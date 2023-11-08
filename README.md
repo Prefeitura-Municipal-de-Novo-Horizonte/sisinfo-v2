@@ -45,8 +45,21 @@ npm install
 ```
 
 Arquivo de secret key:
+
 ```bash
 cp contrib/.env-sample .env
 ```
 
 Feito isso, adicionar as senhas no arquivo .env
+
+----------------------------------------------------------------
+
+## Para desenvolvimento
+
+rodar no terminal
+
+```bash
+npm run dev
+
+python manage.py runserver
+```
