@@ -81,7 +81,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-default_dburl = f"sqlite:///{str(f'{BASE_DIR}db.sqlite3')}"
+default_dburl = config('DATABASE_URL')
 DATABASES = {
     "default": dburl(default_dburl)
 }

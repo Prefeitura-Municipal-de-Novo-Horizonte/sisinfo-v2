@@ -18,6 +18,11 @@ class AbsctactDirectionSector(models.Model):
     def __str__(self):
         return self.name
     
+    def clean(self) -> None:
+        self.name = self.name.capitalize()
+        self.accountable = self.accountable.capitalize()
+        return super().clean()
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -43,10 +48,10 @@ class Direction(AbsctactDirectionSector):
     
     
 class Sector(AbsctactDirectionSector):
-    direction = models.ForeignKey('Direction', on_delete=models.DO_NOTHING, blank=True)
-    phone = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    address = models.TextField()
+    direction = models.ForeignKey('Direction', on_delete=models.DO_NOTHING, blank=True, verbose_name='diretoria')
+    phone = models.CharField('telefone', max_length=255)
+    email = models.CharField('email', max_length=255)
+    address = models.TextField('endereço')
 
     class Meta:
         ordering = ['direction', 'name']

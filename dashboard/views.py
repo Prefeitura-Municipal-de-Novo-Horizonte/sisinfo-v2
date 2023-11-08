@@ -1,7 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.shortcuts import resolve_url as r
 
-from .models import Direction
+from dashboard.forms import DirectionForm
+from dashboard.models import Direction
 
 
 # Create your views here.
@@ -13,8 +15,8 @@ def index(request):
 ########## DIRETORIAS DASHBOARD ##############
 ##############################################
 
-def list_all_diretorias(request):
-    context = {
-        'diretorias': Direction.objects.all(),
-        }
-    return render(request, 'setores/list_all_diretorias.html', context)
+def directions(request):
+    form_diretoria = DirectionForm()
+    diretorias= Direction.objects.all()
+    context = {'form': form_diretoria, 'diretorias': diretorias}
+    return render(request, 'setores/diretorias.html', context)
