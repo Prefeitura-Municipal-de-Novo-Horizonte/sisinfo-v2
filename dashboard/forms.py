@@ -19,10 +19,3 @@ class DirectionForm(forms.ModelForm):
         name = self.cleaned_data[field]
         words = [w.capitalize() for w in name.split()]
         return ' '.join(words)
-    
-    def repeat_name_clean(self):
-        name = self.cleaned_data['name']
-        diretoria = Direction.objects.filter(name=name)
-        if diretoria.exists():
-            raise ValidationError(f'Já existe uma diretoria com o nome {name}')
-        return self.cleaned_data

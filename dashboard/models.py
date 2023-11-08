@@ -8,7 +8,7 @@ from django.template.defaultfilters import slugify
 ##############################################################################################
 
 class AbsctactDirectionSector(models.Model):
-    name = models.CharField('nome', max_length=200, blank=True, null=True)
+    name = models.CharField('nome', max_length=200, blank=True, null=True, unique=True)
     slug = models.SlugField('slug')
     accountable = models.CharField('responsavel', max_length=200, blank=True)
 
@@ -59,6 +59,6 @@ class Sector(AbsctactDirectionSector):
         verbose_name_plural ='setores'
     
     def get_absolute_url(self):
-        return r('dashboard.diretoria', slug=self.slug)
+        return r('dashboard.setor', slug=self.slug)
         
         
