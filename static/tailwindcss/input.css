@@ -7,17 +7,14 @@
 @layer base {
   :root {
     --background: #E9EAEC;
-    --cream: #F4F2EB
+    --ring: 212.7 26.8% 83.9%;
     --primary: #333652;
     --secondary: #90ADC6;
     --main-color: #FAD02C;
     --red: #E4021B;
     --yellow: #FFDB15;
     --corn-flower: #3F5E98
-
-    --border: 0 0% 9%;
-    --input: 0 0% 9%;
-    --ring: 212.7 26.8% 83.9%;
+    --cream: #F4F2EB
 
     --radius: 0.5rem;
   }
@@ -28,7 +25,7 @@
     @apply border-secondary;
   }
   body {
-    @apply h-full bg-cream text-primary;
+    @apply h-full bg-personcream text-primary;
   }
   html {
     @apply h-full;
