@@ -3,4 +3,32 @@
     Diretorias
 {% endblock title %}
 {% block content %}
+    <section>
+        <h1 class="text-xl font-bold py-5">Diretorias</h1>
+        <div class="w-full max-x-full flex flex-col py-6">
+            <div id="cadastro-diretoria" class="flex gap-10">
+                <form action="." method="post" class="flex gap-4 flex-col justify-start">
+                    {% csrf_token %}
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.name.label }}</label>
+                        {{ form.name.errors }}{{ form.name }}
+                    </div>
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.accountable.label }}</label>
+                        {{ form.accountable.errors }}{{ form.accountable }}
+                    </div>
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.kind.label }}</label>
+                        {{ form.kind.errors }}{{ form.kind }}
+                    </div>
+                    <div>
+                        <input type="submit"
+                               class="text-white bg-green-700 hover:bg-green-800 flex items-start focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                               value="Cadastrar" />
+                    </div>
+                </form>
+            </div>
+            <div id="tabela-diretorias" class="flex"></div>
+        </div>
+    </section>
 {% endblock content %}

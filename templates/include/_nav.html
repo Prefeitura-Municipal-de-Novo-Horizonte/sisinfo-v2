@@ -1,10 +1,10 @@
 {% load static %}
 <nav class="bg-main">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <a href="#" class="flex items-center">
+        <a href="{% url 'dashboard:index' %}" class="flex items-center">
             <img src="{% static 'img/logo/logo.png' %}"
                  class="h-8 mr-3"
-                 alt="Flowbite Logo" />
+                 alt="Brasão Prefeitura de Novo Horizonte" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">SISInfo v.2</span>
         </a>
         <div class="flex items-center md:order-2">
@@ -56,7 +56,7 @@
              id="navbar-user">
             <ul class="flex flex-row gap-10">
                 <li>
-                    <a href="#">Home</a>
+                    <a href="{% url 'dashboard:index' %}">Home</a>
                 </li>
                 <li>
                     <a href="#">
@@ -78,7 +78,7 @@
                             <ul class="py-2 text-sm text-gray-700 dark:text-gray-200"
                                 aria-labelledby="dropdownDefaultButton">
                                 <li>
-                                    <a href="{% url 'diretorias' %}"
+                                    <a href="{% url 'dashboard:diretorias' %}"
                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Diretorias</a>
                                 </li>
                                 <li>
