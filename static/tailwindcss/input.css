@@ -1,0 +1,36 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #E9EAEC;
+    --cream: #F4F2EB
+    --primary: #333652;
+    --secondary: #90ADC6;
+    --main-color: #FAD02C;
+    --red: #E4021B;
+    --yellow: #FFDB15;
+    --corn-flower: #3F5E98
+
+    --border: 0 0% 9%;
+    --input: 0 0% 9%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-secondary;
+  }
+  body {
+    @apply h-full bg-cream text-primary;
+  }
+  html {
+    @apply h-full;
+  }
+}
