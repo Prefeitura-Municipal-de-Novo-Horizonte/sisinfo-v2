@@ -44,7 +44,7 @@
                         {{ form.address.errors }}{{ form.address }}
                     </div>
                     <div>
-                        <input type="submit" value="Cadastrar!">
+                        <input type="submit" value="{{ btn }}">
                     </div>
                 </form>
             </div>
@@ -92,6 +92,7 @@
                             <td>{{ setor.email }}</td>
                             <td>{{ setor.address }}</td>
                             <td>
+                                <a href="{% url 'dashboard:update_setor' setor.slug %}">Editar</a>
                                 <a href="{% url 'dashboard:delete_setor' setor.slug setor.id %}">Excluir</a>
                             </td>
                         </tr>

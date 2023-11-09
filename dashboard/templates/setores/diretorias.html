@@ -32,7 +32,7 @@
                         {{ form.kind.errors }}{{ form.kind }}
                     </div>
                     <div>
-                        <input type="submit" value="Cadastrar!">
+                        <input type="submit" value="{{ btn }}">
                     </div>
                 </form>
             </div>
@@ -73,7 +73,8 @@
                             <td>{{ diretoria.accountable }}</td>
                             <td>{{ diretoria.kind }}</td>
                             <td>
-                                <a href="{% url 'dashboard:delete_diretoria' diretoria.id %}">Excluir</a>
+                                <a href="{% url 'dashboard:update_diretoria' diretoria.slug %}">Editar</a>
+                                <a href="{% url 'dashboard:delete_diretoria' diretoria.slug diretoria.id %}">Excluir</a>
                             </td>
                         </tr>
                     {% empty %}
