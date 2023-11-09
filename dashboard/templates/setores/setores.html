@@ -84,7 +84,7 @@
                     {% for setor in setores %}
                         <tr>
                             <td>
-                                <a href="{{ setor.get_absolute_url }}">{{ setor.name }}</a>
+                                <a href="#">{{ setor.name }}</a>
                             </td>
                             <td>{{ setor.accountable }}</td>
                             <td>{{ setor.direction }}</td>
@@ -92,7 +92,7 @@
                             <td>{{ setor.email }}</td>
                             <td>{{ setor.address }}</td>
                             <td>
-                                <a href="#">Excluir</a>
+                                <a href="{% url 'dashboard:delete_setor' setor.slug setor.id %}">Excluir</a>
                             </td>
                         </tr>
                     {% empty %}

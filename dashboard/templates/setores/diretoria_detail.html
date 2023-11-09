@@ -1,14 +1,88 @@
 {% extends "_base.html" %}
 {% block title %}
-    {{ diretoria.name }}
+    Diretorias
 {% endblock title %}
 {% block content %}
-    <section id="diretoria-{{ diretoria.id }}">
-        <div>
-            <h1>{{ diretoria.name }}</h1>
+    <section id="diretorias">
+        <!-- TITULO -->
+        <div id="title">
+            <h1>Diretorias</h1>
         </div>
-        <div id="setores">
-            {% for setor in setores %}{{ setor.name }}{% endfor %}
+        <!-- MESSAGES -->
+        <div id="messages-alert">
+            {% if messages %}
+                {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+            {% endif %}
+        </div>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="forms">
+            <div id="signin">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div>
+                        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                        {{ form.name.errors }}{{ form.name }}
+                    </div>
+                    <div>
+                        <label for="{{ form.accountable.id_for_label }}">{{ form.accountable.label }}</label>
+                        {{ form.accountable.errors }}{{ form.accountable }}
+                    </div>
+                    <div>
+                        <label for="{{ form.kind.id_for_label }}">{{ form.kind.label }}</label>
+                        {{ form.kind.errors }}{{ form.kind }}
+                    </div>
+                    <div>
+                        <input type="submit" value="Cadastrar!">
+                    </div>
+                </form>
+            </div>
+            <!-- FORMULARIO DE BUSCA -->
+            <div id="search">
+                <form method="get">
+                    <div>
+                        <h2>{{ myFilter.form.name.label }}</h2>
+                        <div>{{ myFilter.form.name }}</div>
+                    </div>
+                    <div>
+                        <h2>{{ myFilter.form.accountable.label }}</h2>
+                        <div>{{ myFilter.form.accountable }}</div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Pesquisar!">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- LISTA DE DADOS -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Responsvel</th>
+                        <th>Tipo</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for diretoria in diretorias %}
+                        <tr>
+                            <td>
+                                <a href="{{ diretoria.get_absolute_url }}">{{ diretoria.name }}</a>
+                            </td>
+                            <td>{{ diretoria.accountable }}</td>
+                            <td>{{ diretoria.kind }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:delete_diretoria' diretoria.id %}">Excluir</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">Nenhuma diretoria cadastrada!!!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </section>
 {% endblock content %}

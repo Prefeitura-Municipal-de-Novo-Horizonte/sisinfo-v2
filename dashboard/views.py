@@ -52,6 +52,15 @@ def direction_detail(request, slug):
     }
     return render(request, 'setores/diretoria_detail.html', context)
 
+def direction_edit(request, slug, id):
+    pass
+
+def direction_delete(request, id):
+    diretoria = get_object_or_404(Direction, id=id)
+    diretoria.delete()
+    messages.add_message(request, constants.ERROR, f'Diretoria {diretoria.name} foi excluida com sucesso!')
+    return redirect(reverse('dashboard:diretorias'))
+
 # SETOR
 def sectors(request):
     setores = Sector.objects.all()
@@ -59,8 +68,7 @@ def sectors(request):
         form = SectorForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(request, constants.SUCCESS,
-                                 'Inserido com sucesso!')
+            messages.add_message(request, constants.SUCCESS, 'Inserido com sucesso!')
         else:
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
         return redirect(reverse('dashboard:setores'))
@@ -75,3 +83,9 @@ def sectors(request):
         'myFilter': myFilter,
         }
     return render(request, 'setores/setores.html', context)
+
+def sector_delete(request, id, slug):
+    setor = get_object_or_404(Sector, id=id, slug=slug)
+    setor.delete()
+    messages.add_message(request, constants.ERROR, f'O Setor {setor.name} foi excluido com sucesso!')
+    return redirect(reverse('dashboard:setores'))

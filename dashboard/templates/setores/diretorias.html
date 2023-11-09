@@ -73,7 +73,7 @@
                             <td>{{ diretoria.accountable }}</td>
                             <td>{{ diretoria.kind }}</td>
                             <td>
-                                <a href="#">Excluir</a>
+                                <a href="{% url 'dashboard:delete_diretoria' diretoria.id %}">Excluir</a>
                             </td>
                         </tr>
                     {% empty %}
