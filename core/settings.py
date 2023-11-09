@@ -9,11 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-import os
 from pathlib import Path
 
 from decouple import Csv, config
 from dj_database_url import parse as dburl
+from django.contrib.messages import constants
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -142,3 +142,10 @@ DEFAULT_FROM_EMAIL = 'ti@novohorizonte.sp.gov.br'
 # EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 # EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 # EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# MESSAGES ERROR OR SUCCESS
+MESSAGE_TAGS = {
+    constants.ERROR: 'flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50',
+    constants.SUCCESS: 'flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50',
+    constants.WARNING: 'flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50'
+}

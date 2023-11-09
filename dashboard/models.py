@@ -45,7 +45,7 @@ class Direction(AbsctactDirectionSector):
 class Sector(AbsctactDirectionSector):
     direction = models.ForeignKey('Direction', on_delete=models.DO_NOTHING, blank=True, verbose_name='diretoria')
     phone = models.CharField('telefone', max_length=255)
-    email = models.CharField('email', max_length=255)
+    email = models.EmailField('email')
     address = models.TextField('endereço')
 
     class Meta:

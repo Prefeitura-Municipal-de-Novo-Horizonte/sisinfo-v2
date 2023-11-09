@@ -1,10 +1,10 @@
 {% extends "_base.html" %}
 {% block title %}
-    Diretorias
+    Setores
 {% endblock title %}
 {% block content %}
     <section class="p-9">
-        <h1 class="text-4xl font-bold">Diretorias</h1>
+        <h1 class="text-4xl font-bold">Setores</h1>
         {% if messages %}
             {% for message in messages %}
                 <div class="{{ message.tags }}" role="alert">
@@ -23,7 +23,7 @@
             {% endfor %}
         {% endif %}
         <div class="w-full max-x-full flex flex-col py-6 justify-arround gap-20">
-            <div id="cadastro-diretoria" class="flex gap-10">
+            <div id="cadastro-setor" class="flex gap-10">
                 <form action="." method="post" class="flex gap-4 flex-col justify-start">
                     {% csrf_token %}
                     <div class="flex flex-col justify-start w-[40rem]">
@@ -35,8 +35,20 @@
                         {{ form.accountable.errors }}{{ form.accountable }}
                     </div>
                     <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.kind.label }}</label>
-                        {{ form.kind.errors }}{{ form.kind }}
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.direction.label }}</label>
+                        {{ form.direction.errors }}{{ form.direction }}
+                    </div>
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.phone.label }}</label>
+                        {{ form.phone.errors }}{{ form.phone }}
+                    </div>
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.email.label }}</label>
+                        {{ form.email.errors }}{{ form.email }}
+                    </div>
+                    <div class="flex flex-col justify-start w-[40rem]">
+                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.address.label }}</label>
+                        {{ form.address.errors }}{{ form.address }}
                     </div>
                     <div>
                         <input type="submit"
@@ -45,7 +57,7 @@
                     </div>
                 </form>
             </div>
-            <div class="flex gap-9 bg-main w-20 h-20" id="list-diretorias">
+            <div class="flex gap-9 bg-main w-20 h-20" id="list-setores">
                 <div class="max-w-full flex justify-center items-center absolute">
                     <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full">
                         <table class="max-w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -54,7 +66,10 @@
                                     <th scope="col" class="px-6 py-3 uppercase">Nome</th>
                                     <th scope="col" class="px-6 py-3 uppercase">Responsável</th>
                                     <th scope="col" class="px-6 py-3 uppercase">Slug</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Tipo</th>
+                                    <th scope="col" class="px-6 py-3 uppercase">Diretoria</th>
+                                    <th scope="col" class="px-6 py-3 uppercase">Telefone</th>
+                                    <th scope="col" class="px-6 py-3 uppercase">Email</th>
+                                    <th scope="col" class="px-6 py-3 uppercase">Endereço</th>
                                     <th scope="col" class="px-6 py-3 uppercase">Link</th>
                                     <th scope="col" class="px-6 py-3 uppercase">
                                         <span class="sr-only">Edit / Delete</span>
@@ -62,15 +77,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for diretoria in diretorias %}
+                                {% for setor in setores %}
                                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{ diretoria.name }}
+                                            {{ setor.name }}
                                         </th>
-                                        <td class="px-6 py-4">{{ diretoria.accountable }}</td>
-                                        <td class="px-6 py-4">{{ diretoria.slug }}</td>
-                                        <td class="px-6 py-4">{{ diretoria.kind }}</td>
+                                        <td class="px-6 py-4">{{ setor.accountable }}</td>
+                                        <td class="px-6 py-4">{{ setor.slug }}</td>
+                                        <td class="px-6 py-4">{{ setor.direction }}</td>
+                                        <td class="px-6 py-4">{{ setor.phone }}</td>
+                                        <td class="px-6 py-4">{{ setor.email }}</td>
+                                        <td class="px-6 py-4">{{ setor.address }}</td>
                                         <td class="px-6 py-4">
                                             <a href="#">
                                                 <svg class="w-6 h-6 text-gray-800 dark:text-white"
@@ -107,7 +125,10 @@
                                         </td>
                                     </tr>
                                 {% empty %}
-                                    <td colspan="6" class="px-6 py-4 text-right">Sem diretorias cadastradas</td>
+                                    <tr>
+                                        <th>-</th>
+                                        <td colspan="8" class="px-6 py-4 text-center">Sem setores cadastrados</td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
