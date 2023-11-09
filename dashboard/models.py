@@ -17,11 +17,6 @@ class AbsctactDirectionSector(models.Model):
     
     def __str__(self):
         return self.name
-    
-    def clean(self) -> None:
-        self.name = self.name.capitalize()
-        self.accountable = self.accountable.capitalize()
-        return super().clean()
 
     def save(self, *args, **kwargs):
         if not self.slug:

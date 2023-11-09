@@ -28,7 +28,11 @@
                     </div>
                 </form>
             </div>
-            <div id="tabela-diretorias" class="flex"></div>
+            <div class="flex gap-9 bg-main w-20 h-20">
+                <div class="flex justify-between items-center">
+                    {% for diretoria in diretorias %}<h1>{{ diretoria.name }}</h1>{% endfor %}
+                </div>
+            </div>
         </div>
     </section>
 {% endblock content %}

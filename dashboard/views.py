@@ -1,6 +1,7 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
 from django.shortcuts import resolve_url as r
+from django.urls import reverse
 
 from dashboard.forms import DirectionForm
 from dashboard.models import Direction
@@ -16,7 +17,16 @@ def index(request):
 ##############################################
 
 def directions(request):
-    form_diretoria = DirectionForm()
-    diretorias= Direction.objects.all()
-    context = {'form': form_diretoria, 'diretorias': diretorias}
+    diretorias = Direction.objects.all()
+    if request.method == 'POST':
+        form = DirectionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # TODO: Add message success
+        return HttpResponse('Cadastro OK')
+    form = DirectionForm()
+    context = {
+        'form': form, 
+        'diretorias': diretorias,
+        }
     return render(request, 'setores/diretorias.html', context)
