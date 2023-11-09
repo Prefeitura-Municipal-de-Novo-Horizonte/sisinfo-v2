@@ -1,0 +1,14 @@
+{% extends "_base.html" %}
+{% block title %}
+    {{ diretoria.name }}
+{% endblock title %}
+{% block content %}
+    <section id="diretoria-{{ diretoria.id }}">
+        <div>
+            <h1>{{ diretoria.name }}</h1>
+        </div>
+        <div id="setores">
+            {% for setor in setores %}{{ setor.name }}{% endfor %}
+        </div>
+    </section>
+{% endblock content %}

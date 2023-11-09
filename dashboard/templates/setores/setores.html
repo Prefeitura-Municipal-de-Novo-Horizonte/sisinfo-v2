@@ -3,138 +3,105 @@
     Setores
 {% endblock title %}
 {% block content %}
-    <section class="p-9">
-        <h1 class="text-4xl font-bold">Setores</h1>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="{{ message.tags }}" role="alert">
-                    <svg class="flex-shrink-0 inline w-4 h-4 mr-3"
-                         aria-hidden="true"
-                         xmlns="http://www.w3.org/2000/svg"
-                         fill="currentColor"
-                         viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                    </svg>
-                    <span class="sr-only">Info</span>
-                    <div>
-                        <span class="font-medium">{{ message }}</span>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-        <div class="w-full max-x-full flex flex-col py-6 justify-arround gap-20">
-            <div id="cadastro-setor" class="flex gap-10">
-                <form action="." method="post" class="flex gap-4 flex-col justify-start">
+    <section id="setores">
+        <!-- TITULO -->
+        <div id="title">
+            <h1>Setores</h1>
+        </div>
+        <!-- MESSAGES -->
+        <div id="messages-alert">
+            {% if messages %}
+                {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+            {% endif %}
+        </div>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="forms">
+            <div id="signin">
+                <form action="." method="post">
                     {% csrf_token %}
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.name.label }}</label>
+                    <div>
+                        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
                         {{ form.name.errors }}{{ form.name }}
                     </div>
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.accountable.label }}</label>
+                    <div>
+                        <label for="{{ form.accountable.id_for_label }}">{{ form.accountable.label }}</label>
                         {{ form.accountable.errors }}{{ form.accountable }}
                     </div>
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.direction.label }}</label>
+                    <div>
+                        <label for="{{ form.direction.id_for_label }}">{{ form.direction.label }}</label>
                         {{ form.direction.errors }}{{ form.direction }}
                     </div>
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.phone.label }}</label>
+                    <div>
+                        <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
                         {{ form.phone.errors }}{{ form.phone }}
                     </div>
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.email.label }}</label>
+                    <div>
+                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
                         {{ form.email.errors }}{{ form.email }}
                     </div>
-                    <div class="flex flex-col justify-start w-[40rem]">
-                        <label for="{{ form.name.id_for_label }}" class="font-semibold text-lg">{{ form.address.label }}</label>
+                    <div>
+                        <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
                         {{ form.address.errors }}{{ form.address }}
                     </div>
                     <div>
-                        <input type="submit"
-                               class="text-white bg-green-700 hover:bg-green-800 flex items-start focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                               value="Cadastrar" />
+                        <input type="submit" value="Cadastrar!">
                     </div>
                 </form>
             </div>
-            <div class="flex gap-9 bg-main w-20 h-20" id="list-setores">
-                <div class="max-w-full flex justify-center items-center absolute">
-                    <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full">
-                        <table class="max-w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 uppercase">Nome</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Responsável</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Slug</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Diretoria</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Telefone</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Email</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Endereço</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">Link</th>
-                                    <th scope="col" class="px-6 py-3 uppercase">
-                                        <span class="sr-only">Edit / Delete</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for setor in setores %}
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <th scope="row"
-                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{ setor.name }}
-                                        </th>
-                                        <td class="px-6 py-4">{{ setor.accountable }}</td>
-                                        <td class="px-6 py-4">{{ setor.slug }}</td>
-                                        <td class="px-6 py-4">{{ setor.direction }}</td>
-                                        <td class="px-6 py-4">{{ setor.phone }}</td>
-                                        <td class="px-6 py-4">{{ setor.email }}</td>
-                                        <td class="px-6 py-4">{{ setor.address }}</td>
-                                        <td class="px-6 py-4">
-                                            <a href="#">
-                                                <svg class="w-6 h-6 text-gray-800 dark:text-white"
-                                                     aria-hidden="true"
-                                                     xmlns="http://www.w3.org/2000/svg"
-                                                     fill="none"
-                                                     viewBox="0 0 19 19">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.013 7.962a3.519 3.519 0 0 0-4.975 0l-3.554 3.554a3.518 3.518 0 0 0 4.975 4.975l.461-.46m-.461-4.515a3.518 3.518 0 0 0 4.975 0l3.553-3.554a3.518 3.518 0 0 0-4.974-4.975L10.3 3.7" />
-                                                </svg>
-                                            </a>
-                                        </td>
-                                        <td class="px-6 py-4 text-right flex flex-row gap-4">
-                                            <a href="#"
-                                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                                <svg class="w-6 h-6 text-gray-800 dark:text-white"
-                                                     aria-hidden="true"
-                                                     xmlns="http://www.w3.org/2000/svg"
-                                                     fill="currentColor"
-                                                     viewBox="0 0 20 18">
-                                                    <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
-                                                    <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
-                                                </svg>
-                                            </a>
-                                            <a href="#"
-                                               class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                                <svg class="w-6 h-6 text-gray-800 dark:text-white"
-                                                     aria-hidden="true"
-                                                     xmlns="http://www.w3.org/2000/svg"
-                                                     fill="none"
-                                                     viewBox="0 0 14 14">
-                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                                                </svg>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <th>-</th>
-                                        <td colspan="8" class="px-6 py-4 text-center">Sem setores cadastrados</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+            <!-- FORMULARIO DE BUSCA -->
+            <div id="search">
+                <form method="get">
+                    <div>
+                        <h2>{{ myFilter.form.name.label }}</h2>
+                        <div>{{ myFilter.form.name }}</div>
                     </div>
-                </div>
+                    <div>
+                        <h2>{{ myFilter.form.accountable.label }}</h2>
+                        <div>{{ myFilter.form.accountable }}</div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Pesquisar!">
+                    </div>
+                </form>
             </div>
+        </div>
+        <!-- LISTA DE DADOS -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Responsvel</th>
+                        <th>Diretoria</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Endereço</th>
+                        <th>Link</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for setor in setores %}
+                        <tr>
+                            <td>
+                                <a href="{{ setor.get_absolute_url }}">{{ setor.name }}</a>
+                            </td>
+                            <td>{{ setor.accountable }}</td>
+                            <td>{{ setor.direction }}</td>
+                            <td>{{ setor.phone }}</td>
+                            <td>{{ setor.email }}</td>
+                            <td>{{ setor.address }}</td>
+                            <td>
+                                <a href="#">Excluir</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">Nenhum setor cadastrado!!!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </section>
 {% endblock content %}

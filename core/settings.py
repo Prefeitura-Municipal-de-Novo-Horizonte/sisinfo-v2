@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third Apps
     'django_extensions',
+    'django_filters',
     # My Application
     'dashboard.apps.DashboardConfig',
 ]

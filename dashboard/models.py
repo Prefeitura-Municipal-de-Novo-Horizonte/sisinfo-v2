@@ -2,11 +2,11 @@ from django.db import models
 from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
 
+
 # Create your models here.
 ##############################################################################################
 ############################ SETORES E DIRETORIAS ############################################
 ##############################################################################################
-
 class AbsctactDirectionSector(models.Model):
     name = models.CharField('nome', max_length=200, blank=True, null=True, unique=True)
     slug = models.SlugField('slug')
@@ -39,13 +39,13 @@ class Direction(AbsctactDirectionSector):
         verbose_name_plural = 'diretorias'
     
     def get_absolute_url(self):
-        return r('dashboard.diretoria', slug=self.slug)
+        return r('dashboard:diretoria', slug=self.slug)
     
     
 class Sector(AbsctactDirectionSector):
     direction = models.ForeignKey('Direction', on_delete=models.DO_NOTHING, blank=True, verbose_name='diretoria')
-    phone = models.CharField('telefone', max_length=255)
-    email = models.EmailField('email')
+    phone = models.CharField('telefone', max_length=11, null=True, blank=True)
+    email = models.EmailField('email', null=True, blank=True)
     address = models.TextField('endereço')
 
     class Meta:
@@ -54,6 +54,8 @@ class Sector(AbsctactDirectionSector):
         verbose_name_plural ='setores'
     
     def get_absolute_url(self):
-        return r('dashboard.setor', slug=self.slug)
+        return r('dashboard:setor', slug=self.slug)
         
-        
+##############################################################################################
+########################### LICITAÇÃO E SUPRIMENTOS ##########################################
+##############################################################################################

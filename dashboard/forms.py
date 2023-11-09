@@ -40,3 +40,4 @@ class SectorForm(forms.ModelForm):
         if not self.cleaned_data.get('email') and not self.cleaned_data.get('phone'):
             raise forms.ValidationError("Informe ao menos um e-mail ou telefone.")
         return self.cleaned_data
+    

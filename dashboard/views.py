@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.contrib.messages import constants
-from django.shortcuts import redirect, render
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
 
+from dashboard.filters import DirectionFilter, SectorFilter
 from dashboard.forms import DirectionForm, SectorForm
 from dashboard.models import Direction, Sector
 
@@ -17,6 +19,7 @@ def index(request):
 ########## DIRETORIAS DASHBOARD ##############
 ##############################################
 
+# DIRETORIA
 def directions(request):
     diretorias = Direction.objects.all()
     if request.method == 'POST':
@@ -29,12 +32,27 @@ def directions(request):
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
         return redirect(reverse('dashboard:diretorias'))
     form = DirectionForm()
+
+    myFilter = DirectionFilter(request.GET, queryset=diretorias)
+    diretorias = myFilter.qs
+        
     context = {
         'form': form, 
         'diretorias': diretorias,
+        'myFilter': myFilter,
         }
     return render(request, 'setores/diretorias.html', context)
 
+def direction_detail(request, slug):
+    diretoria = get_object_or_404(Direction, slug=slug)
+    setores = Sector.objects.filter(direction=diretoria.id)
+    context = {
+        'diretoria': diretoria,
+        'setores': setores,
+    }
+    return render(request, 'setores/diretoria_detail.html', context)
+
+# SETOR
 def sectors(request):
     setores = Sector.objects.all()
     if request.method == 'POST':
@@ -47,8 +65,13 @@ def sectors(request):
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
         return redirect(reverse('dashboard:setores'))
     form = SectorForm()
+
+    myFilter = SectorFilter(request.GET, queryset=setores)
+    setores = myFilter.qs
+
     context = {
         'form': form,
-        'setores': setores
+        'setores': setores,
+        'myFilter': myFilter,
         }
     return render(request, 'setores/setores.html', context)
