@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.messages import constants
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
@@ -47,9 +46,14 @@ def direction_detail(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     setores = Sector.objects.filter(direction=diretoria.id)
     total_setores = setores.count()
+
+    myFilter = SectorFilter(request.GET, queryset=setores)
+    setores = myFilter.qs
+    
     context = {
         'diretoria': diretoria,
         'setores': setores,
+        'myFilter': myFilter,
         'total_setores': total_setores,
     }
     return render(request, 'setores/diretoria_detail.html', context)
@@ -123,6 +127,14 @@ def sectors(request):
         'btn': 'Adicionar novo Setor'
         }
     return render(request, 'setores/setores.html', context)
+
+
+def sector_detail(request, slug):
+    setor = get_object_or_404(Sector, slug=slug)
+    context = {
+            'setor': setor,
+        }
+    return render(request, 'setores/setor_detail.html', context)
 
 
 def sector_update(request, slug):

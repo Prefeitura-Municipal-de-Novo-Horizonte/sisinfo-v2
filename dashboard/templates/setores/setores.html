@@ -84,7 +84,7 @@
                     {% for setor in setores %}
                         <tr>
                             <td>
-                                <a href="#">{{ setor.name }}</a>
+                                <a href="{{ setor.get_absolute_url }}">{{ setor.name }}</a>
                             </td>
                             <td>{{ setor.accountable }}</td>
                             <td>{{ setor.direction }}</td>
