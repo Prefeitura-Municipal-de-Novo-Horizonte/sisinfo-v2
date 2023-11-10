@@ -1,6 +1,9 @@
 from django.urls import path
 
 from dashboard.views import (
+    bidding,
+    bidding_delete,
+    bidding_update,
     direction_delete,
     direction_detail,
     direction_update,
@@ -26,4 +29,8 @@ urlpatterns = [
     path('diretoria/setor/<slug:slug>/', sector_detail, name="setor"),
     path('diretoria/setor/<slug:slug>/update/', sector_update, name="update_setor"),
     path('diretoria/setor/<slug:slug>/<str:id>/delete/', sector_delete, name='delete_setor'),
+    # Licitação
+    path('licitacoes/', bidding, name='licitacoes'),
+    path('licitacao/<slug:slug>/update/', bidding_update, name="update_licitacao"),
+    path('licitacao/<slug:slug>/<str:id>/delete/', bidding_delete, name='delete_licitacao'),
 ]

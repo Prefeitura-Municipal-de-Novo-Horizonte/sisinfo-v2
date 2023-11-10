@@ -3,11 +3,6 @@ from django import forms
 from dashboard.models import Bidding, Direction, Material, Sector
 
 
-def extract_from_clean(self, field):
-        name = self.cleaned_data[field]
-        words = [w.capitalize() for w in name.split()]
-        return ' '.join(words)
-
 ##############################################################################################
 ############################ SETORES E DIRETORIAS ############################################
 ##############################################################################################
@@ -20,7 +15,12 @@ class DirectionForm(forms.ModelForm):
         return self.extract_from_clean('name')
     
     def clean_accountable(self):
-        return extract_from_clean('accountable')
+        return self.extract_from_clean('accountable')
+    
+    def extract_from_clean(self, field):
+        name = self.cleaned_data[field]
+        words = [w.capitalize() for w in name.split()]
+        return ' '.join(words)
 
 
 class SectorForm(forms.ModelForm):
@@ -32,7 +32,12 @@ class SectorForm(forms.ModelForm):
         return self.extract_from_clean('name')
     
     def clean_accountable(self):
-        return extract_from_clean('accountable')
+        return self.extract_from_clean('accountable')
+    
+    def extract_from_clean(self, field):
+        name = self.cleaned_data[field]
+        words = [w.capitalize() for w in name.split()]
+        return ' '.join(words)
     
     def clean(self):
         self.cleaned_data = super().clean()
@@ -48,10 +53,15 @@ class SectorForm(forms.ModelForm):
 class BiddingForm(forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ['name', 'date', 'status']
+        fields = ['name', 'status', 'date']
     
     def clean_name(self):
-        return extract_from_clean('name')
+        return self.extract_from_clean('name')
+    
+    def extract_from_clean(self, field):
+        name = self.cleaned_data[field]
+        words = [w.capitalize() for w in name.split()]
+        return ' '.join(words)
 
 class MaterialForm(forms.ModelForm):
     class Meta:
@@ -59,4 +69,4 @@ class MaterialForm(forms.ModelForm):
         fields = ['name', 'status', 'bidding', 'price', 'readjustment']
 
         def clean_name(self):
-            return extract_from_clean('name')
+            return self.extract_from_clean('name')

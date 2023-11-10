@@ -1,0 +1,85 @@
+{% extends "_base.html" %}
+{% block title %}
+    Licitações
+{% endblock title %}
+{% block content %}
+    <section>
+        <!-- TITULO -->
+        <div id="title">
+            <h1>Licitações</h1>
+        </div>
+        <!-- MESSAGES -->
+        <div id="messages-alert">
+            {% if messages %}
+                {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+            {% endif %}
+        </div>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="forms">
+            <div id="signin">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div>
+                        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                        {{ form.name.errors }}{{ form.name }}
+                    </div>
+                    <div>
+                        <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                        {{ form.status.errors }}{{ form.status }}
+                    </div>
+                    <div>
+                        <label for="{{ form.date.id_for_label }}">{{ form.date.label }}</label>
+                        {{ form.date.errors }}{{ form.date }}
+                    </div>
+                    <div>
+                        <input type="submit" value="{{ btn }}">
+                    </div>
+                </form>
+            </div>
+            <!-- FORMULARIO DE BUSCA -->
+            <div id="search">
+                <form method="get">
+                    <div>
+                        <h2>{{ myFilter.form.name.label }}</h2>
+                        <div>{{ myFilter.form.name }}</div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Pesquisar!">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- LISTA DE DADOS -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for licitacao in licitacoes %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ licitacao.name }}</a>
+                            </td>
+                            <td>{{ licitacao.get_status_display }}</td>
+                            <td>{{ licitacao.date }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:update_licitacao' licitacao.slug %}">Editar</a>
+                                <a href="{% url 'dashboard:delete_licitacao' licitacao.slug licitacao.id %}">Excluir</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">Nenhuma licitação cadastrada!!!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock content %}

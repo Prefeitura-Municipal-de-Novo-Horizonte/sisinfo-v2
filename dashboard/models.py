@@ -93,7 +93,8 @@ class Bidding(AbsBiddingMaterial):
         return r('dashboard:licitacao', slug=self.slug)
     
     def save(self, *args, **kwargs):
-        materiais = Material.objects.filter(bidding=self.bidding.id)
+        materiais = Material.objects.filter(bidding=self.id)
+        print(materiais)
         for material in materiais:
             if self.status == '1':
                 material.status = '1'
@@ -101,7 +102,7 @@ class Bidding(AbsBiddingMaterial):
             elif self.status == '2':
                 material.status = '2'
                 material.save()
-        return super(Material, self).save()
+        return super().save()
 
 class Material(AbsBiddingMaterial):
     bidding = models.ForeignKey(Bidding, on_delete=models.SET_NULL, verbose_name='licitação',  related_name='materiais', blank=True, null=True)
