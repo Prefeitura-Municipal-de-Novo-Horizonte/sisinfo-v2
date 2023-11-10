@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db import models
 from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
@@ -48,6 +50,8 @@ class Sector(AbsctactDirectionSector):
     email = models.EmailField('email', null=True, blank=True)
     address = models.TextField('endereço')
 
+    def __str__(self):
+        return self.name
     class Meta:
         ordering = ['direction', 'name']
         verbose_name ='setor'
@@ -59,3 +63,61 @@ class Sector(AbsctactDirectionSector):
 ##############################################################################################
 ########################### LICITAÇÃO E SUPRIMENTOS ##########################################
 ##############################################################################################
+STATUS_CHOICES = (('1', 'Ativo'), ('2', 'Inativo'))
+
+class AbsBiddingMaterial(models.Model):
+    name = models.CharField('nome', max_length=200, blank=True)
+    slug = models.SlugField('slug')
+    status = models.CharField('status', max_length=1, blank=True, choices=STATUS_CHOICES, default=1)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save()
+
+
+class Bidding(AbsBiddingMaterial):
+    date = models.DateField('data', blank=True, null=True)
+    class Meta:
+        ordering = ('status', 'date')
+        verbose_name = 'licitação'
+        verbose_name_plural = 'licitações'
+    
+    def get_absolute_url(self):
+        return r('dashboard:licitacao', slug=self.slug)
+    
+    def save(self, *args, **kwargs):
+        materiais = Material.objects.filter(bidding=self.bidding.id)
+        for material in materiais:
+            if self.status == '1':
+                material.status = '1'
+                material.save()
+            elif self.status == '2':
+                material.status = '2'
+                material.save()
+        return super(Material, self).save()
+
+class Material(AbsBiddingMaterial):
+    bidding = models.ForeignKey(Bidding, on_delete=models.SET_NULL, verbose_name='licitação',  related_name='materiais', blank=True, null=True)
+    price = models.DecimalField('valor', max_digits=8, decimal_places=2, blank=True, null=True)
+    readjustment = models.FloatField('reajuste', default=0)
+
+    class Meta:
+        ordering = ('status', 'bidding', 'name')
+        verbose_name = 'material'
+        verbose_name_plural = 'materiais'
+    
+    def get_absolute_url(self):
+        return r('dashboard:material', slug=self.slug)
+    
+    def total_price(self):
+        if self.readjustment > 0:
+            self.total_price = (float(self.price) + (float(self.price) * (self.readjustment/100)))
+            return Decimal(self.total_price).quantize(Decimal('00000000.00'))
+        return self.price
