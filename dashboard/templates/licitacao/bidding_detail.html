@@ -1,0 +1,102 @@
+{% extends "_base.html" %}
+{% block title %}
+    {{ licitacao.name }}
+{% endblock title %}
+{% block content %}
+    <!-- TITULO -->
+    <div>
+        <h1>{{ licitacao.name }}</h1>
+        <div>
+            <p>{{ licitacao.get_status_display }}</p>
+            <h2>{{ licitacao.date }}</h2>
+        </div>
+        <div>
+            <h2>Total de materiais: {{ total_materiais }}</h2>
+        </div>
+    </div>
+    <!-- MATERIAIS -->
+    <hr>
+    <div id="messages-alert">
+        {% if messages %}
+            {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        <div id="insert-material">
+            <form action="." method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+                    {{ form.name.errors }}{{ form.name }}
+                </div>
+                <div>
+                    <label for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+                    {{ form.status.errors }}{{ form.status }}
+                </div>
+                <div>
+                    <label for="{{ form.bidding.id_for_label }}">{{ form.bidding.label }}</label>
+                    {{ form.bidding.errors }}{{ form.bidding }}
+                </div>
+                <div>
+                    <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                    {{ form.price.errors }}{{ form.price }}
+                </div>
+                <div>
+                    <label for="{{ form.readjustment.id_for_label }}">{{ form.readjustment.label }}</label>
+                    {{ form.readjustment.errors }}{{ form.readjustment }}
+                </div>
+                <input type="submit" value="Cadastrar Material">
+            </form>
+        </div>
+        <hr>
+        <div id="search-material">
+            <div id="search">
+                <form method="get">
+                    <div>
+                        <h2>{{ myFilter.form.name.label }}</h2>
+                        <div>{{ myFilter.form.name }}</div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Pesquisar!">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr>
+        <!-- LISTA DE DADOS -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Status</th>
+                        <th>Valor Inicial</th>
+                        <th>% de reajuste</th>
+                        <th>Valor Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materiais %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ material.name }}</a>
+                            </td>
+                            <td>{{ material.get_status_display }}</td>
+                            <td>{{ material.price }}</td>
+                            <td>{{ material.readjustment }}%</td>
+                            <td>{{ material.total_price }}</td>
+                            <td>
+                                <a href="{% url 'dashboard:delete_material' material.slug material.id %}">Excluir</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">Nenhum Material Cadastrado!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

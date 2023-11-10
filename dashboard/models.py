@@ -94,7 +94,6 @@ class Bidding(AbsBiddingMaterial):
     
     def save(self, *args, **kwargs):
         materiais = Material.objects.filter(bidding=self.id)
-        print(materiais)
         for material in materiais:
             if self.status == '1':
                 material.status = '1'

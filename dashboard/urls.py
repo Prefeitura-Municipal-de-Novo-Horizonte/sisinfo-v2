@@ -1,14 +1,17 @@
 from django.urls import path
 
 from dashboard.views import (
-    bidding,
     bidding_delete,
+    bidding_detail,
     bidding_update,
+    biddings,
     direction_delete,
     direction_detail,
     direction_update,
     directions,
     index,
+    material_delete,
+    materials,
     sector_delete,
     sector_detail,
     sector_update,
@@ -30,7 +33,11 @@ urlpatterns = [
     path('diretoria/setor/<slug:slug>/update/', sector_update, name="update_setor"),
     path('diretoria/setor/<slug:slug>/<str:id>/delete/', sector_delete, name='delete_setor'),
     # Licitação
-    path('licitacoes/', bidding, name='licitacoes'),
+    path('licitacoes/', biddings, name='licitacoes'),
+    path('licitacao/<slug:slug>/', bidding_detail, name="licitacao"),
     path('licitacao/<slug:slug>/update/', bidding_update, name="update_licitacao"),
     path('licitacao/<slug:slug>/<str:id>/delete/', bidding_delete, name='delete_licitacao'),
+    # Materiais
+    path('materiais/', materials, name='materiais'),
+    path('material/<slug:slug>/<str:id>/delete/', material_delete, name='delete_material'),
 ]

@@ -7,6 +7,7 @@
         <!-- TITULO -->
         <div id="title">
             <h1>Licitações</h1>
+            <h2>Total de licitações: {{ total_licitacoes }}</h2>
         </div>
         <!-- MESSAGES -->
         <div id="messages-alert">
@@ -64,7 +65,7 @@
                     {% for licitacao in licitacoes %}
                         <tr>
                             <td>
-                                <a href="#">{{ licitacao.name }}</a>
+                                <a href="{{ licitacao.get_absolute_url }}">{{ licitacao.name }}</a>
                             </td>
                             <td>{{ licitacao.get_status_display }}</td>
                             <td>{{ licitacao.date }}</td>

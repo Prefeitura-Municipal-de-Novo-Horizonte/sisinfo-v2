@@ -5,9 +5,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
 
-from dashboard.filters import BiddingFilter, DirectionFilter, SectorFilter
-from dashboard.forms import BiddingForm, DirectionForm, SectorForm
-from dashboard.models import Bidding, Direction, Sector
+from dashboard.filters import (
+    BiddingFilter,
+    DirectionFilter,
+    MaterialFilter,
+    SectorFilter,
+)
+from dashboard.forms import BiddingForm, DirectionForm, MaterialForm, SectorForm
+from dashboard.models import Bidding, Direction, Material, Sector
 
 
 # Create your views here.
@@ -45,7 +50,6 @@ def direction_detail(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     setores = Sector.objects.filter(direction=diretoria.id)
     total_setores = setores.count()
-
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
     
@@ -61,10 +65,8 @@ def direction_update(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     form = DirectionForm(instance=diretoria)
     diretorias = Direction.objects.all()
-
     myFilter = DirectionFilter(request.GET, queryset=diretorias)
     diretorias = myFilter.qs
-
     context = {
         'diretorias': diretorias,
         'form': form,
@@ -72,7 +74,6 @@ def direction_update(request, slug):
         'myFilter': myFilter,
         'btn': 'Atualizar Diretoria'
         }
-
     if request.method == 'POST':
         form = DirectionForm(request.POST, instance=diretoria)
         if form.is_valid():
@@ -90,9 +91,7 @@ def extract_update_form_direction(form, request):
     diretoria.name = form.cleaned_data['name']
     diretoria.accountable = form.cleaned_data['accountable']
     diretoria.kind = form.cleaned_data['kind']
-
     diretoria.save()
-
     messages.add_message(request, constants.SUCCESS, 'Atualizado com Sucesso!')
     return redirect(reverse('dashboard:diretorias'))
 
@@ -117,10 +116,8 @@ def sectors(request):
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
         return redirect(reverse('dashboard:setores'))
     form = SectorForm()
-
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
-
     context = {
         'form': form,
         'setores': setores,
@@ -142,10 +139,8 @@ def sector_update(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
     form = SectorForm(instance=setor)
     setores = Sector.objects.all()
-
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
-
     context = {
         'setores': setores,
         'form': form,
@@ -153,7 +148,6 @@ def sector_update(request, slug):
         'myFilter': myFilter,
         'btn': 'Atualizar Setor'
         }
-
     if request.method == 'POST':
         form = SectorForm(request.POST, instance=setor)
         if form.is_valid():
@@ -174,9 +168,7 @@ def extract_update_form_sector(form, request):
     setor.phone = form.cleaned_data['phone']
     setor.email = form.cleaned_data['email']
     setor.address = form.cleaned_data['address']
-
     setor.save()
-
     messages.add_message(request, constants.SUCCESS, 'Atualizado com Sucesso!')
     return redirect(reverse('dashboard:setores'))
 
@@ -190,7 +182,7 @@ def sector_delete(request, id, slug):
 ##############################################
 ########## LICITAÇÕES DASHBOARD ##############
 ##############################################
-def bidding(request):
+def biddings(request):
     licitacoes = Bidding.objects.all()
     if request.method == 'POST':
         form = BiddingForm(request.POST)
@@ -200,7 +192,7 @@ def bidding(request):
         else:
             messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
         return redirect(reverse('dashboard:licitacoes'))
-    
+    total_licitacoes = licitacoes.count()
     form = BiddingForm()
     myFilter = BiddingFilter(request.GET, queryset=licitacoes)
     licitacoes = myFilter.qs
@@ -209,13 +201,36 @@ def bidding(request):
         'form': form,
         'licitacoes': licitacoes,
         'myFilter': myFilter,
-        'btn': 'Adicionar nova Licitação'
+        'btn': 'Adicionar nova Licitação',
+        'total_licitacoes': total_licitacoes,
         }
     return render(request, 'licitacao/biddings.html', context)
 
-# def bidding_detail(request):
-#     context = {}
-#     return render(request, 'licitacao/biddings.html', context=context)
+def bidding_detail(request, slug):
+    licitacao = get_object_or_404(Bidding, slug=slug)
+    materiais = Material.objects.filter(bidding=licitacao.id)
+    total_materiais = materiais.count()
+    if request.method == 'POST':
+        form_material = MaterialForm(request.POST)
+        if form_material.is_valid():
+            form_material.save()
+            messages.add_message(request, constants.SUCCESS, 'Inserido com sucesso!')
+        else:
+            messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
+        return redirect(reverse('dashboard:licitacao', kwargs={'slug': slug}))
+    
+    form_material = MaterialForm()
+    myFilter = MaterialFilter(request.GET, queryset=materiais)
+    materiais = myFilter.qs
+    context = {
+        'licitacao': licitacao,
+        'form': form_material,
+        'materiais': materiais,
+        'myFilter': myFilter,
+        'total_materiais': total_materiais,
+        'btn': 'Adicionar Material'
+        }
+    return render(request, 'licitacao/bidding_detail.html', context)
 
 def bidding_update(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
@@ -223,7 +238,6 @@ def bidding_update(request, slug):
     licitacoes = Bidding.objects.all()
     myFilter = BiddingFilter(request.GET, queryset=licitacoes)
     licitacoes = myFilter.qs
-
     context = {
         'licitacao': licitacao,
         'licitacoes': licitacoes,
@@ -243,15 +257,12 @@ def bidding_update(request, slug):
     
     return redirect('dashboard:licitacao')
 
-
 def extract_update_form_bidding(form, request):
     licitacao = form.save(commit=False)
     licitacao.name = form.cleaned_data['name']
     licitacao.status = form.cleaned_data['status']
     licitacao.date = form.cleaned_data['date']
-
     licitacao.save()
-
     messages.add_message(request, constants.SUCCESS, 'Atualizado com Sucesso!')
     return redirect(reverse('dashboard:licitacoes'))
 
@@ -260,3 +271,33 @@ def bidding_delete(request, slug, id):
     licitacao.delete()
     messages.add_message(request, constants.ERROR, f'O Setor {licitacao.name} foi excluido com sucesso!')
     return redirect(reverse('dashboard:licitacoes'))
+
+def materials(request):
+    materiais = Material.objects.all()
+    total_materiais = materiais.count()
+    if request.method == 'POST':
+        form_material = MaterialForm(request.POST)
+        if form_material.is_valid():
+            form_material.save()
+            messages.add_message(request, constants.SUCCESS, 'Inserido com sucesso!')
+        else:
+            messages.add_message(request, constants.ERROR, 'Ocorreu um erro!')
+        return redirect(reverse('dashboard:materiais'))
+    form_material = MaterialForm()
+    myFilter = MaterialFilter(request.GET, queryset=materiais)
+    materiais = myFilter.qs
+    context = {
+        'form_material': form_material,
+        'materiais': materiais,
+        'btn': 'Adicionar novo material',
+        'myFilter': myFilter,
+        'total_materiais': total_materiais,
+        }
+    return render(request, 'licitacao/materials.html', context)
+
+
+def material_delete(request, slug, id):
+    material = get_object_or_404(Material, slug=slug, id=id)
+    material.delete()
+    messages.add_message(request, constants.ERROR, f'O suprimento {material.name} foi excluido com sucesso!')
+    return redirect(reverse('dashboard:materiais'))

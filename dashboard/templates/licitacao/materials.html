@@ -1,0 +1,102 @@
+{% extends "_base.html" %}
+{% block title %}
+    Licitações
+{% endblock title %}
+{% block content %}
+    <section>
+        <!-- TITULO -->
+        <div id="title">
+            <h1>Materiais</h1>
+            <h2>Total de Materiais: {{ total_materiais }}</h2>
+        </div>
+        <hr>
+        <!-- MESSAGES -->
+        <div id="messages-alert">
+            {% if messages %}
+                {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+            {% endif %}
+        </div>
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="forms">
+            <div id="signin">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div>
+                        <label for="{{ form_material.name.id_for_label }}">{{ form_material.name.label }}</label>
+                        {{ form_material.name.errors }}{{ form_material.name }}
+                    </div>
+                    <div>
+                        <label for="{{ form_material.status.id_for_label }}">{{ form_material.status.label }}</label>
+                        {{ form_material.status.errors }}{{ form_material.status }}
+                    </div>
+                    <div>
+                        <label for="{{ form_material.bidding.id_for_label }}">{{ form_material.bidding.label }}</label>
+                        {{ form_material.bidding.errors }}{{ form_material.bidding }}
+                    </div>
+                    <div>
+                        <label for="{{ form_material.price.id_for_label }}">{{ form_material.price.label }}</label>
+                        {{ form_material.price.errors }}{{ form_material.price }}
+                    </div>
+                    <div>
+                        <label for="{{ form_material.readjustment.id_for_label }}">{{ form_material.readjustment.label }}</label>
+                        {{ form_material.readjustment.errors }}{{ form_material.readjustment }}
+                    </div>
+                    <input type="submit" value="{{ btn }}">
+                </form>
+            </div>
+            <!-- FORMULARIO DE BUSCA -->
+            <hr>
+            <div id="search">
+                <form method="get">
+                    <div>
+                        <h2>{{ myFilter.form.name.label }}</h2>
+                        <div>{{ myFilter.form.name }}</div>
+                    </div>
+                    <div>
+                        <input type="submit" value="Pesquisar!">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- LISTA DE DADOS -->
+        <div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Status</th>
+                        <th>Licitação</th>
+                        <th>Valor Inicial</th>
+                        <th>% de reajuste</th>
+                        <th>Valor Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in materiais %}
+                        <tr>
+                            <td>
+                                <a href="#">{{ material.name }}</a>
+                            </td>
+                            <td>{{ material.get_status_display }}</td>
+                            <td>
+                                <a href="{{ material.bidding.get_absolute_url }}">{{ material.bidding }}</a>
+                            </td>
+                            <td>{{ material.price }}</td>
+                            <td>{{ material.readjustment }}%</td>
+                            <td>{{ material.total_price }}</td>
+                            <td>
+                                <a href="#">Editar</a>
+                                <a href="{% url 'dashboard:delete_material' material.slug material.id %}">Excluir</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7">Nenhum Material Cadastrado nessa licitação!!!</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+{% endblock content %}
