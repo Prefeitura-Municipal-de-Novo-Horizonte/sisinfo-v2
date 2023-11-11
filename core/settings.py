@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_filters',
     # My Application
     'dashboard.apps.DashboardConfig',
+    'laudos.apps.LaudosConfig',
 ]
 
 MIDDLEWARE = [
