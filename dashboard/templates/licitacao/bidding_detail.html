@@ -80,7 +80,7 @@
                     {% for material in materiais %}
                         <tr>
                             <td>
-                                <a href="#">{{ material.name }}</a>
+                                <a href="{{ material.get_absolute_url }}">{{ material.name }}</a>
                             </td>
                             <td>{{ material.get_status_display }}</td>
                             <td>{{ material.price }}</td>

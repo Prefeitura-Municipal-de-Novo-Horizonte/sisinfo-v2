@@ -1,6 +1,6 @@
 {% extends "_base.html" %}
 {% block title %}
-    Licitações
+    Materiais
 {% endblock title %}
 {% block content %}
     <section>
@@ -76,7 +76,7 @@
                     {% for material in materiais %}
                         <tr>
                             <td>
-                                <a href="#">{{ material.name }}</a>
+                                <a href="{{ material.get_absolute_url }}">{{ material.name }}</a>
                             </td>
                             <td>{{ material.get_status_display }}</td>
                             <td>
@@ -86,7 +86,7 @@
                             <td>{{ material.readjustment }}%</td>
                             <td>{{ material.total_price }}</td>
                             <td>
-                                <a href="#">Editar</a>
+                                <a href="{% url 'dashboard:update_material' material.slug %}">Editar</a>
                                 <a href="{% url 'dashboard:delete_material' material.slug material.id %}">Excluir</a>
                             </td>
                         </tr>
