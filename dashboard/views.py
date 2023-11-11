@@ -295,6 +295,7 @@ def materials(request):
         }
     return render(request, 'licitacao/materials.html', context)
 
+# TODO: UPDATE MATERIAIS - PAGINA MATERIAIS
 
 def material_delete(request, slug, id):
     material = get_object_or_404(Material, slug=slug, id=id)
