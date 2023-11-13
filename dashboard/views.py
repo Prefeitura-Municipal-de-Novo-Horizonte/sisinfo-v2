@@ -101,8 +101,8 @@ def extract_update_form_direction(form, request):
 def direction_delete(request, id, slug):
     diretoria = get_object_or_404(Direction, id=id, slug=slug)
     diretoria.delete()
-    messages.add_message(request, constants.ERROR, f'Diretoria {
-                         diretoria.name} foi excluida com sucesso!')
+    messages.add_message(request, constants.ERROR,
+                         f'Diretoria {diretoria.name} foi excluida com sucesso!')
     return redirect(reverse('dashboard:diretorias'))
 
 
@@ -179,8 +179,8 @@ def extract_update_form_sector(form, request):
 def sector_delete(request, id, slug):
     setor = get_object_or_404(Sector, id=id, slug=slug)
     setor.delete()
-    messages.add_message(request, constants.ERROR, f'O Setor {
-                         setor.name} foi excluido com sucesso!')
+    messages.add_message(request, constants.ERROR,
+                         f'O Setor {setor.name} foi excluido com sucesso!')
     return redirect(reverse('dashboard:setores'))
 
 
@@ -278,8 +278,8 @@ def extract_update_form_bidding(form, request):
 def bidding_delete(request, slug, id):
     licitacao = get_object_or_404(Bidding, id=id, slug=slug)
     licitacao.delete()
-    messages.add_message(request, constants.ERROR, f'O Setor {
-                         licitacao.name} foi excluido com sucesso!')
+    messages.add_message(request, constants.ERROR,
+                         f'A licitação {licitacao.name} foi excluido com sucesso!')
     return redirect(reverse('dashboard:licitacoes'))
 
 
@@ -357,6 +357,6 @@ def extract_update_form_material(form, request):
 def material_delete(request, slug, id):
     material = get_object_or_404(Material, slug=slug, id=id)
     material.delete()
-    messages.add_message(request, constants.ERROR, f'O suprimento {
-                         material.name} foi excluido com sucesso!')
+    messages.add_message(request, constants.ERROR,
+                         f'O suprimento {material.name} foi excluido com sucesso!')
     return redirect(reverse('dashboard:materiais'))
