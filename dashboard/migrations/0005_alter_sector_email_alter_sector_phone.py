@@ -4,20 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0004_alter_sector_email_alter_sector_phone'),
+        ("dashboard", "0004_alter_sector_email_alter_sector_phone"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sector',
-            name='email',
-            field=models.EmailField(blank=True, max_length=254, null=True, verbose_name='email'),
+            model_name="sector",
+            name="email",
+            field=models.EmailField(
+                blank=True, max_length=254, null=True, verbose_name="email"
+            ),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='phone',
-            field=models.CharField(blank=True, max_length=11, null=True, verbose_name='telefone'),
+            model_name="sector",
+            name="phone",
+            field=models.CharField(
+                blank=True, max_length=11, null=True, verbose_name="telefone"
+            ),
         ),
     ]

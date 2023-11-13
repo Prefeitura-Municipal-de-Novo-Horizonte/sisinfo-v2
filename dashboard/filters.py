@@ -13,7 +13,7 @@ class DirectionFilter(django_filters.FilterSet):
 
     class Meta:
         model = Direction
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SectorFilter(django_filters.FilterSet):
@@ -22,7 +22,7 @@ class SectorFilter(django_filters.FilterSet):
 
     class Meta:
         model = Sector
-        fields = ['name', 'accountable']
+        fields = ["name", "accountable"]
 
 
 ##############################################################################################

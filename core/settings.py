@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
 
 
 # Application definition
@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third Apps
-    'django_extensions',
-    'django_filters',
-    'rolepermissions',
+    "django_extensions",
+    "django_filters",
+    "rolepermissions",
     # My Application
-    'dashboard.apps.DashboardConfig',
+    "dashboard.apps.DashboardConfig",
 ]
 
 MIDDLEWARE = [
@@ -63,7 +63,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -82,10 +82,8 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-default_dburl = config('DATABASE_URL')
-DATABASES = {
-    "default": dburl(default_dburl)
-}
+default_dburl = config("DATABASE_URL")
+DATABASES = {"default": dburl(default_dburl)}
 
 
 # Password validation
@@ -110,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'pt-br'
+LANGUAGE_CODE = "pt-br"
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = "America/Sao_Paulo"
 
 USE_I18N = True
 
@@ -126,15 +124,17 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
 
-MEDIA_URL = 'public/images/'
-MEDIA_ROOT = BASE_DIR / 'public' / 'images'
+MEDIA_URL = "public/images/"
+MEDIA_ROOT = BASE_DIR / "public" / "images"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DEFAULT_FROM_EMAIL = 'ti@novohorizonte.sp.gov.br'
+ROLEPERMISSIONS_MODULE = "core.roles"
+
+DEFAULT_FROM_EMAIL = "ti@novohorizonte.sp.gov.br"
 
 # Email Configuration
 # EMAIL_BACKEND = config('EMAIL_BACKEND')
@@ -147,7 +147,7 @@ DEFAULT_FROM_EMAIL = 'ti@novohorizonte.sp.gov.br'
 
 # MESSAGES ERROR OR SUCCESS
 MESSAGE_TAGS = {
-    constants.ERROR: 'flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50',
-    constants.SUCCESS: 'flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50',
-    constants.WARNING: 'flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50'
+    constants.ERROR: "flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50",
+    constants.SUCCESS: "flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50",
+    constants.WARNING: "flex items-center p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50",
 }

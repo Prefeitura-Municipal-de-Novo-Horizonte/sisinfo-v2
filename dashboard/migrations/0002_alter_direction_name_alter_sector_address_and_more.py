@@ -5,40 +5,48 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0001_initial'),
+        ("dashboard", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='direction',
-            name='name',
-            field=models.CharField(blank=True, max_length=200, null=True, unique=True, verbose_name='nome'),
+            model_name="direction",
+            name="name",
+            field=models.CharField(
+                blank=True, max_length=200, null=True, unique=True, verbose_name="nome"
+            ),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='address',
-            field=models.TextField(verbose_name='endereço'),
+            model_name="sector",
+            name="address",
+            field=models.TextField(verbose_name="endereço"),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='direction',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.DO_NOTHING, to='dashboard.direction', verbose_name='diretoria'),
+            model_name="sector",
+            name="direction",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                to="dashboard.direction",
+                verbose_name="diretoria",
+            ),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='email',
-            field=models.CharField(max_length=255, verbose_name='email'),
+            model_name="sector",
+            name="email",
+            field=models.CharField(max_length=255, verbose_name="email"),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='name',
-            field=models.CharField(blank=True, max_length=200, null=True, unique=True, verbose_name='nome'),
+            model_name="sector",
+            name="name",
+            field=models.CharField(
+                blank=True, max_length=200, null=True, unique=True, verbose_name="nome"
+            ),
         ),
         migrations.AlterField(
-            model_name='sector',
-            name='phone',
-            field=models.CharField(max_length=255, verbose_name='telefone'),
+            model_name="sector",
+            name="phone",
+            field=models.CharField(max_length=255, verbose_name="telefone"),
         ),
     ]
