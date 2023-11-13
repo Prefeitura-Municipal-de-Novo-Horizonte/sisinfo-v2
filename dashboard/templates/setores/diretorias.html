@@ -71,7 +71,7 @@
                                 <a href="{{ diretoria.get_absolute_url }}">{{ diretoria.name }}</a>
                             </td>
                             <td>{{ diretoria.accountable }}</td>
-                            <td>{{ diretoria.kind }}</td>
+                            <td>{{ diretoria.get_kind_display }}</td>
                             <td>
                                 <a href="{% url 'dashboard:update_diretoria' diretoria.slug %}">Editar</a>
                                 <a href="{% url 'dashboard:delete_diretoria' diretoria.slug diretoria.id %}">Excluir</a>
