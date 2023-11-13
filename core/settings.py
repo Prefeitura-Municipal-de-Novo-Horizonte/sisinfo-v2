@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Third Apps
     'django_extensions',
     'django_filters',
+    'rolepermissions',
     # My Application
     'dashboard.apps.DashboardConfig',
 ]
@@ -62,7 +63,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [ BASE_DIR / 'templates'],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -123,7 +124,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR/ "staticfiles" / "static"
+STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
 
 MEDIA_URL = 'public/images/'
 MEDIA_ROOT = BASE_DIR / 'public' / 'images'
