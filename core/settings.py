@@ -83,9 +83,17 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-default_dburl = config("DATABASE_URL")
-DATABASES = {"default": dburl(default_dburl)}
+# default_dburl = config("DATABASE_URL")
+# DATABASES = {"default": dburl(default_dburl)}
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+AUTH_USER_MODEL = 'authenticate.ProfessionalUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
