@@ -32,6 +32,7 @@ class ProfessionalUserManager(BaseUserManager):
             last_name=last_name,
             password=password,
         )
+        user.is_tech = True
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -110,7 +111,7 @@ class ProfessionalUser(AbstractBaseUser):
         "O usuário tem permissão para visualizar o app `app_label`?"
         # Resposta mais simples possível: Sim, sempre
         return True
-    
+
     @property
     def fullname(self):
         return f"{self.first_name} {self.last_name}"

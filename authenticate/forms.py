@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from authenticate.models import ProfessionalUser
 
 
-class UserCreateForm(forms.ModelForm):
+class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Password confirmation", widget=forms.PasswordInput
