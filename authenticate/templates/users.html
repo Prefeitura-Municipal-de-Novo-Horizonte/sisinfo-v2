@@ -66,25 +66,25 @@
                 </td>
                 <!-- Verifica se o usuario esta ativo é administrador ou tecnico em informatica -->
                 <td>
-                    {% comment %} {% if user.is_active is True %}
-                    <a href="{% url 'usuarios:disable_usuario' user.slug %}">Desabilitar</a>
+                    {% if user.is_active is True %}
+                    <a href="{% url 'authenticated:disabled_user' user.slug %}">Desabilitar</a>
                     {% elif user.is_active is False%}
-                    <a href="{% url 'usuarios:enable_usuario' user.slug %}">Habilitar</a>
-                    {% endif %} {% endcomment %}
+                    <a href="{% url 'authenticated:enabled_user' user.slug %}">Habilitar</a>
+                    {% endif %}
                 </td>
                 <td>
-                    {% comment %} {% if user.is_admin is True %}
-                    <a href="{% url 'usuarios:disable_usuario_admin' user.slug %}">Desabilitar</a>
+                    {% if user.is_admin is True %}
+                    <a href="{% url 'authenticated:disabled_user_admin' user.slug %}">Desabilitar</a>
                     {% elif user.is_admin is False%}
-                    <a href="{% url 'usuarios:enable_usuario_admin' user.slug %}">Habilitar</a>
-                    {% endif %} {% endcomment %}
+                    <a href="{% url 'authenticated:enabled_user_admin' user.slug %}">Habilitar</a>
+                    {% endif %} 
                 </td>
                 <td>
-                    {% comment %} {% if user.is_tech is True %}
-                    <a href="{% url 'usuarios:disable_usuario_tech' user.slug %}">Desabilitar</a>
+                    {% if user.is_tech is True %}
+                    <a href="{% url 'authenticated:disabled_user_tech' user.slug %}">Desabilitar</a>
                     {% elif user.is_tech is False%}
-                    <a href="{% url 'usuarios:enable_usuario_tech' user.slug %}">Habilitar</a>
-                    {% endif %} {% endcomment %}
+                    <a href="{% url 'authenticated:enabled_user_tech' user.slug %}">Habilitar</a>
+                    {% endif %} 
                 </td>
             </tr>
             {% endfor %}

@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -19,62 +20,103 @@ def show_users(request):
 ################### LOGIN AND LOGOUT ###########################
 ################################################################
 def login_page(request):
-    if request.method != 'POST':
-        return render(request, 'login.html', context={})
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    user = authenticate(request, username=username, password=password)
-
-    if user is None:
-        # TODO: Adicionar mensagem de erro para ir a pagina de login
-        return HttpResponse('Usuario não existe')
-    login(request, user)
-    if user.first_login is True:
-        form = UserCreationForm(instance=user)
+    if request.user.is_authenticated:
+        return redirect('dashboard:index')
+    elif request.method == 'GET':
+        form = AuthenticationForm(request)
         context = {
             'form': form,
         }
-        return render(request, 'change_password.html', context)
-    return redirect('dashboard:index')
+        return render(request, 'login.html', context)
+    elif request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.first_login is True:
+                form = PasswordChangeForm(request.user)
+                context = {
+                    'form': form
+                }
+                return render(request, 'change_password.html', context)
+            # TODO: Adicionar mensagem de login SUCCESS
+            return redirect('dashboard:index')
+        return redirect(reverse('authenticated:login'))
 
 
-def change_password(request, slug):
-    user_request = request.user
-    user_verification = get_object_or_404(ProfessionalUser, slug=slug)
-    if user_request == user_verification:
-        user = user_request
-        if request.method == 'GET':
-            user_form = UserCreationForm(instance=user)
-            context = {
-                'form': user_form,
-            }
-            return render(request, 'change_password.html', context)
-        elif request.method == 'POST':
-            user_form = UserCreationForm(request.POST, instance=user)
-            if user_form.is_valid():
-                return user_extract_forms(user_form, user, slug)
-    return redirect('authenticated:login')
-
-
-def user_extract_forms(user_form, user, slug):
-    user_form_get = user_form.save(commit=False)
-    user_form_get.first_name = user_form.cleaned_data['first_name']
-    user_form_get.last_name = user_form.cleaned_data['last_name']
-    user_form_get.username = user_form.cleaned_data['username']
-    user_form_get.email = user_form.cleaned_data['email']
-    user_form_get.password1 = user_form.cleaned_data['password1']
-    user_form_get.password2 = user_form.cleaned_data['password2']
-
-    if user_form_get.password1 != user.password:
-        user_form_get.save()
-        user_altered = get_object_or_404(
-            ProfessionalUser, slug=slug)
-        user_altered.first_login = False
-        user_altered.save()
-        return redirect('blog:index')
-    return redirect(reverse('authenticated:change_password', kwargs={'slug': slug}))
+def change_password(request, slug):  # sourcery skip: extract-method
+    if request.method == 'POST':
+        user = request.user
+        form = PasswordChangeForm(user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            user_a = get_object_or_404(ProfessionalUser, slug=slug)
+            if user.first_login is True:
+                user_a.first_login = False
+                user_a.save()
+                # TODO: Adicionar mensagem de SUCCESS
+                return redirect('dashboard:index')
+            # TODO: Adicionar mensagem de SUCCESS
+            return redirect('dashboard:index')
+        # TODO: Adicionar mensagem de ERROR
+        return redirect(reverse('authenticated:change_password', kwargs={'slug': user.slug}))
+    form = PasswordChangeForm(request.user)
+    context = {
+        'form': form,
+    }
+    return render(request, 'change_password.html', context)
 
 
 def logout_page(request):
     logout(request)
+    # TODO: Adicionar mensagem de SUCCESS
     return redirect('authenticated:login')
+
+
+# --- Deabilita e Habilita Usuário ---
+def disabled_user(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    user.is_active = False
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
+
+
+def enabled_user(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    user.is_active = True
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
+
+
+# --- Deabilita e Habilita Usuário Admin ---
+def enabled_user_admin(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    if user.is_tech is False:
+        user.is_tech = True
+    user.is_admin = True
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
+
+
+def disabled_user_admin(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    user.is_admin = False
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
+
+
+# --- Deabilita e Habilita Usuário Tech ---
+def enabled_user_tech(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    user.is_tech = True
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
+
+
+def disabled_user_tech(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    if user.is_admin is True:
+        user.is_admin = False
+    user.is_tech = False
+    user.save()
+    return redirect(reverse('authenticated:show_users'))
