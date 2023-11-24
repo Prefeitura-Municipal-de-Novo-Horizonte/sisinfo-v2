@@ -7,7 +7,7 @@ app_name = 'authenticated'
 
 urlpatterns = [
     path('', views.show_users, name='show_users'),
-    # path('cadastro_usuario/', views.cadastro_usuario, name="cadastro_usuario"),
+    path('register/', views.register_user, name="register_user"),
     # Habilitar usuarios
     path('disabled_user/<slug:slug>',
          views.disabled_user, name="disabled_user"),

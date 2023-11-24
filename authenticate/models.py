@@ -55,7 +55,8 @@ class ProfessionalUser(AbstractBaseUser):
     last_name = models.CharField('ultimo nome', max_length=150)
     username = models.CharField('usuario', unique=True,
                                 max_length=100, blank=True, null=True)
-    registration = models.CharField('numero de matrícula', max_length=8)
+    registration = models.CharField(
+        'numero de matrícula', max_length=8, blank=True, null=True)
     slug = models.SlugField('slug', unique=True, max_length=150)
     email = models.EmailField(
         'email',

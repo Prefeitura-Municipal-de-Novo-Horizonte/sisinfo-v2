@@ -1,6 +1,5 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -71,6 +70,24 @@ def logout_page(request):
     logout(request)
     # TODO: Adicionar mensagem de SUCCESS
     return redirect('authenticated:login')
+
+
+################################################################
+################# Administration Users #########################
+################################################################
+def register_user(request):
+    form = UserCreationForm()
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # TODO: Adicionar mensagem de SUCCESS
+            print(f'Usuario adicionado com sucesso: {user}')
+            return redirect('authenticated:register_user')
+    context = {
+        'form': form,
+    }
+    return render(request, 'register_user.html', context)
 
 
 # --- Deabilita e Habilita Usuário ---

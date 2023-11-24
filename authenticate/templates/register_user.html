@@ -1,0 +1,12 @@
+{% extends "_base.html" %}
+{% block content %}
+<div><h1>Cadastro de usuario</h1></div>
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.non_fields_errors}}
+        {{form.as_p}}
+        <input type="submit" value="Cadastrar">
+    </form>
+</div>
+{% endblock content %}
