@@ -14,7 +14,7 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = ProfessionalUser
         fields = ["first_name", "last_name", "username",
-                  "email", "registration", "profile_pic", "is_tech", "is_admin"]
+                  "email", "registration", "is_tech", "is_admin"]
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -50,6 +50,7 @@ class UserCreationForm(forms.ModelForm):
 
 class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
+
     class Meta:
         model = ProfessionalUser
         fields = ["first_name", "last_name", "username",

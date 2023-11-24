@@ -90,6 +90,8 @@ def register_user(request):
     return render(request, 'register_user.html', context)
 
 
+def alter_user(request, slug):
+    pass
 # --- Deabilita e Habilita Usuário ---
 def disabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
