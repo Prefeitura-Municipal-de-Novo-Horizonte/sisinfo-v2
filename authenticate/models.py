@@ -54,7 +54,7 @@ class ProfessionalUser(AbstractBaseUser):
     last_name = models.CharField('ultimo nome', max_length=150)
     username = models.CharField('usuario', unique=True,
                                 max_length=100, blank=True, null=True)
-    registration = models.Charfield('numero de matrícula', max_length=8)
+    registration = models.CharField('numero de matrícula', max_length=8)
     slug = models.SlugField('slug', unique=True, max_length=150)
     email = models.EmailField(
         'email',
@@ -62,7 +62,7 @@ class ProfessionalUser(AbstractBaseUser):
         unique=True,
     )
     profile_pic = models.ImageField('foto perfil',
-                                    upload_to='images/profiles_pic', null=True, blank=True)
+                                    upload_to='profiles_pic', null=True, blank=True)
     is_active = models.BooleanField('ativo', default=True)
     is_tech = models.BooleanField('tecnico', default=False)
     is_admin = models.BooleanField('administrador', default=False)
