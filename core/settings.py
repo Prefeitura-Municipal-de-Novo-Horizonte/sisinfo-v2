@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "rolepermissions",
     # My Application
     "dashboard.apps.DashboardConfig",
+    "authenticate.apps.AuthenticateConfig",
 ]
 
 MIDDLEWARE = [
