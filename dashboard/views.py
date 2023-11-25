@@ -1,6 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
@@ -16,19 +16,22 @@ from dashboard.models import Bidding, Direction, Material, Sector
 
 
 # Create your views here.
+@login_required(login_url='authenticated:login')
 def index(request):
     context = {}
     return render(request, "index.html", context)
 
 
 ##############################################
+@login_required(login_url='authenticated:login')
 def directions(request):
     diretorias = Direction.objects.all()
     if request.method == "POST":
         form = DirectionForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(request, constants.SUCCESS, "Inserido com sucesso!")
+            messages.add_message(request, constants.SUCCESS,
+                                 "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("dashboard:diretorias"))
@@ -46,6 +49,7 @@ def directions(request):
     return render(request, "setores/diretorias.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def direction_detail(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     setores = Sector.objects.filter(direction=diretoria.id)
@@ -62,6 +66,7 @@ def direction_detail(request, slug):
     return render(request, "setores/diretoria_detail.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def direction_update(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     form = DirectionForm(instance=diretoria)
@@ -97,6 +102,7 @@ def extract_update_form_direction(form, request):
     return redirect(reverse("dashboard:diretorias"))
 
 
+@login_required(login_url='authenticated:login')
 def direction_delete(request, id, slug):
     diretoria = get_object_or_404(Direction, id=id, slug=slug)
     diretoria.delete()
@@ -109,13 +115,15 @@ def direction_delete(request, id, slug):
 
 
 ##############################################
+@login_required(login_url='authenticated:login')
 def sectors(request):
     setores = Sector.objects.all()
     if request.method == "POST":
         form = SectorForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(request, constants.SUCCESS, "Inserido com sucesso!")
+            messages.add_message(request, constants.SUCCESS,
+                                 "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("dashboard:setores"))
@@ -131,6 +139,7 @@ def sectors(request):
     return render(request, "setores/setores.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def sector_detail(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
     context = {
@@ -139,6 +148,7 @@ def sector_detail(request, slug):
     return render(request, "setores/setor_detail.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def sector_update(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
     form = SectorForm(instance=setor)
@@ -177,23 +187,27 @@ def extract_update_form_sector(form, request):
     return redirect(reverse("dashboard:setores"))
 
 
+@login_required(login_url='authenticated:login')
 def sector_delete(request, id, slug):
     setor = get_object_or_404(Sector, id=id, slug=slug)
     setor.delete()
     messages.add_message(
-        request, constants.ERROR, f"O Setor {setor.name} foi excluido com sucesso!"
+        request, constants.ERROR, f"O Setor {
+            setor.name} foi excluido com sucesso!"
     )
     return redirect(reverse("dashboard:setores"))
 
 
 ##############################################
+@login_required(login_url='authenticated:login')
 def biddings(request):
     licitacoes = Bidding.objects.all()
     if request.method == "POST":
         form = BiddingForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(request, constants.SUCCESS, "Inserido com sucesso!")
+            messages.add_message(request, constants.SUCCESS,
+                                 "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("dashboard:licitacoes"))
@@ -212,6 +226,7 @@ def biddings(request):
     return render(request, "licitacao/biddings.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def bidding_detail(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     materiais = Material.objects.filter(bidding=licitacao.id)
@@ -220,7 +235,8 @@ def bidding_detail(request, slug):
         form_material = MaterialForm(request.POST)
         if form_material.is_valid():
             form_material.save()
-            messages.add_message(request, constants.SUCCESS, "Inserido com sucesso!")
+            messages.add_message(request, constants.SUCCESS,
+                                 "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("dashboard:licitacao", kwargs={"slug": slug}))
@@ -239,6 +255,7 @@ def bidding_detail(request, slug):
     return render(request, "licitacao/bidding_detail.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def bidding_update(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     form = BiddingForm(instance=licitacao)
@@ -275,6 +292,7 @@ def extract_update_form_bidding(form, request):
     return redirect(reverse("dashboard:licitacoes"))
 
 
+@login_required(login_url='authenticated:login')
 def bidding_delete(request, slug, id):
     licitacao = get_object_or_404(Bidding, id=id, slug=slug)
     licitacao.delete()
@@ -286,6 +304,7 @@ def bidding_delete(request, slug, id):
     return redirect(reverse("dashboard:licitacoes"))
 
 
+@login_required(login_url='authenticated:login')
 def materials(request):
     materiais = Material.objects.all()
     total_materiais = materiais.count()
@@ -293,7 +312,8 @@ def materials(request):
         form_material = MaterialForm(request.POST)
         if form_material.is_valid():
             form_material.save()
-            messages.add_message(request, constants.SUCCESS, "Inserido com sucesso!")
+            messages.add_message(request, constants.SUCCESS,
+                                 "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("dashboard:materiais"))
@@ -310,6 +330,7 @@ def materials(request):
     return render(request, "licitacao/materials.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def material_detail(request, slug):
     material = get_object_or_404(Material, slug=slug)
     context = {
@@ -318,6 +339,7 @@ def material_detail(request, slug):
     return render(request, "licitacao/material_detail.html", context)
 
 
+@login_required(login_url='authenticated:login')
 def material_update(request, slug):
     material = get_object_or_404(Material, slug=slug)
     form_material = MaterialForm(instance=material)
@@ -356,6 +378,7 @@ def extract_update_form_material(form, request):
     return redirect(reverse("dashboard:materiais"))
 
 
+@login_required(login_url='authenticated:login')
 def material_delete(request, slug, id):
     material = get_object_or_404(Material, slug=slug, id=id)
     material.delete()

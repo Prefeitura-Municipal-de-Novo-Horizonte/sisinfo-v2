@@ -1,13 +1,17 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from authenticate.decorators import admin_only, tech_only, unauthenticated_user
 from authenticate.forms import UserChangeForm, UserCreationForm
 from authenticate.models import ProfessionalUser
 
 
+@login_required(login_url='authenticated:login')
+@admin_only
 def show_users(request):
     users = ProfessionalUser.objects.all()
     context = {
@@ -19,6 +23,7 @@ def show_users(request):
 ################################################################
 ################### LOGIN AND LOGOUT ###########################
 ################################################################
+@unauthenticated_user
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('dashboard:index')
@@ -44,6 +49,7 @@ def login_page(request):
         return redirect(reverse('authenticated:login'))
 
 
+@login_required(login_url='authenticated:login')
 def change_password(request, slug):  # sourcery skip: extract-method
     if request.method == 'POST':
         user = request.user
@@ -67,6 +73,7 @@ def change_password(request, slug):  # sourcery skip: extract-method
     return render(request, 'change_password.html', context)
 
 
+@login_required(login_url='authenticated:login')
 def alter_user(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
@@ -97,7 +104,8 @@ def logout_page(request):
 ################# Administration Users #########################
 ################################################################
 
-
+@login_required(login_url='authenticated:login')
+@admin_only
 def register_user(request):
     form = UserCreationForm()
     if request.method == 'POST':
@@ -114,6 +122,8 @@ def register_user(request):
 
 
 # --- Deabilita e Habilita Usuário ---
+@login_required(login_url='authenticated:login')
+@admin_only
 def disabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     user.is_active = False
@@ -121,6 +131,8 @@ def disabled_user(request, slug):
     return redirect(reverse('authenticated:show_users'))
 
 
+@login_required(login_url='authenticated:login')
+@admin_only
 def enabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     user.is_active = True
@@ -129,6 +141,8 @@ def enabled_user(request, slug):
 
 
 # --- Deabilita e Habilita Usuário Admin ---
+@login_required(login_url='authenticated:login')
+@admin_only
 def enabled_user_admin(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     if user.is_tech is False:
@@ -138,6 +152,8 @@ def enabled_user_admin(request, slug):
     return redirect(reverse('authenticated:show_users'))
 
 
+@login_required(login_url='authenticated:login')
+@admin_only
 def disabled_user_admin(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     user.is_admin = False
@@ -146,6 +162,8 @@ def disabled_user_admin(request, slug):
 
 
 # --- Deabilita e Habilita Usuário Tech ---
+@login_required(login_url='authenticated:login')
+@admin_only
 def enabled_user_tech(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     user.is_tech = True
@@ -153,6 +171,8 @@ def enabled_user_tech(request, slug):
     return redirect(reverse('authenticated:show_users'))
 
 
+@login_required(login_url='authenticated:login')
+@admin_only
 def disabled_user_tech(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     if user.is_admin is True:
@@ -162,6 +182,8 @@ def disabled_user_tech(request, slug):
     return redirect(reverse('authenticated:show_users'))
 
 
+@login_required(login_url='authenticated:login')
+@admin_only
 def profile_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
     print(user)
