@@ -49,9 +49,16 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = ProfessionalUser
         fields = ["first_name", "last_name", "username",
-                  "email", "profile_pic", "registration"]
+                  "email", "registration"]
+
+    def __init__(self, *args, **kwargs):
+        super(__class__, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields["username"].widget.attrs["readonly"] = True

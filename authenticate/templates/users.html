@@ -11,16 +11,10 @@
                     Username
                 </td>
                 <td>
-                    Primeiro Nome
-                </td>
-                <td>
-                    Ultimo Nome
+                    Nome Completo
                 </td>
                 <td>
                     Email
-                </td>
-                <td>
-                    Nome Completo
                 </td>
                 <td>
                     Matricula
@@ -47,16 +41,10 @@
                     {{user.username}}
                 </td>
                 <td>
-                    {{user.first_name}}
-                </td>
-                <td>
-                    {{user.last_name}}
+                    <a href="{{user.get_absolute_url}}">{{user.fullname}}</a>
                 </td>
                 <td>
                     {{user.email}}
-                </td>
-                <td>
-                    {{user.fullname}}
                 </td>
                 <td>
                     {{user.registration}}

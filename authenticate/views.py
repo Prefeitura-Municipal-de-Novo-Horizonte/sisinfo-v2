@@ -1,9 +1,10 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from authenticate.forms import UserCreationForm
+from authenticate.forms import UserChangeForm, UserCreationForm
 from authenticate.models import ProfessionalUser
 
 
@@ -66,6 +67,26 @@ def change_password(request, slug):  # sourcery skip: extract-method
     return render(request, 'change_password.html', context)
 
 
+def alter_user(request):
+    if request.user.is_authenticated:
+        if request.method == 'GET':
+            form = UserChangeForm(instance=request.user)
+            context = {
+                'form': form,
+            }
+            return render(request, 'profile_professional.html', context)
+        if request.method == 'POST':
+            form = UserChangeForm(request.POST, files=request.FILES,
+                                  instance=request.user)
+            print(request.FILES)
+            if form.is_valid():
+                # TODO: Inserir upload de imagem
+                print('OK')
+                form.save()
+                return redirect('authenticated:profile')
+    return redirect('authenticated:login')
+
+
 def logout_page(request):
     logout(request)
     # TODO: Adicionar mensagem de SUCCESS
@@ -75,6 +96,8 @@ def logout_page(request):
 ################################################################
 ################# Administration Users #########################
 ################################################################
+
+
 def register_user(request):
     form = UserCreationForm()
     if request.method == 'POST':
@@ -90,8 +113,6 @@ def register_user(request):
     return render(request, 'register_user.html', context)
 
 
-def alter_user(request, slug):
-    pass
 # --- Deabilita e Habilita Usuário ---
 def disabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -139,3 +160,12 @@ def disabled_user_tech(request, slug):
     user.is_tech = False
     user.save()
     return redirect(reverse('authenticated:show_users'))
+
+
+def profile_user(request, slug):
+    user = get_object_or_404(ProfessionalUser, slug=slug)
+    print(user)
+    context = {
+        'user': user,
+    }
+    return render(request, 'profiles.html', context)

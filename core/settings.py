@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 from pathlib import Path
 
 from decouple import Csv, config
@@ -133,15 +134,13 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
 
-MEDIA_URL = "public/images/"
-MEDIA_ROOT = BASE_DIR / "public" / "images"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-ROLEPERMISSIONS_MODULE = "core.roles"
 
 DEFAULT_FROM_EMAIL = "ti@novohorizonte.sp.gov.br"
 

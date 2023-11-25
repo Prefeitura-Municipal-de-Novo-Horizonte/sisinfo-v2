@@ -27,7 +27,8 @@ urlpatterns = [
     path('change_password/<slug:slug>/',
          views.change_password, name="change_password"),
     # # # Perfil do Usuario
-    # path('profile/<slug:slug>', views.change_password, name="usuario"),
+    path('profile/', views.alter_user, name="profile"),
+    path('profile_user/<slug:slug>', views.profile_user, name="profile_user"),
     # Redefinir Senha
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name="password_reset.html"), name="password_reset"),
