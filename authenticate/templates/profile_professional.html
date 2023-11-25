@@ -1,0 +1,38 @@
+{% extends "_base.html" %}
+{% load static %}
+{% block content %}
+<div>
+    <h2>Bem vindo: {{user.fulname}}</h2>
+    
+    <form action="" method="post">{% csrf_token %}
+        <p>
+            {{form.username.label}}
+            {{form.username}}
+            {{form.username.errors}}
+        </p>
+        <p>
+            {{form.first_name.label}}
+            {{form.first_name}}
+            {{form.first_name.errors}}
+        </p>
+        <p>
+            {{form.last_name.label}}
+            {{form.last_name}}
+            {{form.last_name.errors}}
+        </p>
+        <p>
+            {{form.email.label}}
+            {{form.email}}
+            {{form.email.errors}}
+        </p>
+        <p>
+            {{form.registration.label}}
+            {{form.registration}}
+            {{form.registration.errors}}
+        </p>
+        <input type="submit" value="Alterar Informações">
+    </form>
+    <div><a href="{% url 'authenticated:change_password' user.slug %}">Trocar a senha!</a></div>
+</div>
+{% endblock content %}
+

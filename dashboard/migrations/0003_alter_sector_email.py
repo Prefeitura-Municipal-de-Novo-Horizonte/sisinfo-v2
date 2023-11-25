@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('dashboard', '0002_alter_direction_name_alter_sector_address_and_more'),
+        ("dashboard", "0002_alter_direction_name_alter_sector_address_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sector',
-            name='email',
-            field=models.EmailField(max_length=254, verbose_name='email'),
+            model_name="sector",
+            name="email",
+            field=models.EmailField(max_length=254, verbose_name="email"),
         ),
     ]

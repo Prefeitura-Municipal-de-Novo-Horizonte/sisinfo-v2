@@ -1,0 +1,56 @@
+{% extends "_base.html" %}
+{% block content %}
+<div><h1>Cadastro de usuario</h1></div>
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>
+            {{form.first_name.label}}
+            {{form.first_name}}
+            {{form.first_name.errors}}
+        </p>
+        <p>
+            {{form.last_name.label}}
+            {{form.last_name}}
+            {{form.last_name.errors}}
+        </p>
+        <p>
+            {{form.username.label}}
+            {{form.username}}
+            {{form.username.errors}}
+        </p>
+        <p>
+            {{form.email.label}}
+            {{form.email}}
+            {{form.email.errors}}
+        </p>
+        <p>
+            {{form.registration.label}}
+            {{form.registration}}
+            {{form.registration.errors}}
+        </p>
+        <p>
+            {{form.is_tech.label}}
+            {{form.is_tech}}
+            {{form.is_tech.errors}}
+        </p>
+        <p>
+            {{form.is_admin.label}}
+            {{form.is_admin}}
+            {{form.is_admin.errors}}
+        </p>
+        <p>
+            {{form.password1.label}}
+            {{form.password1}}
+            {{form.password1.errors}}
+        </p>
+        <p>
+            {{form.password2.label}}
+            {{form.password2}}
+            {{form.password2.errors}}
+        </p>
+        <p>Se administrador ou tecnico não for selecionado usuário é cadastrado como estagiário</p>
+        <input type="submit" value="Cadastrar">
+    </form>
+</div>
+{% endblock content %}

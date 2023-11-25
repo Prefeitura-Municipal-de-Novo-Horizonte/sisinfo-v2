@@ -1,0 +1,82 @@
+{% extends "_base.html" %}
+{% block content %}
+<div>
+    <h2>Usuarios</h2>
+</div>
+<div>
+    <table>
+        <thead>
+            <tr>
+                <td>
+                    Username
+                </td>
+                <td>
+                    Nome Completo
+                </td>
+                <td>
+                    Email
+                </td>
+                <td>
+                    Matricula
+                </td>
+                </td>
+                <td>
+                    Cargo
+                </td>
+                <td>
+                    Ativo
+                </td>
+                <td>
+                    Admin
+                </td>
+                <td>
+                    Tecnico
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {{user.username}}
+                </td>
+                <td>
+                    <a href="{{user.get_absolute_url}}">{{user.fullname}}</a>
+                </td>
+                <td>
+                    {{user.email}}
+                </td>
+                <td>
+                    {{user.registration}}
+                </td>
+                <td>
+                    {{user.officer}}
+                </td>
+                <!-- Verifica se o usuario esta ativo é administrador ou tecnico em informatica -->
+                <td>
+                    {% if user.is_active is True %}
+                    <a href="{% url 'authenticated:disabled_user' user.slug %}">Desabilitar</a>
+                    {% elif user.is_active is False%}
+                    <a href="{% url 'authenticated:enabled_user' user.slug %}">Habilitar</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_admin is True %}
+                    <a href="{% url 'authenticated:disabled_user_admin' user.slug %}">Desabilitar</a>
+                    {% elif user.is_admin is False%}
+                    <a href="{% url 'authenticated:enabled_user_admin' user.slug %}">Habilitar</a>
+                    {% endif %} 
+                </td>
+                <td>
+                    {% if user.is_tech is True %}
+                    <a href="{% url 'authenticated:disabled_user_tech' user.slug %}">Desabilitar</a>
+                    {% elif user.is_tech is False%}
+                    <a href="{% url 'authenticated:enabled_user_tech' user.slug %}">Habilitar</a>
+                    {% endif %} 
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}
