@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
 from django.core.exceptions import ValidationError
 
 from authenticate.models import ProfessionalUser
@@ -62,3 +62,17 @@ class UserChangeForm(forms.ModelForm):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields["username"].widget.attrs["readonly"] = True
+
+
+class AuthenticationFormCustom(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Digite seu usenarme ...'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Digite sua senha ...'}))
+
+    class Meta:
+        model = ProfessionalUser
+        fields = ['username', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = "bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

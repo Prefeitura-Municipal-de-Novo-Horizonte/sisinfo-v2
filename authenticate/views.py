@@ -1,12 +1,15 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.http import HttpResponse
+from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from authenticate.decorators import admin_only, tech_only, unauthenticated_user
-from authenticate.forms import UserChangeForm, UserCreationForm
+from authenticate.forms import (
+    AuthenticationFormCustom,
+    UserChangeForm,
+    UserCreationForm,
+)
 from authenticate.models import ProfessionalUser
 
 
@@ -28,13 +31,13 @@ def login_page(request):
     if request.user.is_authenticated:
         return redirect('dashboard:index')
     elif request.method == 'GET':
-        form = AuthenticationForm(request)
+        form = AuthenticationFormCustom(request)
         context = {
             'form': form,
         }
         return render(request, 'login.html', context)
     elif request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
+        form = AuthenticationFormCustom(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)

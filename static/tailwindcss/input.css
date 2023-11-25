@@ -3,31 +3,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  :root {
-    --background:220, 7%, 92%;
-    --ring: 212.7 26.8% 83.9%;
-    --primary: 234, 23%, 26%;
-    --secondary: 208, 32%, 67%;
-    --main-color: 48, 95%, 58%;
-    --red: 353, 98%, 45%;
-    --yellow: 51, 100%, 54%;
-    --corn-flower: 219, 41%, 42%;
-    --cream: 47, 29%, 94%;
-
-    --radius: 0.5rem;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-secondary;
-  }
-  body {
-    @apply h-full bg-personcream text-primary;
-  }
-  html {
-    @apply h-full;
-  }
-}
