@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
 from authenticate.models import ProfessionalUser
@@ -65,8 +65,10 @@ class UserChangeForm(forms.ModelForm):
 
 
 class AuthenticationFormCustom(AuthenticationForm):
-    username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Digite seu usenarme ...'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Digite sua senha ...'}))
+    username = forms.CharField(widget=forms.TextInput(
+        attrs={'placeholder': ''}))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'placeholder': ''}))
 
     class Meta:
         model = ProfessionalUser
@@ -75,4 +77,4 @@ class AuthenticationFormCustom(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs['class'] = "bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            field.widget.attrs['class'] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
