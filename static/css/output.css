@@ -1659,6 +1659,14 @@ input:checked + .toggle-bg {
   padding-top: 5rem;
 }
 
+.pl-11 {
+  padding-left: 2.75rem;
+}
+
+.text-left {
+  text-align: left;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1884,6 +1892,10 @@ input:checked + .toggle-bg {
 
 :is([dir="rtl"] .rtl\:justify-end) {
   justify-content: flex-end;
+}
+
+:is([dir="rtl"] .rtl\:text-right) {
+  text-align: right;
 }
 
 :is(.dark .dark\:divide-gray-600) > :not([hidden]) ~ :not([hidden]) {
