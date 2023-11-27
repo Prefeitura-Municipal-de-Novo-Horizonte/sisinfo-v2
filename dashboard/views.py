@@ -320,7 +320,7 @@ def materials(request):
     myFilter = MaterialFilter(request.GET, queryset=materiais)
     materiais = myFilter.qs
     context = {
-        "form_material": form_material,
+        "form": form_material,
         "materiais": materiais,
         "btn": "Adicionar novo material",
         "myFilter": myFilter,
@@ -348,7 +348,7 @@ def material_update(request, slug):
     context = {
         "material": material,
         "materiais": materiais,
-        "form_material": form_material,
+        "form": form_material,
         "myFilter": myFilter,
         "btn": "Atualizar Licitação",
     }
