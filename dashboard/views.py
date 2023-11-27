@@ -192,8 +192,7 @@ def sector_delete(request, id, slug):
     setor = get_object_or_404(Sector, id=id, slug=slug)
     setor.delete()
     messages.add_message(
-        request, constants.ERROR, f"O Setor {
-            setor.name} foi excluido com sucesso!"
+        request, constants.ERROR, f"O Setor {setor.name} foi excluido com sucesso!"
     )
     return redirect(reverse("dashboard:setores"))
 

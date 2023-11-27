@@ -5,104 +5,164 @@
 {% block content %}
     <section id="setores">
         <!-- TITULO -->
-        <div id="title">
-            <h1>Setores</h1>
+        <div class="flex items-center justify-end h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+            <p class="text-2xl text-gray-400 dark:text-gray-500">
+                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white"><mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500">
+                   Setores
+                </mark>
+                </h1>
+            </p>
         </div>
-        <!-- MESSAGES -->
+        <!-- Dois Grids -->
+        <div class="grid grid-cols-2 gap-4 mb-4 h-auto">
+         <!-- FORMULÁRIO DE CADASTRO -->
+         <div class="flex-col items-center justify-center rounded bg-gray-100 h-full max-h-full dark:bg-gray-800 p-4 gap-3">
+            <div class="w-full max-w-full flex justify-start mb-6">
+               <span class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Formulário de Cadastro</span>
+            </div>
+            <form class="max-w-full mx-auto w-full" action="" method="post">{% csrf_token %}
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.name.errors }}{{ form.name }}
+                    <label for="{{ form.name.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.name.label }}</label>
+                </div>
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.accountable.errors }}{{ form.accountable }}
+                    <label for="{{ form.accountable.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.accountable.label }}</label>
+                </div>
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.direction.errors }}{{ form.direction }}
+                    <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.direction.label }}</label>
+                </div>
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.phone.errors }}{{ form.phone }}
+                    <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.phone.label }}</label>
+                </div>
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.email.errors }}{{ form.email }}
+                    <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.email.label }}</label>
+                </div>
+                <div class="relative z-0 w-full mb-5 group">
+                    {{ form.address.errors }}{{ form.address }}
+                    <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.address.label }}</label>
+                </div>
+                <div class="flex justify-between items-center gap-10">
+                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{{ btn }}</button>
+                    {% if 'Atualizar' in btn %}
+                        <a href="{% url 'dashboard:setores' %}">
+                            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                                Setores
+                            </button>
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        <!-- Formulário de pesquisa -->
+        <div class="flex-col justify-start rounded bg-gray-100 h-full dark:bg-gray-800 p-4 max-w-full w-full">
+            <p class="text-2xl text-gray-400 dark:text-gray-500">
+                <span class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Pesquisar:</span>
+            </p>
+            <form action="" method="get" class="w-full flex-col justify-start p-5 max-w-full">
+                <div class="pb-4 max-w-full w-full">
+                    <label for="{{ myFilter.form.name.id_for_label }}" class="text-sm text-blue-900 font-bold">{{ myFilter.form.name.label }}</label>
+                    <div class="relative mt-1 max-w-full w-full">
+                        <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        {{ myFilter.form.name }}
+                    </div>
+                </div>
+                <div class="pb-4 max-w-full w-full">
+                    <label for="{{ myFilter.form.accountable.id_for_label }}" class="text-sm text-blue-900 font-bold">{{ myFilter.form.accountable.label }}</label>
+                    <div class="relative mt-1 max-w-full w-full">
+                        <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                        </div>
+                        {{ myFilter.form.accountable }}
+                    </div>
+                </div>
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 flex justify-center items-center gap-4 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                    Pesquisar
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- MESSAGES -->
         <div id="messages-alert">
             {% if messages %}
-                {% for message in messages %}<div role="alert">{{ message }}</div>{% endfor %}
+                {% for message in messages %}
+                <div class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-3">
+                   <div role="alert" class="{{message.tags}}">
+                        <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        </svg>
+                        {{ message }}
+                    </div>
+                </div>
+                {% endfor %}
             {% endif %}
         </div>
-        <!-- FORMULÁRIO DE CADASTRO -->
-        <div id="forms">
-            <div id="signin">
-                <form action="." method="post">
-                    {% csrf_token %}
-                    <div>
-                        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
-                        {{ form.name.errors }}{{ form.name }}
-                    </div>
-                    <div>
-                        <label for="{{ form.accountable.id_for_label }}">{{ form.accountable.label }}</label>
-                        {{ form.accountable.errors }}{{ form.accountable }}
-                    </div>
-                    <div>
-                        <label for="{{ form.direction.id_for_label }}">{{ form.direction.label }}</label>
-                        {{ form.direction.errors }}{{ form.direction }}
-                    </div>
-                    <div>
-                        <label for="{{ form.phone.id_for_label }}">{{ form.phone.label }}</label>
-                        {{ form.phone.errors }}{{ form.phone }}
-                    </div>
-                    <div>
-                        <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-                        {{ form.email.errors }}{{ form.email }}
-                    </div>
-                    <div>
-                        <label for="{{ form.address.id_for_label }}">{{ form.address.label }}</label>
-                        {{ form.address.errors }}{{ form.address }}
-                    </div>
-                    <div>
-                        <input type="submit" value="{{ btn }}">
-                    </div>
-                </form>
-            </div>
-            <!-- FORMULARIO DE BUSCA -->
-            <div id="search">
-                <form method="get">
-                    <div>
-                        <h2>{{ myFilter.form.name.label }}</h2>
-                        <div>{{ myFilter.form.name }}</div>
-                    </div>
-                    <div>
-                        <h2>{{ myFilter.form.accountable.label }}</h2>
-                        <div>{{ myFilter.form.accountable }}</div>
-                    </div>
-                    <div>
-                        <input type="submit" value="Pesquisar!">
-                    </div>
-                </form>
-            </div>
-        </div>
         <!-- LISTA DE DADOS -->
-        <div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Responsvel</th>
-                        <th>Diretoria</th>
-                        <th>Telefone</th>
-                        <th>Email</th>
-                        <th>Endereço</th>
-                        <th>Link</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for setor in setores %}
+        <div class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full w-full px-10">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <td>
-                                <a href="{{ setor.get_absolute_url }}">{{ setor.name }}</a>
-                            </td>
-                            <td>{{ setor.accountable }}</td>
-                            <td>{{ setor.direction }}</td>
-                            <td>{{ setor.phone }}</td>
-                            <td>{{ setor.email }}</td>
-                            <td>{{ setor.address }}</td>
-                            <td>
-                                <a href="{% url 'dashboard:update_setor' setor.slug %}">Editar</a>
-                                <a href="{% url 'dashboard:delete_setor' setor.slug setor.id %}">Excluir</a>
-                            </td>
+                            <th scope="col" class="px-6 py-3">Nome</th>
+                            <th scope="col" class="px-6 py-3">Responsvel</th>
+                            <th scope="col" class="px-6 py-3">Diretoria</th>
+                            <th scope="col" class="px-6 py-3">Telefone</th>
+                            <th scope="col" class="px-6 py-3">Email</th>
+                            <th scope="col" class="px-6 py-3">Endereço</th>
+                            <th scope="col" class="px-6 py-3">Ações</th>
                         </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="7">Nenhum setor cadastrado!!!</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for setor in setores %}
+                        <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700">
+
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <a href="{{ setor.get_absolute_url }}">{{ setor.name }}</a>
+                                </th>
+                                <td class="px-6 py-4">{{ setor.accountable }}</td>
+                                <td class="px-6 py-4">{{ setor.direction }}</td>
+                                <td class="px-6 py-4">{{ setor.phone }}</td>
+                                <td class="px-6 py-4">{{ setor.email }}</td>
+                                <td class="px-6 py-4">{{ setor.address }}</td>
+                                <td class="px-6 py-4 flex justify-normal items-center gap-2">
+                                    <a href="{% url 'dashboard:update_setor' setor.slug %}">
+                                        <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                            <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                                <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z"/>
+                                                <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z"/>
+                                            </svg> Editar
+                                        </button>
+                                    </a>
+                                    <a href="{% url 'dashboard:delete_setor' setor.slug setor.id %}">
+                                        <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                            <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                                            </svg>
+                                            Excluir
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                                    <tr>
+                                        <td class="px-6 py-4" colspan="7">Nenhum setor cadastrado!!!</td>
+                                    </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </section>
 {% endblock content %}
