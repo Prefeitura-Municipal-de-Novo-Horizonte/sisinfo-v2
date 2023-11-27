@@ -1,82 +1,138 @@
 {% extends "_base.html" %}
+{% block title %}
+Usuários
+{% endblock title %}
 {% block content %}
-<div>
-    <h2>Usuarios</h2>
-</div>
-<div>
-    <table>
-        <thead>
-            <tr>
-                <td>
-                    Username
-                </td>
-                <td>
-                    Nome Completo
-                </td>
-                <td>
-                    Email
-                </td>
-                <td>
-                    Matricula
-                </td>
-                </td>
-                <td>
-                    Cargo
-                </td>
-                <td>
-                    Ativo
-                </td>
-                <td>
-                    Admin
-                </td>
-                <td>
-                    Tecnico
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>
-                    {{user.username}}
-                </td>
-                <td>
-                    <a href="{{user.get_absolute_url}}">{{user.fullname}}</a>
-                </td>
-                <td>
-                    {{user.email}}
-                </td>
-                <td>
-                    {{user.registration}}
-                </td>
-                <td>
-                    {{user.officer}}
-                </td>
-                <!-- Verifica se o usuario esta ativo é administrador ou tecnico em informatica -->
-                <td>
-                    {% if user.is_active is True %}
-                    <a href="{% url 'authenticated:disabled_user' user.slug %}">Desabilitar</a>
-                    {% elif user.is_active is False%}
-                    <a href="{% url 'authenticated:enabled_user' user.slug %}">Habilitar</a>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if user.is_admin is True %}
-                    <a href="{% url 'authenticated:disabled_user_admin' user.slug %}">Desabilitar</a>
-                    {% elif user.is_admin is False%}
-                    <a href="{% url 'authenticated:enabled_user_admin' user.slug %}">Habilitar</a>
-                    {% endif %} 
-                </td>
-                <td>
-                    {% if user.is_tech is True %}
-                    <a href="{% url 'authenticated:disabled_user_tech' user.slug %}">Desabilitar</a>
-                    {% elif user.is_tech is False%}
-                    <a href="{% url 'authenticated:enabled_user_tech' user.slug %}">Habilitar</a>
-                    {% endif %} 
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<!-- TITULO -->
+        <div class="flex items-center justify-end h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+            <p class="text-2xl text-gray-400 dark:text-gray-500">
+                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white"><mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500">
+                   Usuários
+                </mark>
+                </h1>
+            </p>
+        </div>
+<!-- LISTA DE DADOS -->
+    <div class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full w-full px-10">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            Nome Completo
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Username
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Email
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Matricula
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Cargo
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Ativo
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Técnico
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            Admin
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            <a href="{{user.get_absolute_url}}">{{user.fullname}}</a>
+                        </th>
+                        <td class="px-6 py-4">
+                            {{user.username}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{user.email}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{user.registration}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{user.officer}}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if user.is_active is True %}
+                            <a href="{% url 'authenticated:disabled_user' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                        <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                                        </svg>
+                                    Desabilitar
+                                </button>
+                            </a>
+                            {% elif user.is_active is False%}
+                            <a href="{% url 'authenticated:disabled_user' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                        <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z"/>
+                                        <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z"/>
+                                    </svg> Habilitar
+                                </button>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if user.is_admin is True %}
+                            <a href="{% url 'authenticated:disabled_user_admin' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                        <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                                        </svg>
+                                    Desabilitar
+                                </button>
+                            </a>
+                            {% elif user.is_admin is False%}
+                            <a href="{% url 'authenticated:enabled_user_admin' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                        <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z"/>
+                                        <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z"/>
+                                    </svg> Habilitar
+                                </button>
+                            </a>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if user.is_tech is True %}
+                            <a href="{% url 'authenticated:disabled_user_tech' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                        <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z"/>
+                                        </svg>
+                                    Desabilitar
+                                </button>
+                            </a>
+                            {% elif user.is_tech is False%}
+                            <a href="{% url 'authenticated:enabled_user_tech' user.slug %}">
+                                <button type="button" class="flex justify-center gap-2 items-center focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
+                                        <path d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z"/>
+                                        <path d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z"/>
+                                    </svg> Habilitar
+                                </button>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                                <tr>
+                                    <td class="px-6 py-4" colspan="4">Nenhuma diretoria cadastrada!!!</td>
+                                </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock content %}

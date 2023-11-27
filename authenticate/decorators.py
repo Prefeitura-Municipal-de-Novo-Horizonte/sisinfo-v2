@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 def unauthenticated_user(view_func):
     def wrapper_func(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return redirect('blog:index')
+            return redirect('dashboard:index')
         else:
             return view_func(request, *args, **kwargs)
 
@@ -18,7 +18,7 @@ def admin_only(view_func):
         if request.user.is_admin != True:
             messages.add_message(request, constants.ERROR,
                                  'Você não tem autorização de administrador.')
-            return redirect('index')
+            return redirect('dashboard:index')
 
         if request.user.is_admin == True:
             return view_func(request, *args, **kwargs)
@@ -31,7 +31,7 @@ def tech_only(view_func):
         if request.user.is_tech != True:
             messages.add_message(request, constants.ERROR,
                                  'Você não tem autorização de Tecnico.')
-            return redirect('index')
+            return redirect('dashboard:index')
 
         if request.user.is_tech == True:
             return view_func(request, *args, **kwargs)
