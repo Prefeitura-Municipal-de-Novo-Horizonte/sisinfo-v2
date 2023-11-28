@@ -5,7 +5,7 @@ from django.contrib.messages import constants
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from authenticate.decorators import admin_only, tech_only, unauthenticated_user
+from authenticate.decorators import admin_only, unauthenticated_user
 from authenticate.forms import (
     AuthenticationFormCustom,
     PasswordChangeCustomForm,
@@ -50,6 +50,8 @@ def login_page(request):
                 }
                 return render(request, 'change_password.html', context)
             return redirect('dashboard:index')
+        messages.add_message(request, constants.ERROR,
+                             "Usuário ou Senha inválidos!")
         return redirect(reverse('authenticated:login'))
 
 
