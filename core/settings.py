@@ -133,12 +133,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
+STATIC_URL = 'static/'
+STATIC_ROOT = str(BASE_DIR / 'staticfiles/static/')
+STATICFILES_DIR = [BASE_DIR / 'static/']
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = 'img/'
+MEDIA_ROOT = str(BASE_DIR / 'media/')
 
 COMPRESS_ROOT = BASE_DIR / 'static'
 COMPRESS_ENABLED = True
