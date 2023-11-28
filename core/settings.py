@@ -141,6 +141,7 @@ MEDIA_URL = 'img/'
 MEDIA_ROOT = str(BASE_DIR / 'media/')
 
 COMPRESS_ROOT = BASE_DIR / 'static'
+
 COMPRESS_ENABLED = True
 STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
 

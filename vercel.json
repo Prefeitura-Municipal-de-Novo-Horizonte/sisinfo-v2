@@ -27,5 +27,4 @@
             "dest": "core/wsgi.py"
         }
     ],
-    "outputDirectory": "staticfiles"
 }
