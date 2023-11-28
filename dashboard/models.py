@@ -10,7 +10,8 @@ from django.template.defaultfilters import slugify
 ############################ SETORES E DIRETORIAS ############################################
 ##############################################################################################
 class AbsctactDirectionSector(models.Model):
-    name = models.CharField("nome", max_length=200, blank=True, null=True, unique=True)
+    name = models.CharField("nome", max_length=200,
+                            blank=True, null=True, unique=True)
     slug = models.SlugField("slug")
     accountable = models.CharField("responsavel", max_length=200, blank=True)
 
@@ -135,7 +136,7 @@ class Material(AbsBiddingMaterial):
         return r("dashboard:material", slug=self.slug)
 
     def total_price(self):
-        if self.readjustment > 0:
+        if self.readjustment != 0:
             self.total_price = float(self.price) + (
                 float(self.price) * (self.readjustment / 100)
             )
