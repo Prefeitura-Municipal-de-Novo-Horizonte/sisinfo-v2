@@ -81,7 +81,7 @@ class ProfessionalUser(AbstractBaseUser):
         verbose_name_plural = "profissionais"
 
     def get_absolute_url(self):
-        return r('authenticated:profile_user', slug=self.slug)
+        return r('profile_user', slug=self.slug)
 
     def __str__(self):
         if self.registration is None:
