@@ -30,12 +30,13 @@ urlpatterns = [
     path('profile/', views.alter_user, name="profile"),
     path('profile_user/<slug:slug>', views.profile_user, name="profile_user"),
     # Redefinir Senha
-    path('password_reset/', auth_views.PasswordResetView.as_view(
-        template_name="password_reset.html"), name="password_reset"),
-    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(
-        template_name="password_reset_done.html"), name="password_reset_done"),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
-        template_name="password_reset_confirm_view.html"), name="password_reset_confirm"),
-    path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(
-        template_name="password_reset_complete.html"), name="password_reset_complete"),
+    # TODO: Ajustar a pagina de change password
+    #     path('password_reset/', auth_views.PasswordResetView.as_view(
+    #         template_name="password_reset.html"), name="password_reset"),
+    #     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(
+    #         template_name="password_reset_done.html"), name="password_reset_done"),
+    #     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
+    #         template_name="password_reset_confirm_view.html"), name="password_reset_confirm"),
+    #     path('password_reset_complete/', auth_views.PasswordResetCompleteView.as_view(
+    #         template_name="password_reset_complete.html"), name="password_reset_complete"),
 ]
