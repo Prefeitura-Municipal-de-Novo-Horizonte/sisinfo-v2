@@ -19,5 +19,9 @@ python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
 # Collect static files
-#echo "Collecting static files..."
-#python manage.py collectstatic --no-input
+echo "Collecting static files..."
+python manage.py collectstatic --no-input
+
+# Install Vercel Analycts
+npm i @vercel/analytics
+npm install

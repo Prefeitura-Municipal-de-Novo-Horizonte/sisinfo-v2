@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "npx tailwindcss -i static/src/input.css -o static/css/output.css --watch"
+    "dev": "npx tailwindcss -i static/tailwindcss/input.css -o static/css/djangotw-ui.css --watch"
   },
   "devDependencies": {
     "prettier": "^3.0.3",
