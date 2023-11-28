@@ -24,7 +24,7 @@ urlpatterns = [
     # Login // Logout
     path('login/', views.login_page, name="login"),
     path('logout/', views.logout_page, name="logout"),
-    path('change_password/<slug:slug>/',
+    path('change_password/<slug:slug>',
          views.change_password, name="change_password"),
     # # # Perfil do Usuario
     path('profile/', views.alter_user, name="profile"),
