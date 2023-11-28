@@ -1,6 +1,6 @@
 dj-database-url
 dj-static
-Django=
+Django
 django-extensions
 djlint
 python-decouple
