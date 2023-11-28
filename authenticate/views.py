@@ -1,7 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.messages import constants
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -9,6 +8,7 @@ from django.urls import reverse
 from authenticate.decorators import admin_only, tech_only, unauthenticated_user
 from authenticate.forms import (
     AuthenticationFormCustom,
+    PasswordChangeCustomForm,
     UserChangeForm,
     UserCreationForm,
 )
@@ -44,7 +44,7 @@ def login_page(request):
             user = form.get_user()
             login(request, user)
             if user.first_login is True:
-                form = PasswordChangeForm(request.user)
+                form = PasswordChangeCustomForm(request.user)
                 context = {
                     'form': form
                 }
@@ -57,7 +57,7 @@ def login_page(request):
 def change_password(request, slug):  # sourcery skip: extract-method
     if request.method == 'POST':
         user = request.user
-        form = PasswordChangeForm(user, data=request.POST)
+        form = PasswordChangeCustomForm(user, data=request.POST)
         if form.is_valid():
             form.save()
             user_a = get_object_or_404(ProfessionalUser, slug=slug)
@@ -72,7 +72,7 @@ def change_password(request, slug):  # sourcery skip: extract-method
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse('authenticated:change_password', kwargs={'slug': user.slug}))
-    form = PasswordChangeForm(request.user)
+    form = PasswordChangeCustomForm(request.user)
     context = {
         'form': form,
     }
