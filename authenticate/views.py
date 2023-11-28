@@ -91,10 +91,8 @@ def alter_user(request):
         if request.method == 'POST':
             form = UserChangeForm(request.POST, files=request.FILES,
                                   instance=request.user)
-            print(request.FILES)
             if form.is_valid():
                 # TODO: Inserir upload de imagem
-                print('OK')
                 form.save()
                 messages.add_message(
                     request, constants.SUCCESS, "Alterado com sucesso!")
@@ -212,7 +210,6 @@ def disabled_user_tech(request, slug):
 @admin_only
 def profile_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
-    print(user)
     context = {
         'user': user,
     }
