@@ -53,9 +53,9 @@
                     <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th scope="col" class="px-6 py-3">
+                                <td scope="col" class="px-6 py-3">
                                     Tipo
-                                </th>
+                                </td>
                                 <th scope="col" class="px-6 py-3">
                                     Contato
                                 </th>
@@ -71,10 +71,10 @@
                             {{form_contact.management_form}}
                             {% for fc in form_contact %}
                             <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ fc.kind.errors }}{{ fc.kind }}
                                     <label for="{{ fc.kind.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fc.kind.label }}</label>
-                                </th>
+                                </td>
                                 <td class="px-6 py-4">
                                     {{ fc.value.errors }}{{ fc.value }}
                                     <label for="{{ fc.value.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fc.value.label }}</label>
@@ -97,6 +97,9 @@
         </div>
     </div>
 </form>
+<!-- MESSAGES -->
+{% include "include/_alert.html" %}
+<!-- SEARCH -->
 <!-- Lista de dados -->
 {% endblock content %}
 {% block script %}
@@ -106,10 +109,10 @@
     $(function() {
         $('#inline_form table tbody tr').formset({
             prefix: '{{ form_contact.prefix }}',
-            addText: '&#10003; Adicionar novo item',
+            addText: '&#10003; Adicionar novo contato',
             deleteText: '&#10005; Remover Linha',
-            addCssClass: '',
-            deleteCssClass : ''
+            addCssClass : 'text-base font-bold text-green-700',
+            deleteCssClass : 'text-base font-bold text-red-700',
         });
     })
 </script>

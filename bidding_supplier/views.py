@@ -24,18 +24,13 @@ def suppliers(request):
             form_contact.instance = supplier
             form_contact.save()
             messages.add_message(
-                request, constants.SUCCESS, f"Um {Supplier.__classname__} inserido com sucesso")
+                request, constants.SUCCESS, "Um novo fornecedor inserido com sucesso")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("supplier:fornecedores"))
-
+        return redirect(reverse("suppliers:fornecedores"))
     form = SupplierForm()
     form_contact = inlineformset_factory(
         Supplier, Contact, form=ContactForm, extra=2)
-
-    print(form)
-    print(form_contact)
-
     context = {
         'suppliers': suppliers,
         'form': form,

@@ -11,7 +11,7 @@ class SupplierForm(forms.ModelForm):
         fields = ['company', 'trade', 'cnpj', 'address']
 
     def clean_company(self):
-        return self.extract_from_clean_company("company")
+        return self.extract_from_clean("company")
 
     def extract_from_clean(self, field):
         name = self.cleaned_data[field]
