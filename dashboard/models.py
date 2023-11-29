@@ -4,6 +4,8 @@ from django.db import models
 from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
 
+from bidding_supplier.models import Supplier
+
 
 # Create your models here.
 ##############################################################################################
@@ -118,7 +120,7 @@ class Material(AbsBiddingMaterial):
         Bidding,
         on_delete=models.SET_NULL,
         verbose_name="licitação",
-        related_name="materiais",
+        related_name="licitações",
         blank=True,
         null=True,
     )
@@ -126,6 +128,8 @@ class Material(AbsBiddingMaterial):
         "valor", max_digits=8, decimal_places=2, blank=True, null=True
     )
     readjustment = models.FloatField("reajuste", default=0)
+    supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL,
+                                 verbose_name='fornecedor', related_name='fornecedores', blank=True, null=True)
 
     class Meta:
         ordering = ("status", "bidding", "name")

@@ -89,7 +89,8 @@ class BiddingForm(forms.ModelForm):
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
-        fields = ["name", "status", "bidding", "price", "readjustment"]
+        fields = ["name", "status", "bidding",
+                  "price", "readjustment", "supplier"]
 
         def clean_name(self):
             return self.extract_from_clean("name")
