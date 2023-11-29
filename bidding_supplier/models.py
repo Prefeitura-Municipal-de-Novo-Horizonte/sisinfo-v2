@@ -8,10 +8,10 @@ from bidding_supplier.managers import KindContactQuerySet
 # Create your models here.
 class Supplier(models.Model):
     company = models.CharField(
-        'razão social', max_length=200, blank=True, unique=True)
+        'Razão social', max_length=200, blank=True, unique=True)
     trade = models.CharField(
         'nome fantasia', max_length=255, blank=True, null=True)
-    cnpj = models.CharField('cnpj', max_length=14, blank=True)
+    cnpj = models.CharField('CNPJ', max_length=14, blank=True)
     slug = models.SlugField('slug')
     address = models.TextField('endereço', blank=True, null=True)
     created_at = models.DateTimeField('criado em', auto_now_add=True)
@@ -45,7 +45,7 @@ class Contact(models.Model):
     supplier = models.ForeignKey(
         'Supplier', on_delete=models.CASCADE, verbose_name='fornecedor', related_name='suppliers')
     kind = models.CharField('tipo', max_length=1, choices=KINDS)
-    value = models.CharField('valor', max_length=255)
+    value = models.CharField('contato', max_length=255)
     whatsapp = models.BooleanField('whatsapp', default=False)
 
     objects = KindContactQuerySet.as_manager()
