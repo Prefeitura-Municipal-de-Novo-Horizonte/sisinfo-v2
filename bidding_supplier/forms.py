@@ -1,14 +1,13 @@
 from django import forms
-from pycpfcnpj import cpfcnpj
-
 from django.forms import inlineformset_factory
+from pycpfcnpj import cpfcnpj
 
 from bidding_supplier.models import Contact, Supplier
 
 
-class SupplierForm(forms.Form):
+class SupplierForm(forms.ModelForm):
     class Meta:
-        models = Supplier
+        model = Supplier
         fields = ['company', 'trade', 'cnpj', 'address']
 
     def clean_company(self):
@@ -35,11 +34,11 @@ class SupplierForm(forms.Form):
                 field.widget.attrs['rows'] = "4"
 
 
-class ContactForm(forms.Form):
+class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
         fields = ["kind", "value", "whatsapp"]
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
@@ -47,6 +46,7 @@ class ContactForm(forms.Form):
                 field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             else:
                 field.widget.attrs['class'] = "sr-only peer"
+
 
 ContactInlineForm = inlineformset_factory(
     Supplier,
@@ -56,4 +56,4 @@ ContactInlineForm = inlineformset_factory(
     can_delete=False,
     min_num=1,
     validate_min=True,
-    )
+)

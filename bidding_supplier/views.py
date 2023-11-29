@@ -13,6 +13,7 @@ from bidding_supplier.models import Contact, Supplier
 # Create your views here.
 @login_required(login_url='login')
 def suppliers(request):
+    suppliers = Supplier.objects.all()
     if request.method == 'POST':
         form = SupplierForm(request.POST)
         form_contact_factory = inlineformset_factory(
@@ -28,16 +29,17 @@ def suppliers(request):
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("supplier:fornecedores"))
 
-    suppliers = Supplier.objects.all()
-
-    forms = SupplierForm()
+    form = SupplierForm()
     form_contact = inlineformset_factory(
         Supplier, Contact, form=ContactForm, extra=2)
 
+    print(form)
+    print(form_contact)
+
     context = {
         'suppliers': suppliers,
-        'forms': forms,
+        'form': form,
         'form_contact': form_contact,
-        'btn': f'Adicionar novo {Supplier.__class__.__name__}'
+        'btn': 'Adicionar novo Fornecedor',
     }
     return render(request, "suppliers.html", context)
