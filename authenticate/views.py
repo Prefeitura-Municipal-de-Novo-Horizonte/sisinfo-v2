@@ -56,13 +56,13 @@ def login_page(request):
 
 
 @login_required(login_url='login')
-def change_password(request, slug):  # sourcery skip: extract-method
+def change_password(request):  # sourcery skip: extract-method
     if request.method == 'POST':
         user = request.user
         form = PasswordChangeCustomForm(user, data=request.POST)
         if form.is_valid():
             form.save()
-            user_a = get_object_or_404(ProfessionalUser, slug=slug)
+            user_a = get_object_or_404(ProfessionalUser, slug=request.user.slug)
             if user.first_login is True:
                 user_a.first_login = False
                 user_a.save()
@@ -73,7 +73,7 @@ def change_password(request, slug):  # sourcery skip: extract-method
                                  "Senha trocada com sucesso!")
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        # return redirect(reverse('change_password_2', kwargs={'slug': user.slug}))
+        return redirect('change_password')
     form = PasswordChangeCustomForm(request.user)
     context = {
         'form': form,
