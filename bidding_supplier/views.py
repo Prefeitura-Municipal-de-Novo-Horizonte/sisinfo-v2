@@ -41,5 +41,24 @@ def suppliers(request):
     return render(request, "suppliers.html", context)
 
 
+@login_required(login_url='login')
+def supplier_update(request, slug):
+    fornecedor = get_object_or_404(Supplier, slug=slug)
+    if fornecedor is None:
+        return redirect('suppliers:fornecedores')
+    form = SupplierForm(instance=fornecedor)
+    form_contact_factory = inlineformset_factory(
+        Supplier, Contact, form=ContactForm, extra=1, can_delete=True)
+    form_contact = form_contact_factory(instance=fornecedor)
+    suppliers = Supplier.objects.all()
+    context = {
+        'suppliers': suppliers,
+        'form': form,
+        'form_contact': form_contact,
+        'btn': 'Atualizar Fornecedor',
+    }
+    return render(request, "suppliers.html", context)
+
+
 def supplier_detail(request, slug):
     return HttpResponse(f'{slug}')
