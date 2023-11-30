@@ -25,7 +25,7 @@ class Supplier(models.Model):
         return self.trade
 
     def get_absolute_url(self):
-        return r('speaker_detail', slug=self.slug)
+        return r('suppliers:fornecedor', slug=self.slug)
 
     def save(self, *args, **kwargs):
         if not self.slug:

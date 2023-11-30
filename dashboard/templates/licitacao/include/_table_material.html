@@ -5,6 +5,7 @@
                             <th scope="col" class="px-6 py-3">Nome</th>
                             <th scope="col" class="px-6 py-3">Status</th>
                             <th scope="col" class="px-6 py-3">Licitação</th>
+                            <th scope="col" class="px-6 py-3">Fornecedor</th>
                             <th scope="col" class="px-6 py-3">Valor Inicial</th>
                             <th scope="col" class="px-6 py-3">% de reajuste</th>
                             <th scope="col" class="px-6 py-3">Valor Total</th>
@@ -20,6 +21,7 @@
                                 </th>
                                 <td class="px-6 py-4">{{ material.get_status_display }}</td>
                                 <td class="px-6 py-4">{{ material.bidding }}</td>
+                                <td class="px-6 py-4">{{ material.supplier }}</td>
                                 <td class="px-6 py-4">{{ material.price }}</td>
                                 <td class="px-6 py-4">{{ material.readjustment }}</td>
                                 <td class="px-6 py-4">{{ material.total_price }}</td>

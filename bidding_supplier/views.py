@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.forms import inlineformset_factory
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
@@ -38,3 +39,7 @@ def suppliers(request):
         'btn': 'Adicionar novo Fornecedor',
     }
     return render(request, "suppliers.html", context)
+
+
+def supplier_detail(request, slug):
+    return HttpResponse(f'{slug}')
