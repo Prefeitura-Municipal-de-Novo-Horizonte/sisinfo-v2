@@ -44,8 +44,6 @@ def suppliers(request):
 @login_required(login_url='login')
 def supplier_update(request, slug):
     fornecedor = get_object_or_404(Supplier, slug=slug)
-    if fornecedor is None:
-        return redirect('suppliers:fornecedores')
     form = SupplierForm(instance=fornecedor)
     form_contact_factory = inlineformset_factory(
         Supplier, Contact, form=ContactForm, extra=1, can_delete=True)
@@ -57,6 +55,18 @@ def supplier_update(request, slug):
         'form_contact': form_contact,
         'btn': 'Atualizar Fornecedor',
     }
+    if request.method == 'POST':
+        form = SupplierForm(request.POST, instance=fornecedor)
+        form_contact_factory = inlineformset_factory(
+            Supplier, Contact, form=ContactForm, extra=0, can_delete=False, min_num=1, validate_min=True)
+        form_contact = form_contact_factory(
+            request.POST or None, instance=fornecedor)
+        if form_contact.is_valid():
+            print('Passou')
+        messages.add_message(
+            request, constants.SUCCESS, f"{fornecedor.trade} com sucesso")
+        return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': fornecedor.slug}))
+
     return render(request, "suppliers.html", context)
 
 
