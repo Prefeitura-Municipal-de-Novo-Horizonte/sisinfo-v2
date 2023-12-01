@@ -1,0 +1,15 @@
+{% extends "_base.html" %}
+{% block title %}
+    {{suplier.trade}}
+{% endblock title %}
+{% block content %}
+    {{supplier.company}}
+    {{supplier.cnpj}}
+    {% for contact in contacts %}
+        {{contact.value}}
+    {% endfor %}
+    {% for material in materials %}
+        {{material.name}}
+    {% endfor %}
+{% endblock content %}
+

@@ -7,6 +7,6 @@ app_name = 'suppliers'
 urlpatterns = [
     path('', suppliers, name='fornecedores'),
     path("fornecedor/<slug:slug>/", supplier_detail, name="fornecedor"),
-    path('fornecedor/<slug:slug>/update',
+    path('fornecedor/update/<slug:slug>/',
          supplier_update, name="fornecedor_update"),
 ]

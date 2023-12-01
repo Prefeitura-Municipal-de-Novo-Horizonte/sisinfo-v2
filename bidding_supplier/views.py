@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
 from bidding_supplier.models import Contact, Supplier
+from dashboard.models import Material
 
 
 # Create your views here.
@@ -43,32 +44,39 @@ def suppliers(request):
 
 @login_required(login_url='login')
 def supplier_update(request, slug):
-    fornecedor = get_object_or_404(Supplier, slug=slug)
-    form = SupplierForm(instance=fornecedor)
-    form_contact_factory = inlineformset_factory(
-        Supplier, Contact, form=ContactForm, extra=1, can_delete=True)
-    form_contact = form_contact_factory(instance=fornecedor)
+    supplier = get_object_or_404(Supplier, slug=slug)
+    form = SupplierForm(request.POST or None, instance=supplier, prefix='main')
+    form_contact = ContactInlineForm(
+        request.POST or None, instance=supplier, prefix='suppliers')
     suppliers = Supplier.objects.all()
+
+    if request.method == 'POST':
+        if (form.is_valid() and form_contact.is_valid()):
+            form.save()
+            form_contact.save()
+            messages.add_message(
+                request, constants.SUCCESS, f'O fornecedor {supplier.trade} foi atualizado com sucesso')
+            return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
+        messages.add_message(request, constants.WARNING,
+                             f'Não foi possível atualizar o fornecedor {supplier.trade}')
+        return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
     context = {
-        'suppliers': suppliers,
         'form': form,
         'form_contact': form_contact,
-        'btn': 'Atualizar Fornecedor',
+        'suppliers': suppliers,
+        'btn': 'Atualizar Fornecedor'
     }
-    if request.method == 'POST':
-        form = SupplierForm(request.POST, instance=fornecedor)
-        form_contact_factory = inlineformset_factory(
-            Supplier, Contact, form=ContactForm, extra=0, can_delete=False, min_num=1, validate_min=True)
-        form_contact = form_contact_factory(
-            request.POST or None, instance=fornecedor)
-        if form_contact.is_valid():
-            print('Passou')
-        messages.add_message(
-            request, constants.SUCCESS, f"{fornecedor.trade} com sucesso")
-        return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': fornecedor.slug}))
-
-    return render(request, "suppliers.html", context)
+    return render(request, 'supplier_update.html', context)
 
 
+@login_required(login_url='login')
 def supplier_detail(request, slug):
-    return HttpResponse(f'{slug}')
+    supplier = get_object_or_404(Supplier, slug=slug)
+    contacts = Contact.objects.filter(supplier=supplier)
+    materials = Material.objects.filter(supplier=supplier)
+    context = {
+        'supplier': supplier,
+        'contacts': contacts,
+        'materials': materials,
+    }
+    return render(request, 'supllier.html', context)
