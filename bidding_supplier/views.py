@@ -2,11 +2,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.forms import inlineformset_factory
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
 
+from authenticate.decorators import tech_only
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
 from bidding_supplier.models import Contact, Supplier
 from dashboard.models import Material
@@ -62,6 +62,7 @@ def supplier_update(request, slug):
         return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
     context = {
         'form': form,
+        'supplier': supplier,
         'form_contact': form_contact,
         'suppliers': suppliers,
         'btn': 'Atualizar Fornecedor'
@@ -80,3 +81,26 @@ def supplier_detail(request, slug):
         'materials': materials,
     }
     return render(request, 'supllier.html', context)
+
+
+@login_required(login_url='login')
+@tech_only
+def supplier_delete(request, slug, id):
+    supplier = get_object_or_404(Supplier, id=id, slug=slug)
+    if supplier.delete():
+        messages.add_message(request, constants.ERROR,
+                             f'O Fornecedor {supplier.trade} foi excluido com sucesso!')
+        return redirect(reverse('suppliers:fornecedores'))
+    messages.add_message(request, constants.WARNING,
+                         f'Não foi possivel excluir o fornecedor {supplier.trade}')
+    return redirect(reverse('suppliers:fornecedores'))
+
+
+@login_required(login_url='login')
+def contact_supplier_delete(request, id):
+    contact = get_object_or_404(Contact, id=id)
+    supplier = contact.supplier
+    contact.delete()
+    messages.add_message(request, constants.ERROR,
+                         f'O contato {contact.value} do fornecedor {supplier.trade} foi excluido com sucesso!')
+    return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': supplier.slug}))
