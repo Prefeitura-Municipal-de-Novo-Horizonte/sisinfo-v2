@@ -8,6 +8,7 @@ urlpatterns = [
     path("", include("dashboard.urls")),
     path("authenticate/", include("authenticate.urls")),
     path("suppliers/", include("bidding_supplier.urls")),
+    path("reports/", include("reports.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
