@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "dashboard.apps.DashboardConfig",
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
+    "reports.apps.ReportsConfig",
 ]
 
 MIDDLEWARE = [
