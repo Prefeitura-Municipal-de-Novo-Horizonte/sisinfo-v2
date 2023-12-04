@@ -1,11 +1,14 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django.db import models
 from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
 
 from authenticate.models import ProfessionalUser
+from bidding_supplier.models import Supplier
 from dashboard.models import Material, Sector
+from reports.managers import KindInterestRequestMaterialQuerySet
 
 
 # Create your models here.
@@ -39,8 +42,7 @@ class Report(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             if not self.number_report:
-                self.number_report = f"{datetime.now().strftime('%Y%m%d')}{
-                    self.id:06}"
+                self.number_report = f"{datetime.now().strftime('%Y%m%d')}{self.id:06}"
             self.slug = slugify(self.number_report)
         return super().save()
 
@@ -52,7 +54,7 @@ class MaterialReport(models.Model):
         Material, verbose_name='material', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais')
     quantity = models.IntegerField(
         'quantidade', blank=True, null=True, default=1)
-    unitary_value = models.DecimalField(
+    unitary_price = models.DecimalField(
         "valor", max_digits=8, decimal_places=2, blank=True, null=True)
 
     class Meta:
@@ -60,4 +62,49 @@ class MaterialReport(models.Model):
         verbose_name_plural = 'materiais do laudo'
 
     def save(self, *args, **kwargs):
-        pass
+        if not self.unitary_price:
+            self.unitary_price = self.material.total_price
+        return super().save()
+
+    def total_price(self):
+        self.total_price = float(self.quantity) * float(self.unitary_price)
+        return Decimal(self.total_price).quantize(Decimal("00000000.00"))
+
+
+class Invoice(models.Model):
+    note_number = models.CharField('numero da Nota', max_length=10)
+    supplier = models.ForeignKey(Supplier, verbose_name='fornecedor',
+                                 related_name='fornecedores', on_delete=models.SET_NULL)
+    access_key = models.CharField(
+        'chave de acesso', max_length=50, blank=True, null=True)
+    note_issuance_date = models.DateField('data da emissão da nota')
+
+    class Meta:
+        ordering = ('note_issuance_date', 'supplier', 'note_number')
+        verbose_name = 'nota fiscal'
+        verbose_name_plural = 'notas fiscais'
+
+    def __str__(self):
+        return self.note_number
+
+
+class InterestRequestMaterial(models.Model):
+    REQUEST = 'S'
+    INTEREST = 'E'
+    KINDS = (
+        (REQUEST, 'Solicitação'),
+        (INTEREST, 'Empenho'),
+    )
+    value = models.CharField('valor', max_length=20)
+    kind = models.CharField('kind', max_length=1,
+                            blank=True, null=True, choices=KINDS)
+    invoice = models.ForeignKey(Invoice, verbose_name='nota fiscal', null=True)
+
+    objects = KindInterestRequestMaterialQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = 'solicitação ou empenho'
+        verbose_name_plural = 'solicitações ou empenhos'
+
+    def __str__(self):
+        return self.value
