@@ -13,7 +13,7 @@ from reports.managers import KindInterestRequestMaterialQuerySet
 
 # Create your models here.
 class Report(models.Model):
-    KINDS = (('1', 'Aguardando ...'), ('2', 'Finalizado'))
+    KINDS = (('1', 'Aberto'), ('2', 'Aguardando ...'), ('3', 'Finalizado'))
     number_report = models.CharField(
         'identificação do laudo', max_length=20, unique=True, blank=True, null=True)
     slug = models.SlugField('slug')
@@ -64,6 +64,7 @@ class MaterialReport(models.Model):
     def save(self, *args, **kwargs):
         if not self.unitary_price:
             self.unitary_price = self.material.total_price
+        self.report.status = 2
         return super().save()
 
     def total_price(self):
@@ -74,7 +75,7 @@ class MaterialReport(models.Model):
 class Invoice(models.Model):
     note_number = models.CharField('numero da Nota', max_length=10)
     supplier = models.ForeignKey(Supplier, verbose_name='fornecedor',
-                                 related_name='fornecedores', on_delete=models.SET_NULL)
+                                 related_name='fornecedor', on_delete=models.SET_NULL, blank=True, null=True)
     access_key = models.CharField(
         'chave de acesso', max_length=50, blank=True, null=True)
     note_issuance_date = models.DateField('data da emissão da nota')
@@ -98,7 +99,10 @@ class InterestRequestMaterial(models.Model):
     value = models.CharField('valor', max_length=20)
     kind = models.CharField('kind', max_length=1,
                             blank=True, null=True, choices=KINDS)
-    invoice = models.ForeignKey(Invoice, verbose_name='nota fiscal', null=True)
+    report = models.ForeignKey(
+        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.SET_NULL)
+    invoice = models.ForeignKey(
+        Invoice, verbose_name='nota fiscal', null=True, on_delete=models.SET_NULL)
 
     objects = KindInterestRequestMaterialQuerySet.as_manager()
 
