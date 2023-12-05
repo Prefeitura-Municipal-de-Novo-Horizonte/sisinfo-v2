@@ -67,9 +67,7 @@ class MaterialReport(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.unitary_price:
-            print(type(self.unitary_price))
             novo_decimal = Decimal(self.material.total_price())
-            print(type(novo_decimal))
             self.unitary_price = novo_decimal
         return super().save()
 

@@ -37,20 +37,12 @@ urlpatterns = [
     path("setores/", sectors, name="setores"),
     path("diretoria/setor/<slug:slug>/", sector_detail, name="setor"),
     path("diretoria/setor/<slug:slug>/update/", sector_update, name="update_setor"),
-    path(
-        "diretoria/setor/<slug:slug>/<str:id>/delete/",
-        sector_delete,
-        name="delete_setor",
-    ),
+    path("diretoria/setor/<slug:slug>/<str:id>/delete/", sector_delete, name="delete_setor"),
     # Licitação
     path("licitacoes/", biddings, name="licitacoes"),
     path("licitacao/<slug:slug>/", bidding_detail, name="licitacao"),
     path("licitacao/<slug:slug>/update/", bidding_update, name="update_licitacao"),
-    path(
-        "licitacao/<slug:slug>/<str:id>/delete/",
-        bidding_delete,
-        name="delete_licitacao",
-    ),
+    path("licitacao/<slug:slug>/<str:id>/delete/", bidding_delete, name="delete_licitacao"),
     # Materiais
     path("materiais/", materials, name="materiais"),
     path("material/<slug:slug>/", material_detail, name="material"),
