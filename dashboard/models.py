@@ -139,7 +139,9 @@ class Material(AbsBiddingMaterial):
     def get_absolute_url(self):
         return r("dashboard:material", slug=self.slug)
 
+    # @property
     def total_price(self):
+        "Return o preço total com ajuste ou sem ajuste."
         if self.readjustment != 0:
             self.total_price = float(self.price) + (
                 float(self.price) * (self.readjustment / 100)

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from django.db import models
@@ -14,6 +14,7 @@ from reports.managers import KindInterestRequestMaterialQuerySet
 # Create your models here.
 class Report(models.Model):
     KINDS = (('1', 'Aberto'), ('2', 'Aguardando ...'), ('3', 'Finalizado'))
+
     number_report = models.CharField(
         'identificação do laudo', max_length=20, unique=True, blank=True, null=True)
     slug = models.SlugField('slug')
@@ -23,13 +24,14 @@ class Report(models.Model):
     status = models.CharField('status', max_length=1, default=1, choices=KINDS)
     justification = models.TextField('justificativa')
     professional = models.ForeignKey(
-        ProfessionalUser, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='profissional', related_name='profissional')
+        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional', related_name='profissional')
     pro_accountable = models.ForeignKey(
-        ProfessionalUser, on_delete=models.SET_NULL, blank=True, null=True, verbose_name='profissional responsável', related_name='responsável')
+        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional responsável', related_name='responsável')
     created_at = models.DateTimeField('criado em', auto_now_add=True)
     updated_at = models.DateTimeField('atualizado em', auto_now=True)
 
     class Meta:
+        ordering = ['created_at', 'status', 'updated_at']
         verbose_name = 'laudo'
         verbose_name_plural = 'laudos'
 
@@ -40,9 +42,11 @@ class Report(models.Model):
         return r('reports:report', slug=self.slug)
 
     def save(self, *args, **kwargs):
+        reports = Report.objects.filter(created_at__date=date.today()).count()
         if not self.slug:
             if not self.number_report:
-                self.number_report = f"{datetime.now().strftime('%Y%m%d')}{self.id:06}"
+                self.number_report = datetime.now().strftime('%Y%m%d') + \
+                    f"{self.sector.id:03}" + f"{(reports + 1):03}"
             self.slug = slugify(self.number_report)
         return super().save()
 
@@ -63,8 +67,10 @@ class MaterialReport(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.unitary_price:
-            self.unitary_price = self.material.total_price
-        self.report.status = 2
+            print(type(self.unitary_price))
+            novo_decimal = Decimal(self.material.total_price())
+            print(type(novo_decimal))
+            self.unitary_price = novo_decimal
         return super().save()
 
     def total_price(self):
@@ -112,3 +118,7 @@ class InterestRequestMaterial(models.Model):
 
     def __str__(self):
         return self.value
+
+    def save(self, *args, **kwargs):
+        self.report.status = 2
+        super().save()

@@ -3,9 +3,83 @@
     Cadastrar Laudo
 {% endblock title %}
 {% block content %}
-<h1>cadastro laudo</h1>
-teste
-<form action="" method="post">
-{{form.as_p}}
+<div class="flex items-center justify-end h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+    <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-4xl lg:text-5xl dark:text-white">
+        <mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500">
+            Novo Laudo
+        </mark>
+    </h1>
+</div>
+<!-- Formulário -->
+<form action="" method="post">{% csrf_token %}
+    <div class="grid grid-cols-2 gap-4 mb-4 h-auto bg-gray-100  dark:bg-gray-800 rounded p-4">
+        <div class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-white dark:bg-gray-500 p-4 gap-3">
+            <div class="relative z-0 w-full mb-5 group">
+                {{ form.sector.errors }}{{ form.sector }}
+                <label for="{{ form.sector.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.sector.label }}</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {{ form.employee.errors }}{{ form.employee }}
+                <label for="{{ form.employee.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.employee.label }}</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {{ form.status.errors }}{{ form.status }}
+                <label for="{{ form.status.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.status.label }}</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {{ form.professional.errors }}{{ form.professional }}
+                <label for="{{ form.professional.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.professional.label }}</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                {{ form.pro_accountable.errors }}{{ form.pro_accountable }}
+                <label for="{{ form.pro_accountable.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.pro_accountable.label }}</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                 <label for="{{ form.justification.id_for_label }}" class="block mb-2 text-sm text-gray-500 dark:text-gray-400">{{ form.justification.label }}</label>
+                {{ form.justification.errors }}{{ form.justification }}
+            </div>
+        </div>
+        <div class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-white dark:bg-gray-500 p-4 gap-3">
+            <div class="relative z-0 w-full mb-5 group">
+                 <div class="relative overflow-x-auto shadow-md sm:rounded-lg" id="inline_form">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 w-3">
+                                    Quantidade
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    Material
+                                </th>
+                                <th scope="col" class="px-6 py-3">
+                                    
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{form_material.management_form}}
+                            {% for fm in form_material %}
+                            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                                <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ fm.quantity.errors }}{{ fm.quantity }}
+                                    <label for="{{ fc.quantity.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fm.quantity.label }}</label>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ fm.material.errors }}{{ fm.material }}
+                                    <label for="{{ fc.material.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fm.material.label }}</label>
+                                </td>
+                                <td class="px-6 py-4">
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="flex justify-between items-center gap-10">
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Cadastrar</button>
+            </div>
+        </div>
+    </div>
 </form>
 {% endblock content %}
