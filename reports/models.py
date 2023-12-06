@@ -39,7 +39,7 @@ class Report(models.Model):
         return self.number_report
 
     def get_absolute_url(self):
-        return r('reports:report', slug=self.slug)
+        return r('reports:report_view', slug=self.slug)
 
     def save(self, *args, **kwargs):
         reports = Report.objects.filter(created_at__date=date.today()).count()
@@ -74,6 +74,10 @@ class MaterialReport(models.Model):
     def total_price(self):
         self.total_price = float(self.quantity) * float(self.unitary_price)
         return Decimal(self.total_price).quantize(Decimal("00000000.00"))
+
+    def report_total_price(self):
+        materiais = MaterialReport.objects.filter(report=self.report)
+        return materiais
 
 
 class Invoice(models.Model):

@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+{% block title %}
+{{report.number_report}}
+{% endblock title %}
+{% block content %}
+{{report}}
+
+{% for material in report.laudos.all %}
+    {{material.material.name}}
+    {{material.quantity}}
+    {{material.total_price}}
+{% endfor %}
+
+{{report.laudos.report_total_price}}
+{{report.laudos.all.report_total_price}}
+{% endblock content %}
