@@ -1,7 +1,6 @@
 # xhtml2pdf
 dj-database-url
 django
-dj-static
 django-extensions
 djlint
 python-decouple
@@ -10,4 +9,4 @@ django-filter
 pillow
 urllib3==1.26.6
 cpf-cnpj-validate
-gunicorn
+dj-static
