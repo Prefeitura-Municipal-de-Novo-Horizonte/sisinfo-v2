@@ -1,12 +1,12 @@
 dj-database-url
 dj-static
-Django
+django
 django-extensions
 djlint
 python-decouple
 psycopg2-binary
 django-filter
-Pillow
+pillow
 django-compressor
 urllib3==1.26.6
 cpf-cnpj-validate

@@ -11,7 +11,7 @@ python -m pip install --upgrade pip
 
 # Build the project
 echo "Building the project..."
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt --no-cache-dir --force-reinstall
 
 # Make migrations
 echo "Making migrations..."
