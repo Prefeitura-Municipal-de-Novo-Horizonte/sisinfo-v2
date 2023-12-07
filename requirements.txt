@@ -10,3 +10,4 @@ Pillow
 django-compressor
 urllib3==1.26.6
 cpf-cnpj-validate
+xhtml2pdf

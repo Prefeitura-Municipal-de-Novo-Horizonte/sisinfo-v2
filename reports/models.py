@@ -13,7 +13,7 @@ from reports.managers import KindInterestRequestMaterialQuerySet
 
 # Create your models here.
 class Report(models.Model):
-    KINDS = (('1', 'Aberto'), ('2', 'Aguardando ...'), ('3', 'Finalizado'))
+    KINDS = (('1', 'Aberto'), ('2', 'Aguardando'), ('3', 'Finalizado'))
 
     number_report = models.CharField(
         'identificação do laudo', max_length=20, unique=True, blank=True, null=True)
@@ -53,7 +53,7 @@ class Report(models.Model):
 
 class MaterialReport(models.Model):
     report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.SET_NULL, related_name='laudos')
+        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='laudos')
     material = models.ForeignKey(
         Material, verbose_name='material', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais')
     quantity = models.IntegerField(
