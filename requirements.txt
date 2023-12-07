@@ -1,6 +1,5 @@
 xhtml2pdf
 dj-database-url
-dj-static
 django
 django-extensions
 djlint

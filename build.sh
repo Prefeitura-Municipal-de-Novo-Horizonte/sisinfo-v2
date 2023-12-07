@@ -1,7 +1,6 @@
 #!/bin/bash
-
 # Create a virtual environment
-secho "Creating a virtual environment..."
+echo "Creating a virtual environment..."
 python3 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
@@ -14,7 +13,7 @@ python -m pip install --upgrade pip
 
 # Build the project
 echo "Building the project..."
-python -m pip install -r requirements.txt --no-cache-dir --force-reinstall
+python -m pip install -r requirements.txt --no-cache-dir
 
 # Make migrations
 echo "Making migrations..."
