@@ -7,10 +7,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
 from django.urls import reverse
-from xhtml2pdf import pisa
 
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
 from reports.models import MaterialReport, Report
+
+# from xhtml2pdf import pisa
 
 
 # Create your views here.
@@ -101,23 +102,26 @@ def report_update(request, slug):
         return redirect('reports:reports')
 
 
+# def pdf_report(request, slug):
+#     report = get_object_or_404(Report, slug=slug)
+#     template_name = 'pdf_template.html'
+#     context = {
+#         'report': report,
+#     }
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'inline'
+#     template = get_template(template_name)
+#     html = template.render(context)
+#     # create a pdf
+#     pisa_status = pisa.CreatePDF(
+#         html, dest=response)
+#     # if error then show some funy view
+#     if pisa_status.err:
+#         return HttpResponse(f'We had some errors <pre>{html}</pre>')
+#     return response
+
 def pdf_report(request, slug):
-    report = get_object_or_404(Report, slug=slug)
-    template_name = 'pdf_template.html'
-    context = {
-        'report': report,
-    }
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline'
-    template = get_template(template_name)
-    html = template.render(context)
-    # create a pdf
-    pisa_status = pisa.CreatePDF(
-        html, dest=response)
-    # if error then show some funy view
-    if pisa_status.err:
-        return HttpResponse(f'We had some errors <pre>{html}</pre>')
-    return response
+    pass
 
 
 def material_report_delete(request, id):
