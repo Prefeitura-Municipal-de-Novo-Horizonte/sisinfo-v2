@@ -5,7 +5,8 @@ from django.core.paginator import Paginator
 from django.forms import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import get_template
+
+# from django.template.loader import get_template
 from django.urls import reverse
 
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
@@ -121,7 +122,7 @@ def report_update(request, slug):
 #     return response
 
 def pdf_report(request, slug):
-    pass
+    return HttpResponse('OK')
 
 
 def material_report_delete(request, id):
