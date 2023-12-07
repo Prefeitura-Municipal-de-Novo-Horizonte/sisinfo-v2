@@ -1,6 +1,7 @@
 # xhtml2pdf
 dj-database-url
 django
+dj-static
 django-extensions
 djlint
 python-decouple
