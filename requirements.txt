@@ -1,3 +1,4 @@
+xhtml2pdf
 dj-database-url
 dj-static
 django
@@ -7,7 +8,6 @@ python-decouple
 psycopg2-binary
 django-filter
 pillow
-django-compressor
 urllib3==1.26.6
 cpf-cnpj-validate
-xhtml2pdf
+

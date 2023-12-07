@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third Apps
-    "compressor",
     "django_extensions",
     "django_filters",
     # My Application
