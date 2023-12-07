@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "npx tailwindcss -i static/tailwindcss/input.css -o static/css/djangotw-ui.css --watch"
+    "dev": "npx tailwindcss -i static/tailwindcss/input.css -o static/css/djangotw-ui.css --watch",
+    "build": "sudo apt-get install pkg-config libcairo2-dev"
   },
   "devDependencies": {
     "prettier": "^3.0.3",
