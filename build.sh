@@ -2,11 +2,13 @@
 
 # Create a virtual environment
 echo "Iniciando e atualizando os packages"
-sudo apt-get install pkg-config libcairo2-dev
+apt-get install pkg-config libcairo2-dev
 echo "Creating a virtual environment..."
 python3 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
+echo "Mostrando versão do python..."
+python --version
 
 # Install the latest version of pip
 echo "Installing the latest version of pip..."
