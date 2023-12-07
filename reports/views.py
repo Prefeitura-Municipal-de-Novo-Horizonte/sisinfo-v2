@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from django.forms import inlineformset_factory
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -52,7 +53,12 @@ def report_register(request):
 
 def report_view(request, slug):
     report = get_object_or_404(Report, slug=slug)
+    materiais_report = MaterialReport.objects.filter(report=report)
+    total_price = 0
+    for material in materiais_report:
+        total_price = total_price + material.total_price()
     context = {
         'report': report,
+        'total_price': total_price,
     }
     return render(request, 'report.html', context)

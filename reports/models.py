@@ -31,7 +31,7 @@ class Report(models.Model):
     updated_at = models.DateTimeField('atualizado em', auto_now=True)
 
     class Meta:
-        ordering = ['created_at', 'status', 'updated_at']
+        ordering = ['-created_at', 'status', '-updated_at']
         verbose_name = 'laudo'
         verbose_name_plural = 'laudos'
 
@@ -74,10 +74,6 @@ class MaterialReport(models.Model):
     def total_price(self):
         self.total_price = float(self.quantity) * float(self.unitary_price)
         return Decimal(self.total_price).quantize(Decimal("00000000.00"))
-
-    def report_total_price(self):
-        materiais = MaterialReport.objects.filter(report=self.report)
-        return materiais
 
 
 class Invoice(models.Model):
