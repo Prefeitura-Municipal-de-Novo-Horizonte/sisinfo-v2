@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Create a virtual environment
-echo "Iniciando e atualizando os packages"
-apt-get install pkg-config libcairo2-dev
-echo "Creating a virtual environment..."
+secho "Creating a virtual environment..."
 python3 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
