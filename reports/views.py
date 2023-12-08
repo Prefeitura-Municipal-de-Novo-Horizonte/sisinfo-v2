@@ -122,7 +122,12 @@ def report_update(request, slug):
 #     return response
 
 def pdf_report(request, slug):
-    return HttpResponse('OK')
+    report = get_object_or_404(Report, slug=slug)
+    context = {
+        'report': report,
+    }
+    return render(request, 'pdf_template.html', context)
+    # return HttpResponse('OK')
 
 
 def material_report_delete(request, id):

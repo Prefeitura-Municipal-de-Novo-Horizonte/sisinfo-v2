@@ -10,6 +10,8 @@ python --version
 # Install the latest version of pip
 echo "Installing the latest version of pip..."
 python -m pip install --upgrade pip
+echo "Upgrading the latest version of setuptools and wheel ..."
+python -m pip install --upgrade setuptools wheel
 
 # Build the project
 echo "Building the project..."

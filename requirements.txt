@@ -1,4 +1,4 @@
-# xhtml2pdf
+xhtml2pdf
 dj-database-url
 django
 django-extensions
@@ -10,4 +10,4 @@ pillow
 urllib3==1.26.6
 cpf-cnpj-validate
 dj-static
-WeasyPrint
+# WeasyPrint
