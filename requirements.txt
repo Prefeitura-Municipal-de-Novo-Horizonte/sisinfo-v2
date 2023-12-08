@@ -10,3 +10,4 @@ pillow
 urllib3==1.26.6
 cpf-cnpj-validate
 dj-static
+reportlab
