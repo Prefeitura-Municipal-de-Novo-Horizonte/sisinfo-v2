@@ -1,4 +1,4 @@
-# xhtml2pdf
+xhtml2pdf
 dj-database-url
 django
 django-extensions
