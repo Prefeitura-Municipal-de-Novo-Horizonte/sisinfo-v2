@@ -1,6 +1,5 @@
 {
     "version": 2,
-    "installCommand"
     "builds": [
         {
             "src": "core/wsgi.py",
