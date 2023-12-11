@@ -25,3 +25,8 @@ python manage.py migrate --noinput
 # Collect static files
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear
+
+echo 'Version python'
+python3 --version
+echo 'Version pango'
+pango-view --version
