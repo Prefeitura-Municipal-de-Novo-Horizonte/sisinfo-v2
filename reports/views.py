@@ -103,33 +103,15 @@ def report_update(request, slug):
         return redirect('reports:reports')
 
 
-# def pdf_report(request, slug):
-#     report = get_object_or_404(Report, slug=slug)
-#     template_name = 'pdf_template.html'
-#     context = {
-#         'report': report,
-#     }
-#     response = HttpResponse(content_type='application/pdf')
-#     response['Content-Disposition'] = 'inline'
-#     template = get_template(template_name)
-#     html = template.render(context)
-#     # create a pdf
-#     pisa_status = pisa.CreatePDF(
-#         html, dest=response)
-#     # if error then show some funy view
-#     if pisa_status.err:
-#         return HttpResponse(f'We had some errors <pre>{html}</pre>')
-#     return response
-
 def pdf_report(request, slug):
     report = get_object_or_404(Report, slug=slug)
     context = {
         'report': report,
     }
     return render(request, 'pdf_template.html', context)
-    # return HttpResponse('OK')
 
 
+@login_required(login_url='login')
 def material_report_delete(request, id):
     material_report = get_object_or_404(MaterialReport, id=id)
     report = material_report.report

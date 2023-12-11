@@ -87,13 +87,6 @@ WSGI_APPLICATION = "core.wsgi.application"
 default_dburl = config("DATABASE_URL")
 DATABASES = {"default": dburl(default_dburl)}
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 AUTH_USER_MODEL = 'authenticate.ProfessionalUser'
 
 # Password validation
@@ -129,10 +122,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-# STATIC_URL = 'static/'
-# STATIC_ROOT = str(BASE_DIR / 'staticfiles/static/')
-# STATICFILES_DIR = [BASE_DIR / 'static/']
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]

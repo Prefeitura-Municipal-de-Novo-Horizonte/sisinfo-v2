@@ -1,5 +1,3 @@
-# pycairo
-# xhtml2pdf
 dj-database-url
 django
 django-extensions
@@ -7,10 +5,7 @@ djlint
 python-decouple
 psycopg2-binary
 django-filter
-Pillow
-request
-idna
+pillow
 urllib3==1.26.6
 cpf-cnpj-validate
 dj-static
-# WeasyPrint
