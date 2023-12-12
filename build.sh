@@ -8,6 +8,7 @@ LOCAL_PATH=$(pwd)
 
 ###############################################################
 set -e
+yum makecache --refresh
 yum install -y yum-utils rpmdevtools
 cd /tmp
 yumdownloader --resolve \
@@ -28,6 +29,11 @@ rpmdev-extract -- *rpm
 
 mkdir /opt/lib
 cp -P -r /tmp/*/usr/lib64/* /opt/lib
+ln libgobject-2.0.so.0 libgobject-2.0.so && \
+ln libcairo.so.2 libcairo.so && \
+ln libpango-1.0.so.0 pango-1.0 && \
+ln libpangoft2-1.0.so.0 pangoft2-1.0 && \
+ln libpangocairo-1.0.so.0 pangocairo-1.0
 # pixbuf need list loaders cache
 # https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-query-loaders.html
 PIXBUF_BIN=$(find /tmp -name gdk-pixbuf-query-loaders-64)
