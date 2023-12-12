@@ -4,8 +4,6 @@ echo "Creating a virtual environment..."
 python3.9 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
-echo "Mostrando versão do python..."
-python --version
 
 # Install the latest version of pip
 echo "Installing the latest version of pip..."
@@ -26,7 +24,11 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput --clear
 
+./layer_builder.sh
+
 echo 'Version python'
 python3 --version
 echo 'Version pango'
 pango-view --version
+echo "Versões PIP FREEZE..."
+pip freeze
