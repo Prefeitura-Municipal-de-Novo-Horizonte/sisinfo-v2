@@ -3,9 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.core.paginator import Paginator
 from django.forms import inlineformset_factory
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-
 from django.urls import reverse
 
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
