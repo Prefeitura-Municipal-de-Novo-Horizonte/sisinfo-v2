@@ -37,7 +37,7 @@ cp -r /usr/share/mime /opt/lib/mime
 RUNTIME=$(echo "$AWS_EXECUTION_ENV" | cut -d _ -f 3)
 export RUNTIME
 mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
-python -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
+python3 -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
 
 cd /opt
 # zip -r /out/layer.zip lib/* python/*
@@ -45,22 +45,22 @@ cd /opt
 
 # Install the latest version of pip
 echo "Installing the latest version of pip..."
-python -m pip install --upgrade pip
+python3 -m pip install --upgrade pip
 echo "Upgrading the latest version of setuptools and wheel ..."
-python -m pip install --upgrade setuptools wheel
+python3 -m pip install --upgrade setuptools wheel
 
 # Build the project
 echo "Building the project..."
-python -m pip install -r requirements.txt --no-cache-dir
+python3 -m pip install -r requirements.txt --no-cache-dir
 
 # Make migrations
 echo "Making migrations..."
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
+python3 manage.py makemigrations --noinput
+python3 manage.py migrate --noinput
 
 # Collect static files
 echo "Collecting static files..."
-python manage.py collectstatic --noinput --clear
+python3 manage.py collectstatic --noinput --clear
 
 
 
