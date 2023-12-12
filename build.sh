@@ -4,10 +4,11 @@
 # python3.9 -m venv venv
 # echo "Acessing a virtual environment..."
 # source venv/bin/activate
+pwd
 ###############################################################
 set -e
 yum install -y yum-utils rpmdevtools
-pwd
+LOCAL_PATH=$(pwd)
 cd /tmp
 yumdownloader --resolve \
     cairo.x86_64 \
@@ -40,13 +41,14 @@ export RUNTIME
 mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
 python3 -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
 
+cd $LOCAL_PATH
 # cd /opt
 # zip -r /out/layer.zip lib/* python/*
 ###############################################################
 
 # Install the latest version of pip
 echo "Installing the latest version of pip..."
-python3 -m pip install --upgrade pip
+python3 -m pip install --upgrade pip 
 echo "Upgrading the latest version of setuptools and wheel ..."
 python3 -m pip install --upgrade setuptools wheel
 
@@ -54,7 +56,7 @@ python3 -m pip install --upgrade setuptools wheel
 echo "Building the project..."
 ls -la
 pwd
-python3 -m pip install -r requirements.txt --no-cache-dir
+python3 -m pip install -r requirements.txt
 
 # Make migrations
 echo "Making migrations..."
