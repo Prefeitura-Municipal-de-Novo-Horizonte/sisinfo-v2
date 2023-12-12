@@ -28,7 +28,6 @@ rpmdev-extract -- *rpm
 
 mkdir /opt/lib
 cp -P -r /tmp/*/usr/lib64/* /opt/lib
-ln libgobject-2.0.so.0 libgobject-2.0.so && \
 ln libcairo.so.2 libcairo.so && \
 ln libpango-1.0.so.0 pango-1.0 && \
 ln libpangoft2-1.0.so.0 pangoft2-1.0 && \
