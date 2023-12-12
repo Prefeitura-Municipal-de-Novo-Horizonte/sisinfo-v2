@@ -59,7 +59,7 @@ mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
 python -m pip install "weasyprint<53.0" -t "/opt/python/lib/$RUNTIME/site-packages"
 
 cd /opt
-zip -r9 /out/layer.zip lib/* python/*
+zip -r /out/layer.zip lib/* python/*
 ###############################################################
 
 echo 'Version python'
