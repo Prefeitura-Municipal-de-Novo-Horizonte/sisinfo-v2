@@ -8,7 +8,6 @@ LOCAL_PATH=$(pwd)
 
 ###############################################################
 set -e
-yum makecache --refresh
 yum install -y yum-utils rpmdevtools
 cd /tmp
 yumdownloader --resolve \
