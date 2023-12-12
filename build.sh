@@ -39,7 +39,7 @@ export RUNTIME
 mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
 python3 -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
 
-cd /opt
+# cd /opt
 # zip -r /out/layer.zip lib/* python/*
 ###############################################################
 
@@ -51,6 +51,8 @@ python3 -m pip install --upgrade setuptools wheel
 
 # Build the project
 echo "Building the project..."
+ls -la
+pwd
 python3 -m pip install -r requirements.txt --no-cache-dir
 
 # Make migrations
