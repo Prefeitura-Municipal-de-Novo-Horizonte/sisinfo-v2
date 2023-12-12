@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 # from django.template.loader import get_template
 from django.urls import reverse
+from weasyprint import CSS, HTML
 
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
 from reports.models import MaterialReport, Report
