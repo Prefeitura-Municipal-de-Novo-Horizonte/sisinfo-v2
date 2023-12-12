@@ -7,6 +7,7 @@
 ###############################################################
 set -e
 yum install -y yum-utils rpmdevtools
+pwd
 cd /tmp
 yumdownloader --resolve \
     cairo.x86_64 \
