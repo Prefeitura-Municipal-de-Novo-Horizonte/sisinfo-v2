@@ -30,3 +30,5 @@ echo 'Version python'
 python3 --version
 echo 'Version pango'
 pango-view --version
+echo "version weasyprint"
+weasyprint --info
