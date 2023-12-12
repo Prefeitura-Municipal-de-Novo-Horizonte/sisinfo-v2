@@ -1,14 +1,14 @@
 #!/bin/bash
-# Create a virtual environment
-# echo "Creating a virtual environment..."
-# python3.9 -m venv venv
-# echo "Acessing a virtual environment..."
-# source venv/bin/activate
-pwd
+Create a virtual environment
+echo "Creating a virtual environment..."
+python3.9 -m venv venv
+echo "Acessing a virtual environment..."
+source venv/bin/activate
+LOCAL_PATH=$(pwd)
+
 ###############################################################
 set -e
 yum install -y yum-utils rpmdevtools
-LOCAL_PATH=$(pwd)
 cd /tmp
 yumdownloader --resolve \
     cairo.x86_64 \
@@ -20,7 +20,6 @@ yumdownloader --resolve \
     libuuid.x86_64 \
     libblkid.x86_64 \
     glib2.x86_64 \
-    cairo-devel.x86_64 \
 
 rpmdev-extract -- *rpm
 
@@ -36,10 +35,10 @@ $PIXBUF_BIN > /opt/lib/loaders.cache
 # https://www.linuxtopia.org/online_books/linux_desktop_guides/gnome_2.14_admin_guide/mimetypes-database.html
 cp -r /usr/share/mime /opt/lib/mime
 
-RUNTIME=$(echo "$AWS_EXECUTION_ENV" | cut -d _ -f 3)
-export RUNTIME
-mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
-python3 -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
+# RUNTIME=$(echo "$AWS_EXECUTION_ENV" | cut -d _ -f 3)
+# export RUNTIME
+# mkdir -p "/opt/python/lib/$RUNTIME/site-packages"
+# python -m pip install "weasyprint<52.0" -t "/opt/python/lib/$RUNTIME/site-packages"
 
 cd $LOCAL_PATH
 # cd /opt
@@ -54,8 +53,6 @@ python3 -m pip install --upgrade setuptools wheel
 
 # Build the project
 echo "Building the project..."
-ls -la
-pwd
 python3 -m pip install -r requirements.txt
 
 # Make migrations
@@ -67,12 +64,4 @@ python3 manage.py migrate --noinput
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput --clear
 
-
-
-echo 'Version python'
-python3 --version
-echo 'Version pango'
-pango-view --version
-echo "Versões PIP FREEZE..."
-pip freeze
 weasyprint --info
