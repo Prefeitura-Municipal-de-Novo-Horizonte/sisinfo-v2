@@ -9,4 +9,3 @@ pillow
 urllib3
 cpf-cnpj-validate
 dj-static
-weasyprint==52
