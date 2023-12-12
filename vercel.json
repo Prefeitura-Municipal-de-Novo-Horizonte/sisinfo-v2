@@ -3,7 +3,6 @@
     "regions": [
         "gru1"
     ],
-    "installCommand": ["yum makecache --refresh", "yum install -y yum-utils rpmdevtools", "yum install expat glib2 libffi libffi-dev cairo pango"],
     "builds": [
         {
             "src": "core/wsgi.py",
