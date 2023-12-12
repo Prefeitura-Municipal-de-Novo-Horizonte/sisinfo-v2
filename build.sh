@@ -1,5 +1,5 @@
 #!/bin/bash
-Create a virtual environment
+# Create a virtual environment
 echo "Creating a virtual environment..."
 python3.9 -m venv venv
 echo "Acessing a virtual environment..."
@@ -20,6 +20,9 @@ yumdownloader --resolve \
     libuuid.x86_64 \
     libblkid.x86_64 \
     glib2.x86_64 \
+    gtk3-devel.x86_64 \
+    dbus-glib.x86_64 \
+    gtk3.x86_64 \
 
 rpmdev-extract -- *rpm
 
