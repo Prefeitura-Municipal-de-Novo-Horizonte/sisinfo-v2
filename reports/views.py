@@ -6,6 +6,7 @@ from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
+from reports.filters import ReportFilter
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
 from reports.models import MaterialReport, Report
 
@@ -13,13 +14,16 @@ from reports.models import MaterialReport, Report
 # Create your views here.
 @login_required(login_url='login')
 def reports(request):
-    report_list = Report.objects.all()
-    paginator = Paginator(report_list, 15)  # Show 15 reports per page.
+    reports = Report.objects.all()
+    myFilter = ReportFilter(request.GET, queryset=reports)
+    reports = myFilter.qs
+    paginator = Paginator(reports, 15)  # Show 15 reports per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     context = {
         "page_obj": page_obj,
+        "myFilter": myFilter,
     }
     return render(request, 'reports.html', context)
 
