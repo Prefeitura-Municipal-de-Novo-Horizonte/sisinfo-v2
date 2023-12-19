@@ -9,7 +9,8 @@
             "use": "@vercel/python",
             "config": {
                 "maxLambdaSize": "50mb",
-                "runtime": "python3.9"
+                "runtime": "python3.9",
+                "maxDuration": 60
             }
         },
         {
@@ -30,13 +31,9 @@
         },
         {
             "src": "/(.*)",
-            "dest": "core/wsgi.py"
+            "dest": "core/wsgi.py",
+            "maxDuration": 90
         }
     ],
-    "functions": {
-        "bot/**/*": {
-            "maxDuration": 60
-        }
-    },
     "outputDirectory": "staticfiles"
 }
