@@ -5,6 +5,11 @@ module.exports = {
       './templates/**/*.html',
       './node_modules/flowbite/**/*.js'
   ],
+  variants: {
+    extend: {
+      transform: ['hover'],
+    }
+  },
   theme: {
     extend: {},
   },
