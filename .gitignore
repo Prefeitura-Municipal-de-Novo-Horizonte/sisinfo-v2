@@ -3,6 +3,7 @@
 
 ### Node ###
 # Logs
+db.json
 logs
 *.log
 npm-debug.log*
