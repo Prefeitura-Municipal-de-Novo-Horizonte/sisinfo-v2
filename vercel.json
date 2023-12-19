@@ -33,13 +33,5 @@
             "dest": "core/wsgi.py"
         }
     ],
-    "functions": {
-        "/(.*)": {
-            "maxDuration": 300
-        },
-        "core/*.py": {
-            "maxDuration": 60
-        }
-    },
     "outputDirectory": "staticfiles"
 }
