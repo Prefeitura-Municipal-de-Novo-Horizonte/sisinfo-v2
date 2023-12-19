@@ -31,8 +31,7 @@
         },
         {
             "src": "/(.*)",
-            "dest": "core/wsgi.py",
-            "maxDuration": 90
+            "dest": "core/wsgi.py"
         }
     ],
     "outputDirectory": "staticfiles"
