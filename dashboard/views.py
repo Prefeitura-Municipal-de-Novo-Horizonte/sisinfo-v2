@@ -1,16 +1,12 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.shortcuts import resolve_url as r
 from django.urls import reverse
 
-from dashboard.filters import (
-    BiddingFilter,
-    DirectionFilter,
-    MaterialFilter,
-    SectorFilter,
-)
+from dashboard.filters import BiddingFilter, DirectionFilter, MaterialFilter, SectorFilter
 from dashboard.forms import BiddingForm, DirectionForm, MaterialForm, SectorForm
 from dashboard.models import Bidding, Direction, Material, Sector
 
@@ -130,9 +126,13 @@ def sectors(request):
     form = SectorForm()
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
+    paginator = Paginator(setores, 15)  # Show 15 reports per page.
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     context = {
         "form": form,
-        "setores": setores,
+        "page_obj": page_obj,
         "myFilter": myFilter,
         "btn": "Adicionar novo Setor",
     }
