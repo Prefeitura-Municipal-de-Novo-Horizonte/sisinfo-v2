@@ -33,5 +33,10 @@
             "dest": "core/wsgi.py"
         }
     ],
+    "functions": {
+        "bot/**/*": {
+            "maxDuration": 60
+        }
+    },
     "outputDirectory": "staticfiles"
 }
