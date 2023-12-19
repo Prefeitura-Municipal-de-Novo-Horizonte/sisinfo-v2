@@ -38,7 +38,7 @@
             "maxDuration": 300
         },
         "core/*.py": {
-            "maxDuration": 100
+            "maxDuration": 60
         }
     },
     "outputDirectory": "staticfiles"
