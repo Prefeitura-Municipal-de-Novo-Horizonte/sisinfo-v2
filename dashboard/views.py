@@ -52,10 +52,13 @@ def direction_detail(request, slug):
     total_setores = setores.count()
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
+    paginator = Paginator(setores, 10)  # Show 15 reports per page.
 
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     context = {
         "diretoria": diretoria,
-        "setores": setores,
+        "page_obj": page_obj,
         "myFilter": myFilter,
         "total_setores": total_setores,
     }
