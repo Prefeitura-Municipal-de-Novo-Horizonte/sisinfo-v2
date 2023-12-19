@@ -9,12 +9,22 @@ from django.urls import reverse
 from dashboard.filters import BiddingFilter, DirectionFilter, MaterialFilter, SectorFilter
 from dashboard.forms import BiddingForm, DirectionForm, MaterialForm, SectorForm
 from dashboard.models import Bidding, Direction, Material, Sector
+from reports.models import Report
 
 
 # Create your views here.
 @login_required(login_url='login')
 def index(request):
-    context = {}
+    reports_user = Report.objects.filter(pro_accountable=request.user)
+    reports = Report.objects.all()
+    total_reports = reports.count()
+    total_reports_user = reports_user.count()
+
+    context = {
+        'total_reports': total_reports,
+        'total_reports_user': total_reports_user,
+        
+        }
     return render(request, "index.html", context)
 
 
