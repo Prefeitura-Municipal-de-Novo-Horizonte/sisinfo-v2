@@ -35,7 +35,7 @@ class ReportForm(forms.ModelForm):
                     field.widget.attrs['data-placeholder'] = self.request.user
                     field.initial = self.request.user.id
                 if field in [self.fields["pro_accountable"]]:
-                    if self.request.user.is_tech is True:
+                    if self.request.user.is_tech is True and self.request.user.username != 'administrador':
                         professional = ProfessionalUser.objects.filter(
                             id=self.request.user.id)
                         field.queryset = professional
