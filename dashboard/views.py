@@ -15,16 +15,20 @@ from reports.models import Report
 # Create your views here.
 @login_required(login_url='login')
 def index(request):
-    reports_user = Report.objects.filter(pro_accountable=request.user)
-    reports = Report.objects.all()
-    total_reports = reports.count()
-    total_reports_user = reports_user.count()
-
+    total_reports_user = Report.objects.filter(
+        professional=request.user).count()
+    total_reports = Report.objects.all().count()
+    total_sectors = Sector.objects.all().count()
+    total_directions = Direction.objects.all().count()
+    total_reports_accountable = Report.objects.all().filter(
+        pro_accountable=request.user).count()
     context = {
         'total_reports': total_reports,
         'total_reports_user': total_reports_user,
-        
-        }
+        'total_sectors': total_sectors,
+        'total_directions': total_directions,
+        'total_reports_accountable': total_reports_accountable,
+    }
     return render(request, "index.html", context)
 
 
@@ -62,7 +66,7 @@ def direction_detail(request, slug):
     total_setores = setores.count()
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
-    paginator = Paginator(setores, 10)  # Show 15 reports per page.
+    paginator = Paginator(setores, 12)  # Show 15 reports per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
