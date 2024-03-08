@@ -13,57 +13,82 @@ from reports.managers import KindInterestRequestMaterialQuerySet
 
 # Create your models here.
 class Report(models.Model):
-    KINDS = (('1', 'Aberto'), ('2', 'Aguardando'), ('3', 'Finalizado'))
+    KINDS = (("1", "Aberto"), ("2", "Aguardando"), ("3", "Finalizado"))
 
     number_report = models.CharField(
-        'identificação do laudo', max_length=20, unique=True, blank=True, null=True)
-    slug = models.SlugField('slug')
+        "identificação do laudo", max_length=20, unique=True, blank=True, null=True
+    )
+    slug = models.SlugField("slug")
     sector = models.ForeignKey(
-        Sector, verbose_name='setor', on_delete=models.SET_NULL, blank=True, null=True)
-    employee = models.CharField('funcionario', max_length=200, blank=True)
-    status = models.CharField('status', max_length=1, default=1, choices=KINDS)
-    justification = models.TextField('justificativa')
+        Sector, verbose_name="setor", on_delete=models.SET_NULL, blank=True, null=True
+    )
+    employee = models.CharField("funcionario", max_length=200, blank=True)
+    status = models.CharField("status", max_length=1, default=1, choices=KINDS)
+    justification = models.TextField("justificativa")
     professional = models.ForeignKey(
-        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional', related_name='profissional')
+        ProfessionalUser,
+        on_delete=models.DO_NOTHING,
+        verbose_name="profissional",
+        related_name="profissional",
+    )
     pro_accountable = models.ForeignKey(
-        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional responsável', related_name='responsável')
-    created_at = models.DateTimeField('criado em', auto_now_add=True)
-    updated_at = models.DateTimeField('atualizado em', auto_now=True)
+        ProfessionalUser,
+        on_delete=models.DO_NOTHING,
+        verbose_name="profissional responsável",
+        related_name="responsável",
+    )
+    created_at = models.DateTimeField("criado em", auto_now_add=True)
+    updated_at = models.DateTimeField("atualizado em", auto_now=True)
 
     class Meta:
-        ordering = ['-created_at', 'status', '-updated_at']
-        verbose_name = 'laudo'
-        verbose_name_plural = 'laudos'
+        ordering = ["-created_at", "status", "-updated_at"]
+        verbose_name = "laudo"
+        verbose_name_plural = "laudos"
 
     def __str__(self):
         return self.number_report
 
     def get_absolute_url(self):
-        return r('reports:report_view', slug=self.slug)
+        return r("reports:report_view", slug=self.slug)
 
     def save(self, *args, **kwargs):
         reports = Report.objects.filter(created_at__date=date.today()).count()
         if not self.slug:
             if not self.number_report:
-                self.number_report = datetime.now().strftime('%Y%m%d') + \
-                    f"{self.sector.id:03}" + f"{(reports + 1):03}"
+                self.number_report = (
+                    datetime.now().strftime("%Y%m%d")
+                    + f"{self.sector.id:03}"
+                    + f"{(reports + 1):03}"
+                )
             self.slug = slugify(self.number_report)
         return super().save()
 
 
 class MaterialReport(models.Model):
     report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='laudos')
+        Report,
+        verbose_name="laudo",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="laudos",
+    )
     material = models.ForeignKey(
-        Material, verbose_name='material', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais')
-    quantity = models.IntegerField(
-        'quantidade', blank=True, null=True, default=1)
+        Material,
+        verbose_name="material",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="materiais",
+    )
+    quantity = models.IntegerField("quantidade", blank=True, null=True, default=1)
     unitary_price = models.DecimalField(
-        "valor", max_digits=8, decimal_places=2, blank=True, null=True)
+        "valor", max_digits=8, decimal_places=2, blank=True, null=True
+    )
 
     class Meta:
-        verbose_name = 'materiais do laudo'
-        verbose_name_plural = 'materiais do laudo'
+        verbose_name = "materiais do laudo"
+        verbose_name_plural = "materiais do laudo"
 
     def save(self, *args, **kwargs):
         if not self.unitary_price:
@@ -77,42 +102,50 @@ class MaterialReport(models.Model):
 
 
 class Invoice(models.Model):
-    note_number = models.CharField('numero da Nota', max_length=10)
-    supplier = models.ForeignKey(Supplier, verbose_name='fornecedor',
-                                 related_name='fornecedor', on_delete=models.SET_NULL, blank=True, null=True)
+    note_number = models.CharField("numero da Nota", max_length=10)
+    supplier = models.ForeignKey(
+        Supplier,
+        verbose_name="fornecedor",
+        related_name="fornecedor",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
     access_key = models.CharField(
-        'chave de acesso', max_length=50, blank=True, null=True)
-    note_issuance_date = models.DateField('data da emissão da nota')
+        "chave de acesso", max_length=50, blank=True, null=True
+    )
+    note_issuance_date = models.DateField("data da emissão da nota")
 
     class Meta:
-        ordering = ('note_issuance_date', 'supplier', 'note_number')
-        verbose_name = 'nota fiscal'
-        verbose_name_plural = 'notas fiscais'
+        ordering = ("note_issuance_date", "supplier", "note_number")
+        verbose_name = "nota fiscal"
+        verbose_name_plural = "notas fiscais"
 
     def __str__(self):
         return self.note_number
 
 
 class InterestRequestMaterial(models.Model):
-    REQUEST = 'S'
-    INTEREST = 'E'
+    REQUEST = "S"
+    INTEREST = "E"
     KINDS = (
-        (REQUEST, 'Solicitação'),
-        (INTEREST, 'Empenho'),
+        (REQUEST, "Solicitação"),
+        (INTEREST, "Empenho"),
     )
-    value = models.CharField('valor', max_length=20)
-    kind = models.CharField('kind', max_length=1,
-                            blank=True, null=True, choices=KINDS)
+    value = models.CharField("valor", max_length=20)
+    kind = models.CharField("kind", max_length=1, blank=True, null=True, choices=KINDS)
     report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.SET_NULL)
+        Report, verbose_name="laudo", blank=True, null=True, on_delete=models.SET_NULL
+    )
     invoice = models.ForeignKey(
-        Invoice, verbose_name='nota fiscal', null=True, on_delete=models.SET_NULL)
+        Invoice, verbose_name="nota fiscal", null=True, on_delete=models.SET_NULL
+    )
 
     objects = KindInterestRequestMaterialQuerySet.as_manager()
 
     class Meta:
-        verbose_name = 'solicitação ou empenho'
-        verbose_name_plural = 'solicitações ou empenhos'
+        verbose_name = "solicitação ou empenho"
+        verbose_name_plural = "solicitações ou empenhos"
 
     def __str__(self):
         return self.value

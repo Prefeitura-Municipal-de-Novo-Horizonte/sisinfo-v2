@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 from pathlib import Path
 
 from decouple import Csv, config
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
+    "equipments.apps.EquipmentsConfig",
+    "services.apps.ServicesConfig",
 ]
 
 MIDDLEWARE = [
@@ -87,7 +90,7 @@ WSGI_APPLICATION = "core.wsgi.application"
 default_dburl = config("DATABASE_URL")
 DATABASES = {"default": dburl(default_dburl)}
 
-AUTH_USER_MODEL = 'authenticate.ProfessionalUser'
+AUTH_USER_MODEL = "authenticate.ProfessionalUser"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -127,8 +130,8 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
 
-MEDIA_URL = 'media/images/'
-MEDIA_ROOT = BASE_DIR / 'media' / 'images'
+MEDIA_URL = "media/images/"
+MEDIA_ROOT = BASE_DIR / "media" / "images"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
