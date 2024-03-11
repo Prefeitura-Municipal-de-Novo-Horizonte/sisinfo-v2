@@ -49,8 +49,6 @@ INSTALLED_APPS = [
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
-    "equipments.apps.EquipmentsConfig",
-    "services.apps.ServicesConfig",
 ]
 
 MIDDLEWARE = [
