@@ -143,7 +143,8 @@ table#materials tr {
     border-bottom: .5mm solid rgb(158, 141, 158);
 }
 table#materials td {
-    padding-top: 3mm;
+    padding-top: 2mm;
+    font-size: 7.5pt;
 }
 table#materials td:last-of-type {
   text-align: right;
