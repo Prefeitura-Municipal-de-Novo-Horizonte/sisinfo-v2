@@ -153,5 +153,8 @@ class Material(AbsBiddingMaterial):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name) + "-" + str(self.bidding.id)
+            self.slug = slugify(self.name)
+            self.slug = self.slug.replace(" ", "")
+            self.slug = self.slug[:10] + "-" + \
+                self.supplier.slug[:10] + "-" + self.bidding.slug
         return super().save()
