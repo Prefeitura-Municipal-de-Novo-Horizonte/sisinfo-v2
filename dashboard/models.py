@@ -88,7 +88,7 @@ class AbsBiddingMaterial(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = slugify(self.name) + "-" + str(self.id)
         return super().save()
 
 
