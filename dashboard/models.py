@@ -86,10 +86,10 @@ class AbsBiddingMaterial(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name) + "-" + str(self.id)
-        return super().save()
+    # def save(self, *args, **kwargs):
+    #     if not self.slug:
+    #         self.slug = slugify(self.name)
+    #     return super().save()
 
 
 class Bidding(AbsBiddingMaterial):
@@ -104,6 +104,8 @@ class Bidding(AbsBiddingMaterial):
         return r("dashboard:licitacao", slug=self.slug)
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
         materiais = Material.objects.filter(bidding=self.id)
         for material in materiais:
             if self.status == "1":
@@ -148,3 +150,8 @@ class Material(AbsBiddingMaterial):
             )
             return Decimal(self.total_price).quantize(Decimal("00000000.00"))
         return self.price
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name) + "-" + str(self.bidding.id)
+        return super().save()
