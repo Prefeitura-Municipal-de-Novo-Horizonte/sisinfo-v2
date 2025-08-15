@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
 # from django.shortcuts import resolve_url as r
@@ -356,9 +357,12 @@ def materials(request):
 def material_detail(request, slug):
     material = get_object_or_404(Material, slug=slug)
     reports = MaterialReport.objects.filter(material=material.id)
+    total_quantity = reports.aggregate(total_value=Sum("quantity"))
+    total_quantity = total_quantity.get("total_value")
     context = {
         "material": material,
         "reports": reports,
+        "total_quantity": total_quantity,
     }
     return render(request, "licitacao/material_detail.html", context)
 
