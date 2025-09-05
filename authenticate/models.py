@@ -8,46 +8,40 @@ from django.shortcuts import resolve_url as r
 
 
 class ProfessionalUserManager(BaseUserManager):
-    def create_user(self, username, email, first_name, last_name, password=None):
-        if not email and not username:
-            raise ValueError(
-                "Já existe um profissional cadastrado com esse email ou username")
+    def create_user(self, email, first_name, last_name, password=None, **extra_fields):
+        if not email:
+            raise ValueError("O campo email é obrigatório")
 
+        email = self.normalize_email(email)
         user = self.model(
-            username=username,
-            email=self.normalize_email(email),
+            email=email,
             first_name=first_name,
             last_name=last_name,
+            **extra_fields
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, first_name, last_name, password=None):
-        user = self.create_user(
-            username,
-            email,
-            first_name=first_name,
-            last_name=last_name,
-            password=password,
-        )
-        user.is_tech = True
-        user.is_admin = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_tech', True)
+        extra_fields.setdefault('is_admin', True)
 
-    def create_staff(self, username, email, first_name, last_name, password=None):
-        user = self.create_user(
-            username,
-            email,
-            first_name=first_name,
-            last_name=last_name,
-            password=password,
-        )
-        user.is_tech = True
-        user.save(using=self._db)
-        return user
+        if extra_fields.get('is_tech') is not True:
+            raise ValueError('Superuser must have is_tech=True.')
+        if extra_fields.get('is_admin') is not True:
+            raise ValueError('Superuser must have is_admin=True.')
+
+        return self.create_user(email, first_name, last_name, password, **extra_fields)
+
+    def create_staff(self, email, first_name, last_name, password=None, **extra_fields):
+        extra_fields.setdefault('is_tech', True)
+
+        if extra_fields.get('is_tech') is not True:
+            raise ValueError('Staff must have is_tech=True.')
+
+        return self.create_user(email, first_name, last_name, password, **extra_fields)
 
 
 class ProfessionalUser(AbstractBaseUser):
@@ -72,8 +66,8 @@ class ProfessionalUser(AbstractBaseUser):
 
     objects = ProfessionalUserManager()
 
-    USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["first_name", "last_name", "email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name"]
 
     class Meta:
         ordering = ["is_admin", "is_tech", "first_name"]

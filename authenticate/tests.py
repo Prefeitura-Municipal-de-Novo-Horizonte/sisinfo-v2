@@ -6,19 +6,19 @@ from authenticate.models import ProfessionalUser
 class PermissionsModelTest(TestCase):
     def setUp(self):
         self.non_admin_user = ProfessionalUser.objects.create_user(
-            username='testuser',
             email='testuser@example.com',
             first_name='Test',
             last_name='User',
-            password='password123'
+            password='password123',
+            username='testuser'
         )
 
         self.admin_user = ProfessionalUser.objects.create_superuser(
-            username='adminuser',
             email='adminuser@example.com',
             first_name='Admin',
             last_name='User',
-            password='password123'
+            password='password123',
+            username='adminuser'
         )
 
     def test_non_admin_has_no_permissions(self):
