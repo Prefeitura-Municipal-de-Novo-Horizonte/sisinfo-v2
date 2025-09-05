@@ -91,7 +91,7 @@ class ProfessionalUser(AbstractBaseUser):
     def save(self, *args, **kwargs):
         if not self.id or not self.slug:
             self.slug = uuid.uuid4()
-        return super().save()
+        return super().save(*args, **kwargs)
 
     def officer(self):
         if self.is_tech is False and self.is_admin is False:
@@ -103,13 +103,13 @@ class ProfessionalUser(AbstractBaseUser):
 
     def has_perm(self, perm, obj=None):
         "O usuário tem permissão específica?"
-        # Resposta mais simples possível: Sim, sempre
-        return True
+        # Apenas administradores têm todas as permissões.
+        return self.is_admin
 
     def has_module_perms(self, app_label):
         "O usuário tem permissão para visualizar o app `app_label`?"
-        # Resposta mais simples possível: Sim, sempre
-        return True
+        # Apenas administradores têm acesso a todos os módulos.
+        return self.is_admin
 
     @property
     def fullname(self):
