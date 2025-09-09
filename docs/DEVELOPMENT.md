@@ -37,12 +37,21 @@ Este documento descreve como configurar e executar o ambiente de desenvolvimento
     ```
 
 4.  **Configure as variáveis de ambiente:**
-    Copie o arquivo de exemplo e preencha com suas credenciais locais (banco de dados, secret key, etc.).
+    Copie o arquivo de exemplo `.env-sample` para `.env` e preencha com suas credenciais locais (banco de dados, secret key, etc.). Este arquivo também controlará qual conjunto de configurações do Django será carregado.
     ```bash
     cp contrib/.env-sample .env
     ```
 
-5.  **Execute as migrações do banco de dados:**
+5.  **Entenda as configurações do Django (`DJANGO_SETTINGS_MODULE`):**
+    O projeto agora utiliza uma estrutura de configurações separada por ambiente (`core/settings/`). A variável de ambiente `DJANGO_SETTINGS_MODULE` define qual arquivo de configuração será carregado.
+    *   Para **desenvolvimento local**, o valor padrão é `core.settings.development`. Este arquivo configura o `DEBUG=True`, uma `SECRET_KEY` para desenvolvimento e o backend de e-mail para console.
+    *   Para **produção**, o valor deve ser `core.settings.production`. Este arquivo contém configurações de segurança aprimoradas, `DEBUG=False` e outras otimizações para o ambiente de produção.
+    Você pode sobrescrever o padrão definindo a variável de ambiente antes de executar comandos Django, por exemplo:
+    ```bash
+    DJANGO_SETTINGS_MODULE=core.settings.production python manage.py check --deploy
+    ```
+
+6.  **Execute as migrações do banco de dados:**
     Este comando prepara o banco de dados com o schema necessário para a aplicação.
     ```bash
     python manage.py migrate
@@ -65,3 +74,23 @@ Para desenvolver, você precisará de dois terminais abertos.
     ```
 
 Agora você pode acessar o projeto em `http://127.0.0.1:8000`.
+
+## 3. Executando Testes
+
+O projeto utiliza o `django-test-without-migrations` para otimizar a execução de testes durante o desenvolvimento.
+
+### Abordagem Híbrida
+
+Adotamos uma abordagem híbrida para garantir tanto agilidade quanto segurança:
+
+*   **Para Desenvolvimento Rápido (Local):**
+    Use o comando a seguir para rodar os testes **sem** aplicar as migrações. É muito mais rápido e ideal para o dia a dia, ao validar a lógica de negócio.
+    ```bash
+    python manage.py test --nomigrations
+    ```
+
+*   **Para Validação Completa (Obrigatório antes de Merges/Deploys):**
+    Use o comando padrão para rodar a suíte de testes completa, incluindo a aplicação de todas as migrações. Isso garante que o ambiente de teste é fiel ao de produção e que as migrações estão saudáveis.
+    ```bash
+    python manage.py test
+    ```
