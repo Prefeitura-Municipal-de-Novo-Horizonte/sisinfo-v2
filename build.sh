@@ -2,7 +2,7 @@
 
 # Create a virtual environment
 echo "Creating a virtual environment..."
-python3.10 -m venv venv
+python3 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
 
