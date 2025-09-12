@@ -89,9 +89,11 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
+
 MEDIA_URL = 'media/images/'
 MEDIA_ROOT = BASE_DIR / 'media' / 'images'
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DEFAULT_FROM_EMAIL = "ti@novohorizonte.sp.gov.br"
 
