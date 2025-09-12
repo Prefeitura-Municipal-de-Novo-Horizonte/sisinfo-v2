@@ -1,9 +1,14 @@
 #!/bin/bash
+
 # Create a virtual environment
 echo "Creating a virtual environment..."
 python3.9 -m venv venv
 echo "Acessing a virtual environment..."
 source venv/bin/activate
+
+# Garantir diretório de logs para o Django
+echo "Garantindo diretório logs para logging..."
+mkdir -p logs
 
 # Install the latest version of pip
 echo "Installing the latest version of pip..."

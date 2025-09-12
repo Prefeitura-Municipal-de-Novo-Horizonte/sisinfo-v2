@@ -8,5 +8,4 @@ django-filter
 pillow
 urllib3==1.26.6
 cpf-cnpj-validate
-dj-static
-pymysql
+dj_static
