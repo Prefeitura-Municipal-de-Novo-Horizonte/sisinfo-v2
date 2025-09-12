@@ -30,7 +30,7 @@ O nome `authenticate` é **apropriado** para este app, pois sua função princip
 - [ ] **`profile_professional.html` - Completar informações:** Abordar o `TODO: Adicionar informações` para completar a exibição do perfil do usuário.
 
 ### 6. URLs (`authenticate/urls.py`)
-- [ ] **`app_name`:** Descomentar e definir `app_name = 'authenticate'` para um melhor namespacing de URLs, prevenindo conflitos em projetos maiores.
+- [x] **`app_name`:** Descomentar e definir `app_name = 'authenticate'` para um melhor namespacing de URLs, prevenindo conflitos em projetos maiores.
 
 ## Status
 
@@ -40,5 +40,5 @@ O nome `authenticate` é **apropriado** para este app, pois sua função princip
 - [ ] Formulários revisados (duplicidade de `__init__`, centralização de estilos, remoção de `Meta`).
 - [ ] Decorators revisados (simplificação e redução de redundância).
 - [ ] Templates revisados (extensão de `_base.html`, helper/tag para campos, completar informações de perfil).
-- [ ] URLs revisadas (`app_name`).
+- [x] URLs revisadas (app_name).
 - [ ] Implementação concluída.
