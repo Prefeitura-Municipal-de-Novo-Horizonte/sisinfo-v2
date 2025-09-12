@@ -33,16 +33,45 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Logging específico para produção
+
+# Redefinir LOGGING para ambiente serverless (Vercel)
 LOG_LEVEL = config("LOG_LEVEL")
-LOGGING["root"]["level"] = LOG_LEVEL
-LOGGING["loggers"]["django"]["level"] = LOG_LEVEL
-# Handler de e-mail para admins
-LOGGING["handlers"]["mail_admins"] = {
-    "level": "ERROR",
-    "class": "django.utils.log.AdminEmailHandler",
-    "formatter": "verbose",
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} {name} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console", "mail_admins"],
+        "level": LOG_LEVEL,
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "mail_admins"],
+            "level": LOG_LEVEL,
+            "propagate": False,
+        },
+    },
 }
-LOGGING["loggers"]["django"]["handlers"].append("mail_admins")
 
 # Configurar ADMINS e SERVER_EMAIL para envio de erros críticos
 ADMINS = [("Prefeitura Municipal de Novo Horizonte",
