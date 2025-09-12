@@ -15,7 +15,8 @@ O nome `bidding_supplier` é **aceitável**, mas pode ser mais preciso. Atualmen
 - [ ] **Redundância de ID em `supplier_delete`:** A URL `supplier_delete` utiliza tanto `slug` quanto `id`. Se o `slug` for garantido como único, o `id` pode ser redundante. Avaliar se o `id` é estritamente necessário para a operação de exclusão ou se o `slug` sozinho é suficiente. Por ora, manteremos como está, mas será notado para potencial simplificação.
 
 ## Status
-- [ ] Tarefa criada.
-- [ ] Formulários revisados.
-- [ ] URLs revisadas.
+
+- [x] Tarefa criada.
+- [ ] Formulários revisados (centralização de estilos, criação/aplicação de mixin).
+- [ ] URLs revisadas (simplificação de parâmetros redundantes).
 - [ ] Implementação concluída.

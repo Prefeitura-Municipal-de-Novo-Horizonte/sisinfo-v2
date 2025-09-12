@@ -12,28 +12,28 @@ O nome `dashboard` é **inapropriado** para o escopo atual deste app. Ele conté
 O app `dashboard` será dividido em três apps mais específicos:
 
 #### 1.1. Novo App: `organizational_structure` (ou `sectors_directions`)
-- [x] **Propósito:** Gerenciar os modelos e funcionalidades relacionadas a Diretorias e Setores.
-- [x] **Modelos:** Mover `AbsctactDirectionSector`, `Direction`, `Sector` para `organizational_structure/models.py`.
-- [x] **Views:** Mover `directions`, `direction_detail`, `direction_update`, `direction_delete`, `sectors`, `sector_detail`, `sector_update`, `sector_delete` para `organizational_structure/views.py`.
-- [x] **Forms:** Mover `DirectionForm`, `SectorForm` para `organizational_structure/forms.py`.
-- [x] **Filters:** Mover `DirectionFilter`, `SectorFilter` para `organizational_structure/filters.py`.
-- [x] **Templates:** Mover o conteúdo de `dashboard/templates/setores/` para `organizational_structure/templates/organizational_structure/`.
-- [x] **URLs:** Criar `organizational_structure/urls.py` com as URLs correspondentes.
+- [ ] **Propósito:** Gerenciar os modelos e funcionalidades relacionadas a Diretorias e Setores.
+- [ ] **Modelos:** Mover `AbsctactDirectionSector`, `Direction`, `Sector` para `organizational_structure/models.py`.
+- [ ] **Views:** Mover `directions`, `direction_detail`, `direction_update`, `direction_delete`, `sectors`, `sector_detail`, `sector_update`, `sector_delete` para `organizational_structure/views.py`.
+- [ ] **Forms:** Mover `DirectionForm`, `SectorForm` para `organizational_structure/forms.py`.
+- [ ] **Filters:** Mover `DirectionFilter`, `SectorFilter` para `organizational_structure/filters.py`.
+- [ ] **Templates:** Mover o conteúdo de `dashboard/templates/setores/` para `organizational_structure/templates/organizational_structure/`.
+- [ ] **URLs:** Criar `organizational_structure/urls.py` com as URLs correspondentes.
 
 #### 1.2. Novo App: `bidding_procurement` (ou `bidding`)
-- [x] **Propósito:** Gerenciar os modelos e funcionalidades relacionadas a Licitações e Materiais.
-- [x] **Modelos:** Mover `AbsBiddingMaterial`, `Bidding`, `Material` para `bidding_procurement/models.py`.
-- [x] **Views:** Mover `biddings`, `bidding_detail`, `bidding_update`, `bidding_delete`, `materials`, `material_detail`, `material_update`, `material_delete` para `bidding_procurement/views.py`.
-- [x] **Forms:** Mover `BiddingForm`, `MaterialForm` para `bidding_procurement/forms.py`.
-- [x] **Filters:** Mover `BiddingFilter`, `MaterialFilter` para `bidding_procurement/filters.py`.
-- [x] **Templates:** Mover o conteúdo de `dashboard/templates/licitacao/` para `bidding_procurement/templates/bidding_procurement/`.
-- [x] **URLs:** Criar `bidding_procurement/urls.py` com as URLs correspondentes.
+- [ ] **Propósito:** Gerenciar os modelos e funcionalidades relacionadas a Licitações e Materiais.
+- [ ] **Modelos:** Mover `AbsBiddingMaterial`, `Bidding`, `Material` para `bidding_procurement/models.py`.
+- [ ] **Views:** Mover `biddings`, `bidding_detail`, `bidding_update`, `bidding_delete`, `materials`, `material_detail`, `material_update`, `material_delete` para `bidding_procurement/views.py`.
+- [ ] **Forms:** Mover `BiddingForm`, `MaterialForm` para `bidding_procurement/forms.py`.
+- [ ] **Filters:** Mover `BiddingFilter`, `MaterialFilter` para `bidding_procurement/filters.py`.
+- [ ] **Templates:** Mover o conteúdo de `dashboard/templates/licitacao/` para `bidding_procurement/templates/bidding_procurement/`.
+- [ ] **URLs:** Criar `bidding_procurement/urls.py` com as URLs correspondentes.
 
 #### 1.3. App `dashboard` (Repurposed)
-- [x] **Propósito:** Servir como uma página de entrada central que agrega e exibe métricas e links importantes de outros apps.
-- [x] **Views:** Manter apenas a view `index` em `dashboard/views.py`. Esta view será atualizada para importar dados dos novos apps `organizational_structure`, `bidding_procurement` e `reports`.
-- [x] **Templates:** Manter `dashboard/templates/index.html`.
-- [x] **Remoção:** Remover todos os outros arquivos e diretórios que foram movidos para os novos apps.
+- [ ] **Propósito:** Servir como uma página de entrada central que agrega e exibe métricas e links importantes de outros apps.
+- [ ] **Views:** Manter apenas a view `index` em `dashboard/views.py`. Esta view será atualizada para importar dados dos novos apps `organizational_structure`, `bidding_procurement` e `reports`.
+- [ ] **Templates:** Manter `dashboard/templates/index.html`.
+- [ ] **Remoção:** Remover todos os outros arquivos e diretórios que foram movidos para os novos apps.
 
 ### 2. Melhorias Gerais (Aplicáveis aos Novos Apps)
 
@@ -57,7 +57,8 @@ O app `dashboard` será dividido em três apps mais específicos:
 - [ ] **Redundância de ID em URLs de exclusão:** Para operações de exclusão (`direction_delete`, `sector_delete`, `bidding_delete`, `material_delete`), se o `slug` for garantido como único, o `id` na URL pode ser redundante. Simplificar URLs para usar apenas `slug` se possível.
 
 ## Status
+
 - [x] Tarefa criada.
-- [x] Divisão do App `dashboard` concluída.
-- [ ] Melhorias Gerais implementadas.
-- [x] Implementação concluída.
+- [ ] Divisão do App `dashboard` concluída (criar apps `organizational_structure` e `bidding_procurement`).
+- [ ] Melhorias Gerais implementadas (refatoração de modelos, views, formulários, filtros, templates, URLs, utilitários compartilhados).
+- [ ] Implementação concluída.
