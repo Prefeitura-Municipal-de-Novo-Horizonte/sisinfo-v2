@@ -2,7 +2,7 @@ import uuid
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.db import models
-from django.shortcuts import resolve_url as r
+from django.urls import reverse
 
 # Create your models here.
 
@@ -75,7 +75,7 @@ class ProfessionalUser(AbstractBaseUser):
         verbose_name_plural = "profissionais"
 
     def get_absolute_url(self):
-        return r('authenticate:profile_user', slug=self.slug)
+        return reverse('authenticate:profile_user', kwargs={'slug': self.slug})
 
     def __str__(self):
         if self.registration is None:
