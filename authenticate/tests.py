@@ -35,6 +35,13 @@ class PermissionsModelTest(TestCase):
         self.assertTrue(self.admin_user.has_perm('any.permission'))
         self.assertTrue(self.admin_user.has_module_perms('any_app'))
 
+    def test_get_absolute_url(self):
+        """
+        Testa se o método get_absolute_url retorna a URL correta para o perfil do usuário.
+        """
+        expected_url = f'/authenticate/profile_user/{self.non_admin_user.slug}'
+        self.assertEqual(self.non_admin_user.get_absolute_url(), expected_url)
+
 from django.test import Client
 from django.urls import reverse
 
