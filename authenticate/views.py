@@ -3,7 +3,6 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 
 from authenticate.decorators import admin_only, unauthenticated_user
 from authenticate.forms import (
@@ -15,7 +14,7 @@ from authenticate.forms import (
 from authenticate.models import ProfessionalUser
 
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def show_users(request):
     users = ProfessionalUser.objects.all()
@@ -52,10 +51,10 @@ def login_page(request):
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
-        return redirect(reverse('login'))
+        return redirect('authenticate:login')
 
 
-@login_required(login_url='login')
+@login_required
 def change_password(request):  # sourcery skip: extract-method
     if request.method == 'POST':
         user = request.user
@@ -73,7 +72,7 @@ def change_password(request):  # sourcery skip: extract-method
                                  "Senha trocada com sucesso!")
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect('change_password')
+        return redirect('authenticate:change_password')
     form = PasswordChangeCustomForm(request.user)
     context = {
         'form': form,
@@ -81,7 +80,7 @@ def change_password(request):  # sourcery skip: extract-method
     return render(request, 'change_password.html', context)
 
 
-@login_required(login_url='login')
+@login_required
 def alter_user(request):
     if request.user.is_authenticated:
         if request.method == 'GET':
@@ -94,29 +93,28 @@ def alter_user(request):
             form = UserChangeForm(request.POST, files=request.FILES,
                                   instance=request.user)
             if form.is_valid():
-                # TODO: Inserir upload de imagem
                 form.save()
                 messages.add_message(
                     request, constants.SUCCESS, "Alterado com sucesso!")
-                return redirect('profile')
+                return redirect('authenticate:profile')
             messages.add_message(
                 request, constants.ERROR, "Ocorreu um erro!")
-            return redirect('profile')
-    return redirect('login')
+            return redirect('authenticate:profile')
+    return redirect('authenticate:login')
 
 
 def logout_page(request):
     logout(request)
     messages.add_message(
         request, constants.SUCCESS, "Logout com sucesso!")
-    return redirect('login')
+    return redirect('authenticate:login')
 
 
 ################################################################
 ################# Administration Users #########################
 ################################################################
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def register_user(request):
     form = UserCreationForm()
@@ -126,7 +124,7 @@ def register_user(request):
             user = form.save()
             messages.add_message(
                 request, constants.SUCCESS, f"Usuario adicionado com sucesso: {user}")
-            return redirect('register_user')
+            return redirect('authenticate:register_user')
         messages.add_message(
             request, constants.ERROR, "Ocorreu um erro!")
     context = {
@@ -136,7 +134,7 @@ def register_user(request):
 
 
 # --- Deabilita e Habilita Usuário ---
-@login_required(login_url='login')
+@login_required
 @admin_only
 def disabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -144,10 +142,10 @@ def disabled_user(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario desabilitado com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def enabled_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -155,11 +153,11 @@ def enabled_user(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario habilitado com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
 # --- Deabilita e Habilita Usuário Admin ---
-@login_required(login_url='login')
+@login_required
 @admin_only
 def enabled_user_admin(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -169,10 +167,10 @@ def enabled_user_admin(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario habilitado como administrador com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def disabled_user_admin(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -180,11 +178,11 @@ def disabled_user_admin(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario desabilitador como administrador com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
 # --- Deabilita e Habilita Usuário Tech ---
-@login_required(login_url='login')
+@login_required
 @admin_only
 def enabled_user_tech(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -192,10 +190,10 @@ def enabled_user_tech(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario habilitado como tecnico com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def disabled_user_tech(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)
@@ -205,10 +203,10 @@ def disabled_user_tech(request, slug):
     user.save()
     messages.add_message(
         request, constants.SUCCESS, f"Usuario desabilitado como tecnico com sucesso: {user}")
-    return redirect(reverse('show_users'))
+    return redirect('authenticate:show_users')
 
 
-@login_required(login_url='login')
+@login_required
 @admin_only
 def profile_user(request, slug):
     user = get_object_or_404(ProfessionalUser, slug=slug)

@@ -16,6 +16,6 @@ DATABASES = {
 }
 
 # Logging específico para desenvolvimento
-LOG_LEVEL = "DEBUG"
-LOGGING["root"]["level"] = LOG_LEVEL
-LOGGING["loggers"]["django"]["level"] = LOG_LEVEL
+# LOG_LEVEL = "DEBUG"
+# LOGGING["root"]["level"] = LOG_LEVEL
+# LOGGING["loggers"]["django"]["level"] = LOG_LEVEL

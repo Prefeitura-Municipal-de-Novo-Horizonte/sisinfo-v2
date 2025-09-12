@@ -5,9 +5,6 @@ from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
-# from django.shortcuts import resolve_url as r
-from django.urls import reverse
-
 from dashboard.filters import (
     BiddingFilter,
     DirectionFilter,
@@ -20,7 +17,7 @@ from reports.models import MaterialReport, Report
 
 
 # Create your views here.
-@login_required(login_url='login')
+@login_required
 def index(request):
     total_reports_user = Report.objects.filter(
         professional=request.user).count()
@@ -40,7 +37,7 @@ def index(request):
 
 
 ##############################################
-@login_required(login_url='login')
+@login_required
 def directions(request):
     diretorias = Direction.objects.all()
     if request.method == "POST":
@@ -51,7 +48,7 @@ def directions(request):
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("dashboard:diretorias"))
+        return redirect("dashboard:diretorias")
     form = DirectionForm()
 
     myFilter = DirectionFilter(request.GET, queryset=diretorias)
@@ -66,7 +63,7 @@ def directions(request):
     return render(request, "setores/diretorias.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def direction_detail(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     setores = Sector.objects.filter(direction=diretoria.id)
@@ -86,7 +83,7 @@ def direction_detail(request, slug):
     return render(request, "setores/diretoria_detail.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def direction_update(request, slug):
     diretoria = get_object_or_404(Direction, slug=slug)
     form = DirectionForm(instance=diretoria)
@@ -119,10 +116,10 @@ def extract_update_form_direction(form, request):
     diretoria.kind = form.cleaned_data["kind"]
     diretoria.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-    return redirect(reverse("dashboard:diretorias"))
+    return redirect("dashboard:diretorias")
 
 
-@login_required(login_url='login')
+@login_required
 def direction_delete(request, id, slug):
     diretoria = get_object_or_404(Direction, id=id, slug=slug)
     diretoria.delete()
@@ -131,11 +128,11 @@ def direction_delete(request, id, slug):
         constants.ERROR,
         f"Diretoria {diretoria.name} foi excluida com sucesso!",
     )
-    return redirect(reverse("dashboard:diretorias"))
+    return redirect("dashboard:diretorias")
 
 
 ##############################################
-@login_required(login_url='login')
+@login_required
 def sectors(request):
     setores = Sector.objects.all()
     if request.method == "POST":
@@ -146,7 +143,7 @@ def sectors(request):
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("dashboard:setores"))
+        return redirect("dashboard:setores")
     form = SectorForm()
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
@@ -163,7 +160,7 @@ def sectors(request):
     return render(request, "setores/setores.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def sector_detail(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
     context = {
@@ -172,7 +169,7 @@ def sector_detail(request, slug):
     return render(request, "setores/setor_detail.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def sector_update(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
     form = SectorForm(instance=setor)
@@ -208,21 +205,21 @@ def extract_update_form_sector(form, request):
     setor.address = form.cleaned_data["address"]
     setor.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-    return redirect(reverse("dashboard:setores"))
+    return redirect("dashboard:setores")
 
 
-@login_required(login_url='login')
+@login_required
 def sector_delete(request, id, slug):
     setor = get_object_or_404(Sector, id=id, slug=slug)
     setor.delete()
     messages.add_message(
         request, constants.ERROR, f"O Setor {setor.name} foi excluido com sucesso!"
     )
-    return redirect(reverse("dashboard:setores"))
+    return redirect("dashboard:setores")
 
 
 ##############################################
-@login_required(login_url='login')
+@login_required
 def biddings(request):
     licitacoes = Bidding.objects.all()
     if request.method == "POST":
@@ -233,7 +230,7 @@ def biddings(request):
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("dashboard:licitacoes"))
+        return redirect("dashboard:licitacoes")
     total_licitacoes = licitacoes.count()
     form = BiddingForm()
     myFilter = BiddingFilter(request.GET, queryset=licitacoes)
@@ -249,7 +246,7 @@ def biddings(request):
     return render(request, "licitacao/biddings.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def bidding_detail(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     materiais = Material.objects.filter(bidding=licitacao.id)
@@ -262,7 +259,7 @@ def bidding_detail(request, slug):
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("dashboard:licitacao", kwargs={"slug": slug}))
+        return redirect("dashboard:licitacao", slug=slug)
 
     form_material = MaterialForm()
     myFilter = MaterialFilter(request.GET, queryset=materiais)
@@ -278,7 +275,7 @@ def bidding_detail(request, slug):
     return render(request, "licitacao/bidding_detail.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def bidding_update(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     form = BiddingForm(instance=licitacao)
@@ -312,10 +309,10 @@ def extract_update_form_bidding(form, request):
     licitacao.date = form.cleaned_data["date"]
     licitacao.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-    return redirect(reverse("dashboard:licitacoes"))
+    return redirect("dashboard:licitacoes")
 
 
-@login_required(login_url='login')
+@login_required
 def bidding_delete(request, slug, id):
     licitacao = get_object_or_404(Bidding, id=id, slug=slug)
     licitacao.delete()
@@ -324,10 +321,10 @@ def bidding_delete(request, slug, id):
         constants.ERROR,
         f"A licitação {licitacao.name} foi excluido com sucesso!",
     )
-    return redirect(reverse("dashboard:licitacoes"))
+    return redirect("dashboard:licitacoes")
 
 
-@login_required(login_url='login')
+@login_required
 def materials(request):
     materiais = Material.objects.all()
     total_materiais = materiais.count()
@@ -339,7 +336,7 @@ def materials(request):
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("dashboard:materiais"))
+        return redirect("dashboard:materiais")
     form_material = MaterialForm()
     myFilter = MaterialFilter(request.GET, queryset=materiais)
     materiais = myFilter.qs
@@ -353,7 +350,7 @@ def materials(request):
     return render(request, "licitacao/materials.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def material_detail(request, slug):
     material = get_object_or_404(Material, slug=slug)
     reports = MaterialReport.objects.filter(material=material.id)
@@ -367,7 +364,7 @@ def material_detail(request, slug):
     return render(request, "licitacao/material_detail.html", context)
 
 
-@login_required(login_url='login')
+@login_required
 def material_update(request, slug):
     material = get_object_or_404(Material, slug=slug)
     form_material = MaterialForm(instance=material)
@@ -403,10 +400,10 @@ def extract_update_form_material(form, request):
     material.readjustment = form.cleaned_data["readjustment"]
     material.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-    return redirect(reverse("dashboard:materiais"))
+    return redirect("dashboard:materiais")
 
 
-@login_required(login_url='login')
+@login_required
 def material_delete(request, slug, id):
     material = get_object_or_404(Material, slug=slug, id=id)
     material.delete()
@@ -415,4 +412,4 @@ def material_delete(request, slug, id):
         constants.ERROR,
         f"O suprimento {material.name} foi excluido com sucesso!",
     )
-    return redirect(reverse("dashboard:materiais"))
+    return redirect("dashboard:materiais")

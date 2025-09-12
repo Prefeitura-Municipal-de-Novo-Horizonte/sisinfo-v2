@@ -66,6 +66,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "core.wsgi.application"
 
 AUTH_USER_MODEL = 'authenticate.ProfessionalUser'
+LOGIN_URL = 'authenticate:login'
+LOGOUT_URL = 'authenticate:logout'
+LOGIN_REDIRECT_URL = 'dashboard:index'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -9,7 +9,20 @@ from django.core.exceptions import ValidationError
 from authenticate.models import ProfessionalUser
 
 
-class UserCreationForm(forms.ModelForm):
+class FormStyleMixin:
+    def apply_style_to_fields(self, style_type='default'):
+        for field_name, field in self.fields.items():
+            if style_type == 'user_creation' and field_name in ['is_tech', 'is_admin']:
+                field.widget.attrs['class'] = "sr-only peer"
+                continue
+
+            if style_type == 'login':
+                field.widget.attrs['class'] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+            else:  # default style
+                field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+
+
+class UserCreationForm(FormStyleMixin, forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Password confirmation", widget=forms.PasswordInput
@@ -20,6 +33,10 @@ class UserCreationForm(forms.ModelForm):
         fields = ["first_name", "last_name", "username",
                   "email", "registration", "is_tech", "is_admin"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.apply_style_to_fields(style_type='user_creation')
+
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
@@ -28,11 +45,11 @@ class UserCreationForm(forms.ModelForm):
             raise ValidationError("Senhas não combinam")
         return password2
 
-    def clean_firstname(self):
-        return self.extract_from_clean(self.first_name)
+    def clean_first_name(self):
+        return self.extract_from_clean('first_name')
 
-    def clean_lastname(self):
-        return self.extract_from_clean(self.last_name)
+    def clean_last_name(self):
+        return self.extract_from_clean('last_name')
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -51,17 +68,8 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            if field not in [self.fields["is_tech"], self.fields["is_admin"]]:
-                field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            else:
-                field.widget.attrs['class'] = "sr-only peer"
 
-
-class UserChangeForm(forms.ModelForm):
-
+class UserChangeForm(FormStyleMixin, forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -70,35 +78,25 @@ class UserChangeForm(forms.ModelForm):
                   "email", "registration"]
 
     def __init__(self, *args, **kwargs):
-        super(__class__, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.apply_style_to_fields()
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields["username"].widget.attrs["readonly"] = True
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 
-
-class AuthenticationFormCustom(AuthenticationForm):
+class AuthenticationFormCustom(FormStyleMixin, AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': ''}))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={'placeholder': ''}))
 
-    class Meta:
-        model = ProfessionalUser
-        fields = ['username', 'password']
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        self.apply_style_to_fields(style_type='login')
 
 
-class PasswordChangeCustomForm(PasswordChangeForm):
+class PasswordChangeCustomForm(FormStyleMixin, PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        self.apply_style_to_fields()
