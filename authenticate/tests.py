@@ -34,3 +34,30 @@ class PermissionsModelTest(TestCase):
         """
         self.assertTrue(self.admin_user.has_perm('any.permission'))
         self.assertTrue(self.admin_user.has_module_perms('any_app'))
+
+from django.test import Client
+from django.urls import reverse
+
+class AuthenticationViewsTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = ProfessionalUser.objects.create_user(
+            email='testuser@example.com',
+            first_name='Test',
+            last_name='User',
+            password='password123',
+            username='testuser'
+        )
+        # A view that requires login. 'show_users' is a good candidate.
+        self.protected_url = reverse('authenticate:show_users')
+        self.login_url = reverse('authenticate:login')
+
+    def test_redirect_if_not_logged_in(self):
+        """
+        Garante que o usuário seja redirecionado para a página de login se não estiver autenticado.
+        """
+        response = self.client.get(self.protected_url)
+        # Check for redirect, status code 302
+        self.assertEqual(response.status_code, 302)
+        # Check if it redirects to the correct login page
+        self.assertRedirects(response, f'{self.login_url}?next={self.protected_url}')

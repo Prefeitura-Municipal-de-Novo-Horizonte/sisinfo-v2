@@ -3,7 +3,7 @@ from django.urls import path
 
 from authenticate import views
 
-# app_name = 'authenticated'
+app_name = 'authenticate'
 
 urlpatterns = [
     path('', views.show_users, name='show_users'),
@@ -30,7 +30,7 @@ urlpatterns = [
     path('profile/', views.alter_user, name="profile"),
     path('profile_user/<slug:slug>', views.profile_user, name="profile_user"),
     # Redefinir Senha
-    # TODO: Ajustar a pagina de change password
+    
     path('password_reset/', auth_views.PasswordResetView.as_view(
         template_name="password_reset.html"), name="password_reset"),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(
