@@ -1,29 +1,40 @@
+
 """
 Configurações base para todos os ambientes.
 """
+import os
 from pathlib import Path
 
 from django.contrib.messages import constants
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-INSTALLED_APPS = [
+# Separando as apps para melhor organização
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third Apps
+]
+
+THIRD_PARTY_APPS = [
     "django_extensions",
     "django_filters",
-    # My Application
+]
+
+MY_APPS = [
     "dashboard.apps.DashboardConfig",
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
 ]
 
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
+
+
+# Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -78,12 +89,53 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles" / "static"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = 'media/images/'
 MEDIA_ROOT = BASE_DIR / 'media' / 'images'
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DEFAULT_FROM_EMAIL = "ti@novohorizonte.sp.gov.br"
 
+# Configuração padrão de logging para todos os ambientes
+
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LOG_FILE = os.getenv("LOG_FILE", str(BASE_DIR / "logs" / "django.log"))
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s"
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "class": "logging.FileHandler",
+            "filename": LOG_FILE,
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console", "file"],
+        "level": LOG_LEVEL,
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console", "file"],
+            "level": LOG_LEVEL,
+            "propagate": True,
+        },
+    },
+}
+
+
+# Mensagens do Django
 MESSAGE_TAGS = {
     constants.ERROR: "flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800 gap-4 w-full",
     constants.SUCCESS: "flex items-center p-4 mb-4 text-sm text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800 gap-4 w-full",

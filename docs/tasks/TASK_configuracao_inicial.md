@@ -71,13 +71,15 @@ A aplicação está em produção e aprimorar a configuração base é crucial p
 - [ ] Simular o ambiente de produção (se possível) para verificar as configurações de segurança, logging e e-mail.
 - [ ] Executar `python manage.py check --deploy` para verificar problemas de configuração em produção.
 
+
 ## Status
-- [ ] Tarefa criada.
-- [ ] Estrutura de Configuração por Ambiente implementada.
-- [ ] Melhorias de segurança aplicadas.
-- [ ] Configuração de banco de dados ajustada.
-- [ ] Configuração de arquivos estáticos/mídia revisada.
-- [ ] Configuração de logging adicionada.
-- [ ] Variáveis de ambiente atualizadas.
-- [ ] Verificação concluída.
-- [ ] Implementação concluída.
+- [x] Tarefa criada.
+- [x] Estrutura de Configuração por Ambiente implementada (base, development, production).
+- [x] Melhorias de segurança aplicadas (HSTS, SSL, cookies seguros, XSS, etc).
+- [x] Configuração de banco de dados ajustada (separação clara entre ambientes).
+- [x] Configuração de arquivos estáticos revisada para Vercel.
+- [x] Configuração de logging adicionada (handlers para arquivo/e-mail, formatters).
+- [x] Variáveis de ambiente atualizadas no `.env` e `.env-sample`.
+- [x] Backup do build.sh realizado.
+- [ ] Teste de deploy na Vercel e validação dos arquivos estáticos.
+- [ ] Solicitar revisão final antes de merge.
