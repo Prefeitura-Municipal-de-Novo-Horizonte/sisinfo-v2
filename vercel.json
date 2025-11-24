@@ -1,15 +1,15 @@
 {
     "version": 2,
     "regions": [
-        "sfo1"
+        "iad1"
     ],
     "builds": [
         {
             "src": "core/wsgi.py",
             "use": "@vercel/python",
             "config": {
-                "maxLambdaSize": "50mb",
-                "runtime": "python3.9",
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.12",
                 "maxDuration": 60
             }
         },

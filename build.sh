@@ -20,9 +20,8 @@ python3 -m pip install --upgrade setuptools wheel
 echo "Building the project..."
 python3 -m pip install -r requirements.txt
 
-# Make migrations
-echo "Making migrations..."
-python3 manage.py makemigrations --noinput
+# Apply migrations (migrations should be created locally, not in build)
+echo "Applying migrations..."
 python3 manage.py migrate --noinput
 
 # Collect static files
