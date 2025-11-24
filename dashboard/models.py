@@ -93,10 +93,22 @@ class Bidding(AbsBiddingMaterial):
     """
     Representa uma licitação/pregão.
     
-    Não possui mais campo 'status' próprio. Cada material vinculado
-    a esta licitação possui seu próprio status na tabela MaterialBidding.
+    O status da licitação é propagado automaticamente para todos os
+    materiais vinculados via MaterialBidding quando alterado.
     """
+    STATUS_CHOICES = (
+        ("1", "Ativo"),
+        ("2", "Inativo"),
+    )
+    
     date = models.DateField("data", blank=True, null=True)
+    status = models.CharField(
+        "status",
+        max_length=1,
+        choices=STATUS_CHOICES,
+        default="1",
+        help_text="Status da licitação (propagado para materiais vinculados)"
+    )
 
     class Meta:
         ordering = ("date", "name")
@@ -108,8 +120,31 @@ class Bidding(AbsBiddingMaterial):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.name)
-        return super().save(*args, **kwargs)
+            slug_base = slugify(self.name)
+            original_slug = slug_base
+            counter = 1
+            while Bidding.objects.filter(slug=slug_base).exclude(pk=self.pk).exists():
+                slug_base = f"{original_slug}-{counter}"
+                counter += 1
+            
+            self.slug = slug_base
+        
+        # Detectar mudança de status
+        status_changed = False
+        if self.pk:
+            try:
+                old_instance = Bidding.objects.get(pk=self.pk)
+                status_changed = old_instance.status != self.status
+            except Bidding.DoesNotExist:
+                pass
+        
+        result = super().save(*args, **kwargs)
+        
+        # Propagar mudança de status para MaterialBidding associados
+        if status_changed:
+            self.material_associations.update(status=self.status)
+        
+        return result
 
 
 class Material(AbsBiddingMaterial):
