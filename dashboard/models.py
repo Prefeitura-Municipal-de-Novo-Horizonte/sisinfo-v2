@@ -57,7 +57,7 @@ class Sector(AbsctractDirectionSector):
         verbose_name_plural = "setores"
 
     def get_absolute_url(self):
-        return r("dashboard:setor", slug=self.slug)
+        return r("dashboard:setor", kwargs={"slug": self.slug})
 
 
 ##############################################################################################
@@ -150,7 +150,7 @@ class Material(AbsBiddingMaterial):
         verbose_name_plural = "materiais"
 
     def get_absolute_url(self):
-        return r("dashboard:material", slug=self.slug)
+        return r("dashboard:material", kwargs={"slug": self.slug})
 
     def total_price(self):
         """Retorna o preço total com reajuste aplicado."""

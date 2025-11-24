@@ -251,6 +251,7 @@ def bidding_detail(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     # Materiais agora vêm de MaterialBidding (tabela intermediária)
     material_associations = licitacao.material_associations.all().select_related('material', 'material__supplier')
+    # Debug print removed
     total_materiais = material_associations.count()
     if request.method == "POST":
         form_material = MaterialForm(request.POST)
