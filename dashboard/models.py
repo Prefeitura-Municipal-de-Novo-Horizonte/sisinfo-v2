@@ -99,7 +99,7 @@ class Bidding(AbsBiddingMaterial):
         verbose_name_plural = "licitações"
 
     def get_absolute_url(self):
-        return r("dashboard:licitacao", slug=self.slug)
+        return r("dashboard:licitacao", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:
