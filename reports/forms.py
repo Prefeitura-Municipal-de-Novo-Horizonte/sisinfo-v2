@@ -94,9 +94,29 @@ class MaterialReportForm(forms.ModelForm):
         from dashboard.models import MaterialBidding
         items_ativos = Material.objects.filter(
             bidding_associations__status='1'
-        ).distinct()
+        ).distinct().prefetch_related('bidding_associations__bidding')
         
         self.fields['material'].queryset = items_ativos
+        
+        # Customizar o label para mostrar licitações e status
+        self.fields['material'].label_from_instance = self._material_label
+    
+    def _material_label(self, obj):
+        """
+        Retorna label customizado mostrando material e suas licitações ativas.
+        Formato: "Material X - Licitação Y (Ativo), Licitação Z (Ativo)"
+        """
+        active_associations = obj.bidding_associations.filter(status='1').select_related('bidding')
+        if not active_associations.exists():
+            return f"{obj.name} (Sem licitações ativas)"
+        
+        biddings_info = []
+        for assoc in active_associations:
+            status_display = assoc.get_status_display()
+            biddings_info.append(f"{assoc.bidding.name} ({status_display})")
+        
+        biddings_str = ", ".join(biddings_info)
+        return f"{obj.name} - {biddings_str}"
 
 
 MaterialReportFormset = inlineformset_factory(
