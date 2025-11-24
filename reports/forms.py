@@ -89,7 +89,7 @@ class MaterialReportForm(forms.ModelForm):
         self.fields['id'].label = ''
         self.fields['id'].widget = forms.HiddenInput()
 
-        items_ativos = Material.objects.filter(status='1')
+        items_ativos = Material.objects.all()
         self.fields['material'].queryset = items_ativos
 
 
