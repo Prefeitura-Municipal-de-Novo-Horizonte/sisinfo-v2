@@ -1,27 +1,27 @@
 # Sistema de Gerenciamento de TI - SISInfo V2 💻⚙️
 
-<div align="center">
-<img src="https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/capa.png" width="350" />
+\u003cdiv align="center"\u003e
+\u003cimg src="https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/capa.png" width="350" /\u003e
 
-<div data-badges>
-    <img src="https://img.shields.io/github/stars/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub stars" />
-    <img src="https://img.shields.io/github/forks/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub forks" />
-    <img src="https://img.shields.io/github/issues/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub issues" />
-</div>
+\u003cdiv data-badges\u003e
+    \u003cimg src="https://img.shields.io/github/stars/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub stars" /\u003e
+    \u003cimg src="https://img.shields.io/github/forks/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub forks" /\u003e
+    \u003cimg src="https://img.shields.io/github/issues/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub issues" /\u003e
+\u003c/div\u003e
 
-<div data-badges>
-    <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" />
-    <img src="https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white" alt="Django" />
-    <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-    <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
-    <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" />
-    <img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E" alt="Postgres" />
-    <img src="https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white" alt="Postgres" />
+\u003cdiv data-badges\u003e
+    \u003cimg src="https://img.shields.io/badge/python-3670A0?style=for-the-badge\u0026logo=python\u0026logoColor=ffdd54" alt="Python" /\u003e
+    \u003cimg src="https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge\u0026logo=django\u0026logoColor=white" alt="Django" /\u003e
+    \u003cimg src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge\u0026logo=tailwind-css\u0026logoColor=white" alt="Tailwind CSS" /\u003e
+    \u003cimg src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge\u0026logo=vercel\u0026logoColor=white" alt="Vercel" /\u003e
+    \u003cimg src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge\u0026logo=postgresql\u0026logoColor=white" alt="Postgres" /\u003e
+    \u003cimg src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge\u0026logo=javascript\u0026logoColor=%23F7DF1E" alt="Postgres" /\u003e
+    \u003cimg src="https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge\u0026logo=gnu-bash\u0026logoColor=white" alt="Postgres" /\u003e
 
-</div>
-</div>
+\u003c/div\u003e
+\u003c/div\u003e
 
-<h3>🖥️ SISInfo: Sistema de Gerenciamento da Diretoria de TI 🖥️</h3>
+\u003ch3\u003e🖥️ SISInfo: Sistema de Gerenciamento da Diretoria de TI 🖥️\u003c/h3\u003e
 O SISInfo é uma plataforma completa e intuitiva desenvolvida para otimizar e centralizar a gestão da Diretoria de Tecnologia da Informação da Prefeitura de Novo Horizonte. Com foco em eficiência e organização, o sistema oferece um conjunto de ferramentas robustas para simplificar o dia a dia dos profissionais de TI e garantir o funcionamento eficaz dos serviços tecnológicos do município.
 
 ### 📋 Funcionalidades Principais 📋
@@ -45,66 +45,121 @@ O SISInfo é uma plataforma completa e intuitiva desenvolvida para otimizar e ce
 O SISInfo é a solução ideal para a Prefeitura de Novo Horizonte otimizar seus processos de TI, reduzir custos e garantir a qualidade dos serviços tecnológicos prestados à comunidade.
 
 ## Tecnologias usadas: 🚀⚙️
-| Tecnologia | Version | Descrição |
+| Tecnologia | Versão | Descrição |
 | :---------- | :--------- | :---------------------------------- |
-| `python` | `3.12` | **Opcional**. Preferivél, porem pode se trabalhar no python 3.11.x |
-| `nodejs` | `20.9.0` | **Obrigatório**. Usado para utilizando do TailwindCSS e Flowbite |
+| `Python` | `3.12.x` | **Recomendado**. Python 3.11.x também compatível |
+| `Django` | `5.2.6` | Framework web principal |
+| `Node.js` | `20.9.0+` | **Obrigatório**. Usado para TailwindCSS e Flowbite |
+| `PostgreSQL` | `Latest` | Banco de dados (via Supabase) |
+| `TailwindCSS` | `3.3.5` | Framework CSS |
+| `Flowbite` | `2.0.0` | Componentes UI |
 
-Como utilizar:
+## 🚀 Setup Local
+
+### 1. Clonar o repositório
 
 ```bash
 git clone https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2.git
-
 cd sisinfo-v2
+```
 
+### 2. Criar ambiente virtual Python
+
+```bash
 python -m venv .venv
 ```
 
-Caso esteja no linux ou unix:
-
+**Linux/Unix:**
 ```bash
 source .venv/bin/activate
 ```
 
-Caso esteja no windows:
-
+**Windows:**
 ```bash
-.venv\Scripts\activate.bat
+.venv\\Scripts\\activate.bat
 ```
 
-Proximo passo instalar as dependências:
+### 3. Instalar dependências Python
 
 ```bash
 pip install --upgrade pip
-
 pip install -r requirements.txt
 ```
 
-Instalando as dependências para o frontend:
+### 4. Instalar dependências Node.js
 
 ```bash
 npm install
 ```
 
-Arquivo de secret key:
+### 5. Configurar variáveis de ambiente
 
 ```bash
 cp contrib/.env-sample .env
 ```
 
-Feito isso, adicionar as senhas no arquivo .env
+Edite o arquivo `.env` e configure:
+- `SECRET_KEY`: Chave secreta do Django
+- `DATABASE_URL`: URL de conexão com PostgreSQL (Supabase)
+- `DEBUG`: `True` para desenvolvimento, `False` para produção
+- `ALLOWED_HOSTS`: Hosts permitidos (ex: `localhost,127.0.0.1,.vercel.app`)
 
-----------------------------------------------------------------
-
-## Para desenvolvimento
-
-rodar no terminal
+### 6. Executar migrações
 
 ```bash
-npm run dev
+python manage.py migrate
+```
 
+### 7. Rodar em desenvolvimento
+
+Em um terminal:
+```bash
+npm run dev
+```
+
+Em outro terminal:
+```bash
 python manage.py runserver
 ```
+
+Acesse: `http://127.0.0.1:8000`
+
+## 📦 Deploy na Vercel
+
+O projeto está configurado para deploy automático na Vercel.
+
+### Configuração
+
+1. **Conecte o repositório** no dashboard da Vercel
+2. **Configure as variáveis de ambiente** no Vercel:
+   - `SECRET_KEY`
+   - `DATABASE_URL`
+   - `DEBUG=False`
+   - `ALLOWED_HOSTS=.vercel.app`
+
+3. **Deploy automático**: Cada push para `main` faz deploy automático
+
+### Arquivos de configuração
+
+- `vercel.json`: Configuração do Vercel (Python 3.12, região sfo1)
+- `build.sh`: Script de build (instala deps, roda migrações, coleta statics)
+
+## 🐛 Troubleshooting
+
+### Erro 504 (Gateway Timeout)
+- Verifique se a região do Vercel (`sfo1`) está próxima do banco Supabase
+- Otimize queries lentas com `select_related()` e `prefetch_related()`
+
+### Migrações não aplicadas
+- Rode localmente: `python manage.py migrate`
+- Commit as migrações: `git add dashboard/migrations/ && git commit`
+- Push para aplicar em produção
+
+### Erro de slug vazio
+- Certifique-se de que todos os objetos têm slugs válidos
+- Rode: `python manage.py shell` e execute a migração de dados manualmente
+
+## 📸 Screenshots
 
 ![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/2.jpg)
 ![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/3.jpg)
