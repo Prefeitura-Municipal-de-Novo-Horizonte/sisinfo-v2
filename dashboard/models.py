@@ -36,7 +36,7 @@ class Direction(AbsctractDirectionSector):
         verbose_name_plural = "diretorias"
 
     def get_absolute_url(self):
-        return r("dashboard:diretoria", slug=self.slug)
+        return r("dashboard:diretoria", kwargs={"slug": self.slug})
 
 
 class Sector(AbsctractDirectionSector):
