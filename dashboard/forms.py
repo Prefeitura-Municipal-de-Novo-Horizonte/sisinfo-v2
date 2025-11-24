@@ -70,7 +70,7 @@ class SectorForm(forms.ModelForm):
 class BiddingForm(forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ["name", "date"]
+        fields = ["name", "date", "status"]
 
     def clean_name(self):
         return self.extract_from_clean("name")
