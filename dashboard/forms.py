@@ -9,7 +9,7 @@ from dashboard.models import Bidding, Direction, Material, Sector
 class DirectionForm(forms.ModelForm):
     class Meta:
         model = Direction
-        fields = ["name", "accountable", "kind"]
+        fields = ["name", "accountable"]
 
     def clean_name(self):
         return self.extract_from_clean("name")
@@ -70,7 +70,7 @@ class SectorForm(forms.ModelForm):
 class BiddingForm(forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ["name", "status", "date"]
+        fields = ["name", "date"]
 
     def clean_name(self):
         return self.extract_from_clean("name")
@@ -89,8 +89,7 @@ class BiddingForm(forms.ModelForm):
 class MaterialForm(forms.ModelForm):
     class Meta:
         model = Material
-        fields = ["name", "status", "bidding",
-                  "price", "readjustment", "supplier"]
+        fields = ["name", "price", "readjustment", "supplier"]
 
         def clean_name(self):
             return self.extract_from_clean("name")

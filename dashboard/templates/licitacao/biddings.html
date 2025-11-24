@@ -26,10 +26,6 @@
                     <label for="{{ form.name.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.name.label }}</label>
                 </div>
                 <div class="relative z-0 w-full mb-5 group">
-                    {{ form.status.errors }}{{ form.status }}
-                    <label for="{{ form.status.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.status.label }}</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
                     {{ form.date.errors }}{{ form.date }}
                     <label for="floating_repeat_password" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.date.label }}</label>
                 </div>
@@ -91,9 +87,6 @@
                                 Nome
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Status
-                            </th>
-                            <th scope="col" class="px-6 py-3">
                                 Data
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -107,9 +100,6 @@
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 <a href="{{ licitacao.get_absolute_url }}">{{ licitacao.name }}</a>
                             </th>
-                            <td class="px-6 py-4">
-                                {{ licitacao.get_status_display }}
-                            </td>
                             <td class="px-6 py-4">
                                 {{ licitacao.date }}
                             </td>
@@ -135,7 +125,7 @@
                         </tr>
                         {% empty %}
                                     <tr>
-                                        <td class="px-6 py-4" colspan="4">Nenhuma licitacao cadastrada!!!</td>
+                                        <td class="px-6 py-4" colspan="3">Nenhuma licitacao cadastrada!!!</td>
                                     </tr>
                         {% endfor %}
                     </tbody>
