@@ -89,7 +89,14 @@ class MaterialReportForm(forms.ModelForm):
         self.fields['id'].label = ''
         self.fields['id'].widget = forms.HiddenInput()
 
-        items_ativos = Material.objects.all()
+        # Filtrar apenas materiais que estão ativos em alguma licitação
+        # via tabela intermediária MaterialBidding
+        from dashboard.models import MaterialBidding
+        active_material_ids = MaterialBidding.objects.filter(
+            status='1'
+        ).values_list('material_id', flat=True).distinct()
+        
+        items_ativos = Material.objects.filter(id__in=active_material_ids)
         self.fields['material'].queryset = items_ativos
 
 
