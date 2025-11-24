@@ -12,6 +12,21 @@ from bidding_supplier.models import Supplier
 
 
 class AbsctractDirectionSector(models.Model):
+    """
+    Classe abstrata base para Diretorias e Setores.
+    
+    Define campos comuns compartilhados entre Direction e Sector:
+    - name: Nome da diretoria/setor
+    - slug: Identificador único para URLs
+    - accountable: Responsável pela diretoria/setor
+    - address: Endereço físico
+    
+    Attributes:
+        name (str): Nome da diretoria ou setor
+        slug (str): Slug único gerado automaticamente a partir do nome
+        accountable (str): Nome do responsável
+        address (str): Endereço físico da diretoria/setor
+    """
     name = models.CharField("nome", max_length=200, blank=True)
     slug = models.SlugField("slug")
     accountable = models.CharField("responsável", max_length=200, blank=True)
@@ -30,6 +45,19 @@ class AbsctractDirectionSector(models.Model):
 
 
 class Direction(AbsctractDirectionSector):
+    """
+    Representa uma Diretoria da Prefeitura.
+    
+    Herda campos de AbsctractDirectionSector (name, slug, accountable, address).
+    Uma Diretoria pode conter múltiplos Setores.
+    
+    Example:
+        >>> direction = Direction.objects.create(
+        ...     name="Diretoria de TI",
+        ...     accountable="João Silva",
+        ...     address="Rua Principal, 123"
+        ... )
+    """
     class Meta:
         ordering = ("name",)
         verbose_name = "diretoria"
@@ -40,6 +68,15 @@ class Direction(AbsctractDirectionSector):
 
 
 class Sector(AbsctractDirectionSector):
+    """
+    Representa um Setor dentro de uma Diretoria.
+    
+    Herda campos de AbsctractDirectionSector (name, slug, accountable, address).
+    Cada Setor pertence a uma Diretoria específica.
+    
+    Attributes:
+        direction (Direction): Diretoria à qual este setor pertence
+    """
     direction = models.ForeignKey(
         Direction,
         on_delete=models.SET_NULL,
@@ -68,11 +105,18 @@ STATUS_CHOICES = (("1", "Ativo"), ("2", "Inativo"))
 
 class AbsBiddingMaterial(models.Model):
     """
-    Modelo abstrato base para Material e Bidding.
+    Classe abstrata base para Materiais e Licitações.
+    
+    Define campos comuns:
+    - name: Nome do material/licitação
+    - slug: Identificador único para URLs (gerado automaticamente)
+    - supplier: Fornecedor associado
     
     NOTA: O campo 'status' foi removido deste modelo abstrato.
     Agora o status é gerenciado na tabela intermediária MaterialBidding,
     permitindo que um material tenha status diferentes em cada licitação.
+    
+    O slug é gerado automaticamente no método save() se não fornecido.
     """
     name = models.CharField("nome", max_length=200, blank=True)
     slug = models.SlugField("slug")
