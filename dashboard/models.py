@@ -106,15 +106,7 @@ class Bidding(AbsBiddingMaterial):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        materiais = Material.objects.filter(bidding=self.id)
-        for material in materiais:
-            if self.status == "1":
-                material.status = "1"
-                material.save()
-            elif self.status == "2":
-                material.status = "2"
-                material.save()
-        return super().save()
+        return super().save(*args, **kwargs)
 
 
 class Material(AbsBiddingMaterial):

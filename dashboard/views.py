@@ -249,8 +249,9 @@ def biddings(request):
 @login_required
 def bidding_detail(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
-    materiais = Material.objects.filter(bidding=licitacao.id)
-    total_materiais = materiais.count()
+    # Materiais agora vêm de MaterialBidding (tabela intermediária)
+    material_associations = licitacao.material_associations.all().select_related('material', 'material__supplier')
+    total_materiais = material_associations.count()
     if request.method == "POST":
         form_material = MaterialForm(request.POST)
         if form_material.is_valid():
@@ -262,12 +263,11 @@ def bidding_detail(request, slug):
         return redirect("dashboard:licitacao", slug=slug)
 
     form_material = MaterialForm()
-    myFilter = MaterialFilter(request.GET, queryset=materiais)
-    materiais = myFilter.qs
+    myFilter = MaterialFilter(request.GET, queryset=Material.objects.all())
     context = {
         "licitacao": licitacao,
         "form": form_material,
-        "materiais": materiais,
+        "material_associations": material_associations,  # Mudado de 'materiais'
         "myFilter": myFilter,
         "total_materiais": total_materiais,
         "btn": "Adicionar Material",
@@ -305,7 +305,7 @@ def bidding_update(request, slug):
 def extract_update_form_bidding(form, request):
     licitacao = form.save(commit=False)
     licitacao.name = form.cleaned_data["name"]
-    licitacao.status = form.cleaned_data["status"]
+    # Removido: licitacao.status (campo não existe mais)
     licitacao.date = form.cleaned_data["date"]
     licitacao.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
@@ -394,10 +394,11 @@ def material_update(request, slug):
 def extract_update_form_material(form, request):
     material = form.save(commit=False)
     material.name = form.cleaned_data["name"]
-    material.status = form.cleaned_data["status"]
-    material.bidding = form.cleaned_data["bidding"]
+    # Removido: material.status (campo não existe mais)
+    # Removido: material.bidding (campo não existe mais - agora é ManyToMany)
     material.price = form.cleaned_data["price"]
     material.readjustment = form.cleaned_data["readjustment"]
+    material.supplier = form.cleaned_data.get("supplier")
     material.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
     return redirect("dashboard:materiais")
