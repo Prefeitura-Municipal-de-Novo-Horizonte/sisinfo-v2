@@ -250,10 +250,14 @@ def biddings(request):
     form = BiddingForm()
     myFilter = BiddingFilter(request.GET, queryset=licitacoes)
     licitacoes = myFilter.qs
+    
+    paginator = Paginator(licitacoes, 15)  # Show 15 biddings per page.
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     context = {
         "form": form,
-        "licitacoes": licitacoes,
+        "page_obj": page_obj,  # Changed from 'licitacoes' to 'page_obj'
         "myFilter": myFilter,
         "btn": "Adicionar nova Licitação",
         "total_licitacoes": total_licitacoes,
