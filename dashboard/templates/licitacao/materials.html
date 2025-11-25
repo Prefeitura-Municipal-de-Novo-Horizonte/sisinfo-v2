@@ -14,7 +14,7 @@ Materiais
         </h1>
     </div>
     <!-- Dois Grids -->
-    <div class="grid grid-cols-2 gap-4 mb-4 h-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto">
         <!-- FORMULÁRIO DE CADASTRO -->
         <div
             class="flex-col items-center justify-center rounded bg-gray-100 h-full max-h-full dark:bg-gray-800 p-4 gap-3">
@@ -24,7 +24,7 @@ Materiais
                     de Cadastro</span>
             </div>
             <form class="max-w-full mx-auto w-full" action="" method="post">{% csrf_token %}
-                {% include "licitacao/include/_form_material.html" %}
+                {% include "licitacao/include/_form_material_generic.html" %}
                 <div class="flex justify-between items-center gap-10">
                     <button type="submit"
                         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex justify-around gap-2 items-center">
@@ -71,8 +71,8 @@ Materiais
             </p>
             <form action="" method="get" class="w-full flex-col justify-center items-center p-5 max-w-full">
                 <div class="pb-4 max-w-full w-full items-center">
-                    <label for="{{ myFilter.form.name.id_for_label }}" class="text-sm text-blue-900 font-bold">{{
-                        myFilter.form.name.label }}</label>
+                    <label for="{{ myFilter.form.name.id_for_label }}" class="text-sm text-blue-900 font-bold">Pesquise
+                        pelo nome do material:</label>
                     <div class="relative mt-1 max-w-full w-full">
                         <div
                             class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
