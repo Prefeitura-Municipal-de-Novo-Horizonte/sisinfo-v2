@@ -1,13 +1,88 @@
 {% extends "_base.html" %}
 {% block title %}
-    {{ setor.name }}
+{{ setor.name }}
 {% endblock title %}
-# TODO: Arrumar a página de detalhes de setores
 {% block content %}
-    <section id="{{ setor.slug }}">
-        
-        <div>
-            <h1>{{ setor.name }}</h1>
+<section id="{{ setor.slug }}">
+    <!-- TITULO -->
+    <div class="flex items-center justify-end h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
+        <h1
+            class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+            <mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500">
+                {{ setor.name }}
+            </mark>
+        </h1>
+    </div>
+
+    <!-- INFO SETOR -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Informações do Setor</h5>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Responsável:</strong> {{ setor.accountable }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Diretoria:</strong> {{ setor.direction.name }}</p>
+
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Telefone:</strong> {{ setor.phone }}
+            </p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>E-mail:</strong> {{ setor.email }}</p>
+            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400"><strong>Endereço:</strong> {{ setor.address }}
+            </p>
         </div>
-    </section>
+
+        <div
+            class="flex items-center justify-center p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <a href="{% url 'dashboard:setores' %}">
+                <button type="button"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    Voltar para Setores
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <!-- TABELA DE LAUDOS -->
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-4">
+        <div class="p-4 bg-white dark:bg-gray-900">
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Laudos do Setor</h2>
+        </div>
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Número</th>
+                    <th scope="col" class="px-6 py-3">Funcionário</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                    <th scope="col" class="px-6 py-3">Data</th>
+                    <th scope="col" class="px-6 py-3">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {{ report.number_report }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ report.employee }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ report.get_status_display }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ report.created_at|date:"d/m/Y" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ report.get_absolute_url }}"
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Ver Detalhes</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td colspan="5" class="px-6 py-4 text-center">Nenhum laudo encontrado para este setor.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
 {% endblock content %}

@@ -12,6 +12,21 @@ from bidding_supplier.models import Supplier
 
 
 class AbsctractDirectionSector(models.Model):
+    """
+    Classe abstrata base para Diretorias e Setores.
+    
+    Define campos comuns compartilhados entre Direction e Sector:
+    - name: Nome da diretoria/setor
+    - slug: Identificador único para URLs
+    - accountable: Responsável pela diretoria/setor
+    - address: Endereço físico
+    
+    Attributes:
+        name (str): Nome da diretoria ou setor
+        slug (str): Slug único gerado automaticamente a partir do nome
+        accountable (str): Nome do responsável
+        address (str): Endereço físico da diretoria/setor
+    """
     name = models.CharField("nome", max_length=200, blank=True)
     slug = models.SlugField("slug")
     accountable = models.CharField("responsável", max_length=200, blank=True)
@@ -30,6 +45,19 @@ class AbsctractDirectionSector(models.Model):
 
 
 class Direction(AbsctractDirectionSector):
+    """
+    Representa uma Diretoria da Prefeitura.
+    
+    Herda campos de AbsctractDirectionSector (name, slug, accountable, address).
+    Uma Diretoria pode conter múltiplos Setores.
+    
+    Example:
+        >>> direction = Direction.objects.create(
+        ...     name="Diretoria de TI",
+        ...     accountable="João Silva",
+        ...     address="Rua Principal, 123"
+        ... )
+    """
     class Meta:
         ordering = ("name",)
         verbose_name = "diretoria"
@@ -40,6 +68,15 @@ class Direction(AbsctractDirectionSector):
 
 
 class Sector(AbsctractDirectionSector):
+    """
+    Representa um Setor dentro de uma Diretoria.
+    
+    Herda campos de AbsctractDirectionSector (name, slug, accountable, address).
+    Cada Setor pertence a uma Diretoria específica.
+    
+    Attributes:
+        direction (Direction): Diretoria à qual este setor pertence
+    """
     direction = models.ForeignKey(
         Direction,
         on_delete=models.SET_NULL,
@@ -68,11 +105,18 @@ STATUS_CHOICES = (("1", "Ativo"), ("2", "Inativo"))
 
 class AbsBiddingMaterial(models.Model):
     """
-    Modelo abstrato base para Material e Bidding.
+    Classe abstrata base para Materiais e Licitações.
+    
+    Define campos comuns:
+    - name: Nome do material/licitação
+    - slug: Identificador único para URLs (gerado automaticamente)
+    - supplier: Fornecedor associado
     
     NOTA: O campo 'status' foi removido deste modelo abstrato.
     Agora o status é gerenciado na tabela intermediária MaterialBidding,
     permitindo que um material tenha status diferentes em cada licitação.
+    
+    O slug é gerado automaticamente no método save() se não fornecido.
     """
     name = models.CharField("nome", max_length=200, blank=True)
     slug = models.SlugField("slug")
@@ -153,28 +197,6 @@ class Material(AbsBiddingMaterial):
     
     A relação com Bidding é Many-to-Many através da tabela intermediária MaterialBidding.
     """
-    price = models.DecimalField(
-        "valor base",
-        max_digits=8,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text="Preço base do material (sem reajuste)"
-    )
-    readjustment = models.FloatField(
-        "reajuste padrão (%)",
-        default=0,
-        help_text="Percentual de reajuste aplicado sobre o preço base"
-    )
-    supplier = models.ForeignKey(
-        Supplier,
-        on_delete=models.SET_NULL,
-        verbose_name='fornecedor',
-        related_name='materials',
-        blank=True,
-        null=True
-    )
-    
     # Many-to-Many com Bidding através de MaterialBidding
     biddings = models.ManyToManyField(
         Bidding,
@@ -185,31 +207,17 @@ class Material(AbsBiddingMaterial):
     )
 
     class Meta:
-        ordering = ("name", "supplier")
+        ordering = ("name",)
         verbose_name = "material"
         verbose_name_plural = "materiais"
 
     def get_absolute_url(self):
         return r("dashboard:material", kwargs={"slug": self.slug})
 
-    def total_price(self):
-        """Retorna o preço total com reajuste aplicado."""
-        if not self.price:
-            return Decimal("0.00")
-        
-        if self.readjustment and self.readjustment != 0:
-            total = float(self.price) + (float(self.price) * (self.readjustment / 100))
-            return Decimal(str(total)).quantize(Decimal("0.00"))
-        
-        return self.price
-
     def save(self, *args, **kwargs):
         if not self.slug:
-            # Slug baseado em nome + fornecedor (sem licitação)
-            slug_base = slugify(self.name)[:20]
-            
-            if self.supplier:
-                slug_base = f"{slug_base}-{self.supplier.slug[:15]}"
+            # Slug baseado apenas no nome
+            slug_base = slugify(self.name)[:50]
             
             # Garantir unicidade
             original_slug = slug_base
@@ -254,6 +262,28 @@ class MaterialBidding(models.Model):
         default="1",
         help_text="Status deste material nesta licitação específica"
     )
+    supplier = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='fornecedor',
+        related_name='bidding_materials',
+        blank=True,
+        null=True
+    )
+    price = models.DecimalField(
+        "preço",
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Preço do material nesta licitação"
+    )
+    readjustment = models.FloatField(
+        "reajuste (%)",
+        default=0,
+        help_text="Percentual de reajuste aplicado"
+    )
+    # price_snapshot mantido por compatibilidade temporária, será removido futuramente
     price_snapshot = models.DecimalField(
         "preço no momento da inclusão",
         max_digits=8,
@@ -264,6 +294,17 @@ class MaterialBidding(models.Model):
     )
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+
+    def total_price(self):
+        """Retorna o preço total com reajuste aplicado."""
+        if not self.price:
+            return Decimal("0.00")
+        
+        if self.readjustment and self.readjustment != 0:
+            total = float(self.price) + (float(self.price) * (self.readjustment / 100))
+            return Decimal(str(total)).quantize(Decimal("0.00"))
+        
+        return self.price
     
     class Meta:
         ordering = ("bidding", "material")
@@ -276,6 +317,6 @@ class MaterialBidding(models.Model):
     
     def save(self, *args, **kwargs):
         # Captura price_snapshot automaticamente se não fornecido
-        if not self.price_snapshot and self.material:
-            self.price_snapshot = self.material.total_price()
+        if not self.price_snapshot:
+            self.price_snapshot = self.total_price()
         return super().save(*args, **kwargs)

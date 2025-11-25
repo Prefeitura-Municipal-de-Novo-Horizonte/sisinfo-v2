@@ -9,7 +9,7 @@ from django.urls import reverse
 from authenticate.decorators import tech_only
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
 from bidding_supplier.models import Contact, Supplier
-from dashboard.models import Material
+from dashboard.models import Bidding, Material, MaterialBidding
 
 
 # Create your views here.
@@ -74,11 +74,13 @@ def supplier_update(request, slug):
 def supplier_detail(request, slug):
     supplier = get_object_or_404(Supplier, slug=slug)
     contacts = Contact.objects.filter(supplier=supplier)
-    materials = Material.objects.filter(supplier=supplier)
+    materials = MaterialBidding.objects.filter(supplier=supplier)
+    biddings = Bidding.objects.filter(material_associations__supplier=supplier).distinct()
     context = {
         'supplier': supplier,
         'contacts': contacts,
         'materials': materials,
+        'biddings': biddings,
     }
     return render(request, 'supllier.html', context)
 
