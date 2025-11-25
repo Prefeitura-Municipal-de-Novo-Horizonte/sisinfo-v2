@@ -197,28 +197,6 @@ class Material(AbsBiddingMaterial):
     
     A relação com Bidding é Many-to-Many através da tabela intermediária MaterialBidding.
     """
-    price = models.DecimalField(
-        "valor base",
-        max_digits=8,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text="Preço base do material (sem reajuste)"
-    )
-    readjustment = models.FloatField(
-        "reajuste padrão (%)",
-        default=0,
-        help_text="Percentual de reajuste aplicado sobre o preço base"
-    )
-    supplier = models.ForeignKey(
-        Supplier,
-        on_delete=models.SET_NULL,
-        verbose_name='fornecedor',
-        related_name='materials',
-        blank=True,
-        null=True
-    )
-    
     # Many-to-Many com Bidding através de MaterialBidding
     biddings = models.ManyToManyField(
         Bidding,
@@ -229,31 +207,17 @@ class Material(AbsBiddingMaterial):
     )
 
     class Meta:
-        ordering = ("name", "supplier")
+        ordering = ("name",)
         verbose_name = "material"
         verbose_name_plural = "materiais"
 
     def get_absolute_url(self):
         return r("dashboard:material", kwargs={"slug": self.slug})
 
-    def total_price(self):
-        """Retorna o preço total com reajuste aplicado."""
-        if not self.price:
-            return Decimal("0.00")
-        
-        if self.readjustment and self.readjustment != 0:
-            total = float(self.price) + (float(self.price) * (self.readjustment / 100))
-            return Decimal(str(total)).quantize(Decimal("0.00"))
-        
-        return self.price
-
     def save(self, *args, **kwargs):
         if not self.slug:
-            # Slug baseado em nome + fornecedor (sem licitação)
-            slug_base = slugify(self.name)[:20]
-            
-            if self.supplier:
-                slug_base = f"{slug_base}-{self.supplier.slug[:15]}"
+            # Slug baseado apenas no nome
+            slug_base = slugify(self.name)[:50]
             
             # Garantir unicidade
             original_slug = slug_base
@@ -298,6 +262,28 @@ class MaterialBidding(models.Model):
         default="1",
         help_text="Status deste material nesta licitação específica"
     )
+    supplier = models.ForeignKey(
+        Supplier,
+        on_delete=models.SET_NULL,
+        verbose_name='fornecedor',
+        related_name='bidding_materials',
+        blank=True,
+        null=True
+    )
+    price = models.DecimalField(
+        "preço",
+        max_digits=8,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Preço do material nesta licitação"
+    )
+    readjustment = models.FloatField(
+        "reajuste (%)",
+        default=0,
+        help_text="Percentual de reajuste aplicado"
+    )
+    # price_snapshot mantido por compatibilidade temporária, será removido futuramente
     price_snapshot = models.DecimalField(
         "preço no momento da inclusão",
         max_digits=8,
@@ -308,6 +294,17 @@ class MaterialBidding(models.Model):
     )
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+
+    def total_price(self):
+        """Retorna o preço total com reajuste aplicado."""
+        if not self.price:
+            return Decimal("0.00")
+        
+        if self.readjustment and self.readjustment != 0:
+            total = float(self.price) + (float(self.price) * (self.readjustment / 100))
+            return Decimal(str(total)).quantize(Decimal("0.00"))
+        
+        return self.price
     
     class Meta:
         ordering = ("bidding", "material")
@@ -320,6 +317,6 @@ class MaterialBidding(models.Model):
     
     def save(self, *args, **kwargs):
         # Captura price_snapshot automaticamente se não fornecido
-        if not self.price_snapshot and self.material:
-            self.price_snapshot = self.material.total_price()
+        if not self.price_snapshot:
+            self.price_snapshot = self.total_price()
         return super().save(*args, **kwargs)

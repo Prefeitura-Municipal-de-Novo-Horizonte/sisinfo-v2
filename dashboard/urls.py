@@ -18,6 +18,8 @@ from dashboard.views import (
     sector_detail,
     sector_update,
     sectors,
+    toggle_bidding_status,
+    toggle_material_status,
 )
 
 app_name = "dashboard"
@@ -42,11 +44,13 @@ urlpatterns = [
     path("licitacoes/", biddings, name="licitacoes"),
     path("licitacao/<slug:slug>/", bidding_detail, name="licitacao"),
     path("licitacao/<slug:slug>/update/", bidding_update, name="update_licitacao"),
+    path("licitacao/<slug:slug>/toggle-status/", toggle_bidding_status, name="toggle_status_licitacao"),
     path("licitacao/<slug:slug>/<str:id>/delete/", bidding_delete, name="delete_licitacao"),
     # Materiais
     path("materiais/", materials, name="materiais"),
     path("material/<slug:slug>/", material_detail, name="material"),
     path("material/<slug:slug>/update/", material_update, name="update_material"),
+    path("material/<int:id>/toggle-status/", toggle_material_status, name="toggle_status_material"),
     path(
         "material/<slug:slug>/<str:id>/delete/", material_delete, name="delete_material"
     ),

@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -11,8 +12,20 @@ from dashboard.filters import (
     MaterialFilter,
     SectorFilter,
 )
-from dashboard.forms import BiddingForm, DirectionForm, MaterialForm, SectorForm
-from dashboard.models import Bidding, Direction, Material, Sector
+from dashboard.forms import (
+    BiddingForm,
+    DirectionForm,
+    MaterialBiddingForm,
+    MaterialForm,
+    SectorForm,
+)
+from dashboard.models import (
+    Bidding,
+    Direction,
+    Material,
+    MaterialBidding,
+    Sector,
+)
 from reports.models import MaterialReport, Report
 
 
@@ -163,8 +176,10 @@ def sectors(request):
 @login_required
 def sector_detail(request, slug):
     setor = get_object_or_404(Sector, slug=slug)
+    reports = Report.objects.filter(sector=setor)
     context = {
         "setor": setor,
+        "reports": reports,
     }
     return render(request, "setores/setor_detail.html", context)
 
@@ -250,20 +265,25 @@ def biddings(request):
 def bidding_detail(request, slug):
     licitacao = get_object_or_404(Bidding, slug=slug)
     # Materiais agora vêm de MaterialBidding (tabela intermediária)
-    material_associations = licitacao.material_associations.all().select_related('material', 'material__supplier')
+    material_associations = licitacao.material_associations.all().select_related('material', 'supplier')
     # Debug print removed
     total_materiais = material_associations.count()
     if request.method == "POST":
-        form_material = MaterialForm(request.POST)
+        form_material = MaterialBiddingForm(request.POST)
         if form_material.is_valid():
-            form_material.save()
-            messages.add_message(request, constants.SUCCESS,
-                                 "Inserido com sucesso!")
+            material_bidding = form_material.save(commit=False)
+            material_bidding.bidding = licitacao
+            try:
+                material_bidding.save()
+                messages.add_message(request, constants.SUCCESS,
+                                     "Material vinculado com sucesso!")
+            except IntegrityError:
+                messages.add_message(request, constants.ERROR, "Este material já está vinculado a esta licitação!")
         else:
-            messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
+            messages.add_message(request, constants.ERROR, "Erro ao vincular material. Verifique os dados.")
         return redirect("dashboard:licitacao", slug=slug)
 
-    form_material = MaterialForm()
+    form_material = MaterialBiddingForm()
     myFilter = MaterialFilter(request.GET, queryset=Material.objects.all())
     context = {
         "licitacao": licitacao,
@@ -271,7 +291,7 @@ def bidding_detail(request, slug):
         "material_associations": material_associations,  # Mudado de 'materiais'
         "myFilter": myFilter,
         "total_materiais": total_materiais,
-        "btn": "Adicionar Material",
+        "btn": "Vincular Material",
     }
     return render(request, "licitacao/bidding_detail.html", context)
 
@@ -306,7 +326,7 @@ def bidding_update(request, slug):
 def extract_update_form_bidding(form, request):
     licitacao = form.save(commit=False)
     licitacao.name = form.cleaned_data["name"]
-    # Removido: licitacao.status (campo não existe mais)
+    licitacao.status = form.cleaned_data["status"]
     licitacao.date = form.cleaned_data["date"]
     licitacao.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
@@ -323,6 +343,42 @@ def bidding_delete(request, slug, id):
         f"A licitação {licitacao.name} foi excluido com sucesso!",
     )
     return redirect("dashboard:licitacoes")
+
+
+@login_required
+def toggle_bidding_status(request, slug):
+    licitacao = get_object_or_404(Bidding, slug=slug)
+    
+    # Toggle status: '1' (Ativo) <-> '2' (Inativo)
+    if licitacao.status == '1':
+        licitacao.status = '2'
+        msg = f"A licitação {licitacao.name} foi desativada com sucesso!"
+    else:
+        licitacao.status = '1'
+        msg = f"A licitação {licitacao.name} foi ativada com sucesso!"
+    
+    licitacao.save()  # O método save() já propaga para os materiais
+    
+    messages.add_message(request, constants.SUCCESS, msg)
+    return redirect("dashboard:licitacoes")
+
+
+@login_required
+def toggle_material_status(request, id):
+    material_bidding = get_object_or_404(MaterialBidding, id=id)
+    
+    # Toggle status: '1' (Ativo) <-> '2' (Inativo)
+    if material_bidding.status == '1':
+        material_bidding.status = '2'
+        msg = f"O material {material_bidding.material.name} foi desativado nesta licitação!"
+    else:
+        material_bidding.status = '1'
+        msg = f"O material {material_bidding.material.name} foi ativado nesta licitação!"
+    
+    material_bidding.save()
+    
+    messages.add_message(request, constants.SUCCESS, msg)
+    return redirect("dashboard:licitacao", slug=material_bidding.bidding.slug)
 
 
 @login_required
@@ -397,9 +453,7 @@ def extract_update_form_material(form, request):
     material.name = form.cleaned_data["name"]
     # Removido: material.status (campo não existe mais)
     # Removido: material.bidding (campo não existe mais - agora é ManyToMany)
-    material.price = form.cleaned_data["price"]
-    material.readjustment = form.cleaned_data["readjustment"]
-    material.supplier = form.cleaned_data.get("supplier")
+    # Removido: price, readjustment, supplier (agora em MaterialBidding)
     material.save()
     messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
     return redirect("dashboard:materiais")

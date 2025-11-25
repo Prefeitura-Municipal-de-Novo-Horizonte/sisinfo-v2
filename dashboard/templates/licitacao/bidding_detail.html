@@ -15,7 +15,7 @@
     </p>
 </div>
 <!-- CABEÇALHO -->
-<div class="grid grid-cols-2 gap-4 mb-4 h-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto">
     <div class="flex-col items-center justify-end rounded bg-gray-100 h-full max-h-full dark:bg-gray-800 p-4">
         <div class="w-full max-w-full flex justify-start mb-6">
             <span
@@ -94,6 +94,6 @@
 
 <!-- LISTA MATERIAIS -->
 <div class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
-    {% include "licitacao/include/_table_material.html" with material_associations=material_associations %}
+    {% include "licitacao/include/_table_material.html" %}
 </div>
 {% endblock content %}
