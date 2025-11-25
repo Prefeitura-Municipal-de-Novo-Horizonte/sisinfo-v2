@@ -3,10 +3,6 @@
         <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-6 py-3">Nome</th>
-                <th scope="col" class="px-6 py-3">Fornecedor</th>
-                <th scope="col" class="px-6 py-3">Preço Base</th>
-                <th scope="col" class="px-6 py-3">Reajuste (%)</th>
-                <th scope="col" class="px-6 py-3">Preço Total</th>
                 <th scope="col" class="px-6 py-3">Ações</th>
             </tr>
         </thead>
@@ -17,10 +13,6 @@
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     <a href="{{ material.get_absolute_url }}">{{ material.name }}</a>
                 </th>
-                <td class="px-6 py-4">{{ material.supplier }}</td>
-                <td class="px-6 py-4">R$ {{ material.price|floatformat:2 }}</td>
-                <td class="px-6 py-4">{{ material.readjustment }}%</td>
-                <td class="px-6 py-4">R$ {{ material.total_price|floatformat:2 }}</td>
                 <td class="px-6 py-4 flex justify-normal items-center gap-2">
                     <a href="{% url 'dashboard:update_material' material.slug %}">
                         <button type="button"

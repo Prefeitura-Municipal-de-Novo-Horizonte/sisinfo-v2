@@ -11,7 +11,7 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
 
 *   **Linguagens:** Python (3.12.x preferencial, 3.11.x compatível), JavaScript.
 *   **Frameworks e Runtimes:**
-    *   Backend: Django 4.2.7
+    *   Backend: Django 5.2.6
     *   Frontend: Tailwind CSS 3.3.5, Flowbite 2.0.0
     *   Runtime: Node.js 20.9.0+ (para ferramentas de frontend)
 *   **Bancos de Dados:** PostgreSQL (via Docker).
