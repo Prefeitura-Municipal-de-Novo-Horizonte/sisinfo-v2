@@ -2,7 +2,7 @@ from django import forms
 from django.forms import inlineformset_factory
 
 from authenticate.models import ProfessionalUser
-from dashboard.models import Material
+from bidding_procurement.models import Material
 from reports.models import InterestRequestMaterial, Invoice, MaterialReport, Report
 
 
@@ -91,7 +91,7 @@ class MaterialReportForm(forms.ModelForm):
 
         # Buscar materiais diretamente da tabela intermediária MaterialBidding
         # Apenas materiais com status ativo (status='1')
-        from dashboard.models import MaterialBidding
+        from bidding_procurement.models import MaterialBidding
         items_ativos = Material.objects.filter(
             bidding_associations__status='1'
         ).distinct().prefetch_related('bidding_associations__bidding')

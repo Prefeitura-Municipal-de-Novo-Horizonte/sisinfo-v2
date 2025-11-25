@@ -3,13 +3,13 @@ import os
 import sys
 import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 
 try:
     django.setup()
     print("✓ Django setup successful")
     
-    from dashboard.models import Material, Bidding, MaterialBidding
+    from bidding_procurement.models import Material, Bidding, MaterialBidding
     print("✓ Models imported successfully")
     
     print(f"✓ Material fields: {[f.name for f in Material._meta.get_fields()]}")

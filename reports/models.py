@@ -7,7 +7,8 @@ from django.template.defaultfilters import slugify
 
 from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
-from dashboard.models import Material, Sector
+from bidding_procurement.models import Material
+from organizational_structure.models import Sector
 from reports.managers import KindInterestRequestMaterialQuerySet
 
 

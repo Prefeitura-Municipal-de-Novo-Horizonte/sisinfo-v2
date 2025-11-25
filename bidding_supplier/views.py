@@ -9,7 +9,7 @@ from django.urls import reverse
 from authenticate.decorators import tech_only
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
 from bidding_supplier.models import Contact, Supplier
-from dashboard.models import Bidding, Material, MaterialBidding
+from bidding_procurement.models import Bidding, Material, MaterialBidding
 
 
 # Create your views here.

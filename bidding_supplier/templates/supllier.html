@@ -50,7 +50,7 @@
         <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
             {% for bidding in biddings %}
             <li>
-                <a href="{% url 'dashboard:licitacao' bidding.slug %}"
+                <a href="{% url 'bidding_procurement:licitacao' bidding.slug %}"
                     class="hover:underline text-blue-600 dark:text-blue-400">
                     {{ bidding.name }} ({{ bidding.date|date:"d/m/Y" }})
                 </a>

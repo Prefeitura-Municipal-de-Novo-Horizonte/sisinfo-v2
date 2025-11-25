@@ -5,7 +5,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 django.setup()
 
-from dashboard.models import Bidding, MaterialBidding
+from bidding_procurement.models import Bidding, MaterialBidding
 
 print("Checking MaterialBidding associations...")
 biddings = Bidding.objects.all()

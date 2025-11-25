@@ -13,13 +13,13 @@ Criar o app `organizational_structure` para gerenciar modelos, views, formulári
 
 ## Status
 - [x] Tarefa criada.
-- [ ] Estrutura inicial criada.
-- [ ] Modelos movidos.
-- [ ] Views movidas.
-- [ ] Formulários movidos.
-- [ ] Filtros movidos.
-- [ ] Templates movidos.
-- [ ] URLs criadas.
+- [x] Estrutura inicial criada.
+- [x] Modelos movidos.
+- [x] Views movidas.
+- [x] Formulários movidos.
+- [x] Filtros movidos.
+- [x] Templates movidos.
+- [x] URLs criadas.
 - [ ] Imports/referências atualizados.
 - [ ] Testes realizados.
 - [ ] Implementação concluída.

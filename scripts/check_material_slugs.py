@@ -6,7 +6,7 @@ from django.utils.text import slugify
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 django.setup()
 
-from dashboard.models import Material
+from bidding_procurement.models import Material
 
 print("Checking Material slugs...")
 materials = Material.objects.all()

@@ -5,7 +5,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 django.setup()
 
-from dashboard.models import Bidding
+from bidding_procurement.models import Bidding
 
 print("Checking Biddings for empty slugs...")
 biddings = Bidding.objects.all()

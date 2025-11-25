@@ -6,6 +6,7 @@ from django.contrib.auth.forms import (
 )
 from django.core.exceptions import ValidationError
 
+from core.mixins import CapitalizeFieldMixin
 from authenticate.models import ProfessionalUser
 
 
@@ -22,7 +23,7 @@ class FormStyleMixin:
                 field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 
 
-class UserCreationForm(FormStyleMixin, forms.ModelForm):
+class UserCreationForm(CapitalizeFieldMixin, FormStyleMixin, forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Password confirmation", widget=forms.PasswordInput
@@ -55,10 +56,7 @@ class UserCreationForm(FormStyleMixin, forms.ModelForm):
         username = self.cleaned_data['username']
         return username.lower()
 
-    def extract_from_clean(self, field):
-        name = self.cleaned_data[field]
-        words = [w.capitalize() for w in name.split()]
-        return ' '.join(words)
+
 
     def save(self, commit=True):
         # Save the provided password in hashed format
