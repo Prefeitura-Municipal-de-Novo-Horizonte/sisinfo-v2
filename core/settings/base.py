@@ -30,7 +30,7 @@ MY_APPS = [
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
     "organizational_structure.apps.OrganizationalStructureConfig",
-    "bidding_procurement",
+    "bidding_procurement.apps.BiddingProcurementConfig",
     "core",
 ]
 

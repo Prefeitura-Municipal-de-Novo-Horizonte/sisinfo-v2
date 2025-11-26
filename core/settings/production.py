@@ -73,6 +73,9 @@ LOGGING = {
     },
 }
 
+# Browserless.io API Key for PDF generation
+BROWSERLESS_API_KEY = config("BROWSERLESS_API_KEY")
+
 # Configurar ADMINS e SERVER_EMAIL para envio de erros críticos
 ADMINS = [("Prefeitura Municipal de Novo Horizonte",
            "suporte@novohorizonte.sp.gov.br")]
