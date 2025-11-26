@@ -182,7 +182,7 @@ Laudos
                                 </svg>
                             </button>
                         </a>
-                        <a href="{% url 'reports:pdf_report' report.slug %}" target="_blank">
+                        <a href="{% url 'reports:generate_pdf' report.slug %}">
                             <button type="button" class="{% btn_danger %}">
                                 <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                                     viewBox="0 0 16 20">
