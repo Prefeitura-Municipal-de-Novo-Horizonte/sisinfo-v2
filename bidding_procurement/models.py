@@ -16,7 +16,7 @@ class AbsBiddingMaterial(models.Model):
     Define campos comuns:
     - name: Nome do material/licitação
     - slug: Identificador único para URLs (gerado automaticamente)
-    - supplier: Fornecedor associado
+    - supplier: Fornecedor associado (removido nesta versão, mantido em MaterialBidding)
     
     NOTA: O campo 'status' foi removido deste modelo abstrato.
     Agora o status é gerenciado na tabela intermediária MaterialBidding,
@@ -64,6 +64,7 @@ class Bidding(AbsBiddingMaterial):
         db_table = "dashboard_bidding"
 
     def get_absolute_url(self):
+        """Retorna a URL absoluta para os detalhes da licitação."""
         return r("bidding_procurement:licitacao", kwargs={"slug": self.slug})
 
 
@@ -91,6 +92,7 @@ class Material(AbsBiddingMaterial):
         db_table = "dashboard_material"
 
     def get_absolute_url(self):
+        """Retorna a URL absoluta para os detalhes do material."""
         return r("bidding_procurement:material", kwargs={"slug": self.slug})
 
 
@@ -161,7 +163,12 @@ class MaterialBidding(models.Model):
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
 
     def total_price(self):
-        """Retorna o preço total com reajuste aplicado."""
+        """
+        Calcula o preço total considerando o reajuste.
+        
+        Returns:
+            Decimal: Preço final com reajuste aplicado.
+        """
         if not self.price:
             return Decimal("0.00")
         
@@ -182,6 +189,9 @@ class MaterialBidding(models.Model):
         return f"{self.material.name} - {self.bidding.name}"
     
     def save(self, *args, **kwargs):
+        """
+        Sobrescreve o método save para capturar o snapshot do preço.
+        """
         # Captura price_snapshot automaticamente se não fornecido
         if not self.price_snapshot:
             self.price_snapshot = self.total_price()

@@ -1,6 +1,7 @@
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full w-full px-10">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
+{% load ui_tags %}
+<div class="{% table_container %}">
+    <table class="{% table_base %}">
+        <thead class="{% table_head %}">
             <tr>
                 <th scope="col" class="px-6 py-3">Nome</th>
                 <th scope="col" class="px-6 py-3">Status</th>
@@ -13,10 +14,9 @@
         </thead>
         <tbody>
             {% for assoc in material_associations %}
-            <tr
-                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            <tr class="{% table_row %}">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <a href="{{ assoc.material.get_absolute_url }}">{{ assoc.material.name }}</a>
+                    {{ assoc.material.name }}
                 </th>
                 <td class="px-6 py-4">
                     {% if assoc.status == '1' %}
@@ -35,8 +35,7 @@
                     {% if licitacao.status == '1' %}
                     <a href="{% url 'bidding_procurement:toggle_status_material' assoc.id %}">
                         {% if assoc.status == '1' %}
-                        <button type="button"
-                            class="flex justify-center gap-2 items-center focus:outline-none text-white bg-gray-500 hover:bg-gray-600 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800">
+                        <button type="button" class="flex justify-center gap-2 items-center {% btn_secondary %}">
                             <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -46,16 +45,15 @@
                             Desativar
                         </button>
                         {% else %}
-                        <button type="button"
-                            class="flex justify-center gap-2 items-center focus:outline-none text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800">
+                        <button type="button" class="flex justify-center gap-2 items-center {% btn_primary %}">
                             <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                     stroke-width="2" d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
-                            </svg>
                             Excluir
                         </button>
+                        {% endif %}
                     </a>
                     {% endif %}
                 </td>

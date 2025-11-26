@@ -2,9 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.core.paginator import Paginator
-from django.db import IntegrityError
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
 from bidding_procurement.filters import (
     BiddingFilter,
@@ -18,18 +17,23 @@ from bidding_procurement.forms import (
 from bidding_procurement.models import (
     Bidding,
     Material,
-    MaterialBidding,
 )
 from reports.models import MaterialReport
+from .services import BiddingService, MaterialService
 
 
 @login_required
 def biddings(request):
-    licitacoes = Bidding.objects.all()
+    """
+    View para listar e criar licitações.
+    
+    GET: Lista todas as licitações com paginação e filtro.
+    POST: Cria uma nova licitação.
+    """
+    licitacoes = BiddingService.get_all_biddings()
     if request.method == "POST":
         form = BiddingForm(request.POST)
-        if form.is_valid():
-            form.save()
+        if BiddingService.create_bidding(form):
             messages.add_message(request, constants.SUCCESS,
                                  "Inserido com sucesso!")
         else:
@@ -56,27 +60,27 @@ def biddings(request):
 
 @login_required
 def bidding_detail(request, slug):
-    licitacao = get_object_or_404(Bidding, slug=slug)
+    """
+    View para exibir detalhes de uma licitação e vincular materiais.
+    
+    GET: Exibe detalhes da licitação e lista de materiais vinculados.
+    POST: Vincula um novo material à licitação.
+    """
+    licitacao = BiddingService.get_bidding_by_slug(slug)
     # Materiais agora vêm de MaterialBidding (tabela intermediária)
     material_associations = licitacao.material_associations.all().select_related('material', 'supplier')
     total_materiais = material_associations.count()
     if request.method == "POST":
         form_material = MaterialBiddingForm(request.POST)
-        if form_material.is_valid():
-            material_bidding = form_material.save(commit=False)
-            material_bidding.bidding = licitacao
-            try:
-                material_bidding.save()
-                messages.add_message(request, constants.SUCCESS,
-                                     "Material vinculado com sucesso!")
-            except IntegrityError:
-                messages.add_message(request, constants.ERROR, "Este material já está vinculado a esta licitação!")
+        success, msg = BiddingService.add_material_to_bidding(licitacao, form_material)
+        if success:
+            messages.add_message(request, constants.SUCCESS, msg)
         else:
-            messages.add_message(request, constants.ERROR, "Erro ao vincular material. Verifique os dados.")
+            messages.add_message(request, constants.ERROR, msg)
         return redirect("bidding_procurement:licitacao", slug=slug)
 
     form_material = MaterialBiddingForm()
-    myFilter = MaterialFilter(request.GET, queryset=Material.objects.all())
+    myFilter = MaterialFilter(request.GET, queryset=MaterialService.get_all_materials())
     context = {
         "licitacao": licitacao,
         "form": form_material,
@@ -90,9 +94,12 @@ def bidding_detail(request, slug):
 
 @login_required
 def bidding_update(request, slug):
-    licitacao = get_object_or_404(Bidding, slug=slug)
+    """
+    View para atualizar uma licitação existente.
+    """
+    licitacao = BiddingService.get_bidding_by_slug(slug)
     form = BiddingForm(instance=licitacao)
-    licitacoes = Bidding.objects.all()
+    licitacoes = BiddingService.get_all_biddings()
     myFilter = BiddingFilter(request.GET, queryset=licitacoes)
     licitacoes = myFilter.qs
     context = {
@@ -105,8 +112,7 @@ def bidding_update(request, slug):
 
     if request.method == "POST":
         form = BiddingForm(request.POST, instance=licitacao)
-        if form.is_valid():
-            form.save()
+        if BiddingService.update_bidding(licitacao, form):
             messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
             return redirect("bidding_procurement:licitacoes")
         else:
@@ -117,66 +123,56 @@ def bidding_update(request, slug):
     return redirect("bidding_procurement:licitacao")
 
 
-
-
-
-@login_required
 @login_required
 def bidding_delete(request, slug):
-    licitacao = get_object_or_404(Bidding, slug=slug)
-    licitacao.delete()
+    """
+    View para excluir uma licitação.
+    """
+    licitacao = BiddingService.get_bidding_by_slug(slug)
+    name = licitacao.name
+    BiddingService.delete_bidding(licitacao)
     messages.add_message(
         request,
         constants.ERROR,
-        f"A licitação {licitacao.name} foi excluido com sucesso!",
+        f"A licitação {name} foi excluido com sucesso!",
     )
     return redirect("bidding_procurement:licitacoes")
 
 
 @login_required
 def toggle_bidding_status(request, slug):
-    licitacao = get_object_or_404(Bidding, slug=slug)
-    
-    # Toggle status: '1' (Ativo) <-> '2' (Inativo)
-    if licitacao.status == '1':
-        licitacao.status = '2'
-        msg = f"A licitação {licitacao.name} foi desativada com sucesso!"
-    else:
-        licitacao.status = '1'
-        msg = f"A licitação {licitacao.name} foi ativada com sucesso!"
-    
-    licitacao.save()  # O método save() já propaga para os materiais
-    
+    """
+    View para alternar o status de uma licitação (Ativo/Inativo).
+    """
+    licitacao = BiddingService.get_bidding_by_slug(slug)
+    msg = BiddingService.toggle_status(licitacao)
     messages.add_message(request, constants.SUCCESS, msg)
     return redirect("bidding_procurement:licitacoes")
 
 
 @login_required
 def toggle_material_status(request, id):
-    material_bidding = get_object_or_404(MaterialBidding, id=id)
-    
-    # Toggle status: '1' (Ativo) <-> '2' (Inativo)
-    if material_bidding.status == '1':
-        material_bidding.status = '2'
-        msg = f"O material {material_bidding.material.name} foi desativado nesta licitação!"
-    else:
-        material_bidding.status = '1'
-        msg = f"O material {material_bidding.material.name} foi ativado nesta licitação!"
-    
-    material_bidding.save()
-    
+    """
+    View para alternar o status de um material em uma licitação específica.
+    """
+    material_bidding, msg = BiddingService.toggle_material_status(id)
     messages.add_message(request, constants.SUCCESS, msg)
     return redirect("bidding_procurement:licitacao", slug=material_bidding.bidding.slug)
 
 
 @login_required
 def materials(request):
-    materiais = Material.objects.all()
+    """
+    View para listar e criar materiais.
+    
+    GET: Lista todos os materiais com paginação e filtro.
+    POST: Cria um novo material.
+    """
+    materiais = MaterialService.get_all_materials()
     total_materiais = materiais.count()
     if request.method == "POST":
         form_material = MaterialForm(request.POST)
-        if form_material.is_valid():
-            form_material.save()
+        if MaterialService.create_material(form_material):
             messages.add_message(request, constants.SUCCESS,
                                  "Inserido com sucesso!")
         else:
@@ -185,9 +181,14 @@ def materials(request):
     form_material = MaterialForm()
     myFilter = MaterialFilter(request.GET, queryset=materiais)
     materiais = myFilter.qs
+    
+    paginator = Paginator(materiais, 15)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
         "form": form_material,
-        "materiais": materiais,
+        "page_obj": page_obj,
         "btn": "Adicionar novo material",
         "myFilter": myFilter,
         "total_materiais": total_materiais,
@@ -197,7 +198,10 @@ def materials(request):
 
 @login_required
 def material_detail(request, slug):
-    material = get_object_or_404(Material, slug=slug)
+    """
+    View para exibir detalhes de um material e seu histórico de uso.
+    """
+    material = MaterialService.get_material_by_slug(slug)
     reports = MaterialReport.objects.filter(material=material.id)
     total_quantity = reports.aggregate(total_value=Sum("quantity"))
     total_quantity = total_quantity.get("total_value")
@@ -211,9 +215,12 @@ def material_detail(request, slug):
 
 @login_required
 def material_update(request, slug):
-    material = get_object_or_404(Material, slug=slug)
+    """
+    View para atualizar um material existente.
+    """
+    material = MaterialService.get_material_by_slug(slug)
     form_material = MaterialForm(instance=material)
-    materiais = Material.objects.all()
+    materiais = MaterialService.get_all_materials()
     myFilter = MaterialFilter(request.GET, queryset=materiais)
     materiais = myFilter.qs
     context = {
@@ -226,8 +233,7 @@ def material_update(request, slug):
 
     if request.method == "POST":
         form_material = MaterialForm(request.POST, instance=material)
-        if form_material.is_valid():
-            form_material.save()
+        if MaterialService.update_material(material, form_material):
             messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
             return redirect("bidding_procurement:materiais")
         else:
@@ -238,17 +244,17 @@ def material_update(request, slug):
     return redirect("bidding_procurement:licitacao")
 
 
-
-
-
-@login_required
 @login_required
 def material_delete(request, slug):
-    material = get_object_or_404(Material, slug=slug)
-    material.delete()
+    """
+    View para excluir um material.
+    """
+    material = MaterialService.get_material_by_slug(slug)
+    name = material.name
+    MaterialService.delete_material(material)
     messages.add_message(
         request,
         constants.ERROR,
-        f"O suprimento {material.name} foi excluido com sucesso!",
+        f"O suprimento {name} foi excluido com sucesso!",
     )
     return redirect("bidding_procurement:materiais")

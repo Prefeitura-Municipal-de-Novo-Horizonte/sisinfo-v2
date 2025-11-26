@@ -11,6 +11,6 @@ Remover arquivos de configuração antigos e código comentado/morto para manter
 ## Status
 - [x] Tarefa criada.
 - [x] `core/settings.py` removido.
-- [ ] Código comentado removido.
-- [ ] Arquivos de backup limpos.
-- [ ] Implementação concluída.
+- [x] Código comentado removido (limpeza geral realizada durante refatoração).
+- [x] Arquivos de backup limpos.
+- [x] Implementação concluída.

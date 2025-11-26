@@ -53,7 +53,6 @@ class Direction(AbsctactDirectionSector):
         db_table = 'dashboard_direction'
 
     def get_absolute_url(self):
-        # TODO: Update URL namespace after moving views
         return r("organizational_structure:diretoria", kwargs={"slug": self.slug})
 
 
@@ -85,5 +84,4 @@ class Sector(AbsctactDirectionSector):
         db_table = 'dashboard_sector'
 
     def get_absolute_url(self):
-        # TODO: Update URL namespace after moving views
         return r("organizational_structure:setor", kwargs={"slug": self.slug})

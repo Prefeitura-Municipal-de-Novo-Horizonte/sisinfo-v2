@@ -3,38 +3,42 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
-from django.shortcuts import resolve_url as r
 from django.urls import reverse
 
 from authenticate.decorators import tech_only
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
 from bidding_supplier.models import Contact, Supplier
-from bidding_procurement.models import Bidding, Material, MaterialBidding
+from bidding_supplier.services import SupplierService
 
 
 # Create your views here.
 @login_required(login_url='login')
 def suppliers(request):
-    suppliers = Supplier.objects.all()
+    """
+    View para listar e criar fornecedores.
+    
+    GET: Lista todos os fornecedores.
+    POST: Cria um novo fornecedor com contatos.
+    """
+    suppliers_list = SupplierService.get_all_suppliers()
     if request.method == 'POST':
         form = SupplierForm(request.POST)
         form_contact_factory = inlineformset_factory(
             Supplier, Contact, form=ContactForm)
         form_contact = form_contact_factory(request.POST)
-        if form.is_valid() and form_contact.is_valid():
-            supplier = form.save()
-            form_contact.instance = supplier
-            form_contact.save()
+        
+        if SupplierService.create_supplier(form, form_contact):
             messages.add_message(
                 request, constants.SUCCESS, "Um novo fornecedor inserido com sucesso")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect(reverse("suppliers:fornecedores"))
+        
     form = SupplierForm()
     form_contact = inlineformset_factory(
         Supplier, Contact, form=ContactForm, extra=2)
     context = {
-        'suppliers': suppliers,
+        'suppliers': suppliers_list,
         'form': form,
         'form_contact': form_contact,
         'btn': 'Adicionar novo Fornecedor',
@@ -44,16 +48,17 @@ def suppliers(request):
 
 @login_required(login_url='login')
 def supplier_update(request, slug):
-    supplier = get_object_or_404(Supplier, slug=slug)
+    """
+    View para atualizar um fornecedor existente e seus contatos.
+    """
+    supplier = SupplierService.get_supplier_by_slug(slug)
     form = SupplierForm(request.POST or None, instance=supplier, prefix='main')
     form_contact = ContactInlineForm(
         request.POST or None, instance=supplier, prefix='suppliers')
-    suppliers = Supplier.objects.all()
+    suppliers_list = SupplierService.get_all_suppliers()
 
     if request.method == 'POST':
-        if (form.is_valid() and form_contact.is_valid()):
-            form.save()
-            form_contact.save()
+        if SupplierService.update_supplier(form, form_contact):
             messages.add_message(
                 request, constants.SUCCESS, f'O fornecedor {supplier.trade} foi atualizado com sucesso')
             return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
@@ -64,7 +69,7 @@ def supplier_update(request, slug):
         'form': form,
         'supplier': supplier,
         'form_contact': form_contact,
-        'suppliers': suppliers,
+        'suppliers': suppliers_list,
         'btn': 'Atualizar Fornecedor'
     }
     return render(request, 'supplier_update.html', context)
@@ -72,37 +77,35 @@ def supplier_update(request, slug):
 
 @login_required(login_url='login')
 def supplier_detail(request, slug):
-    supplier = get_object_or_404(Supplier, slug=slug)
-    contacts = Contact.objects.filter(supplier=supplier)
-    materials = MaterialBidding.objects.filter(supplier=supplier)
-    biddings = Bidding.objects.filter(material_associations__supplier=supplier).distinct()
-    context = {
-        'supplier': supplier,
-        'contacts': contacts,
-        'materials': materials,
-        'biddings': biddings,
-    }
+    """
+    View para exibir detalhes de um fornecedor, incluindo contatos, materiais e licitações.
+    """
+    context = SupplierService.get_supplier_details(slug)
     return render(request, 'supllier.html', context)
 
 
 @login_required(login_url='login')
 @tech_only
-def supplier_delete(request, slug, id):
-    supplier = get_object_or_404(Supplier, id=id, slug=slug)
-    if supplier.delete():
+def supplier_delete(request, slug):
+    """
+    View para excluir um fornecedor (apenas técnicos).
+    """
+    supplier = get_object_or_404(Supplier, slug=slug)
+    trade = supplier.trade
+    if SupplierService.delete_supplier(supplier):
         messages.add_message(request, constants.ERROR,
-                             f'O Fornecedor {supplier.trade} foi excluido com sucesso!')
+                             f'O Fornecedor {trade} foi excluido com sucesso!')
         return redirect(reverse('suppliers:fornecedores'))
     messages.add_message(request, constants.WARNING,
-                         f'Não foi possivel excluir o fornecedor {supplier.trade}')
+                         f'Não foi possivel excluir o fornecedor {trade}')
     return redirect(reverse('suppliers:fornecedores'))
 
 
 @login_required(login_url='login')
 def contact_supplier_delete(request, id):
-    contact = get_object_or_404(Contact, id=id)
-    supplier = contact.supplier
-    contact.delete()
-    messages.add_message(request, constants.ERROR,
-                         f'O contato {contact.value} do fornecedor {supplier.trade} foi excluido com sucesso!')
+    """
+    View para excluir um contato de fornecedor.
+    """
+    supplier, msg = SupplierService.delete_contact(id)
+    messages.add_message(request, constants.ERROR, msg)
     return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': supplier.slug}))

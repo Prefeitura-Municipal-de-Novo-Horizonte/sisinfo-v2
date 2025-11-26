@@ -17,6 +17,6 @@ O nome `bidding_supplier` é **aceitável**, mas pode ser mais preciso. Atualmen
 ## Status
 
 - [x] Tarefa criada.
-- [ ] Formulários revisados (centralização de estilos, criação/aplicação de mixin).
-- [ ] URLs revisadas (simplificação de parâmetros redundantes).
+- [x] Formulários revisados (centralização de estilos, criação/aplicação de mixin `TailwindFormMixin`).
+- [ ] URLs revisadas (simplificação de parâmetros redundantes - `id` ainda presente em `supplier_delete`).
 - [ ] Implementação concluída.

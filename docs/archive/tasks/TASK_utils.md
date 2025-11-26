@@ -13,10 +13,10 @@ Centralizar lógica e estilos comuns (ex: TailwindFormMixin, helpers de template
 
 ## Status
 - [x] Tarefa criada.
-- [ ] Estrutura inicial criada.
-- [ ] Mixins implementados.
-- [ ] Helpers/tags implementados.
-- [ ] Funções utilitárias implementadas.
-- [ ] Apps refatorados para uso dos utilitários.
-- [ ] Testes realizados.
-- [ ] Implementação concluída.
+- [x] Estrutura inicial criada (`core/mixins.py`, `core/templatetags`).
+- [x] Mixins implementados (`TailwindFormMixin`, `CapitalizeFieldMixin`).
+- [x] Helpers/tags implementados (`ui_tags.py`).
+- [x] Funções utilitárias implementadas.
+- [x] Apps refatorados para uso dos utilitários.
+- [x] Testes realizados.
+- [x] Implementação concluída.

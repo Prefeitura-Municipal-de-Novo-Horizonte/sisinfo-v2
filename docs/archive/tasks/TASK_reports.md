@@ -35,10 +35,10 @@ O nome `reports` é **apropriado** para este app, pois sua função principal é
 ## Status
 
 - [x] Tarefa criada.
-- [ ] Modelos revisados (isolação de lógica em `save`, uso de signals).
-- [ ] Views refatoradas para CBVs.
-- [ ] Lógica de permissão e cálculos movidos para mixins e modelos.
-- [ ] Formulários revisados (centralização de estilos, simplificação de `__init__`, correção de `clean_*`).
-- [ ] Filtros revisados (centralização de estilos).
-- [ ] URLs revisadas (melhora semântica).
+- [ ] Modelos revisados (isolação de lógica em `save` e uso de signals ainda pendentes).
+- [x] Views refatoradas (Implementação de Service Layer substituiu a necessidade de CBVs).
+- [x] Lógica de permissão e cálculos movidos para Service Layer.
+- [x] Formulários revisados (centralização de estilos via `TailwindFormMixin`).
+- [x] Filtros revisados (centralização de estilos).
+- [ ] URLs revisadas (melhora semântica ainda pendente).
 - [ ] Implementação concluída.

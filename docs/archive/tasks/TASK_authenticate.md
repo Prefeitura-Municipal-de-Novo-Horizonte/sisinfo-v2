@@ -33,12 +33,11 @@ O nome `authenticate` é **apropriado** para este app, pois sua função princip
 - [x] **`app_name`:** Descomentar e definir `app_name = 'authenticate'` para um melhor namespacing de URLs, prevenindo conflitos em projetos maiores.
 
 ## Status
-
 - [x] Tarefa criada.
-- [ ] Modelos revisados (campo `username`, método `officer`).
-- [ ] Views revisadas (upload de imagem em `alter_user`).
-- [ ] Formulários revisados (duplicidade de `__init__`, centralização de estilos, remoção de `Meta`).
-- [ ] Decorators revisados (simplificação e redução de redundância).
-- [ ] Templates revisados (extensão de `_base.html`, helper/tag para campos, completar informações de perfil).
+- [x] Modelos revisados (campo `username` mantido por compatibilidade, método `officer` ok).
+- [x] Views revisadas (upload de imagem em `alter_user` implementado via Service Layer).
+- [x] Formulários revisados (duplicidade de `__init__` corrigida, centralização de estilos via `FormStyleMixin`, remoção de `Meta` em `AuthenticationFormCustom`).
+- [x] Decorators revisados.
+- [x] Templates revisados (extensão de `_base.html` implementada, helper/tag para campos via `ui_tags`).
 - [x] URLs revisadas (app_name).
-- [ ] Implementação concluída.
+- [x] Implementação concluída.

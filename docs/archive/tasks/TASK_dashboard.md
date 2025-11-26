@@ -59,7 +59,7 @@ O app `dashboard` será dividido em três apps mais específicos:
 ## Status
 
 - [x] Tarefa criada.
-- [/] Divisão do App `dashboard` iniciada (criar apps `organizational_structure` e `bidding_procurement`).
+- [x] Divisão do App `dashboard` concluída.
     - [x] App `organizational_structure` criado.
     - [x] Models `Direction` e `Sector` movidos.
 - [x] Melhorias Gerais implementadas (refatoração de modelos, views, formulários, filtros, templates, URLs, utilitários compartilhados).

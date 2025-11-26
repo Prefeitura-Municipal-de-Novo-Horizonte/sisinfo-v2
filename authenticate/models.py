@@ -8,7 +8,13 @@ from django.urls import reverse
 
 
 class ProfessionalUserManager(BaseUserManager):
+    """
+    Manager personalizado para o modelo ProfessionalUser.
+    """
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):
+        """
+        Cria e salva um usuário com o email e senha fornecidos.
+        """
         if not email:
             raise ValueError("O campo email é obrigatório")
 
@@ -25,6 +31,9 @@ class ProfessionalUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
+        """
+        Cria e salva um superusuário com o email e senha fornecidos.
+        """
         extra_fields.setdefault('is_tech', True)
         extra_fields.setdefault('is_admin', True)
 
@@ -36,6 +45,9 @@ class ProfessionalUserManager(BaseUserManager):
         return self.create_user(email, first_name, last_name, password, **extra_fields)
 
     def create_staff(self, email, first_name, last_name, password=None, **extra_fields):
+        """
+        Cria e salva um usuário da equipe (staff/técnico).
+        """
         extra_fields.setdefault('is_tech', True)
 
         if extra_fields.get('is_tech') is not True:
@@ -45,6 +57,10 @@ class ProfessionalUserManager(BaseUserManager):
 
 
 class ProfessionalUser(AbstractBaseUser):
+    """
+    Modelo de usuário personalizado para o sistema.
+    Substitui o usuário padrão do Django.
+    """
     first_name = models.CharField('primeiro nome', max_length=100)
     last_name = models.CharField('ultimo nome', max_length=150)
     username = models.CharField('usuario', unique=True,
@@ -88,6 +104,7 @@ class ProfessionalUser(AbstractBaseUser):
         return super().save(*args, **kwargs)
 
     def officer(self):
+        """Retorna o cargo do usuário baseado em suas permissões."""
         if self.is_tech is False and self.is_admin is False:
             return 'Estagiário de Suporte em Informática'
         elif self.is_tech is True and self.is_admin is False:

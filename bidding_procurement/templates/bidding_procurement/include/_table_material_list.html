@@ -1,22 +1,25 @@
-<div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full w-full px-10">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
+{% load ui_tags %}
+<div class="{% table_container %}">
+    <table class="{% table_base %}">
+        <thead class="{% table_head %}">
             <tr>
-                <th scope="col" class="px-6 py-3">Nome</th>
-                <th scope="col" class="px-6 py-3">Ações</th>
+                <th scope="col" class="px-6 py-3">
+                    Nome
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Ações
+                </th>
             </tr>
         </thead>
         <tbody>
-            {% for material in materiais %}
-            <tr
-                class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700">
+            {% for material in page_obj %}
+            <tr class="{% table_row %}">
                 <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <a href="{{ material.get_absolute_url }}">{{ material.name }}</a>
+                    {{ material.name }}
                 </th>
                 <td class="px-6 py-4 flex justify-normal items-center gap-2">
                     <a href="{% url 'bidding_procurement:update_material' material.slug %}">
-                        <button type="button"
-                            class="flex justify-center gap-2 items-center focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                        <button type="button" class="{% btn_success %} flex justify-center gap-2 items-center">
                             <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
                                 <path
@@ -27,8 +30,7 @@
                         </button>
                     </a>
                     <a href="{% url 'bidding_procurement:delete_material' material.slug %}">
-                        <button type="button"
-                            class="flex justify-center gap-2 items-center focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                        <button type="button" class="{% btn_danger %} flex justify-center gap-2 items-center">
                             <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                 <path
@@ -41,9 +43,12 @@
             </tr>
             {% empty %}
             <tr>
-                <td class="px-6 py-4" colspan="6">Nenhum material cadastrado!!!</td>
+                <td class="px-6 py-4" colspan="3">Nenhum material cadastrado!!!</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+<div class="w-full flex justify-center mt-4">
+    {% include "include/_pagination.html" %}
 </div>

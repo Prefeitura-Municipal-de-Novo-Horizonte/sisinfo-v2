@@ -13,5 +13,5 @@ for b in biddings:
     print(f"ID: {b.id}, Name: {b.name}, Slug: '{b.slug}'")
     if not b.slug:
         print(f"⚠️  WARNING: Bidding {b.id} has empty slug! Fixing...")
-        b.save() # Save should trigger slug generation
+        # b.save() # Save should trigger slug generation
         print(f"   -> New slug: '{b.slug}'")

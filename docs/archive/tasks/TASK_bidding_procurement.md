@@ -1,11 +1,11 @@
-# TASK: Criação e Refatoração do App organizational_structure
+# TASK: Criação e Refatoração do App bidding_procurement
 
 ## Objetivo
-Criar o app `organizational_structure` para gerenciar modelos, views, formulários, filtros e templates relacionados a Diretorias e Setores, conforme plano de reestruturação do dashboard.
+Criar o app `bidding_procurement` para gerenciar modelos, views, formulários, filtros e templates relacionados a Licitações e Materiais, conforme plano de reestruturação do dashboard.
 
 ## Plano de Ação
 - [ ] Criar o diretório e estrutura inicial do app.
-- [ ] Mover modelos (`AbsctactDirectionSector`, `Direction`, `Sector`) do dashboard para o novo app.
+- [ ] Mover modelos (`AbsBiddingMaterial`, `Bidding`, `Material`) do dashboard para o novo app.
 - [ ] Mover views, formulários, filtros e templates relacionados.
 - [ ] Criar e configurar URLs do app.
 - [ ] Atualizar imports e referências em todo o projeto.
@@ -20,6 +20,6 @@ Criar o app `organizational_structure` para gerenciar modelos, views, formulári
 - [x] Filtros movidos.
 - [x] Templates movidos.
 - [x] URLs criadas.
-- [ ] Imports/referências atualizados.
-- [ ] Testes realizados.
-- [ ] Implementação concluída.
+- [x] Imports/referências atualizados.
+- [x] Testes realizados.
+- [x] Implementação concluída.

@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 
 from authenticate.decorators import admin_only, unauthenticated_user
 from authenticate.forms import (
@@ -11,13 +11,16 @@ from authenticate.forms import (
     UserChangeForm,
     UserCreationForm,
 )
-from authenticate.models import ProfessionalUser
+from authenticate.services import AuthenticateService
 
 
 @login_required
 @admin_only
 def show_users(request):
-    users = ProfessionalUser.objects.all()
+    """
+    View para listar todos os usuários (apenas admin).
+    """
+    users = AuthenticateService.get_all_users()
     context = {
         'users': users,
     }
@@ -29,6 +32,11 @@ def show_users(request):
 ################################################################
 @unauthenticated_user
 def login_page(request):
+    """
+    View para login de usuários.
+    Redireciona para dashboard se já autenticado.
+    Se primeiro login, redireciona para troca de senha.
+    """
     if request.user.is_authenticated:
         return redirect('dashboard:index')
     elif request.method == 'GET':
@@ -55,19 +63,16 @@ def login_page(request):
 
 
 @login_required
-def change_password(request):  # sourcery skip: extract-method
+def change_password(request):
+    """
+    View para troca de senha.
+    Atualiza flag de primeiro login se necessário.
+    """
     if request.method == 'POST':
         user = request.user
         form = PasswordChangeCustomForm(user, data=request.POST)
-        if form.is_valid():
-            form.save()
-            user_a = get_object_or_404(ProfessionalUser, slug=request.user.slug)
-            if user.first_login is True:
-                user_a.first_login = False
-                user_a.save()
-                messages.add_message(
-                    request, constants.SUCCESS, "Senha trocada com sucesso!")
-                return redirect('dashboard:index')
+        if AuthenticateService.change_password(form):
+            AuthenticateService.update_first_login(user)
             messages.add_message(request, constants.SUCCESS,
                                  "Senha trocada com sucesso!")
             return redirect('dashboard:index')
@@ -82,6 +87,9 @@ def change_password(request):  # sourcery skip: extract-method
 
 @login_required
 def alter_user(request):
+    """
+    View para alteração de perfil do próprio usuário.
+    """
     if request.user.is_authenticated:
         if request.method == 'GET':
             form = UserChangeForm(instance=request.user)
@@ -92,8 +100,7 @@ def alter_user(request):
         if request.method == 'POST':
             form = UserChangeForm(request.POST, files=request.FILES,
                                   instance=request.user)
-            if form.is_valid():
-                form.save()
+            if AuthenticateService.update_user_profile(request.user, form):
                 messages.add_message(
                     request, constants.SUCCESS, "Alterado com sucesso!")
                 return redirect('authenticate:profile')
@@ -104,6 +111,9 @@ def alter_user(request):
 
 
 def logout_page(request):
+    """
+    View para logout.
+    """
     logout(request)
     messages.add_message(
         request, constants.SUCCESS, "Logout com sucesso!")
@@ -117,11 +127,14 @@ def logout_page(request):
 @login_required
 @admin_only
 def register_user(request):
+    """
+    View para registro de novos usuários (apenas admin).
+    """
     form = UserCreationForm()
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+        user = AuthenticateService.create_user(form)
+        if user:
             messages.add_message(
                 request, constants.SUCCESS, f"Usuario adicionado com sucesso: {user}")
             return redirect('authenticate:register_user')
@@ -137,22 +150,20 @@ def register_user(request):
 @login_required
 @admin_only
 def disabled_user(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    user.is_active = False
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario desabilitado com sucesso: {user}")
+    """Desabilita um usuário."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.disable_user(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
 @login_required
 @admin_only
 def enabled_user(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    user.is_active = True
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario habilitado com sucesso: {user}")
+    """Habilita um usuário."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.enable_user(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
@@ -160,24 +171,20 @@ def enabled_user(request, slug):
 @login_required
 @admin_only
 def enabled_user_admin(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    if user.is_tech is False:
-        user.is_tech = True
-    user.is_admin = True
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario habilitado como administrador com sucesso: {user}")
+    """Promove usuário a Admin."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.promote_to_admin(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
 @login_required
 @admin_only
 def disabled_user_admin(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    user.is_admin = False
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario desabilitador como administrador com sucesso: {user}")
+    """Remove privilégios de Admin."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.demote_from_admin(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
@@ -185,31 +192,28 @@ def disabled_user_admin(request, slug):
 @login_required
 @admin_only
 def enabled_user_tech(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    user.is_tech = True
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario habilitado como tecnico com sucesso: {user}")
+    """Promove usuário a Técnico."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.promote_to_tech(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
 @login_required
 @admin_only
 def disabled_user_tech(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
-    if user.is_admin is True:
-        user.is_admin = False
-    user.is_tech = False
-    user.save()
-    messages.add_message(
-        request, constants.SUCCESS, f"Usuario desabilitado como tecnico com sucesso: {user}")
+    """Remove privilégios de Técnico."""
+    user = AuthenticateService.get_user_by_slug(slug)
+    msg = AuthenticateService.demote_from_tech(user)
+    messages.add_message(request, constants.SUCCESS, msg)
     return redirect('authenticate:show_users')
 
 
 @login_required
 @admin_only
 def profile_user(request, slug):
-    user = get_object_or_404(ProfessionalUser, slug=slug)
+    """Visualiza perfil de outro usuário (apenas admin)."""
+    user = AuthenticateService.get_user_by_slug(slug)
     context = {
         'user': user,
     }

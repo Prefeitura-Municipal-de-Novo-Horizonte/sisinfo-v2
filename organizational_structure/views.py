@@ -1,23 +1,32 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.messages import constants
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from organizational_structure.filters import DirectionFilter, SectorFilter
 from organizational_structure.forms import DirectionForm, SectorForm
 from organizational_structure.models import Direction, Sector
+from organizational_structure.services import StructureService
 from reports.models import Report
 
 
 ##############################################
 @login_required
 def directions(request):
-    diretorias = Direction.objects.all()
+    """
+    View para listar e criar diretorias.
+    
+    GET: Lista todas as diretorias com filtro.
+    POST: Cria uma nova diretoria.
+    """
+    diretorias_list = StructureService.get_all_directions()
     if request.method == "POST":
         form = DirectionForm(request.POST)
-        if form.is_valid():
-            form.save()
+        if StructureService.create_direction(form):
             messages.add_message(request, constants.SUCCESS,
                                  "Inserido com sucesso!")
         else:
@@ -25,12 +34,12 @@ def directions(request):
         return redirect("organizational_structure:diretorias")
     form = DirectionForm()
 
-    myFilter = DirectionFilter(request.GET, queryset=diretorias)
-    diretorias = myFilter.qs
+    myFilter = DirectionFilter(request.GET, queryset=diretorias_list)
+    diretorias_list = myFilter.qs
 
     context = {
         "form": form,
-        "diretorias": diretorias,
+        "diretorias": diretorias_list,
         "myFilter": myFilter,
         "btn": "Adicionar nova Diretoria",
         "submit_class": "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
@@ -41,33 +50,41 @@ def directions(request):
 
 @login_required
 def direction_detail(request, slug):
-    diretoria = get_object_or_404(Direction, slug=slug)
-    setores = Sector.objects.filter(direction=diretoria.id)
-    total_setores = setores.count()
+    """
+    View para visualizar detalhes de uma diretoria e seus setores.
+    """
+    context_data = StructureService.get_direction_details(slug)
+    setores = context_data['setores']
+    
     myFilter = SectorFilter(request.GET, queryset=setores)
     setores = myFilter.qs
     paginator = Paginator(setores, 12)  # Show 15 reports per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
+    
     context = {
-        "diretoria": diretoria,
+        "diretoria": context_data['diretoria'],
         "page_obj": page_obj,
         "myFilter": myFilter,
-        "total_setores": total_setores,
+        "total_setores": context_data['total_setores'],
     }
     return render(request, "organizational_structure/diretoria_detail.html", context)
 
 
 @login_required
 def direction_update(request, slug):
-    diretoria = get_object_or_404(Direction, slug=slug)
+    """
+    View para atualizar uma diretoria existente.
+    """
+    diretoria = StructureService.get_direction_by_slug(slug)
     form = DirectionForm(instance=diretoria)
-    diretorias = Direction.objects.all()
-    myFilter = DirectionFilter(request.GET, queryset=diretorias)
-    diretorias = myFilter.qs
+    diretorias_list = StructureService.get_all_directions()
+    myFilter = DirectionFilter(request.GET, queryset=diretorias_list)
+    diretorias_list = myFilter.qs
+    
     context = {
-        "diretorias": diretorias,
+        "diretorias": diretorias_list,
         "form": form,
         "diretoria": diretoria,
         "myFilter": myFilter,
@@ -77,8 +94,7 @@ def direction_update(request, slug):
     }
     if request.method == "POST":
         form = DirectionForm(request.POST, instance=diretoria)
-        if form.is_valid():
-            form.save()
+        if StructureService.update_direction(form):
             messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
             return redirect("organizational_structure:diretorias")
         else:
@@ -89,18 +105,18 @@ def direction_update(request, slug):
     return redirect("organizational_structure:diretorias")
 
 
-
-
-
-@login_required
 @login_required
 def direction_delete(request, slug):
+    """
+    View para excluir uma diretoria.
+    """
     diretoria = get_object_or_404(Direction, slug=slug)
-    diretoria.delete()
+    name = diretoria.name
+    StructureService.delete_direction(diretoria)
     messages.add_message(
         request,
         constants.ERROR,
-        f"Diretoria {diretoria.name} foi excluida com sucesso!",
+        f"Diretoria {name} foi excluida com sucesso!",
     )
     return redirect("organizational_structure:diretorias")
 
@@ -108,20 +124,26 @@ def direction_delete(request, slug):
 ##############################################
 @login_required
 def sectors(request):
-    setores = Sector.objects.all()
+    """
+    View para listar e criar setores.
+    
+    GET: Lista todos os setores com paginação e filtro.
+    POST: Cria um novo setor.
+    """
+    setores_list = StructureService.get_all_sectors()
     if request.method == "POST":
         form = SectorForm(request.POST)
-        if form.is_valid():
-            form.save()
+        if StructureService.create_sector(form):
             messages.add_message(request, constants.SUCCESS,
                                  "Inserido com sucesso!")
         else:
             messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
         return redirect("organizational_structure:setores")
+        
     form = SectorForm()
-    myFilter = SectorFilter(request.GET, queryset=setores)
-    setores = myFilter.qs
-    paginator = Paginator(setores, 15)  # Show 15 reports per page.
+    myFilter = SectorFilter(request.GET, queryset=setores_list)
+    setores_list = myFilter.qs
+    paginator = Paginator(setores_list, 15)  # Show 15 reports per page.
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -138,24 +160,26 @@ def sectors(request):
 
 @login_required
 def sector_detail(request, slug):
-    setor = get_object_or_404(Sector, slug=slug)
-    reports = Report.objects.filter(sector=setor)
-    context = {
-        "setor": setor,
-        "reports": reports,
-    }
+    """
+    View para visualizar detalhes de um setor e seus relatórios.
+    """
+    context = StructureService.get_sector_details(slug)
     return render(request, "organizational_structure/setor_detail.html", context)
 
 
 @login_required
 def sector_update(request, slug):
-    setor = get_object_or_404(Sector, slug=slug)
+    """
+    View para atualizar um setor existente.
+    """
+    setor = StructureService.get_sector_by_slug(slug)
     form = SectorForm(instance=setor)
-    setores = Sector.objects.all()
-    myFilter = SectorFilter(request.GET, queryset=setores)
-    setores = myFilter.qs
+    setores_list = StructureService.get_all_sectors()
+    myFilter = SectorFilter(request.GET, queryset=setores_list)
+    setores_list = myFilter.qs
+    
     context = {
-        "setores": setores,
+        "setores": setores_list,
         "form": form,
         "setor": setor,
         "myFilter": myFilter,
@@ -165,8 +189,7 @@ def sector_update(request, slug):
     }
     if request.method == "POST":
         form = SectorForm(request.POST, instance=setor)
-        if form.is_valid():
-            form.save()
+        if StructureService.update_sector(form):
             messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
             return redirect("organizational_structure:setores")
         else:
@@ -177,15 +200,15 @@ def sector_update(request, slug):
     return redirect("organizational_structure:setores")
 
 
-
-
-
-@login_required
 @login_required
 def sector_delete(request, slug):
+    """
+    View para excluir um setor.
+    """
     setor = get_object_or_404(Sector, slug=slug)
-    setor.delete()
+    name = setor.name
+    StructureService.delete_sector(setor)
     messages.add_message(
-        request, constants.ERROR, f"O Setor {setor.name} foi excluido com sucesso!"
+        request, constants.ERROR, f"O Setor {name} foi excluido com sucesso!"
     )
     return redirect("organizational_structure:setores")

@@ -31,6 +31,7 @@ MY_APPS = [
     "reports.apps.ReportsConfig",
     "organizational_structure.apps.OrganizationalStructureConfig",
     "bidding_procurement",
+    "core",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
