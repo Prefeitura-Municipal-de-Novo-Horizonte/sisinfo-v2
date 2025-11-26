@@ -1,78 +1,84 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 {% block title %}
 {{supplier.trade}}
 {% endblock title %}
 {% block content %}
-<div class="grid grid-cols-2 gap-4 mb-4 h-auto dark:bg-gray-800 rounded p-4">
-    <div
-        class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-gray-100 dark:bg-gray-500 p-4 gap-3">
-        <p class="text-sm italic text-blue-700 mb-2">Razão social:</p>
-        <h1 class="text-3xl text-gray-900 font-extrabold dark:text-white">{{supplier.company}}</h1>
-        <p class="text-sm italic text-blue-700 mb-2 mt-4">Nome fantasia:</p>
-        <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.trade}}</h1>
-        <p class="text-sm italic text-blue-700 mb-2 mt-4">CNPJ:</p>
-        <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.cnpj}}</h1>
-        <p class="text-sm italic text-blue-700 mb-2 mt-4">Endereço:</p>
-        <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.address}}</h1>
+<section>
+    <div class="{% header_container %}">
+        <h1 class="{% header_title %}">
+            <mark class="{% header_mark %}">
+                {{supplier.trade}}
+            </mark>
+        </h1>
     </div>
-    <div
-        class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-gray-100 dark:bg-gray-500 p-4 gap-3">
-        <h2 class="mb-2 text-lg font-semibold text-blue-700 dark:text-white">Contatos:</h2>
-        <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-            {% for sc in supplier.suppliers.all %}
-            <li class="flex items-center gap-4">
-                {% if sc.kind == 'P' %}
-                <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m16.344 12.168-1.4-1.4a1.98 1.98 0 0 0-2.8 0l-.7.7a1.98 1.98 0 0 1-2.8 0l-2.1-2.1a1.98 1.98 0 0 1 0-2.8l.7-.7a1.981 1.981 0 0 0 0-2.8l-1.4-1.4a1.828 1.828 0 0 0-2.8 0C-.638 5.323 1.1 9.542 4.78 13.22c3.68 3.678 7.9 5.418 11.564 1.752a1.828 1.828 0 0 0 0-2.804Z" />
-                </svg>
-                {% elif sc.kind == 'E'%}
-                <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2" />
-                </svg>
-                {% endif %}
-                {{sc.value}}
-                {% if sc.whatsapp %}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-whatsapp" viewBox="0 0 16 16">
-                    <path
-                        d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
-                </svg>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        <hr class="my-4 border-gray-300 dark:border-gray-600">
-        <h2 class="mb-2 text-lg font-semibold text-blue-700 dark:text-white">Licitações Participantes:</h2>
-        <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-            {% for bidding in biddings %}
-            <li>
-                <a href="{% url 'dashboard:licitacao' bidding.slug %}"
-                    class="hover:underline text-blue-600 dark:text-blue-400">
-                    {{ bidding.name }} ({{ bidding.date|date:"d/m/Y" }})
-                </a>
-            </li>
-            {% empty %}
-            <li>Nenhuma licitação encontrada.</li>
-            {% endfor %}
-        </ul>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto dark:bg-gray-800 rounded p-4">
+        <div class="{% card_base %} p-6">
+            <p class="text-sm italic text-blue-700 mb-2">Razão social:</p>
+            <h1 class="text-3xl text-gray-900 font-extrabold dark:text-white">{{supplier.company}}</h1>
+            <p class="text-sm italic text-blue-700 mb-2 mt-4">Nome fantasia:</p>
+            <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.trade}}</h1>
+            <p class="text-sm italic text-blue-700 mb-2 mt-4">CNPJ:</p>
+            <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.cnpj}}</h1>
+            <p class="text-sm italic text-blue-700 mb-2 mt-4">Endereço:</p>
+            <h1 class="text-2xl text-gray-500 font-semibold dark:text-white">{{supplier.address}}</h1>
+        </div>
+        <div class="{% card_base %} p-6">
+            <h2 class="mb-2 text-lg font-semibold text-blue-700 dark:text-white">Contatos:</h2>
+            <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                {% for sc in supplier.suppliers.all %}
+                <li class="flex items-center gap-4">
+                    {% if sc.kind == 'P' %}
+                    <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m16.344 12.168-1.4-1.4a1.98 1.98 0 0 0-2.8 0l-.7.7a1.98 1.98 0 0 1-2.8 0l-2.1-2.1a1.98 1.98 0 0 1 0-2.8l.7-.7a1.981 1.981 0 0 0 0-2.8l-1.4-1.4a1.828 1.828 0 0 0-2.8 0C-.638 5.323 1.1 9.542 4.78 13.22c3.68 3.678 7.9 5.418 11.564 1.752a1.828 1.828 0 0 0 0-2.804Z" />
+                    </svg>
+                    {% elif sc.kind == 'E'%}
+                    <svg class="w-3 h-3 text-gray-800 dark:text-white" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 4a4 4 0 0 1 4 4v6M5 4a4 4 0 0 0-4 4v6h8M5 4h9M9 14h10V8a3.999 3.999 0 0 0-2.066-3.5M9 14v5m0-5h4v5m-9-8h2m8-4V1h2" />
+                    </svg>
+                    {% endif %}
+                    {{sc.value}}
+                    {% if sc.whatsapp %}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-whatsapp" viewBox="0 0 16 16">
+                        <path
+                            d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z" />
+                    </svg>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            <hr class="my-4 border-gray-300 dark:border-gray-600">
+            <h2 class="mb-2 text-lg font-semibold text-blue-700 dark:text-white">Licitações Participantes:</h2>
+            <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
+                {% for bidding in biddings %}
+                <li>
+                    <a href="{% url 'bidding_procurement:licitacao' bidding.slug %}"
+                        class="hover:underline text-blue-600 dark:text-blue-400">
+                        {{ bidding.name }} ({{ bidding.date|date:"d/m/Y" }})
+                    </a>
+                </li>
+                {% empty %}
+                <li>Nenhuma licitação encontrada.</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-</div>
-<div class="grid grid-cols-2 gap-4 mb-4 h-auto dark:bg-gray-800 rounded p-4">
-    <a href="{% url 'suppliers:fornecedores' %}">
-        <button type="button"
-            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900 flex justify-around gap-2 items-center">
-            Fornecedores
-            <svg class="w-4 h-4 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 16 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 7 1 4l3-3m0 12h6.5a4.5 4.5 0 1 0 0-9H2" />
-            </svg>
-        </button>
-    </a>
-</div>
+    <div class="grid grid-cols-2 gap-4 mb-4 h-auto dark:bg-gray-800 rounded p-4">
+        <a href="{% url 'suppliers:fornecedores' %}">
+            <button type="button" class="{% btn_warning %} flex justify-around gap-2 items-center">
+                Fornecedores
+                <svg class="w-4 h-4 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 16 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 7 1 4l3-3m0 12h6.5a4.5 4.5 0 1 0 0-9H2" />
+                </svg>
+            </button>
+        </a>
+    </div>
+</section>
 {% endblock content %}
-# TODO: Adicionar futuros modificações

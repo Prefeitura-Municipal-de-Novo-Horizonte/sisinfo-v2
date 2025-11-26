@@ -7,7 +7,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
 from django.db.models import Count
-from dashboard.models import Material
+from bidding_procurement.models import Material
 
 print("="*80)
 print("ANÁLISE DE MATERIAIS DUPLICADOS")

@@ -7,6 +7,9 @@ from bidding_supplier.managers import KindContactQuerySet
 
 # Create your models here.
 class Supplier(models.Model):
+    """
+    Representa um fornecedor.
+    """
     company = models.CharField(
         'Razão social', max_length=200, blank=True, unique=True)
     trade = models.CharField(
@@ -25,9 +28,14 @@ class Supplier(models.Model):
         return self.trade
 
     def get_absolute_url(self):
+        """Retorna a URL absoluta para os detalhes do fornecedor."""
         return r('suppliers:fornecedor', slug=self.slug)
 
     def save(self, *args, **kwargs):
+        """
+        Sobrescreve o método save para gerar o slug automaticamente
+        se não fornecido, usando o nome fantasia ou razão social.
+        """
         if not self.slug:
             if not self.trade:
                 self.trade = self.company
@@ -36,6 +44,9 @@ class Supplier(models.Model):
 
 
 class Contact(models.Model):
+    """
+    Representa um contato de um fornecedor (Email ou Telefone).
+    """
     EMAIL = 'E'
     PHONE = 'P'
     KINDS = (
