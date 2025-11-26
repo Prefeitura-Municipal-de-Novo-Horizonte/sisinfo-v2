@@ -38,8 +38,8 @@ class PDFGenerator:
             # URL do Browserless com API key (novo endpoint de produção)
             browserless_url = f"wss://production-sfo.browserless.io?token={settings.BROWSERLESS_API_KEY}"
             
-            # Renderizar template HTML
-            html_content = render_to_string('pdf_template.html', {'report': report})
+            # Renderizar template HTML com CSS inline
+            html_content = render_to_string('pdf_download_template.html', {'report': report})
             
             logger.info(f"Gerando PDF para laudo {report.number_report}")
             
