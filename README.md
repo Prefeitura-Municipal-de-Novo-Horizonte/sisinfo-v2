@@ -94,6 +94,9 @@ Para executar a suíte de testes:
 python manage.py test
 ```
 
+## 🤝 Como Contribuir
+Quer contribuir? Ótimo! Leia nosso [Guia de Contribuição](CONTRIBUTING.md) para detalhes sobre nosso código de conduta e o processo de envio de pull requests.
+
 ## 📸 Screenshots
 ![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/2.jpg)
 ![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/3.jpg)
