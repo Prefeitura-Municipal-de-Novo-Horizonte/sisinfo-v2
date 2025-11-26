@@ -10,7 +10,28 @@ E essencial lembrar que qualquer alteracao feita em banco de dados deve ser test
 Não podemos trabalhar na branch main, entao sempre que for fazer uma tarefa vamos trocar de branch, antes de sair fazendo os codigos.
 </object>
 <tips>
-- Caso precise fazer modificações significativas no banco de dados ou em alguma model, ou até mesmo criar uma aplicacao nova, quero que siga o padrao de migrations que eu coloquei dentro da pasta docs/migrations_for_example_django_altered_in_production lá tem um exemplo de como fazer a alteração para manter os dados que já estão no banco de dados.
+- Caso precise fazer modificações significativas no banco de dados ou em alguma model, ou até mesmo criar uma aplicacao nova, quero que siga o padrao de migrations que eu coloquei dentro da pasta docs/migrations_for_example_django_altered_in_production lá tem um exemplo de como fazer    *   `docker-compose.yaml`: Configuração dos serviços Docker (ex: banco de dados).
+    *   `reports/pdf_generator.py`: Serviço de geração de PDF usando Playwright + Browserless.io.
+*   **Pipeline CI/CD:** Não foi identificado um arquivo de configuração de pipeline CI/CD (ex: `.github/workflows`, `.gitlab-ci.yml`) na estrutura de diretórios fornecida.
+
+## 6. Fluxo de Trabalho de Desenvolvimento e Testes
+
+*   **Ambiente de Desenvolvimento Local:**
+    1.  Clonar o repositório.
+    2.  Criar e ativar um ambiente virtual Python (`python -m venv .venv`).
+    3.  Instalar dependências Python (`pip install -r requirements.txt`).
+    4.  Instalar dependências Node.js (`npm install`).
+    5.  Copiar e configurar o arquivo `.env` (`cp contrib/.env-sample .env`).
+        *   **Importante:** Configurar `BROWSERLESS_API_KEY` para geração de PDF.
+    6.  Executar migrações do banco de dados (`python manage.py migrate`).
+    7.  Iniciar o compilador Tailwind CSS em um terminal (`npm run dev`).
+    8.  Iniciar o servidor Django em outro terminal (`python manage.py runserver`).
+*   **Geração de PDF:**
+    *   Utiliza **Playwright** conectado ao serviço **Browserless.io**.
+    *   Requer `BROWSERLESS_API_KEY` no `.env`.
+    *   Template específico: `reports/templates/pdf_download_template.html` (CSS inline).
+*   **Testes:**
+    *   Executar todos os testes: `python manage.py test`
 - Faça um arquivo de progressao para cada task que for fazer para que caso ocorra qualquer erro, podemos seguir de onde paramos.
 - Veja as TASKS, caso a task já esteja no padrao pode marcar como concluida.
 - Caso alguma aplicacao nao esteja de acordo com o objetivo da aplicacao, pode dividi-la em outras aplicações lembrando de fazer a migracao correta como te disse acima.
