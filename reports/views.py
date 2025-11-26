@@ -129,3 +129,31 @@ def material_report_delete(request, report_slug, pk):
     report, msg = ReportService.delete_material_report(pk)
     messages.add_message(request, constants.SUCCESS, msg)
     return redirect(reverse('reports:report_update', kwargs={'slug': report.slug}))
+
+
+@login_required(login_url='login')
+def generate_pdf_report(request, slug):
+    """
+    Gera e retorna PDF do laudo usando Browserless.io.
+    
+    Args:
+        request: HttpRequest
+        slug: Slug do laudo
+        
+    Returns:
+        HttpResponse com PDF gerado
+    """
+    from reports.pdf_generator import PDFGenerator
+    from django.http import HttpResponse
+    
+    report = ReportService.get_report_by_slug(slug)
+    
+    try:
+        pdf_bytes = PDFGenerator.generate_report_pdf(report)
+        
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="laudo_{report.number_report}.pdf"'
+        return response
+    except Exception as e:
+        messages.add_message(request, constants.ERROR, f'Erro ao gerar PDF: {str(e)}')
+        return redirect(reverse('reports:report_view', kwargs={'slug': slug}))

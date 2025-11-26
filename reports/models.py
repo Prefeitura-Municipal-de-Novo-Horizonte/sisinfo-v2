@@ -136,10 +136,3 @@ class InterestRequestMaterial(models.Model):
 
     def __str__(self):
         return self.value
-
-    def save(self, *args, **kwargs):
-        """
-        Ao salvar, atualiza o status do laudo associado para 'Aguardando' (2).
-        """
-        self.report.status = 2
-        super().save()
