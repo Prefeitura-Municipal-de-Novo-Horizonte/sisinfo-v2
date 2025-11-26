@@ -12,7 +12,7 @@ import os
 from dj_static import Cling
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings.production")
 
 application = Cling(get_asgi_application())
 
