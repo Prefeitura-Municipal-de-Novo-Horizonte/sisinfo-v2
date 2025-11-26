@@ -15,6 +15,9 @@ DATABASES = {
     "default": dburl(config("DATABASE_URL"))
 }
 
+# Browserless.io API Key for PDF generation
+BROWSERLESS_API_KEY = config("BROWSERLESS_API_KEY", default="")
+
 # Logging específico para desenvolvimento
 # LOG_LEVEL = "DEBUG"
 # LOGGING["root"]["level"] = LOG_LEVEL
