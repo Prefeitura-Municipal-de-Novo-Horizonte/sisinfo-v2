@@ -9,7 +9,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
 from django.db.models import Count
-from dashboard.models import Material
+from bidding_procurement.models import Material
 
 # Buscar materiais com nomes duplicados
 duplicates = Material.objects.values('name', 'supplier__trade').annotate(

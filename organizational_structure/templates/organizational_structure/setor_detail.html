@@ -1,0 +1,39 @@
+<tr>
+    <th scope="col" class="px-6 py-3">Número</th>
+    <th scope="col" class="px-6 py-3">Funcionário</th>
+    <th scope="col" class="px-6 py-3">Status</th>
+    <th scope="col" class="px-6 py-3">Data</th>
+    <th scope="col" class="px-6 py-3">Ações</th>
+</tr>
+</thead>
+<tbody>
+    {% for report in reports %}
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {{ report.number_report }}
+        </th>
+        <td class="px-6 py-4">
+            {{ report.employee }}
+        </td>
+        <td class="px-6 py-4">
+            {{ report.get_status_display }}
+        </td>
+        <td class="px-6 py-4">
+            {{ report.created_at|date:"d/m/Y" }}
+        </td>
+        <td class="px-6 py-4">
+            <a href="{{ report.get_absolute_url }}"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Ver Detalhes</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+        <td colspan="5" class="px-6 py-4 text-center">Nenhum laudo encontrado para este setor.</td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+</div>
+
+</section>
+{% endblock content %}

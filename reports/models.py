@@ -7,12 +7,16 @@ from django.template.defaultfilters import slugify
 
 from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
-from dashboard.models import Material, Sector
+from bidding_procurement.models import Material
+from organizational_structure.models import Sector
 from reports.managers import KindInterestRequestMaterialQuerySet
 
 
 # Create your models here.
 class Report(models.Model):
+    """
+    Representa um laudo técnico.
+    """
     KINDS = (('1', 'Aberto'), ('2', 'Aguardando'), ('3', 'Finalizado'))
 
     number_report = models.CharField(
@@ -39,9 +43,14 @@ class Report(models.Model):
         return self.number_report
 
     def get_absolute_url(self):
+        """Retorna a URL absoluta para visualização do laudo."""
         return r('reports:report_view', slug=self.slug)
 
     def save(self, *args, **kwargs):
+        """
+        Sobrescreve save para gerar identificador único (number_report)
+        e slug baseado na data, setor e contagem diária.
+        """
         reports = Report.objects.filter(created_at__date=date.today()).count()
         if not self.slug:
             if not self.number_report:
@@ -52,6 +61,9 @@ class Report(models.Model):
 
 
 class MaterialReport(models.Model):
+    """
+    Representa um material incluído em um laudo.
+    """
     report = models.ForeignKey(
         Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='laudos')
     material = models.ForeignKey(
@@ -73,11 +85,15 @@ class MaterialReport(models.Model):
         return super().save()
 
     def total_price(self):
+        """Calcula o preço total (quantidade * preço unitário)."""
         self.total_price = float(self.quantity) * float(self.unitary_price)
         return Decimal(self.total_price).quantize(Decimal("00000000.00"))
 
 
 class Invoice(models.Model):
+    """
+    Representa uma Nota Fiscal.
+    """
     note_number = models.CharField('numero da Nota', max_length=10)
     supplier = models.ForeignKey(Supplier, verbose_name='fornecedor',
                                  related_name='fornecedor', on_delete=models.SET_NULL, blank=True, null=True)
@@ -95,6 +111,9 @@ class Invoice(models.Model):
 
 
 class InterestRequestMaterial(models.Model):
+    """
+    Representa uma Solicitação ou Empenho de material.
+    """
     REQUEST = 'S'
     INTEREST = 'E'
     KINDS = (
@@ -119,5 +138,8 @@ class InterestRequestMaterial(models.Model):
         return self.value
 
     def save(self, *args, **kwargs):
+        """
+        Ao salvar, atualiza o status do laudo associado para 'Aguardando' (2).
+        """
         self.report.status = 2
         super().save()

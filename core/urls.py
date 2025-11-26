@@ -9,6 +9,8 @@ urlpatterns = [
     path("authenticate/", include(("authenticate.urls", "authenticate"))),
     path("suppliers/", include("bidding_supplier.urls")),
     path("reports/", include("reports.urls")),
+    path("structure/", include("organizational_structure.urls")),
+    path("procurement/", include("bidding_procurement.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

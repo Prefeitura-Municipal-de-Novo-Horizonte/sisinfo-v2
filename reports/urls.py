@@ -9,7 +9,7 @@ urlpatterns = [
     path('new_register_report/', report_register, name='register_report'),
     path('report/<slug:slug>', report_view, name='report_view'),
     path('report/<slug:slug>/update', report_update, name='report_update'),
-    path('report/material_report/<str:id>',
-         material_report_delete, name='material_report_delete'),
+    path('report/<slug:report_slug>/material/<int:pk>/delete',
+         material_report_delete, name="material_report_delete"),
     path('report/<slug:slug>/pdf', pdf_report, name='pdf_report'),
 ]

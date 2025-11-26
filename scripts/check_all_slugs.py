@@ -6,7 +6,7 @@ from django.utils.text import slugify
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings.development')
 django.setup()
 
-from dashboard.models import Direction, Sector
+from organizational_structure.models import Direction, Sector
 
 def fix_slugs(model, name_field='name'):
     print(f"Checking {model.__name__} slugs...")

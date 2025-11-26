@@ -29,6 +29,9 @@ MY_APPS = [
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
+    "organizational_structure.apps.OrganizationalStructureConfig",
+    "bidding_procurement",
+    "core",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
