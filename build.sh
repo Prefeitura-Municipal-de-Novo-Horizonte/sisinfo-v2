@@ -24,6 +24,10 @@ python3 -m pip install -r requirements.txt
 echo "Applying migrations..."
 python3 manage.py migrate --noinput
 
+# Populate legacy bidding (fix for existing materials)
+echo "Populating legacy bidding..."
+python3 manage.py populate_legacy_bidding
+
 # Collect static files
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput --clear
