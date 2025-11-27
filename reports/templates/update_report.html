@@ -80,10 +80,10 @@ Cadastrar Laudo
                                         fm.quantity.label }}</label>
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ fm.material.errors }}{{ fm.material }}
-                                    <label for="{{ fc.material.id_for_label }}"
+                                    {{ fm.material_bidding.errors }}{{ fm.material_bidding }}
+                                    <label for="{{ fc.material_bidding.id_for_label }}"
                                         class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{
-                                        fm.material.label }}</label>
+                                        fm.material_bidding.label }}</label>
                                 </td>
                                 {% if fm.instance.pk is not None %}
                                 {% if 'Atualizar' in btn %}
