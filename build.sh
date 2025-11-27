@@ -24,6 +24,16 @@ python3 -m pip install -r requirements.txt
 echo "Applying migrations..."
 python3 manage.py migrate --noinput
 
+# Restaurar MaterialReports do backup (se existir)
+if [ -f "backup/backup_24112025.json" ]; then
+    echo "Restaurando MaterialReports do backup..."
+    python3 manage.py restore_material_reports_from_json backup/backup_24112025.json --force || true
+fi
+
+# Corrigir MaterialReports órfãos (fallback)
+echo "Corrigindo MaterialReports órfãos..."
+python3 manage.py fix_orphan_material_reports || true
+
 # Populate legacy bidding (fix for existing materials)
 echo "Populating legacy bidding..."
 python3 manage.py populate_legacy_bidding

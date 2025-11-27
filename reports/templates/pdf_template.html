@@ -75,14 +75,8 @@
                             {% for material in report.laudos.all %}
                             <tr>
                                 <td>{{material.quantity}}</td>
-                                <td>{{material.material.name}}</td>
-                                <td>
-                                    {% for bidding_assoc in material.material.bidding_associations.all %}
-                                    {{ bidding_assoc.bidding.name }}{% if not forloop.last %}, {% endif %}
-                                    {% empty %}
-                                    Sem licitação
-                                    {% endfor %}
-                                </td>
+                                <td>{{material.material_bidding.material.name}}</td>
+                                <td>{{material.material_bidding.bidding.name}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
