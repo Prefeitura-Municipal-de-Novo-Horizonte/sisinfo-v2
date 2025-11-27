@@ -99,7 +99,7 @@
                 {% for material in report.laudos.all %}
                 <dd class="text-lg font-semibold flex justify-between border-b-2 border-b-gray-200 mb-2">
                     <h2 class="text-green-700">{{material.quantity}}</h2>
-                    <h2><a href="{{material.material.get_absolute_url}}">{{ material.material.name }}</a></h2>
+                    <h2>{{ material.material_bidding.material.name }}</h2>
                     <h2 class="text-red-700">R$ {{material.total_price}}</h2>
                 </dd>
                 {% endfor %}
