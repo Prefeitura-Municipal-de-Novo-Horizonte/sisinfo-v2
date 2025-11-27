@@ -10,6 +10,7 @@ from bidding_supplier.models import Supplier
 from bidding_procurement.models import Material
 from organizational_structure.models import Sector
 from reports.managers import KindInterestRequestMaterialQuerySet
+from bidding_procurement.models import MaterialBidding
 
 
 # Create your models here.
@@ -46,19 +47,6 @@ class Report(models.Model):
         """Retorna a URL absoluta para visualização do laudo."""
         return r('reports:report_view', slug=self.slug)
 
-    def save(self, *args, **kwargs):
-        """
-        Sobrescreve save para gerar identificador único (number_report)
-        e slug baseado na data, setor e contagem diária.
-        """
-        reports = Report.objects.filter(created_at__date=date.today()).count()
-        if not self.slug:
-            if not self.number_report:
-                self.number_report = datetime.now().strftime('%Y%m%d') + \
-                    f"{self.sector.id:03}" + f"{(reports + 1):03}"
-            self.slug = slugify(self.number_report)
-        return super().save()
-
 
 class MaterialReport(models.Model):
     """
@@ -66,8 +54,8 @@ class MaterialReport(models.Model):
     """
     report = models.ForeignKey(
         Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='laudos')
-    material = models.ForeignKey(
-        Material, verbose_name='material', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais')
+    material_bidding = models.ForeignKey(
+        MaterialBidding, verbose_name='material da licitação', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais_laudos')
     quantity = models.IntegerField(
         'quantidade', blank=True, null=True, default=1)
     unitary_price = models.DecimalField(
@@ -77,17 +65,12 @@ class MaterialReport(models.Model):
         verbose_name = 'materiais do laudo'
         verbose_name_plural = 'materiais do laudo'
 
-    def save(self, *args, **kwargs):
-        if not self.unitary_price:
-            # novo_decimal = Decimal(self.material.total_price())
-            # self.unitary_price = novo_decimal
-            pass
-        return super().save()
-
     def total_price(self):
         """Calcula o preço total (quantidade * preço unitário)."""
-        self.total_price = float(self.quantity) * float(self.unitary_price)
-        return Decimal(self.total_price).quantize(Decimal("00000000.00"))
+        if not self.quantity or not self.unitary_price:
+            return Decimal("0.00")
+        self.total_price_val = float(self.quantity) * float(self.unitary_price)
+        return Decimal(self.total_price_val).quantize(Decimal("00000000.00"))
 
 
 class Invoice(models.Model):
@@ -100,6 +83,9 @@ class Invoice(models.Model):
     access_key = models.CharField(
         'chave de acesso', max_length=50, blank=True, null=True)
     note_issuance_date = models.DateField('data da emissão da nota')
+    file = models.FileField(
+        'arquivo da nota', upload_to='invoices/%Y/%m/', blank=True, null=True)
+    xml_content = models.TextField('conteúdo XML', blank=True, null=True)
 
     class Meta:
         ordering = ('note_issuance_date', 'supplier', 'note_number')

@@ -2,7 +2,7 @@ from django import forms
 from django.forms import inlineformset_factory
 
 from authenticate.models import ProfessionalUser
-from bidding_procurement.models import Material
+from bidding_procurement.models import MaterialBidding
 from reports.models import InterestRequestMaterial, Invoice, MaterialReport, Report
 
 
@@ -79,7 +79,7 @@ class MaterialReportForm(forms.ModelForm):
 
     class Meta:
         model = MaterialReport
-        fields = ['id', 'material', 'quantity']
+        fields = ['id', 'material_bidding', 'quantity']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -91,32 +91,22 @@ class MaterialReportForm(forms.ModelForm):
 
         # Buscar materiais diretamente da tabela intermediária MaterialBidding
         # Apenas materiais com status ativo (status='1')
-        from bidding_procurement.models import MaterialBidding
-        items_ativos = Material.objects.filter(
-            bidding_associations__status='1'
-        ).distinct().prefetch_related('bidding_associations__bidding')
+        items_ativos = MaterialBidding.objects.filter(
+            status='1'
+        ).select_related('material', 'bidding')
         
-        self.fields['material'].queryset = items_ativos
+        self.fields['material_bidding'].queryset = items_ativos
+        self.fields['material_bidding'].label = 'Material (Licitação)'
         
         # Customizar o label para mostrar licitações e status
-        self.fields['material'].label_from_instance = self._material_label
+        self.fields['material_bidding'].label_from_instance = self._material_label
     
     def _material_label(self, obj):
         """
-        Retorna label customizado mostrando material e suas licitações ativas.
-        Formato: "Material X - Licitação Y (Ativo), Licitação Z (Ativo)"
+        Retorna label customizado mostrando material e a licitação.
+        Formato: "Material X - Licitação Y"
         """
-        active_associations = obj.bidding_associations.filter(status='1').select_related('bidding')
-        if not active_associations.exists():
-            return f"{obj.name} (Sem licitações ativas)"
-        
-        biddings_info = []
-        for assoc in active_associations:
-            status_display = assoc.get_status_display()
-            biddings_info.append(f"{assoc.bidding.name} ({status_display})")
-        
-        biddings_str = ", ".join(biddings_info)
-        return f"{obj.name} - {biddings_str}"
+        return f"{obj.material.name} - {obj.bidding.name}"
 
 
 MaterialReportFormset = inlineformset_factory(

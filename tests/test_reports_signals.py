@@ -1,8 +1,10 @@
 from django.test import TestCase
-from reports.models import Report, InterestRequestMaterial, Invoice
+from reports.models import Report, InterestRequestMaterial, Invoice, MaterialReport
 from bidding_supplier.models import Supplier
+from bidding_procurement.models import Material, Bidding, MaterialBidding
 from organizational_structure.models import Sector, Direction
 from authenticate.models import ProfessionalUser
+from datetime import date, datetime
 
 
 class ReportSignalsTestCase(TestCase):
@@ -52,6 +54,49 @@ class ReportSignalsTestCase(TestCase):
             supplier=self.supplier,
             note_issuance_date="2025-01-01"
         )
+
+        # Criar Material, Bidding e MaterialBidding para testes de preço
+        self.material = Material.objects.create(name="Material Teste")
+        self.bidding = Bidding.objects.create(name="Licitação Teste", date=date.today())
+        self.material_bidding = MaterialBidding.objects.create(
+            material=self.material,
+            bidding=self.bidding,
+            price="100.00",
+            readjustment=10.0, # 10% de reajuste, total deve ser 110.00
+            supplier=self.supplier
+        )
+
+    def test_report_identifier_generation(self):
+        """
+        Signal deve gerar number_report e slug automaticamente.
+        """
+        report = Report.objects.create(
+            sector=self.sector,
+            employee="Outro Funcionário",
+            justification="Teste ID",
+            professional=self.user,
+            pro_accountable=self.user
+        )
+        self.assertIsNotNone(report.number_report)
+        self.assertIsNotNone(report.slug)
+        # Formato esperado: YYYYMMDD + sector_id(3) + count(3)
+        expected_prefix = datetime.now().strftime('%Y%m%d')
+        self.assertTrue(report.number_report.startswith(expected_prefix))
+
+    def test_material_report_price_setting(self):
+        """
+        Signal deve definir unitary_price do MaterialReport baseado no MaterialBidding.
+        """
+        material_report = MaterialReport.objects.create(
+            report=self.report,
+            material_bidding=self.material_bidding,
+            quantity=2
+        )
+        # Preço base 100 + 10% = 110.00
+        self.assertEqual(float(material_report.unitary_price), 110.00)
+        
+        # Total deve ser 2 * 110 = 220.00
+        self.assertEqual(float(material_report.total_price()), 220.00)
 
     def test_creating_interest_request_updates_report_status(self):
         """
