@@ -8,6 +8,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('json_file', type=str, help='Caminho para o arquivo JSON de backup')
+        parser.add_argument('--force', action='store_true', help='Forçar restauração mesmo se já tiver material_bidding')
 
     def handle(self, *args, **kwargs):
         json_file = kwargs['json_file']
@@ -59,8 +60,8 @@ class Command(BaseCommand):
                     skipped_count += 1
                     continue
                 
-                # Se já tem material_bidding, pular
-                if material_report.material_bidding:
+                # Se já tem material_bidding e não é --force, pular
+                if material_report.material_bidding and not kwargs.get('force'):
                     skipped_count += 1
                     continue
                 
