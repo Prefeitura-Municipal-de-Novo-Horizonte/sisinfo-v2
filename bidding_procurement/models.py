@@ -65,6 +65,8 @@ class Bidding(AbsBiddingMaterial):
 
     def get_absolute_url(self):
         """Retorna a URL absoluta para os detalhes da licitação."""
+        if not self.slug:
+            return "#"  # Retorna # se slug estiver vazio
         return r("bidding_procurement:licitacao", kwargs={"slug": self.slug})
 
 
