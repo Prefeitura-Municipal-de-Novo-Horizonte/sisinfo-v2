@@ -43,7 +43,7 @@ python manage.py sync_bidding_with_pdf docs/licitacoes/121-2025.pdf
 
 Remover estes materiais? [S/n]: S
 ✓ 5 materiais removidos
-Materiais restantes: 24
+Materiais restantes: 25
 ```
 
 ---
@@ -73,7 +73,7 @@ for b in Bidding.objects.filter(administrative_process__in=['121/25', '223/25'])
 
 **Resultado esperado:**
 ```
-Processo Licitatório 121/25: 24 materiais
+Processo Licitatório 121/25: 25 materiais
 Processo Licitatório 223/25: 39 materiais
 ```
 
@@ -85,7 +85,7 @@ Processo Licitatório 223/25: 39 materiais
 - [ ] `clean_duplicate_biddings` executado
 - [ ] `sync_bidding_with_pdf` para 121/25 executado
 - [ ] `sync_bidding_with_pdf` para 223/25 executado
-- [ ] Verificação final mostra 24 e 39 materiais
+- [ ] Verificação final mostra **25** e **39** materiais
 - [ ] Interface mostra apenas 1 licitação de cada (sem duplicatas)
 
 ---
@@ -112,7 +112,7 @@ Se algum comando falhar ou o resultado não for o esperado:
 ## 📝 Após executar tudo
 
 A interface deve mostrar:
-- ✅ Processo Licitatório 121/25 (1x, 24 materiais)
+- ✅ Processo Licitatório 121/25 (1x, **25 materiais**)
 - ✅ Processo Licitatório 223/25 (1x, 39 materiais)
 - ✅ Sem duplicatas
 - ✅ Todos os materiais corretos conforme PDFs
