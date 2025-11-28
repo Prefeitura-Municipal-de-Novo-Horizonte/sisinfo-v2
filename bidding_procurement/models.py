@@ -56,6 +56,35 @@ class Bidding(AbsBiddingMaterial):
         default="1",
         help_text="Status da licitação (propagado para materiais vinculados)"
     )
+    
+    # Novos campos para importação automatizada
+    administrative_process = models.CharField(
+        "processo administrativo",
+        max_length=20,
+        blank=True,
+        help_text="Ex: 121/25"
+    )
+    modality = models.CharField(
+        "modalidade",
+        max_length=100,
+        blank=True,
+        help_text="Ex: PREGÃO ELETRÔNICO"
+    )
+    modality_number = models.IntegerField(
+        "número da modalidade",
+        null=True,
+        blank=True,
+        help_text="Ex: 38"
+    )
+    validity_date = models.DateField(
+        "prazo de validade",
+        null=True,
+        blank=True
+    )
+    object_description = models.TextField(
+        "objeto/descrição",
+        blank=True
+    )
 
     class Meta:
         ordering = ("date", "name")
@@ -129,27 +158,34 @@ class MaterialBidding(models.Model):
         max_length=1,
         choices=STATUS_CHOICES,
         default="1",
-        help_text="Status deste material nesta licitação específica"
+        help_text="Status do material nesta licitação específica"
     )
     supplier = models.ForeignKey(
         Supplier,
         on_delete=models.SET_NULL,
-        verbose_name='fornecedor',
-        related_name='bidding_materials',
+        null=True,
         blank=True,
-        null=True
+        related_name='material_biddings',
+        verbose_name='fornecedor vencedor',
+        help_text="Fornecedor que venceu este item na licitação"
+    )
+    quantity = models.IntegerField(
+        "quantidade licitada",
+        default=0,
+        help_text="Quantidade total licitada deste material"
     )
     price = models.DecimalField(
         "preço",
-        max_digits=8,
+        max_digits=10,
         decimal_places=2,
-        blank=True,
-        null=True,
+        default=Decimal("0.00"),
         help_text="Preço do material nesta licitação"
     )
-    readjustment = models.FloatField(
-        "reajuste (%)",
-        default=0,
+    readjustment = models.DecimalField(
+        "reajuste",
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
         help_text="Percentual de reajuste aplicado"
     )
     # price_snapshot mantido por compatibilidade temporária, será removido futuramente
@@ -163,6 +199,22 @@ class MaterialBidding(models.Model):
     )
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+
+    def get_available_quantity(self):
+        """
+        Calcula quantidade disponível (licitada - usada em laudos).
+        
+        Returns:
+            int: Quantidade disponível para uso
+        """
+        from reports.models import MaterialReport
+        from django.db.models import Sum
+        
+        used = MaterialReport.objects.filter(
+            material_bidding=self
+        ).aggregate(total=Sum('quantity'))['total'] or 0
+        
+        return self.quantity - used
 
     def total_price(self):
         """
