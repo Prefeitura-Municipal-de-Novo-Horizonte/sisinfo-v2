@@ -24,10 +24,12 @@ python3 -m pip install -r requirements.txt
 echo "Applying migrations..."
 python3 manage.py migrate --noinput
 
-# Executar comandos de recuperação apenas uma vez (usando arquivo de flag)
-RECOVERY_FLAG=".recovery_completed"
+# Executar comandos de recuperação apenas uma vez (usando banco de dados)
+echo "=== VERIFICANDO PROCEDIMENTOS DE RECUPERAÇÃO ==="
 
-if [ ! -f "$RECOVERY_FLAG" ]; then
+# Recuperação de dados (v1)
+python3 manage.py check_procedure "data_recovery_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
     echo "=== EXECUTANDO RECUPERAÇÃO DE DADOS (PRIMEIRA VEZ) ==="
     
     # Restaurar MaterialReports do backup (se existir)
@@ -44,12 +46,13 @@ if [ ! -f "$RECOVERY_FLAG" ]; then
     echo "Populating legacy bidding..."
     python3 manage.py populate_legacy_bidding || true
     
-    # Marcar como concluído
-    touch "$RECOVERY_FLAG"
+    # Marcar como concluído no banco
+    python3 manage.py mark_procedure "data_recovery_v1" --notes "Recuperação inicial de dados"
     echo "=== RECUPERAÇÃO CONCLUÍDA ==="
 else
-    echo "Recuperação já foi executada anteriormente (pulando...)"
+    echo "Recuperação de dados já foi executada anteriormente (pulando...)"
 fi
+
 
 # Executar procedimentos de manutenção (apenas uma vez cada)
 echo "=== VERIFICANDO PROCEDIMENTOS DE MANUTENÇÃO ==="
