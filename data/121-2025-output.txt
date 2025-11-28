@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/mnt/data/prefeitura/sisinfo-v2/manage.py", line 13, in main
+    from django.core.management import execute_from_command_line
+ModuleNotFoundError: No module named 'django'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/mnt/data/prefeitura/sisinfo-v2/manage.py", line 24, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/data/prefeitura/sisinfo-v2/manage.py", line 15, in main
+    raise ImportError(
+    ...<3 lines>...
+    ) from exc
+ImportError: Couldn't import Django. Are you sure it's installed and available on your PYTHONPATH environment variable? Did you forget to activate a virtual environment?

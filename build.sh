@@ -51,6 +51,31 @@ else
     echo "Recuperação já foi executada anteriormente (pulando...)"
 fi
 
+# Executar procedimentos de manutenção (apenas uma vez cada)
+echo "=== VERIFICANDO PROCEDIMENTOS DE MANUTENÇÃO ==="
+
+# Consolidar duplicatas (v1)
+python3 manage.py check_procedure "consolidate_duplicates_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    echo "Consolidando fornecedores e materiais duplicados..."
+    python3 manage.py consolidate_duplicates --auto --threshold 0.98 && \
+    python3 manage.py mark_procedure "consolidate_duplicates_v1" --notes "Consolidação automática de duplicatas" || \
+    python3 manage.py mark_procedure "consolidate_duplicates_v1" --failed --notes "Falha na consolidação"
+else
+    echo "Consolidação de duplicatas já executada (pulando...)"
+fi
+
+# Limpar licitações duplicadas (v1)
+python3 manage.py check_procedure "clean_duplicate_biddings_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    echo "Limpando licitações duplicadas..."
+    python3 manage.py clean_duplicate_biddings && \
+    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --notes "Limpeza de licitações duplicadas" || \
+    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --failed --notes "Falha na limpeza"
+else
+    echo "Limpeza de licitações duplicadas já executada (pulando...)"
+fi
+
 # Collect static files
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput --clear
