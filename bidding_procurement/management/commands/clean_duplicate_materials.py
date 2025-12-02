@@ -47,6 +47,12 @@ class Command(BaseCommand):
                 keep = instances[0]
                 remove_list = instances[1:]
                 
+                # Contar laudos que serão afetados
+                total_laudos_affected = 0
+                for item in remove_list:
+                    if hasattr(item, 'materiais_laudos'):
+                        total_laudos_affected += item.materiais_laudos.count()
+                
                 if not dry_run:
                     with transaction.atomic():
                         for item in remove_list:
@@ -62,6 +68,10 @@ class Command(BaseCommand):
                             total_removed += 1
                 else:
                     self.stdout.write(f'    [DRY-RUN] Removeria {len(remove_list)} itens')
+                    if total_laudos_affected > 0:
+                        self.stdout.write(self.style.WARNING(f'    [DRY-RUN] {total_laudos_affected} laudo(s) serão re-apontados para ID {keep.id}'))
+                    else:
+                        self.stdout.write(f'    [DRY-RUN] Nenhum laudo afetado - remoção segura')
 
         if total_removed > 0:
             self.stdout.write(self.style.SUCCESS(f'\n✓ {total_removed} materiais duplicados removidos'))
