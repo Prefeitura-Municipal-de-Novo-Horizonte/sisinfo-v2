@@ -1,0 +1,151 @@
+{% extends "_base.html" %}
+{% load ui_tags %}
+{% block title %}
+Usuários
+{% endblock title %}
+{% block content %}
+<!-- TITULO -->
+<div class="{% header_container %}">
+    <div class="sm:rounded-lg px-10">
+        <h1 class="{% header_title %}">
+            <mark class="{% header_mark %}">
+                Usuários
+            </mark>
+        </h1>
+    </div>
+</div>
+{% include "include/_alert.html" %}
+<!-- LISTA DE DADOS -->
+<div class="{% page_container %}">
+    <div class="{% table_container %}">
+        <table class="{% table_base %}">
+            <thead class="{% table_head %}">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Nome Completo
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Username
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Matricula
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Cargo
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Ativo
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Técnico
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Admin
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr class="{% table_row %}">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <a href="{{user.get_absolute_url}}">{{user.fullname}}</a>
+                    </th>
+                    <td class="px-6 py-4">
+                        {{user.username}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{user.email}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{user.registration}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{user.officer}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if user.is_active is True %}
+                        <a href="{% url 'authenticate:disabled_user' user.slug %}">
+                            <button type="button" class="{% btn_danger %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 20 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 8h6m-9-3.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% elif user.is_active is False%}
+                        <a href="{% url 'authenticate:enabled_user' user.slug %}">
+                            <button type="button" class="{% btn_success %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor" viewBox="0 0 20 18">
+                                    <path
+                                        d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if user.is_tech is True %}
+                        <a href="{% url 'authenticate:disabled_user_tech' user.slug %}">
+                            <button type="button" class="{% btn_danger %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 20 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 8h6m-9-3.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% elif user.is_tech is False%}
+                        <a href="{% url 'authenticate:enabled_user_tech' user.slug %}">
+                            <button type="button" class="{% btn_success %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor" viewBox="0 0 20 18">
+                                    <path
+                                        d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if user.is_admin is True %}
+                        <a href="{% url 'authenticate:disabled_user_admin' user.slug %}">
+                            <button type="button" class="{% btn_danger %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 20 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M13 8h6m-9-3.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0ZM5 11h3a4 4 0 0 1 4 4v2H1v-2a4 4 0 0 1 4-4Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% elif user.is_admin is False%}
+                        <a href="{% url 'authenticate:enabled_user_admin' user.slug %}">
+                            <button type="button" class="{% btn_success %} flex justify-center gap-2 items-center">
+                                <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor" viewBox="0 0 20 18">
+                                    <path
+                                        d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td class="px-6 py-4" colspan="4">Nenhum usuário cadastrado!!!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

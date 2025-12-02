@@ -1,0 +1,215 @@
+{% extends "_base.html" %}
+{% load ui_tags %}
+{% block title %}
+Laudos
+{% endblock title %}
+{% block content %}
+<!-- Titulo -->
+<div class="{% header_container %} flex justify-between items-center">
+    <div class="sm:rounded-lg px-10">
+        <a href="{% url 'reports:register_report' %}">
+            <button type="button" class="{% btn_success %} flex justify-center items-center gap-2">
+                Novo Laudo
+                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 1v16M1 9h16" />
+                </svg>
+            </button>
+        </a>
+    </div>
+    <div class="sm:rounded-lg px-10">
+        <h1 class="{% header_title %}">
+            <mark class="{% header_mark %}">
+                Laudos
+            </mark>
+        </h1>
+    </div>
+</div>
+<!-- MESSAGES -->
+{% include "include/_alert.html" %}
+<!-- Search -->
+<div class="{% search_container %}">
+    <form action="" method="get" class="w-full flex justify-start p-2 max-w-full gap-3 items-center me-2">
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.number_report }}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.sector }}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.justification }}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.pro_accountable }}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.start_date}}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.end_date}}
+            </div>
+        </div>
+        <div class="py-5 flex">
+            <div class="relative mt-1">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                {{ myFilter.form.status }}
+            </div>
+        </div>
+        <button type="submit" class="{% search_button %} flex justify-center items-center gap-4">
+            <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+            Pesquisar
+        </button>
+    </form>
+</div>
+<div class="{% page_container %}">
+    <!-- Table -->
+    <div class="{% table_container %}">
+        <table class="{% table_base %}">
+            <thead class="{% table_head %}">
+                <tr>
+                    <th scope="col" class="px-6 py-3 w-10">
+                        Numero Laudo
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Setor
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Funcionário
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Criado em
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Profissional
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Ações
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in page_obj %}
+                <tr class="{% table_row %}">
+                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        <a href="{{ report.get_absolute_url }}">{{report.number_report}}</a>
+                    </th>
+                    <td class="px-6 py-4">
+                        {{report.sector}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{report.employee}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{report.created_at|date:'d/m/Y'}}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{report.professional}}
+                    </td>
+                    <td class="px-4">
+                        <a href="{% url 'reports:report_update' report.slug %}">
+                            <button type="button" class="{% btn_warning %}">
+                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                    fill="currentColor" viewBox="0 0 20 18">
+                                    <path
+                                        d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
+                                    <path
+                                        d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        <a href="{% url 'reports:pdf_report' report.slug %}" target="_blank">
+                            <button type="button" class="{% btn_danger %}">
+                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 16 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M1 18a.969.969 0 0 0 .933 1h12.134A.97.97 0 0 0 15 18M1 7V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2v5M6 1v4a1 1 0 0 1-1 1H1m0 9v-5h1.5a1.5 1.5 0 1 1 0 3H1m12 2v-5h2m-2 3h2m-8-3v5h1.375A1.626 1.626 0 0 0 10 13.375v-1.75A1.626 1.626 0 0 0 8.375 10H7Z" />
+                                </svg>
+                            </button>
+                        </a>
+                        <a href="{% url 'reports:generate_pdf' report.slug %}">
+                            <button type="button" class="{% btn_success %}">
+                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 20 19">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M15 15h.01M4 12H2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-3M9.5 1v10.93m4-3.93-4 4-4-4" />
+                                </svg>
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- Pagination -->
+    {% include "include/_pagination.html" %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+{% endblock content %}
