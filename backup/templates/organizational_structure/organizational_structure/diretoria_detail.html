@@ -1,0 +1,52 @@
+{% extends "_base.html" %}
+{% block title %}
+{{ diretoria.name }}
+{% endblock title %}
+{% block content %}
+<section id="{{ diretoria.slug }}">
+    <!-- CABEÇALHO -->
+    <div class="grid grid-cols-2 gap-4 mb-4 h-auto">
+        <div class="flex-col items-center justify-end rounded bg-gray-100 h-full max-h-full dark:bg-gray-800 p-4">
+            <dl
+                class="max-w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 w-full mb-8">
+                <div class="flex flex-col pb-3">
+                    <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Nome:</dt>
+                    <dd class="text-lg font-bold text-blue-700">{{diretoria.name}}</dd>
+                </div>
+                <div class="flex flex-col pb-3">
+                    <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Responsável:</dt>
+                    <dd class="text-lg font-semibold">{{ diretoria.accountable }}</dd>
+                </div>
+                <div class="flex flex-col py-3">
+                    <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Tipo:</dt>
+                    <dd class="text-lg font-semibold">{{ diretoria.get_kind_display }}</dd>
+                </div>
+                <div class="flex flex-col pb-3">
+                    <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Quantidade de setores:</dt>
+                    <dd class="text-lg font-semibold">{{ total_setores}}</dd>
+                </div>
+            </dl>
+            <a href="{% url 'organizational_structure:diretorias' %}">
+                <button type="button"
+                    class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+                    Diretorias
+                </button>
+            </a>
+        </div>
+        <div
+            class="flex-col items-center justify-center rounded bg-gray-100 h-full max-h-full dark:bg-gray-800 p-4 gap-3">
+            <!-- Formulário de pesquisa -->
+            <div class="flex-col justify-start rounded bg-gray-100 h-full dark:bg-gray-800 p-4 max-w-full w-full">
+                {% include "organizational_structure/include/_search_setor.html" %}
+            </div>
+        </div>
+    </div>
+    <!-- LISTA SETORES -->
+    <div
+        class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6 gap-3 justify-center flex-wrap">
+        {% include "organizational_structure/include/_table_setor.html" %}
+        <!-- Pagination -->
+        {% include "include/_pagination.html" %}
+    </div>
+</section>
+{% endblock content %}

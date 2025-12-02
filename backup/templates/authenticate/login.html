@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/djangotw-ui.css' %}" type="text/css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+  <title>Login Page</title>
+</head>
+
+<body class="flex justify-center items-center h-screen bg-blue-700">
+
+
+  {% load ui_tags %}
+  <div class="{% login_container %}">
+    <form class="space-y-6" action="" method="post">{% csrf_token %}
+      {{ form.non_field_errors }}
+      <div class="flex justify-center items-center gap-10">
+        <img src="{% static 'img/logo/logo.png' %}" alt="" class="h-20 w-20 object-fit">
+        <h5 class="text-xl font-medium text-gray-900 dark:text-white flex justify-center gap-4 pl-20">SISInfo V2</h5>
+      </div>
+      <hr>
+      <div class="relative">
+        {{form.username.errors}}
+        {{form.username}}
+        <label for="{{form.username.id_for_label}}" class="{% input_label %} start-1">{{form.username.label}}</label>
+      </div>
+      <div class="relative">
+        {{form.password.errors}}
+        {{form.password}}
+        <label for="{{form.password.id_for_label}}" class="{% input_label %} start-1">{{form.password.label}}</label>
+      </div>
+      {% include "include/_alert.html" %}
+      <div class="flex items-start">
+        <a href="{% url 'authenticate:password_reset' %}"
+          class="ms-auto text-sm text-blue-700 hover:underline dark:text-blue-500">Esqueceu a senha?</a>
+      </div>
+      <button type="submit" class="w-full {% btn_primary %} flex justify-center gap-5">
+        Login
+        <svg class="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+          viewBox="0 0 21 16">
+          <path d="M11 16a1 1 0 0 1-1-1v-1h2v1a1 1 0 0 1-1 1Z" />
+          <path
+            d="M17.989 6.124a6.5 6.5 0 0 0-12.495-2.1A5 5 0 0 0 6 14h4V8.414l-.293.293a1 1 0 0 1-1.414-1.414l2-2a1 1 0 0 1 1.414 0l2 2a1 1 0 1 1-1.414 1.414L12 8.414V14h5a4 4 0 0 0 .989-7.876Z" />
+        </svg>
+      </button>
+    </form>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+</body>
+
+</html>

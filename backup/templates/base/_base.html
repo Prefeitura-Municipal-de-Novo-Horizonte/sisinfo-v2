@@ -1,0 +1,36 @@
+<!-- Base HTML -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <meta name="keywords" content="meta">
+  <meta name="description" content="description">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}
+      {% endblock title %}
+      - SISInfo - Prefeitura Municipal de Novo Horizonte
+    </title>
+    {% include "include/_favicon.html" %}
+    {% include "include/_css.html" %}
+  </head>
+  <body>
+    <header>
+      {% include "include/_nav.html" %}
+    </header>
+    <main>
+      <div class="p-4 sm:ml-64">
+   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+      {% block content %}
+      {% endblock content %}
+      </div></div>
+    </main>
+    <footer>
+      {% include "include/_footer.html" %}
+    </footer>
+    {% include "include/_js.html" %}
+    {% block script %}
+    {% endblock script %}
+  </body>
+</html>
