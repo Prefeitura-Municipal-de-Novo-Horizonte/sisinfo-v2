@@ -1,94 +1,146 @@
-<!-- templates/index.html -->
-
 {% extends "_base.html" %}
-{% load ui_tags %}
-{% block title %}
-Dashboard
-{% endblock title %}
+{% load static %}
+
 {% block content %}
+<div class="grid grid-cols-1 gap-6 mb-6">
+    <!-- Main Chart Section -->
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Laudos por Setor</h5>
 
-{% include "include/_alert.html" %}
+            <!-- Filter -->
+            <select name="days"
+                    hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
+                    hx-target="#chart-reports-container"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option value="7">Últimos 7 dias</option>
+                <option value="15">Últimos 15 dias</option>
+                <option value="30" selected>Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="365">Último Ano</option>
+            </select>
+        </div>
 
-<div class="grid grid-cols-4 gap-4 mb-4 mt-4">
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800 w-full max-w-full">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-green-500 text-white p-3 text-center hover:bg-green-800 transition-all duration-500 font-semibold">Meus
-            Atendimentos</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">0</h2>
-      </div>
-   </div>
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800 w-full max-w-full">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-red-500 text-white p-3 text-center hover:bg-red-800 transition-all duration-500 font-semibold">Laudos
-            Responsável</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">{{ total_reports_accountable }}</h2>
-      </div>
-   </div>
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-indigo-500 text-white p-3 text-center hover:bg-indigo-900 transition-all duration-500 font-semibold">Meus
-            Laudos</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">{{ total_reports_user }}</h2>
-      </div>
-   </div>
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-blue-500 text-white p-3 text-center hover:bg-blue-800 transition-all duration-500 font-semibold">Total
-            de Laudos</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">{{ total_reports }}</h2>
-      </div>
-   </div>
+        <div id="chart-reports-container" class="w-full">
+             {% include "dashboard/partials/sector_chart.html" %}
+        </div>
+    </div>
 </div>
-<div class="grid grid-cols-3 gap-4 mb-4 mt-14">
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-red-500 text-white p-3 text-center hover:bg-red-800 transition-all duration-500 font-semibold">Ordem
-            de Serviços</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">0</h2>
-      </div>
-   </div>
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800 w-full max-w-full">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-blue-500 text-white p-3 text-center hover:bg-blue-800 transition-all duration-500 font-semibold">Diretorias</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">{{ total_directions }}</h2>
-      </div>
-   </div>
-   <div class="flex items-center justify-center h-24 rounded bg-gray-50 dark:bg-gray-800">
-      <div class="{% dashboard_card %}">
-         <a href="#"
-            class="bg-indigo-500 text-white p-3 text-center hover:bg-indigo-800 transition-all duration-500 font-semibold">Setores</a>
-         <h2 class="text-center p-5 font-bold text-5xl text-gray-500">{{ total_sectors }}</h2>
-      </div>
-   </div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Calendar -->
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+         <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white mb-4">Calendário de Laudos</h5>
+         <div id="calendar"></div>
+    </div>
+
+    <!-- Top Materials -->
+    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white mb-4">Top Materiais Utilizados</h5>
+        <div id="chart-top-materials"></div>
+    </div>
 </div>
-<!--
-      <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-         <p class="text-2xl text-gray-400 dark:text-gray-500">
-            Grid 4
-         </p>
-      </div>
-      <div class="grid grid-cols-2 gap-4 mb-4">
-         <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-            <p class="text-2xl text-gray-400 dark:text-gray-500">
-               Grid 5
-            </p>
-         </div>
-         <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
-            <p class="text-2xl text-gray-400 dark:text-gray-500">
-               Grid 6
-            </p>
-         </div>
-      </div>
-      <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50 dark:bg-gray-800">
-         <p class="text-2xl text-gray-400 dark:text-gray-500">
-            Grid 7
-         </p>
-      </div>
-      -->
-{% endblock content %}
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Calendar Init
+        var calendarEl = document.getElementById('calendar');
+        if (calendarEl) {
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,listWeek'
+                },
+                events: {{ calendar_events|safe }},
+                height: 'auto',
+                themeSystem: 'standard',
+            });
+            calendar.render();
+
+            function updateCalendarTheme() {
+                if (document.documentElement.classList.contains('dark')) {
+                    calendarEl.classList.add('text-white');
+                } else {
+                    calendarEl.classList.remove('text-white');
+                }
+            }
+            updateCalendarTheme();
+            window.addEventListener('themeChanged', updateCalendarTheme);
+        }
+
+        // Top Materials Chart
+        (function() {
+            var options = {
+                series: [{
+                    name: 'Quantidade',
+                    data: {{ material_series|safe }}
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: { show: false },
+                    background: 'transparent',
+                    fontFamily: 'Inter, sans-serif'
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                        distributed: true
+                    }
+                },
+                colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                dataLabels: { enabled: true },
+                xaxis: {
+                    categories: {{ material_labels|safe }},
+                    labels: { style: { colors: '#6B7280', fontSize: '12px' } }
+                },
+                yaxis: {
+                    labels: { style: { colors: '#6B7280', fontSize: '12px' } }
+                },
+                legend: { show: false },
+                grid: { borderColor: '#F3F4F6' },
+                theme: {
+                    mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                }
+            };
+
+            if (document.documentElement.classList.contains('dark')) {
+                options.grid.borderColor = '#374151';
+                options.xaxis.labels.style.colors = '#9CA3AF';
+                options.yaxis.labels.style.colors = '#9CA3AF';
+            }
+
+            if (document.querySelector("#chart-top-materials")) {
+                var chart = new ApexCharts(document.querySelector("#chart-top-materials"), options);
+                chart.render();
+
+                window.addEventListener('themeChanged', function(e) {
+                     chart.updateOptions({
+                        theme: { mode: e.detail.theme },
+                        grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
+                        xaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
+                        yaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } }
+                    });
+                });
+            }
+        })();
+    });
+</script>
+
+<style>
+/* FullCalendar Dark Mode Overrides */
+.dark .fc-toolbar-title { color: white; }
+.dark .fc-button { background-color: #374151; border-color: #4B5563; }
+.dark .fc-button-primary:not(:disabled).fc-button-active,
+.dark .fc-button-primary:not(:disabled):active { background-color: #1D4ED8; border-color: #1D4ED8; }
+.dark .fc-theme-standard td, .dark .fc-theme-standard th { border-color: #374151; }
+.dark .fc-day-other .fc-daygrid-day-top { opacity: 0.3; }
+.dark .fc-daygrid-day-number { color: #D1D5DB; }
+.dark .fc-col-header-cell-cushion { color: #D1D5DB; }
+</style>
+{% endblock %}

@@ -1,9 +1,16 @@
 {% extends "_base.html" %}
 {% load ui_tags %}
+{% load static %}
+
 {% block title %}
 Laudos
 {% endblock title %}
+
 {% block content %}
+<!-- CSS para Flatpickr -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
 <!-- Titulo -->
 <div class="{% header_container %} flex justify-between items-center">
     <div class="sm:rounded-lg px-10">
@@ -30,8 +37,8 @@ Laudos
 {% include "include/_alert.html" %}
 <!-- Search -->
 <div class="{% search_container %}">
-    <form action="" method="get" class="w-full flex justify-start p-2 max-w-full gap-3 items-center me-2">
-        <div class="py-5 flex">
+    <form action="" method="get" class="w-full flex flex-wrap justify-start p-2 max-w-full gap-3 items-center me-2">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -43,7 +50,7 @@ Laudos
                 {{ myFilter.form.number_report }}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -55,7 +62,7 @@ Laudos
                 {{ myFilter.form.sector }}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -67,7 +74,7 @@ Laudos
                 {{ myFilter.form.justification }}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -79,7 +86,7 @@ Laudos
                 {{ myFilter.form.pro_accountable }}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -91,7 +98,7 @@ Laudos
                 {{ myFilter.form.start_date}}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -103,7 +110,7 @@ Laudos
                 {{ myFilter.form.end_date}}
             </div>
         </div>
-        <div class="py-5 flex">
+        <div class="py-2 flex">
             <div class="relative mt-1">
                 <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -211,5 +218,26 @@ Laudos
     {% include "include/_pagination.html" %}
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/datepicker.min.js"></script>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/pt.js"></script>
+
+<!-- Inicialização -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        flatpickr("input[name='start_date']", {
+            dateFormat: "d/m/Y",
+            locale: "pt",
+            altInput: true,
+            altFormat: "j F, Y",
+        });
+
+        flatpickr("input[name='end_date']", {
+            dateFormat: "d/m/Y",
+            locale: "pt",
+            altInput: true,
+            altFormat: "j F, Y",
+        });
+    });
+</script>
 {% endblock content %}

@@ -1,0 +1,106 @@
+<div id="chart-reports-sector" class="w-full h-full"></div>
+<script>
+    (function() {
+        function initSectorChart() {
+            if (!document.querySelector("#chart-reports-sector")) return;
+
+            var options = {
+                series: [{
+                    name: 'Laudos',
+                    data: {{ sector_series|safe }}
+                }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: {
+                        show: false
+                    },
+                    background: 'transparent',
+                    animations: {
+                        enabled: true
+                    }
+                },
+                colors: ['#1D4ED8'], /* Azul Institucional */
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: false,
+                        columnWidth: '50%',
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    show: true,
+                    width: 2,
+                    colors: ['transparent']
+                },
+                xaxis: {
+                    categories: {{ sector_labels|safe }},
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
+                yaxis: {
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#F3F4F6',
+                    strokeDashArray: 4
+                },
+                theme: {
+                    mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                }
+            };
+
+            // Dark mode adjustment
+            if (document.documentElement.classList.contains('dark')) {
+                options.grid.borderColor = '#374151';
+                options.xaxis.labels.style.colors = '#9CA3AF';
+                options.yaxis.labels.style.colors = '#9CA3AF';
+            }
+
+            var chartContainer = document.querySelector("#chart-reports-sector");
+            chartContainer.innerHTML = '';
+
+            var chart = new ApexCharts(chartContainer, options);
+            chart.render();
+
+            // Listen for theme changes (custom event from sidebar)
+            function handleThemeChange(e) {
+                // Check if chart container is still in DOM
+                if (!document.body.contains(chartContainer)) {
+                    window.removeEventListener('themeChanged', handleThemeChange);
+                    return;
+                }
+
+                chart.updateOptions({
+                    theme: { mode: e.detail.theme },
+                    grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
+                    xaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
+                    yaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } }
+                });
+            }
+            window.addEventListener('themeChanged', handleThemeChange);
+        }
+
+        if (typeof ApexCharts !== 'undefined') {
+            initSectorChart();
+        } else {
+            document.addEventListener('DOMContentLoaded', initSectorChart);
+        }
+    })();
+</script>

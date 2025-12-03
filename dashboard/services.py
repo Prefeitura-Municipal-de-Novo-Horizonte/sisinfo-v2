@@ -1,6 +1,11 @@
-from typing import Dict, Any
+from typing import Dict, Any, List
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+from datetime import timedelta
+
 from organizational_structure.models import Direction, Sector
-from reports.models import Report
+from reports.models import Report, MaterialReport
 from authenticate.models import ProfessionalUser
 
 class DashboardService:
@@ -9,7 +14,7 @@ class DashboardService:
     """
 
     @staticmethod
-    def get_dashboard_data(user: ProfessionalUser) -> Dict[str, int]:
+    def get_dashboard_data(user: ProfessionalUser) -> Dict[str, Any]:
         """
         Retorna os dados consolidados para o dashboard do usuário.
         
@@ -17,18 +22,66 @@ class DashboardService:
             user (ProfessionalUser): O usuário logado.
             
         Returns:
-            dict: Dicionário contendo as contagens de relatórios, setores, etc.
+            dict: Dicionário contendo estatísticas e dados para gráficos.
         """
+        # Contadores básicos (ainda úteis para contexto, embora cards sejam removidos)
         total_reports_user = Report.objects.filter(professional=user).count()
         total_reports = Report.objects.all().count()
-        total_sectors = Sector.objects.all().count()
-        total_directions = Direction.objects.all().count()
-        total_reports_accountable = Report.objects.all().filter(pro_accountable=user).count()
         
         return {
             'total_reports': total_reports,
             'total_reports_user': total_reports_user,
-            'total_sectors': total_sectors,
-            'total_directions': total_directions,
-            'total_reports_accountable': total_reports_accountable,
         }
+
+    @staticmethod
+    def get_reports_by_sector(period_days: int = 30) -> List[Dict[str, Any]]:
+        """
+        Retorna a contagem de laudos por setor.
+        """
+        start_date = timezone.now() - timedelta(days=period_days)
+
+        stats = Report.objects.filter(
+            created_at__gte=start_date
+        ).values('sector__name').annotate(
+            count=Count('id')
+        ).order_by('-count')
+
+        return list(stats)
+
+    @staticmethod
+    def get_top_materials(limit: int = 5) -> List[Dict[str, Any]]:
+        """
+        Retorna os materiais mais utilizados nos laudos.
+        """
+        stats = MaterialReport.objects.values(
+            'material_bidding__material__name'
+        ).annotate(
+            total_qty=Sum('quantity')
+        ).order_by('-total_qty')[:limit]
+
+        return [
+            {
+                'name': item['material_bidding__material__name'],
+                'qty': item['total_qty']
+            }
+            for item in stats if item['material_bidding__material__name']
+        ]
+
+    @staticmethod
+    def get_recent_reports_for_calendar() -> List[Dict[str, Any]]:
+        """
+        Retorna laudos para o calendário.
+        """
+        reports = Report.objects.select_related('sector').all()
+        events = []
+        for report in reports:
+            events.append({
+                'title': f"Laudo {report.number_report}",
+                'start': report.created_at.isoformat(),
+                'url': report.get_absolute_url(),
+                'extendedProps': {
+                    'sector': report.sector.name if report.sector else 'Sem Setor',
+                    'status': report.get_status_display()
+                }
+            })
+        return events

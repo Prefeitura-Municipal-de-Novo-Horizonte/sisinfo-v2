@@ -37,15 +37,7 @@ def login_page(request):
     Redireciona para dashboard se já autenticado.
     Se primeiro login, redireciona para troca de senha.
     """
-    if request.user.is_authenticated:
-        return redirect('dashboard:index')
-    elif request.method == 'GET':
-        form = AuthenticationFormCustom(request)
-        context = {
-            'form': form,
-        }
-        return render(request, 'login.html', context)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         form = AuthenticationFormCustom(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
@@ -59,7 +51,13 @@ def login_page(request):
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
-        return redirect('authenticate:login')
+        return render(request, 'login.html', {'form': form})
+
+    form = AuthenticationFormCustom(request)
+    context = {
+        'form': form,
+    }
+    return render(request, 'login.html', context)
 
 
 @login_required
