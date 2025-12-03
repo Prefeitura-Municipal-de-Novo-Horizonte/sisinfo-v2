@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Registration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1d4fd7",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111521",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="font-display">
+<div class="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root" style="font-family: 'Public Sans', sans-serif;">
+<div class="flex flex-1">
+<div class="flex w-full">
+<!-- Left Panel -->
+<div class="hidden lg:flex lg:w-2/5 flex-col items-center justify-center bg-primary p-10">
+<div class="flex flex-col items-center text-center">
+<svg class="h-16 w-16 mb-6 text-white" fill="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 12.33L19.98 8L12 3.67L4.02 8L12 12.33ZM3 8.33L11 12.67V20.17L3 15.83V8.33ZM13 20.17V12.67L21 8.33V15.83L13 20.17Z"></path>
+</svg>
+<h1 class="text-3xl font-bold text-white mb-2">Modernizando a Gestão Pública</h1>
+<p class="text-white/80">Junte-se a nós para otimizar os serviços municipais.</p>
+</div>
+</div>
+<!-- Right Panel -->
+<div class="flex w-full lg:w-3/5 flex-col items-center justify-center bg-background-light dark:bg-background-dark p-6 sm:p-12">
+<div class="w-full max-w-md">
+<div class="flex justify-center mb-8">
+<div class="w-full max-w-[200px] h-auto bg-center bg-no-repeat aspect-[2/1] bg-contain rounded-lg" data-alt="Illustration of a team working together" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD1h5VUfRdTJ-P53IBsTwXAHzsn2Qq5gI-Wt2qDHLFf_IMdhIciMfIgJ8aTqBKk5b8rR9IftZBIzJ3MCC7_i2-SxWn3YZbkJ6FPECU2Gh2HXSou7ccmFTr2QmQpnBq3SD5rRLmni6YlfFYu3Xwr08AH3t4e1jSlycy5YTdXXMR9OpPcVF2lLDqy2CWaoc2d4rvKzwweIo09o1JQ_dmE7I3E50qM_Cf88u9rX9f9gcHpuEMynaucvtTdQejSy09K95TZHUK-PSDu8Sc");'></div>
+</div>
+<div class="text-center lg:text-left mb-8">
+<h1 class="text-3xl font-bold text-[#111827] dark:text-white">Crie sua Conta</h1>
+<h2 class="text-base text-gray-500 dark:text-gray-400 mt-1">Preencha os campos abaixo para se registrar.</h2>
+</div>
+<form class="flex flex-col gap-4">
+<label class="flex flex-col w-full">
+<p class="text-[#111827] dark:text-gray-300 text-sm font-medium leading-normal pb-2">Nome Completo</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111827] dark:text-white dark:bg-background-dark/50 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-white h-12 placeholder:text-gray-400 p-3 text-base font-normal leading-normal" placeholder="Digite seu nome completo" value=""/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111827] dark:text-gray-300 text-sm font-medium leading-normal pb-2">Email</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111827] dark:text-white dark:bg-background-dark/50 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-white h-12 placeholder:text-gray-400 p-3 text-base font-normal leading-normal" placeholder="Digite seu email" value=""/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111827] dark:text-gray-300 text-sm font-medium leading-normal pb-2">Nome de Usuário</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111827] dark:text-white dark:bg-background-dark/50 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-white h-12 placeholder:text-gray-400 p-3 text-base font-normal leading-normal" placeholder="Escolha um nome de usuário" value=""/>
+</label>
+<label class="flex flex-col w-full">
+<p class="text-[#111827] dark:text-gray-300 text-sm font-medium leading-normal pb-2">Senha</p>
+<div class="relative flex w-full flex-1 items-stretch">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111827] dark:text-white dark:bg-background-dark/50 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-gray-300 dark:border-gray-700 bg-white h-12 placeholder:text-gray-400 p-3 text-base font-normal leading-normal" placeholder="Digite sua senha" type="password" value=""/>
+<button class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 dark:text-gray-400" type="button">
+<span class="material-symbols-outlined" data-icon="Eye">visibility</span>
+</button>
+</div>
+</label>
+<button class="flex items-center justify-center whitespace-nowrap transition-colors duration-150 font-medium disabled:pointer-events-none disabled:opacity-50 px-6 py-3 rounded-lg bg-primary text-white hover:bg-primary/90 mt-4 h-12 w-full text-base">
+                                Criar Conta
+                            </button>
+</form>
+<div class="mt-6 text-center">
+<p class="text-sm text-gray-600 dark:text-gray-400">
+                                Já tem uma conta?
+                                <a class="font-semibold text-primary hover:underline" href="#">Faça login</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

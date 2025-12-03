@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lista de Fornecedores</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1d4fd7",
+            "background-light": "#f6f6f8",
+            "background-dark": "#111521",
+          },
+          fontFamily: {
+            "display": ["Public Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
+    }
+    
+    .material-symbols-outlined.fill {
+      font-variation-settings: 'FILL' 1;
+    }
+  </style>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-row min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-background-dark border-r border-gray-200 dark:border-gray-800">
+<div class="flex h-full min-h-[700px] flex-col justify-between p-4">
+<div class="flex flex-col gap-4">
+<div class="flex gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Admin avatar placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB35xEJYyNpDj3g4yoP9zFBxl4oX2YnY1zaFCMjPGpaiVW7R2Bsuro1G-A3AlxQ39Jz0KFQgqr7qM00PflIw-GXK7pxPNXVe0QwO5hRer1EaGsfchxJ9ry4lJ0GtsH2QgYmJBYOILTOi3VChCvN1AFCPZdqtYx81NAAS2EpLMgpwNfUdz9_VDVhSQEwqVEosvrOaIQsU4wJ8lFzWxUFfrAldalRKAYiktHMQifpbAIoWLFheRO0U8iUdw3uBlcczUlCBqoxmDLNoH0");'></div>
+<div class="flex flex-col">
+<h1 class="text-slate-900 dark:text-white text-base font-medium leading-normal">Admin</h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Sistema de Gestão</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-sm font-medium leading-normal">Dashboard</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 dark:bg-primary/20 text-primary dark:text-white" href="#">
+<span class="material-symbols-outlined fill">apartment</span>
+<p class="text-sm font-bold leading-normal">Fornecedores</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">description</span>
+<p class="text-sm font-medium leading-normal">Contratos</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<p class="text-sm font-medium leading-normal">Relatórios</p>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">settings</span>
+<p class="text-sm font-medium leading-normal">Configurações</p>
+</a>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" href="#">
+<span class="material-symbols-outlined">help</span>
+<p class="text-sm font-medium leading-normal">Ajuda</p>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-8">
+<div class="mx-auto max-w-7xl">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between gap-3 p-4">
+<div class="flex min-w-72 flex-col gap-2">
+<p class="text-slate-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Lista de Fornecedores</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">Gerencie, adicione ou edite os fornecedores do município.</p>
+</div>
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 focus:ring-4 focus:ring-primary/30">
+<span class="truncate">+ Adicionar Fornecedor</span>
+</button>
+</div>
+<!-- SearchBar -->
+<div class="px-4 py-3">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="flex items-center justify-center rounded-l-lg border border-r-0 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 pl-4 text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-slate-900 dark:text-white focus:outline-0 focus:ring-2 focus:ring-primary h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 text-base font-normal leading-normal border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800" placeholder="Buscar por nome ou CNPJ..." value=""/>
+</div>
+</label>
+</div>
+<!-- Card Grid -->
+<div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6 p-4">
+<!-- Card 1 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Tech Solutions logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdxEqKITJR4s1LpB-pReG785COLfhbSn5EoCzVEVfu0tPZGx0FbO2KStqfKKijV7BFbHD7bZ6T28p2qhalTG6se9nC9PG8uYEBqAXwMGFIv9S8NDlVKNP3xdyYLeqNpG6ltC6eNeC0-GSDwVcG1EA-_rzI2AxwyDGTuehuxjD8fetq9yUpaQbAY5io_2x46o7pJuCXR4G9JwFgx_m6A63tXDBDjO3U3htgv-2XmOUp2ufceQS_FzrIY5UZvcy1sH8AtUchb_MWdkQ");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Tech Solutions</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 12.345.678/0001-90</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>contato@techsolutions.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(11) 98765-4321</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Infra Works logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC-7VzHMAJe-kM8qqznwPPruhyg650ykCcj4s6c1bDjW2ht6e7lsZ_YvluFzobZZqfUCgLwut0KROvEj7Jj-Rb_bj-DPrcSIX8audwTJelNIZvnmNBM_VvNn-5nbRJqxo9nIcvw9NssvZiMHkz-jURvF7V4vf-ZkRsOP-A7Le3TsMlapIEFfxJcEykpLj2bSWi0WZ3940-mNf9BK2Fnpa6hMBgz2tOAvP5c5onzD1MeX5he0DMByD82IozeAnn94jJQoQj1GAl7wio");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Infra Works</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 23.456.789/0001-80</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>contato@infraworks.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(21) 91234-5678</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Papelaria Central logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuALlGqYoVy0VKsOG4KSlAyQ7XqjhDsBSTcGKtcZw-vJP8w3ed3M9YcWG7WYCDChIW5qUuEJtDa3LDjT6FYbqfd1bIxLojtkz-KpU7dJ-xxkF8u0EwP_n8QHgkLi_PcK__EjswxtDl8bXhKD3mBLlbOXHdjDRIAxjVpTjLOc8-pC5tyNqXKFbvp8WVjAcbIM77cL92NmbQqhOXt2bAArOwlgzxMrrJbRffXOIGa3MLqiqAzQqQo0CCE0Ee6HYjMVTRswtUaVThgwYB0");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Papelaria Central</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 34.567.890/0001-70</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>vendas@papelariacentral.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(31) 98877-6655</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Limpeza &amp; Cia logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwAuJY9c-ICQ1z1rQEUfIKciVmaSjyr7kWN0gKfsFiv3TH--6FkG0o6dXEkjRu7vJe211vYALv3Nb7KelyXt1JY19ExpjV_69CTWJhOjjj3_rZ25cuvKg-_TMHB5AXdz2oj_55F7itJUdAXz_WbV3lUHH5FuA3HKCgLWOXJx-wK-JVPbqmv66mwuScHgaoEZFgf-Jsmpp8wNHni640_yhQrJlajwEuWKFWJr9Ao6qOvtfvj1_zNu2QahHPzYkElEhRuNqKnyKSo7M");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Limpeza &amp; Cia</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 45.678.901/0001-60</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>contato@limpezacia.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(41) 99988-7766</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+<!-- Card 5 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Frota Municipal logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIuX4Z5y2N8_5anX9oxjcuAxOBGS-6xrm00VkCnV7beVvjkWR6HUpiVwTPm4bAKXHWiT1dnG9lrDgqAxxv0QMwD1z7Aa9bTZU8GueG91SEAjLh8BxloAM2U9-ZhVvgZP_RCRCzQVS7cQU1sXzWa6FyiCkKTj7m1w9HuYrGQ4RypA3_UR876BcLOOPrLNfigET-WCGtZl5CKzy1b6iqv-4nbsv4vrdRaYT-8A1lRBX1pjkyokZPpf0OK05NvfYufzwwUZf7Yo71A1k");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Frota Municipal</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 56.789.012/0001-50</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>gestao@frotamunicipal.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(51) 98765-1234</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="flex flex-col gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm transition-shadow hover:shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-center bg-no-repeat aspect-square bg-cover rounded-full" data-alt="Consultoria ABC logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA63563WYWRnIV511iTc4mabrSrun8WQBgYT0KHrQzRDpPoNgB1GfxAe-i5APhXQQSUgvH2wQULXNL9nH61r5xjml0ZiDpEgoZ1AnYdpHTB--_4HHPEA9rXTdviL5YtWr6p8c2zPejDZucRDwzIsUWO5a2UNru5Rc8W3rIBr1u-bI4gI2UmdYhfo9mOVH-ahblEwgw0q9zUY0fj2EjioKHHCO9x0HDU7rlzaflmrT9kvUWesB3kI6zzAuJDragldgAysQNXVvUkbAs");'></div>
+<div>
+<p class="text-slate-900 dark:text-white text-lg font-bold leading-normal">Consultoria ABC</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">CNPJ: 67.890.123/0001-40</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">mail</span>
+<span>admin@consultoriaabc.com</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-base">phone</span>
+<span>(61) 91122-3344</span>
+</div>
+</div>
+<div class="flex gap-2 mt-2">
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">visibility</span>Ver
+                </button>
+<button class="flex-1 flex items-center justify-center gap-2 rounded-lg h-9 px-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-sm font-bold leading-normal hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-lg">edit</span>Editar
+                </button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center p-4">
+<a class="flex size-10 items-center justify-center text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined text-xl">chevron_left</span>
+</a>
+<a class="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-white rounded-full bg-primary" href="#">1</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-white" href="#">2</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-white" href="#">3</a>
+<span class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full">...</span>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-white" href="#">8</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-white" href="#">9</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-slate-700 dark:text-slate-300 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-white" href="#">10</a>
+<a class="flex size-10 items-center justify-center text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined text-xl">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
