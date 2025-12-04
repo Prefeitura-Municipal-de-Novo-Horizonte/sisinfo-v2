@@ -157,3 +157,38 @@ def generate_pdf_report(request, slug):
     except Exception as e:
         messages.add_message(request, constants.ERROR, f'Erro ao gerar PDF: {str(e)}')
         return redirect(reverse('reports:report_view', kwargs={'slug': slug}))
+
+
+@login_required(login_url='login')
+def create_sector_api(request):
+    """
+    API para criar um novo setor via AJAX.
+    Retorna JSON com {id, name} ou erro.
+    """
+    from django.http import JsonResponse
+    from django.utils.text import slugify
+    from organizational_structure.models import Sector
+    import json
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            name = data.get('name')
+            
+            if not name:
+                return JsonResponse({'error': 'Nome do setor é obrigatório'}, status=400)
+                
+            # Verifica se já existe
+            if Sector.objects.filter(name__iexact=name).exists():
+                return JsonResponse({'error': 'Setor já existe'}, status=400)
+                
+            # Cria o setor
+            # Slug é obrigatório no model, então geramos aqui
+            slug = slugify(name)
+            sector = Sector.objects.create(name=name, slug=slug)
+            
+            return JsonResponse({'id': sector.id, 'name': sector.name})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+            
+    return JsonResponse({'error': 'Método não permitido'}, status=405)
