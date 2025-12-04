@@ -1,181 +1,170 @@
 {% extends "_base.html" %}
-{% load ui_tags %}
+
 {% block title %}
 Licitações
 {% endblock title %}
 {% block content %}
-<section>
-    <!-- TITULO -->
-    <div class="{% header_container %}">
-        <p class="text-2xl text-gray-400 dark:text-gray-500">
-        <h1 class="{% header_title %}">
-            <mark class="{% header_mark %}">
-                Licitações
-            </mark>
-        </h1>
-        </p>
+
+<div class="mx-auto max-w-7xl"
+    x-data="{ showForm: {% if form.errors %}true{% else %}false{% endif %}, showFilters: false }">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Licitações</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Processos</span>
     </div>
-    <!-- Dois Grids -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto">
-        <!-- FORMULÁRIO DE CADASTRO -->
-        <div class="{% form_container %}">
-            <div class="w-full max-w-full flex justify-start mb-6">
-                <span
-                    class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Formulário
-                    de Cadastro</span>
-            </div>
-            <form class="max-w-full mx-auto w-full" action="" method="post">{% csrf_token %}
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.name.errors }}{{ form.name }}
-                    <label for="{{ form.name.id_for_label }}"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nome
-                        da Licitação</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.date.errors }}{{ form.date }}
-                    <label for="floating_repeat_password"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Data</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.status.errors }}{{ form.status }}
-                    <label for="{{ form.status.id_for_label }}"
-                        class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Status</label>
-                </div>
-                <div class="flex justify-between items-center gap-10">
-                    <button type="submit"
-                        class="{% btn_primary %} flex justify-around gap-2 items-center w-full sm:w-auto">
-                        {{ btn }}
-                        <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20"
-                            height="20" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.994 19a8.999 8.999 0 1 1 3.53-17.281M5.995 9l4 4 7-8m-1 8v5m-2.5-2.5h5" />
-                        </svg>
-                    </button>
-                    {% if 'Atualizar' in btn %}
-                    <a href="{% url 'bidding_procurement:licitacoes' %}">
-                        <button type="button" class="{% btn_warning %} flex justify-around gap-2 items-center">
-                            Licitações
-                            <svg class="w-4 h-4 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                fill="none" viewBox="0 0 16 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M4 7 1 4l3-3m0 12h6.5a4.5 4.5 0 1 0 0-9H2" />
-                            </svg>
-                        </button>
-                    </a>
-                    {% endif %}
-                </div>
-            </form>
+
+    <!-- Header -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Licitações</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Gerencie os processos licitatórios.</p>
         </div>
-        <!-- Formulário de pesquisa -->
-        <div class="{% search_container %}">
-            <p class="text-2xl text-gray-400 dark:text-gray-500">
-                <span
-                    class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Pesquisar:</span>
-            </p>
-            <form action="" method="get" class="w-full flex-col justify-start p-5 max-w-full">
-                <div class="pb-4 max-w-full w-full">
-                    <label for="{{ myFilter.form.name.id_for_label }}" class="text-sm text-blue-900 font-bold">Pesquise
-                        pelo nome do processo:</label>
-                    <div class="relative mt-1 max-w-full w-full">
-                        <div
-                            class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                            </svg>
-                        </div>
-                        {{ myFilter.form.name }}
-                    </div>
-                </div>
-                <button type="submit" class="{% btn_primary %} flex justify-center items-center gap-4">
-                    <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+        <div class="flex gap-2">
+            <button @click="showFilters = !showFilters"
+                class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+                Filtros
+            </button>
+            <button @click="showForm = !showForm"
+                class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 focus:outline-none dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span x-text="showForm ? 'Cancelar Cadastro' : 'Nova Licitação'"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    {% include "include/_alert.html" %}
+
+    <!-- Filters Section (Collapsible) -->
+    <div x-show="showFilters" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 transform -translate-y-4"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 transform translate-y-0"
+        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-6" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <form action="" method="get" class="flex flex-col sm:flex-row gap-4 items-end">
+                {% include "bidding_procurement/include/_form_field_standard.html" with field=myFilter.form.name %}
+                <button type="submit"
+                    class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                     Pesquisar
                 </button>
             </form>
         </div>
     </div>
-    <!-- MESSAGES -->
-    {% include "include/_alert.html" %}
-    <!-- LISTA DE DADOS -->
-    <div class="flex items-center max-w-full w-full h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6 flex-col">
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-w-full w-full px-10">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-white uppercase bg-blue-700 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
-                            Nome
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Data
-                        </th>
-                        <th scope="col" class="px-6 py-3">
-                            Ações
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for licitacao in page_obj %}
-                    <tr
-                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-100 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <a href="{{ licitacao.get_absolute_url }}">{{ licitacao.name }}</a>
-                        </th>
-                        <td class="px-6 py-4">
-                            {{ licitacao.date }}
-                        </td>
-                        <td class="px-6 py-4 flex justify-normal items-center gap-2">
-                            <a href="{% url 'bidding_procurement:toggle_status_licitacao' licitacao.slug %}">
-                                {% if licitacao.status == '1' %}
-                                <button type="button"
-                                    class="{% btn_secondary %} flex justify-center gap-2 items-center">
-                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M1 5v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H1Zm0 0V2a1 1 0 0 1 1-1h5.443a1 1 0 0 1 .8.4l2.7 3.6H1Z" />
-                                    </svg>
-                                    Desativar
-                                </button>
-                                {% else %}
-                                <button type="button" class="{% btn_primary %} flex justify-center gap-2 items-center">
-                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
-                                    </svg>
-                                    Ativar
-                                </button>
-                                {% endif %}
-                            </a>
-                            <a href="{% url 'bidding_procurement:delete_licitacao' licitacao.slug %}">
-                                <button type="button" class="{% btn_danger %} flex justify-center gap-2 items-center">
-                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                    </svg>
-                                    Excluir
-                                </button>
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td class="px-6 py-4" colspan="3">Nenhuma licitacao cadastrada!!!</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="w-full flex justify-center mt-4">
-            {% include "include/_pagination.html" %}
+
+    <!-- Form Section (Collapsible) -->
+    <div x-show="showForm" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 transform -translate-y-4"
+        x-transition:enter-end="opacity-100 transform translate-y-0"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 transform translate-y-0"
+        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-8" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Nova Licitação</h3>
+            <form action="" method="post">{% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="md:col-span-2">
+                        {% include "bidding_procurement/include/_form_field_standard.html" with field=form.name %}
+                    </div>
+                    {% include "bidding_procurement/include/_form_field_standard.html" with field=form.date %}
+                    {% include "bidding_procurement/include/_form_field_standard.html" with field=form.status %}
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Salvar Licitação
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</section>
+
+    <!-- Listagem em Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for licitacao in page_obj %}
+        <div
+            class="flex flex-col rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden hover:shadow-lg transition-shadow duration-300">
+            <div class="p-5 flex flex-col flex-grow">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-gray-900 dark:text-white text-lg font-bold leading-normal line-clamp-2"
+                        title="{{ licitacao.name }}">
+                        {{ licitacao.name }}
+                    </h3>
+                    {% if licitacao.status == '1' %}
+                    <span
+                        class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-2.5 py-0.5 text-xs font-semibold text-green-800 dark:text-green-300 whitespace-nowrap ml-2">
+                        Ativo
+                    </span>
+                    {% else %}
+                    <span
+                        class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/50 px-2.5 py-0.5 text-xs font-semibold text-red-800 dark:text-red-300 whitespace-nowrap ml-2">
+                        Inativo
+                    </span>
+                    {% endif %}
+                </div>
+
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal mb-4">
+                    Data: {{ licitacao.date|date:"d/m/Y" }}
+                </p>
+
+                <div class="mt-auto flex flex-col gap-2">
+                    <a href="{{ licitacao.get_absolute_url }}"
+                        class="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-50 text-brand-600 h-9 px-3 text-sm font-bold leading-normal hover:bg-brand-100 dark:bg-gray-700 dark:text-brand-400 dark:hover:bg-gray-600 transition-colors">
+                        Ver Detalhes
+                    </a>
+
+                    <div
+                        class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'bidding_procurement:toggle_status_licitacao' licitacao.slug %}"
+                            class="text-xs font-medium {% if licitacao.status == '1' %}text-red-600 hover:text-red-800{% else %}text-green-600 hover:text-green-800{% endif %} transition-colors">
+                            {% if licitacao.status == '1' %}Desativar{% else %}Ativar{% endif %}
+                        </a>
+                        <a href="{% url 'bidding_procurement:delete_licitacao' licitacao.slug %}"
+                            class="text-xs font-medium text-gray-500 hover:text-red-600 transition-colors">
+                            Excluir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div
+            class="col-span-full flex flex-col items-center justify-center p-12 text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 border-dashed">
+            <svg class="w-12 h-12 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                </path>
+            </svg>
+            <p class="text-lg font-medium">Nenhuma licitação encontrada.</p>
+            <p class="text-sm">Tente ajustar os filtros ou cadastre uma nova licitação.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        {% include "include/_pagination.html" %}
+    </div>
+</div>
+</div>
 {% endblock content %}
