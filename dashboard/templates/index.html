@@ -1,18 +1,26 @@
 {% extends "_base.html" %}
 {% load static %}
 
+{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<div class="grid grid-cols-1 gap-6 mb-6">
-    <!-- Main Chart Section -->
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
+<!-- Page Header -->
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo, {{ request.user.fullname|default:"Usuário" }}
+    </p>
+</div>
+
+<!-- Main Chart Section (Full Width) -->
+<div class="mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between mb-4">
-            <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white">Laudos por Setor</h5>
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos por Setor</h5>
 
             <!-- Filter -->
-            <select name="days"
-                    hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
-                    hx-target="#chart-reports-container"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
+                hx-target="#chart-reports-container"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                 <option value="7">Últimos 7 dias</option>
                 <option value="15">Últimos 15 dias</option>
                 <option value="30" selected>Últimos 30 dias</option>
@@ -21,67 +29,70 @@
             </select>
         </div>
 
-        <div id="chart-reports-container" class="w-full">
-             {% include "dashboard/partials/sector_chart.html" %}
+        <div id="chart-reports-container" class="w-full" style="max-width: 100%; overflow: hidden;">
+            {% include "dashboard/partials/sector_chart.html" %}
         </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Calendar -->
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
-         <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white mb-4">Calendário de Laudos</h5>
-         <div id="calendar"></div>
-    </div>
+<!-- Top Materials Chart (Full Width) -->
+<div class="mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
 
-    <!-- Top Materials -->
-    <div class="p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <h5 class="text-xl font-bold leading-none text-gray-900 dark:text-white mb-4">Top Materiais Utilizados</h5>
-        <div id="chart-top-materials"></div>
+            <!-- Filter por Período -->
+            <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                <option value="7">Últimos 7 dias</option>
+                <option value="15">Últimos 15 dias</option>
+                <option value="30" selected>Últimos 30 dias</option>
+                <option value="90">Últimos 90 dias</option>
+                <option value="365">Último Ano</option>
+            </select>
+        </div>
+
+        <div id="chart-top-materials" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
     </div>
 </div>
 
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<!-- Data for JavaScript -->
+<script id="dashboard-data" type="application/json">
+{
+  "materialLabels": {{ material_labels|safe }},
+  "materialSeries": {{ material_series|safe }}
+}
+</script>
+{% endblock %}
+
+{% block script %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Calendar Init
-        var calendarEl = document.getElementById('calendar');
-        if (calendarEl) {
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,listWeek'
-                },
-                events: {{ calendar_events|safe }},
-                height: 'auto',
-                themeSystem: 'standard',
-            });
-            calendar.render();
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get data from JSON script tag
+        const dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);
 
-            function updateCalendarTheme() {
-                if (document.documentElement.classList.contains('dark')) {
-                    calendarEl.classList.add('text-white');
-                } else {
-                    calendarEl.classList.remove('text-white');
-                }
+        // ============================================
+        // Top Materials Chart Initial Render
+        // ============================================
+        let materialLabels = dashboardData.materialLabels || [];
+        let materialSeries = dashboardData.materialSeries || [];
+
+        function renderMaterialsChart() {
+            if (materialLabels.length === 0) {
+                const container = document.querySelector("#chart-top-materials");
+                if (container) container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
+                return;
             }
-            updateCalendarTheme();
-            window.addEventListener('themeChanged', updateCalendarTheme);
-        }
 
-        // Top Materials Chart
-        (function() {
             var options = {
                 series: [{
                     name: 'Quantidade',
-                    data: {{ material_series|safe }}
+                    data: materialSeries
                 }],
                 chart: {
                     type: 'bar',
-                    height: 350,
+                    height: 400,
+                    width: '100%',
                     toolbar: { show: false },
                     background: 'transparent',
                     fontFamily: 'Inter, sans-serif'
@@ -90,23 +101,50 @@
                     bar: {
                         borderRadius: 4,
                         horizontal: true,
-                        distributed: true
+                        distributed: false,
+                        dataLabels: {
+                            position: 'top'
+                        }
                     }
                 },
-                colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-                dataLabels: { enabled: true },
+                colors: ['#1D4ED8'],
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        colors: ['#fff']
+                    }
+                },
                 xaxis: {
-                    categories: {{ material_labels|safe }},
-                    labels: { style: { colors: '#6B7280', fontSize: '12px' } }
+                    categories: materialLabels,
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
                 },
                 yaxis: {
-                    labels: { style: { colors: '#6B7280', fontSize: '12px' } }
+                    labels: {
+                        style: {
+                            colors: '#6B7280',
+                            fontSize: '12px'
+                        }
+                    }
                 },
                 legend: { show: false },
                 grid: { borderColor: '#F3F4F6' },
                 theme: {
                     mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-                }
+                },
+                responsive: [{
+                    breakpoint: 640,
+                    options: {
+                        chart: { height: 300 },
+                        plotOptions: {
+                            bar: { horizontal: false }
+                        }
+                    }
+                }]
             };
 
             if (document.documentElement.classList.contains('dark')) {
@@ -116,11 +154,12 @@
             }
 
             if (document.querySelector("#chart-top-materials")) {
-                var chart = new ApexCharts(document.querySelector("#chart-top-materials"), options);
+                const chart = new ApexCharts(document.querySelector("#chart-top-materials"), options);
                 chart.render();
 
-                window.addEventListener('themeChanged', function(e) {
-                     chart.updateOptions({
+                // Theme change handler
+                window.addEventListener('themeChanged', function (e) {
+                    chart.updateOptions({
                         theme: { mode: e.detail.theme },
                         grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
                         xaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
@@ -128,19 +167,10 @@
                     });
                 });
             }
-        })();
+        }
+
+        // Initial render
+        renderMaterialsChart();
     });
 </script>
-
-<style>
-/* FullCalendar Dark Mode Overrides */
-.dark .fc-toolbar-title { color: white; }
-.dark .fc-button { background-color: #374151; border-color: #4B5563; }
-.dark .fc-button-primary:not(:disabled).fc-button-active,
-.dark .fc-button-primary:not(:disabled):active { background-color: #1D4ED8; border-color: #1D4ED8; }
-.dark .fc-theme-standard td, .dark .fc-theme-standard th { border-color: #374151; }
-.dark .fc-day-other .fc-daygrid-day-top { opacity: 0.3; }
-.dark .fc-daygrid-day-number { color: #D1D5DB; }
-.dark .fc-col-header-cell-cushion { color: #D1D5DB; }
-</style>
 {% endblock %}

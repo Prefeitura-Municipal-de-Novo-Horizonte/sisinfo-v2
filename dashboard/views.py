@@ -57,3 +57,25 @@ def reports_by_sector_chart(request):
         'sector_series': series,
     }
     return render(request, "dashboard/partials/sector_chart.html", context)
+
+
+@login_required
+def top_materials_chart(request):
+    """
+    Retorna dados dos materiais mais utilizados por período via HTMX.
+    """
+    try:
+        days = int(request.GET.get('days', 30))
+    except ValueError:
+        days = 30
+
+    materials_data = DashboardService.get_top_materials_by_period(days)
+
+    labels = json.dumps([item['name'] for item in materials_data])
+    series = json.dumps([str(item['qty']) for item in materials_data])
+
+    context = {
+        'material_labels': labels,
+        'material_series': series,
+    }
+    return render(request, "dashboard/partials/materials_chart.html", context)

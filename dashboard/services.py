@@ -49,7 +49,7 @@ class DashboardService:
         return list(stats)
 
     @staticmethod
-    def get_top_materials(limit: int = 5) -> List[Dict[str, Any]]:
+    def get_top_materials(limit: int = 10) -> List[Dict[str, Any]]:
         """
         Retorna os materiais mais utilizados nos laudos.
         """
@@ -85,3 +85,26 @@ class DashboardService:
                 }
             })
         return events
+
+    @staticmethod
+    def get_top_materials_by_period(period_days: int = 30, limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        Retorna os materiais mais utilizados nos laudos em um período específico.
+        """
+        start_date = timezone.now() - timedelta(days=period_days)
+        
+        stats = MaterialReport.objects.filter(
+            report__created_at__gte=start_date
+        ).values(
+            'material_bidding__material__name'
+        ).annotate(
+            total_qty=Sum('quantity')
+        ).order_by('-total_qty')[:limit]
+
+        return [
+            {
+                'name': item['material_bidding__material__name'],
+                'qty': item['total_qty']
+            }
+            for item in stats if item['material_bidding__material__name']
+        ]

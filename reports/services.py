@@ -13,13 +13,16 @@ class ReportService:
 
     @staticmethod
     def get_all_reports() -> QuerySet[Report]:
-        """Retorna todos os laudos cadastrados."""
-        return Report.objects.all()
+        """Retorna todos os laudos cadastrados com otimização."""
+        return Report.objects.select_related('sector', 'professional', 'pro_accountable').all()
 
     @staticmethod
     def get_report_by_slug(slug: str) -> Report:
         """Retorna um laudo específico pelo slug ou 404 se não encontrado."""
-        return get_object_or_404(Report, slug=slug)
+        return get_object_or_404(
+            Report.objects.select_related('sector', 'professional', 'pro_accountable'), 
+            slug=slug
+        )
 
     @staticmethod
     def create_report(form: ReportForm, form_material: BaseInlineFormSet) -> Optional[Report]:
