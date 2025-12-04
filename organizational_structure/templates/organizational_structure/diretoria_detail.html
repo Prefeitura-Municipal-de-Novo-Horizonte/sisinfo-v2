@@ -4,99 +4,122 @@
 {% block title %}{{ diretoria.name }}{% endblock title %}
 
 {% block content %}
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div>
-        <div class="flex items-center gap-3 mb-2">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ diretoria.name }}</h1>
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                Diretoria
-            </span>
-        </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Detalhes e setores vinculados.</p>
+<div class="mx-auto max-w-4xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Estrutura</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'organizational_structure:diretorias' %}">Diretorias</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">{{ diretoria.name }}</span>
     </div>
 
-    <a href="{% url 'organizational_structure:diretorias' %}"
-        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors flex items-center gap-2 w-fit">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-            </path>
-        </svg>
-        Voltar para Diretorias
-    </a>
-</div>
-
-<div class="space-y-6">
-    <!-- Detalhes da Diretoria -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <h3
-            class="text-lg font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
-            Informações
-        </h3>
-        <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nome</dt>
-                <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ diretoria.name }}</dd>
-            </div>
-            <div>
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Responsável</dt>
-                <dd class="mt-1 text-base text-gray-900 dark:text-white">{{ diretoria.accountable }}</dd>
-            </div>
-            <div>
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Tipo</dt>
-                <dd class="mt-1 text-base text-gray-900 dark:text-white">{{ diretoria.get_kind_display|default:"-" }}
-                </dd>
-            </div>
-            <div>
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Setores</dt>
-                <dd class="mt-1 text-2xl font-bold text-blue-600 dark:text-blue-500">{{ total_setores }}</dd>
-            </div>
-        </dl>
-    </div>
-
-    <!-- Filters Section (Collapsible) -->
-    <div x-data="{ showFilters: false }"
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
-            @click="showFilters = !showFilters">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
-                    </path>
-                </svg>
-                Filtrar Setores
-            </h3>
-            <button type="button" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': showFilters}"
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
-        </div>
-
-        <div x-show="showFilters" x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2" class="p-4" style="display: none;">
-            {% include "organizational_structure/include/_search_setor.html" %}
-        </div>
-    </div>
-
-    <!-- Lista de Setores -->
     <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div
-            class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
-            <h3 class="font-semibold text-gray-900 dark:text-white">Setores Vinculados</h3>
-            <a href="{% url 'organizational_structure:setores' %}"
-                class="text-sm text-blue-600 hover:underline dark:text-blue-500">Gerenciar Setores</a>
+        class="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+        <!-- Header Section -->
+        <div class="p-6">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+                <div class="flex flex-col gap-2">
+                    <div
+                        class="inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold w-fit bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                        Diretoria
+                    </div>
+                    <h1 class="text-3xl font-black leading-tight tracking-tight text-gray-900 dark:text-white">
+                        {{ diretoria.name }}
+                    </h1>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{% url 'organizational_structure:update_diretoria' diretoria.slug %}"
+                        class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 text-sm font-bold text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        <span>Editar</span>
+                    </a>
+                    <a href="{% url 'organizational_structure:delete_diretoria' diretoria.slug %}"
+                        class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 text-sm font-bold text-red-600 dark:text-red-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                        <span>Excluir</span>
+                    </a>
+                </div>
+            </div>
         </div>
-        {% include "organizational_structure/include/_table_setor.html" %}
 
-        <!-- Pagination -->
-        <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-            {% include "include/_pagination.html" %}
+        <!-- Info Grid -->
+        <div
+            class="border-t border-gray-200 dark:border-gray-700 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Responsável</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{
+                    diretoria.accountable }}</p>
+            </div>
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Tipo</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{
+                    diretoria.get_kind_display|default:"-" }}</p>
+            </div>
+            <div class="flex flex-col gap-1">
+                <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Total de Setores</p>
+                <p class="text-base font-medium leading-normal text-blue-600 dark:text-blue-500">{{ total_setores }}</p>
+            </div>
+        </div>
+
+        <!-- Filters Section (Collapsible) -->
+        <div x-data="{ showFilters: false }" class="border-t border-gray-200 dark:border-gray-700">
+            <div class="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                @click="showFilters = !showFilters">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                        </path>
+                    </svg>
+                    Filtrar Setores
+                </h3>
+                <button type="button"
+                    class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <svg class="w-5 h-5 transform transition-transform duration-200"
+                        :class="{'rotate-180': showFilters}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div x-show="showFilters" x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+                class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50"
+                style="display: none;">
+                {% include "organizational_structure/include/_search_setor.html" %}
+            </div>
+        </div>
+
+        <!-- Lista de Setores -->
+        <div class="border-t border-gray-200 dark:border-gray-700">
+            <div
+                class="p-4 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                <h3 class="font-semibold text-gray-900 dark:text-white">Setores Vinculados</h3>
+                <a href="{% url 'organizational_structure:setores' %}"
+                    class="text-sm text-blue-600 hover:underline dark:text-blue-500">Gerenciar Setores</a>
+            </div>
+            {% include "organizational_structure/include/_table_setor.html" %}
+
+            <!-- Pagination -->
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+                {% include "include/_pagination.html" %}
+            </div>
         </div>
     </div>
 </div>
