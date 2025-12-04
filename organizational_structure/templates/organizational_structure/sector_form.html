@@ -6,65 +6,68 @@
 {% endblock title %}
 
 {% block content %}
-<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div>
-        <div class="flex items-center gap-3 mb-2">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                {% if form.instance.pk %}Editar Setor{% else %}Novo Setor{% endif %}
-            </h1>
-            <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                Gerenciamento
-            </span>
-        </div>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Preencha os dados abaixo para salvar.</p>
+<div class="mx-auto max-w-4xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Estrutura</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'organizational_structure:setores' %}">Setores</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">
+            {% if form.instance.pk %}Editar{% else %}Novo{% endif %}
+        </span>
     </div>
 
-    <a href="{% url 'organizational_structure:setores' %}"
-        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors flex items-center gap-2 w-fit">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-            </path>
-        </svg>
-        Voltar para Lista
-    </a>
-</div>
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            {% if form.instance.pk %}Editar Setor{% else %}Novo Setor{% endif %}
+        </h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Preencha as informações abaixo para salvar.</p>
+    </div>
 
-<!-- Alerts -->
-{% include "include/_alert.html" %}
+    <!-- Alerts -->
+    {% include "include/_alert.html" %}
 
-<div class="max-w-2xl mx-auto">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <form action="" method="post">{% csrf_token %}
             <div class="space-y-6">
-                <div>
-                    <label for="{{ form.name.id_for_label }}"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Nome do Setor
-                    </label>
-                    {{ form.name }}
-                    {{ form.name.errors }}
-                </div>
-
-                <div>
-                    <label for="{{ form.accountable.id_for_label }}"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Responsável
-                    </label>
-                    {{ form.accountable }}
-                    {{ form.accountable.errors }}
-                </div>
-
-                <div>
-                    <label for="{{ form.direction.id_for_label }}"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                        Diretoria
-                    </label>
-                    {{ form.direction }}
-                    {{ form.direction.errors }}
-                </div>
-
+                <!-- Grid de Informações Principais -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.name.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nome do Setor
+                        </label>
+                        {{ form.name }}
+                        {{ form.name.errors }}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.direction.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Diretoria
+                        </label>
+                        {{ form.direction }}
+                        {{ form.direction.errors }}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.accountable.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Responsável
+                        </label>
+                        {{ form.accountable }}
+                        {{ form.accountable.errors }}
+                    </div>
+                </div>
+
+                <!-- Grid de Contato -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div>
                         <label for="{{ form.phone.id_for_label }}"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -83,6 +86,7 @@
                     </div>
                 </div>
 
+                <!-- Endereço (Full Width) -->
                 <div>
                     <label for="{{ form.address.id_for_label }}"
                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -92,7 +96,12 @@
                     {{ form.address.errors }}
                 </div>
 
-                <div class="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <a href="{% url 'organizational_structure:setores' %}"
+                        class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors">
+                        Cancelar
+                    </a>
                     <button type="submit"
                         class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,11 +110,6 @@
                         </svg>
                         Salvar Setor
                     </button>
-
-                    <a href="{% url 'organizational_structure:setores' %}"
-                        class="text-gray-700 bg-white border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:bg-gray-50 dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 dark:focus:ring-gray-700 transition-colors">
-                        Cancelar
-                    </a>
                 </div>
             </div>
         </form>
