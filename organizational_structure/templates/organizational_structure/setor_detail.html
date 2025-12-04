@@ -1,72 +1,157 @@
 {% extends "_base.html" %}
 {% load ui_tags %}
 
-{% block title %}{{ sector.name }}{% endblock title %}
+{% block title %}{{ setor.name }}{% endblock title %}
 
 {% block content %}
-<section>
-    <div class="{% header_container %}">
-        <h1 class="{% header_title %}">
-            <mark class="{% header_mark %}">
-                {{ sector.name }}
-            </mark>
-        </h1>
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ setor.name }}</h1>
+            <span
+                class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                Setor
+            </span>
+        </div>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Detalhes e histórico de laudos.</p>
     </div>
 
-    <div class="{% card_base %} p-6 mb-4">
-        <dl class="max-w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
-            <div class="flex flex-col pb-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Diretoria:</dt>
-                <dd class="text-lg font-semibold">{{ sector.direction.name }}</dd>
+    <a href="{% url 'organizational_structure:setores' %}"
+        class="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors flex items-center gap-2 w-fit">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+            </path>
+        </svg>
+        Voltar para Setores
+    </a>
+</div>
+
+<div class="space-y-6">
+    <!-- Detalhes do Setor -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3
+            class="text-lg font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
+            Informações
+        </h3>
+        <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nome</dt>
+                <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ setor.name }}</dd>
             </div>
-            <div class="flex flex-col py-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Setor:</dt>
-                <dd class="text-lg font-semibold">{{ sector.name }}</dd>
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Diretoria</dt>
+                <dd class="mt-1 text-base text-blue-600 dark:text-blue-400 font-medium">
+                    <a href="{{ setor.direction.get_absolute_url }}" class="hover:underline">
+                        {{ setor.direction.name }}
+                    </a>
+                </dd>
             </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Responsável</dt>
+                <dd class="mt-1 text-base text-gray-900 dark:text-white">{{ setor.accountable }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Contato</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white space-y-1">
+                    {% if setor.email %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        {{ setor.email }}
+                    </div>
+                    {% endif %}
+                    {% if setor.phone %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                            </path>
+                        </svg>
+                        {{ setor.phone }}
+                    </div>
+                    {% endif %}
+                </dd>
+            </div>
+            {% if setor.address %}
+            <div class="md:col-span-2 lg:col-span-4">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Endereço</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ setor.address|linebreaksbr }}</dd>
+            </div>
+            {% endif %}
         </dl>
     </div>
 
-    <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Laudos do Setor</h2>
+    <!-- Lista de Laudos -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div
+            class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex justify-between items-center">
+            <h3 class="font-semibold text-gray-900 dark:text-white">Laudos Recentes</h3>
+            <span
+                class="text-xs font-medium px-2.5 py-0.5 rounded bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                {{ reports.count }} laudos
+            </span>
+        </div>
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                    <th scope="col" class="px-6 py-3">Número</th>
-                    <th scope="col" class="px-6 py-3">Funcionário</th>
-                    <th scope="col" class="px-6 py-3">Status</th>
-                    <th scope="col" class="px-6 py-3">Data</th>
-                    <th scope="col" class="px-6 py-3">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for report in reports %}
-                <tr
-                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {{ report.number_report }}
-                    </th>
-                    <td class="px-6 py-4">
-                        {{ report.employee }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ report.get_status_display }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ report.created_at|date:"d/m/Y" }}
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="{{ report.get_absolute_url }}"
-                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Ver Detalhes</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <td colspan="5" class="px-6 py-4 text-center">Nenhum laudo encontrado para este setor.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="relative overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Número</th>
+                        <th scope="col" class="px-6 py-3">Funcionário</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Data</th>
+                        <th scope="col" class="px-6 py-3 text-right">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ report.number_report }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ report.employee }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                {% if report.status == 'WAITING' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300
+                                {% elif report.status == 'APPROVED' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
+                                {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}">
+                                {{ report.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ report.created_at|date:"d/m/Y" }}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{{ report.get_absolute_url }}"
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                Ver Detalhes
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center">
+                            <div class="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                                <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                                <p>Nenhum laudo encontrado para este setor.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-</section>
+</div>
 {% endblock content %}
