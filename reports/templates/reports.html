@@ -1,221 +1,258 @@
 {% extends "_base.html" %}
-{% load ui_tags %}
 {% load static %}
 
-{% block title %}
-Laudos
-{% endblock title %}
+{% block title %}Laudos{% endblock %}
 
 {% block content %}
 <!-- CSS para Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 
-<!-- Titulo -->
-<div class="{% header_container %} flex justify-between items-center">
-    <div class="sm:rounded-lg px-10">
-        <a href="{% url 'reports:register_report' %}">
-            <button type="button" class="{% btn_success %} flex justify-center items-center gap-2">
-                Novo Laudo
-                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 1v16M1 9h16" />
-                </svg>
-            </button>
-        </a>
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Laudos</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Gerencie e visualize os laudos técnicos.</p>
     </div>
-    <div class="sm:rounded-lg px-10">
-        <h1 class="{% header_title %}">
-            <mark class="{% header_mark %}">
-                Laudos
-            </mark>
-        </h1>
-    </div>
+    <a href="{% url 'reports:register_report' %}"
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 dark:focus:ring-brand-900 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Novo Laudo
+    </a>
 </div>
-<!-- MESSAGES -->
-{% include "include/_alert.html" %}
-<!-- Search -->
-<div class="{% search_container %}">
-    <form action="" method="get" class="w-full flex flex-wrap justify-start p-2 max-w-full gap-3 items-center me-2">
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.number_report }}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.sector }}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.justification }}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.pro_accountable }}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.start_date}}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.end_date}}
-            </div>
-        </div>
-        <div class="py-2 flex">
-            <div class="relative mt-1">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.status }}
-            </div>
-        </div>
-        <button type="submit" class="{% search_button %} flex justify-center items-center gap-4">
-            <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+
+<!-- Filters Section -->
+<div x-data="{ showFilters: false }"
+    class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        @click="showFilters = !showFilters">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                </path>
             </svg>
-            Pesquisar
+            Filtros de Pesquisa
+        </h3>
+        <button type="button" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': showFilters}"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
         </button>
-    </form>
+    </div>
+
+    <div x-show="showFilters" x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2" class="p-4">
+        <form action="" method="get" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Numero -->
+            <div>
+                <label for="id_number_report"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Número</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.number_report }}
+                </div>
+            </div>
+
+            <!-- Setor -->
+            <div>
+                <label for="id_sector"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Setor</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                            </path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.sector }}
+                </div>
+            </div>
+
+            <!-- Profissional -->
+            <div>
+                <label for="id_pro_accountable"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Profissional</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.pro_accountable }}
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div>
+                <label for="id_status"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.status }}
+                </div>
+            </div>
+
+            <!-- Data Início -->
+            <div>
+                <label for="id_start_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Data
+                    Início</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.start_date }}
+                </div>
+            </div>
+
+            <!-- Data Fim -->
+            <div>
+                <label for="id_end_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Data
+                    Fim</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.end_date }}
+                </div>
+            </div>
+
+            <!-- Justificativa (Full Width) -->
+            <div class="sm:col-span-2 lg:col-span-2">
+                <label for="id_justification"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Justificativa</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h7"></path>
+                        </svg>
+                    </div>
+                    {{ myFilter.form.justification }}
+                </div>
+            </div>
+
+            <!-- Botão Pesquisar -->
+            <div class="flex items-end">
+                <button type="submit"
+                    class="w-full text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 focus:outline-none dark:focus:ring-brand-800 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Pesquisar
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
-<div class="{% page_container %}">
-    <!-- Table -->
-    <div class="{% table_container %}">
-        <table class="{% table_base %}">
-            <thead class="{% table_head %}">
+
+<!-- Table Section -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                    <th scope="col" class="px-6 py-3 w-10">
-                        Numero Laudo
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Setor
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Funcionário
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Criado em
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Profissional
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Ações
-                    </th>
+                    <th scope="col" class="px-6 py-3">Número</th>
+                    <th scope="col" class="px-6 py-3">Setor</th>
+                    <th scope="col" class="px-6 py-3">Funcionário</th>
+                    <th scope="col" class="px-6 py-3">Criado em</th>
+                    <th scope="col" class="px-6 py-3">Profissional</th>
+                    <th scope="col" class="px-6 py-3 text-center">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for report in page_obj %}
-                <tr class="{% table_row %}">
+                <tr
+                    class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700/50">
                     <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        <a href="{{ report.get_absolute_url }}">{{report.number_report}}</a>
+                        <a href="{{ report.get_absolute_url }}"
+                            class="hover:text-brand-600 dark:hover:text-brand-400 hover:underline">
+                            {{ report.number_report }}
+                        </a>
                     </th>
-                    <td class="px-6 py-4">
-                        {{report.sector}}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{report.employee}}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{report.created_at|date:'d/m/Y'}}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{report.professional}}
-                    </td>
-                    <td class="px-4">
-                        <a href="{% url 'reports:report_update' report.slug %}">
-                            <button type="button" class="{% btn_warning %}">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                    fill="currentColor" viewBox="0 0 20 18">
-                                    <path
-                                        d="M12.687 14.408a3.01 3.01 0 0 1-1.533.821l-3.566.713a3 3 0 0 1-3.53-3.53l.713-3.566a3.01 3.01 0 0 1 .821-1.533L10.905 2H2.167A2.169 2.169 0 0 0 0 4.167v11.666A2.169 2.169 0 0 0 2.167 18h11.666A2.169 2.169 0 0 0 16 15.833V11.1l-3.313 3.308Zm5.53-9.065.546-.546a2.518 2.518 0 0 0 0-3.56 2.576 2.576 0 0 0-3.559 0l-.547.547 3.56 3.56Z" />
-                                    <path
-                                        d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
+                    <td class="px-6 py-4">{{ report.sector }}</td>
+                    <td class="px-6 py-4">{{ report.employee }}</td>
+                    <td class="px-6 py-4">{{ report.created_at|date:'d/m/Y' }}</td>
+                    <td class="px-6 py-4">{{ report.professional }}</td>
+                    <td class="px-6 py-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            <!-- Editar -->
+                            <a href="{% url 'reports:report_update' report.slug %}"
+                                class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline" title="Editar">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                    </path>
                                 </svg>
-                            </button>
-                        </a>
-                        <a href="{% url 'reports:pdf_report' report.slug %}" target="_blank">
-                            <button type="button" class="{% btn_danger %}">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 16 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M1 18a.969.969 0 0 0 .933 1h12.134A.97.97 0 0 0 15 18M1 7V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2v5M6 1v4a1 1 0 0 1-1 1H1m0 9v-5h1.5a1.5 1.5 0 1 1 0 3H1m12 2v-5h2m-2 3h2m-8-3v5h1.375A1.626 1.626 0 0 0 10 13.375v-1.75A1.626 1.626 0 0 0 8.375 10H7Z" />
+                            </a>
+                            <!-- Visualizar PDF -->
+                            <a href="{% url 'reports:pdf_report' report.slug %}" target="_blank"
+                                class="font-medium text-red-600 dark:text-red-500 hover:underline"
+                                title="Visualizar PDF">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 2H7a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
                                 </svg>
-                            </button>
-                        </a>
-                        <a href="{% url 'reports:generate_pdf' report.slug %}">
-                            <button type="button" class="{% btn_success %}">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 20 19">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M15 15h.01M4 12H2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-3M9.5 1v10.93m4-3.93-4 4-4-4" />
+                            </a>
+                            <!-- Download PDF -->
+                            <a href="{% url 'reports:generate_pdf' report.slug %}"
+                                class="font-medium text-green-600 dark:text-green-500 hover:underline"
+                                title="Baixar PDF">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
-                            </button>
-                        </a>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                        Nenhum laudo encontrado.
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
     <!-- Pagination -->
-    {% include "include/_pagination.html" %}
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        {% include "include/_pagination.html" %}
+    </div>
 </div>
 
 <!-- JS -->
@@ -224,19 +261,31 @@ Laudos
 
 <!-- Inicialização -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        flatpickr("input[name='start_date']", {
+    document.addEventListener("DOMContentLoaded", function () {
+        // Configuração comum para Flatpickr
+        const flatpickrConfig = {
             dateFormat: "d/m/Y",
             locale: "pt",
             altInput: true,
             altFormat: "j F, Y",
+            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        };
+
+        flatpickr("input[name='start_date']", flatpickrConfig);
+        flatpickr("input[name='end_date']", flatpickrConfig);
+
+        // Atualizar tema do flatpickr quando o tema do sistema mudar
+        window.addEventListener('themeChanged', function (e) {
+            // Recarregar a página ou atualizar dinamicamente se necessário
+            // Por enquanto, o CSS do flatpickr dark theme já está carregado
         });
 
-        flatpickr("input[name='end_date']", {
-            dateFormat: "d/m/Y",
-            locale: "pt",
-            altInput: true,
-            altFormat: "j F, Y",
+        // Estilizar inputs do Django Filter automaticamente
+        const formInputs = document.querySelectorAll('input[type="text"], input[type="number"], select');
+        formInputs.forEach(input => {
+            if (!input.classList.contains('flatpickr-input')) {
+                input.classList.add('bg-gray-50', 'border', 'border-gray-300', 'text-gray-900', 'text-sm', 'rounded-lg', 'focus:ring-brand-500', 'focus:border-brand-500', 'block', 'w-full', 'pl-10', 'p-2.5', 'dark:bg-gray-700', 'dark:border-gray-600', 'dark:placeholder-gray-400', 'dark:text-white', 'dark:focus:ring-brand-500', 'dark:focus:border-brand-500');
+            }
         });
     });
 </script>
