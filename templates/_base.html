@@ -2,35 +2,70 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="keywords" content="meta">
   <meta name="description" content="description">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-      {% endblock title %}
-      - SISInfo - Prefeitura Municipal de Novo Horizonte
-    </title>
-    {% include "include/_favicon.html" %}
-    {% include "include/_css.html" %}
-  </head>
-  <body>
-    <header>
-      {% include "include/_nav.html" %}
-    </header>
-    <main>
-      <div class="p-4 sm:ml-64">
-   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-      {% block content %}
-      {% endblock content %}
-      </div></div>
+  <title>
+    {% block title %}
+    {% endblock title %}
+    - SISInfo - Prefeitura Municipal de Novo Horizonte
+  </title>
+  {% include "include/_favicon.html" %}
+  {% include "include/_css.html" %}
+</head>
+
+<body>
+  <div x-data="{
+      sidebarOpen: window.innerWidth >= 640,
+      sidebarCollapsed: false,
+      darkMode: localStorage.getItem('theme') === 'dark',
+      toggleTheme() {
+        this.darkMode = !this.darkMode;
+        if (this.darkMode) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        }
+        window.dispatchEvent(new CustomEvent('themeChanged', {
+          detail: { theme: this.darkMode ? 'dark' : 'light' }
+        }));
+      },
+      init() {
+        if (this.darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    }" @resize.window="sidebarOpen = window.innerWidth >= 640" x-init="init()" class="bg-gray-50 dark:bg-gray-900">
+
+    <!-- Sidebar -->
+    {% include "include/_nav.html" %}
+
+    <!-- Main Content -->
+    <main :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="p-4 transition-all duration-300">
+      <div class="p-4">
+        {% block content %}
+        {% endblock content %}
+      </div>
     </main>
-    <footer>
+
+    <footer :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="transition-all duration-300">
       {% include "include/_footer.html" %}
     </footer>
-    {% include "include/_js.html" %}
-    {% block script %}
-    {% endblock script %}
-  </body>
+  </div>
+
+  {% include "include/_js.html" %}
+  <!-- Toast Notifications -->
+  {% include "include/_toast.html" %}
+
+  {% block script %}
+  {% endblock script %}
+</body>
+
 </html>

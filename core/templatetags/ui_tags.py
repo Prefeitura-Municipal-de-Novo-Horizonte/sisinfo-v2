@@ -81,3 +81,7 @@ def dashboard_card():
 @register.simple_tag
 def login_container():
     return "w-full max-w-sm p-4 bg-gray-50 border border-gray-800 rounded-tl-2xl shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
+
+@register.filter(name='add_class')
+def add_class(value, arg):
+    return value.as_widget(attrs={'class': arg})
