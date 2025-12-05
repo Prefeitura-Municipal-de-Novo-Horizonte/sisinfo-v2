@@ -1,0 +1,117 @@
+{% extends "_base.html" %}
+{% block title %}Perfil Profissional{% endblock title %}
+
+{% block content %}
+<div class="mx-auto max-w-5xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Administração</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'authenticate:users' %}">Usuários</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">{{ user.fullname }}</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Perfil do Usuário</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Informações detalhadas do usuário.</p>
+        </div>
+        <a href="{% url 'authenticate:users' %}"
+            class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors flex items-center gap-2 justify-center sm:justify-start">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Voltar
+        </a>
+    </div>
+
+    <!-- Alerts -->
+    {% include "include/_alert.html" %}
+
+    <!-- User Info Card -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Informações Pessoais</h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nome Completo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ user.fullname }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Username</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ user.username }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Email</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ user.email }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Matrícula</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ user.registration }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cargo</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ user.officer|default:"-" }}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+                    <dd class="mt-1">
+                        {% if user.is_active %}
+                        <span
+                            class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">
+                            Ativo
+                        </span>
+                        {% else %}
+                        <span
+                            class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                            Inativo
+                        </span>
+                        {% endif %}
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permissions Card -->
+    <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Permissões</h3>
+        </div>
+        <div class="p-6">
+            <div class="flex flex-wrap gap-3">
+                {% if user.is_admin %}
+                <span
+                    class="bg-purple-100 text-purple-800 text-sm font-medium px-3 py-1 rounded dark:bg-purple-900 dark:text-purple-300">
+                    Administrador
+                </span>
+                {% endif %}
+                {% if user.is_tech %}
+                <span
+                    class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded dark:bg-blue-900 dark:text-blue-300">
+                    Técnico
+                </span>
+                {% endif %}
+                {% if not user.is_admin and not user.is_tech %}
+                <span
+                    class="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded dark:bg-gray-700 dark:text-gray-300">
+                    Estagiário
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

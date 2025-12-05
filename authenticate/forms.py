@@ -7,26 +7,16 @@ from django.contrib.auth.forms import (
 from django.core.exceptions import ValidationError
 
 from core.mixins import CapitalizeFieldMixin
+from core.constants import STANDARD_INPUT_CLASS
 from authenticate.models import ProfessionalUser
 
 
-class FormStyleMixin:
-    def apply_style_to_fields(self, style_type='default'):
-        for field_name, field in self.fields.items():
-            if style_type == 'user_creation' and field_name in ['is_tech', 'is_admin']:
-                field.widget.attrs['class'] = "sr-only peer"
-                continue
-
-            if style_type == 'login':
-                field.widget.attrs['class'] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            else:  # default style
-                field.widget.attrs['class'] = "block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 
 
-class UserCreationForm(CapitalizeFieldMixin, FormStyleMixin, forms.ModelForm):
-    password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
+    password1 = forms.CharField(label="Senha", widget=forms.PasswordInput)
     password2 = forms.CharField(
-        label="Password confirmation", widget=forms.PasswordInput
+        label="Confirmação de Senha", widget=forms.PasswordInput
     )
 
     class Meta:
@@ -36,7 +26,11 @@ class UserCreationForm(CapitalizeFieldMixin, FormStyleMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apply_style_to_fields(style_type='user_creation')
+        for field_name, field in self.fields.items():
+            if field_name in ['is_tech', 'is_admin']:
+                # Checkboxes mantêm estilo padrão
+                continue
+            field.widget.attrs['class'] = STANDARD_INPUT_CLASS
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -67,7 +61,9 @@ class UserCreationForm(CapitalizeFieldMixin, FormStyleMixin, forms.ModelForm):
         return user
 
 
-class UserChangeForm(FormStyleMixin, forms.ModelForm):
+
+
+class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -77,13 +73,16 @@ class UserChangeForm(FormStyleMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apply_style_to_fields()
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.HiddenInput):
+                field.widget.attrs['class'] = STANDARD_INPUT_CLASS
+        
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields["username"].widget.attrs["readonly"] = True
 
 
-class AuthenticationFormCustom(FormStyleMixin, AuthenticationForm):
+class AuthenticationFormCustom(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': ''}))
     password = forms.CharField(widget=forms.PasswordInput(
@@ -91,10 +90,13 @@ class AuthenticationFormCustom(FormStyleMixin, AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apply_style_to_fields(style_type='login')
+        # Login mantém estilo floating label para consistência com página externa
+        for field in self.fields.values():
+            field.widget.attrs['class'] = "block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
 
 
-class PasswordChangeCustomForm(FormStyleMixin, PasswordChangeForm):
+class PasswordChangeCustomForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.apply_style_to_fields()
+        for field in self.fields.values():
+            field.widget.attrs['class'] = STANDARD_INPUT_CLASS

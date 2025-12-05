@@ -1,0 +1,25 @@
+{% extends "_base.html" %}
+{% block title %}Perfis{% endblock title %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Perfis</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Perfis de Usuário</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Gerencie os perfis e permissões do sistema.</p>
+    </div>
+
+    <!-- Content -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <p class="text-gray-500 dark:text-gray-400">Conteúdo em desenvolvimento.</p>
+    </div>
+</div>
+{% endblock content %}

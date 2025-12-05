@@ -24,7 +24,7 @@ def show_users(request):
     context = {
         'users': users,
     }
-    return render(request, 'users.html', context)
+    return render(request, 'users/users.html', context)
 
 
 ################################################################
@@ -47,17 +47,17 @@ def login_page(request):
                 context = {
                     'form': form
                 }
-                return render(request, 'change_password.html', context)
+                return render(request, 'users/change_password.html', context)
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
-        return render(request, 'login.html', {'form': form})
+        return render(request, 'auth/login.html', {'form': form})
 
     form = AuthenticationFormCustom(request)
     context = {
         'form': form,
     }
-    return render(request, 'login.html', context)
+    return render(request, 'auth/login.html', context)
 
 
 @login_required
@@ -80,7 +80,7 @@ def change_password(request):
     context = {
         'form': form,
     }
-    return render(request, 'change_password.html', context)
+    return render(request, 'users/change_password.html', context)
 
 
 @login_required
@@ -94,7 +94,7 @@ def alter_user(request):
             context = {
                 'form': form,
             }
-            return render(request, 'profile_professional.html', context)
+            return render(request, 'users/profile_professional.html', context)
         if request.method == 'POST':
             form = UserChangeForm(request.POST, files=request.FILES,
                                   instance=request.user)
@@ -141,7 +141,7 @@ def register_user(request):
     context = {
         'form': form,
     }
-    return render(request, 'register_user.html', context)
+    return render(request, 'users/register_user.html', context)
 
 
 # --- Deabilita e Habilita Usuário ---
@@ -215,4 +215,4 @@ def profile_user(request, slug):
     context = {
         'user': user,
     }
-    return render(request, 'profiles.html', context)
+    return render(request, 'users/profiles.html', context)
