@@ -20,12 +20,20 @@ def directions(request):
     """
     View para listar diretorias com filtros.
     """
+    from django.core.paginator import Paginator
+    
     diretorias_list = StructureService.get_all_directions()
     myFilter = DirectionFilter(request.GET, queryset=diretorias_list)
     diretorias_list = myFilter.qs
+    
+    # Paginação
+    paginator = Paginator(diretorias_list, 12)  # 12 itens por página (grid 3x4)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     context = {
-        "diretorias": diretorias_list,
+        "diretorias": page_obj,
+        "page_obj": page_obj,
         "myFilter": myFilter,
     }
     return render(request, "organizational_structure/diretorias.html", context)
