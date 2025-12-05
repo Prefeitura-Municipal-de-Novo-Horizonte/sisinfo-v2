@@ -35,9 +35,9 @@
       </li>
 
       <!-- Setores -->
-      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
-        <button
-          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -64,9 +64,9 @@
         </ul>
 
         <!-- Submenu Flutuante -->
-        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition
+        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`top: ${itemTop}px`">
+          :style="`top: ${top}px`">
           <a href="{% url 'organizational_structure:diretorias' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
           <a href="{% url 'organizational_structure:setores' %}"
@@ -75,9 +75,9 @@
       </li>
 
       <!-- Laudos -->
-      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
-        <button
-          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -102,10 +102,9 @@
           </li>
         </ul>
 
-        <div x-show="sidebarCollapsed && showFloating" x-transition @mouseenter="showFloating = true"
-          @mouseleave="showFloating = false"
+        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`top: ${$el.parentElement.getBoundingClientRect().top}px`">
+          :style="`top: ${top}px`">
           <a href="{% url 'reports:reports' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
             Laudos</a>
@@ -115,9 +114,9 @@
       </li>
 
       <!-- Licitações -->
-      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
-        <button
-          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -147,10 +146,9 @@
           </li>
         </ul>
 
-        <div x-show="sidebarCollapsed && showFloating" x-transition @mouseenter="showFloating = true"
-          @mouseleave="showFloating = false"
+        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`top: ${$el.parentElement.getBoundingClientRect().top}px`">
+          :style="`top: ${top}px`">
           {% if request.user.is_tech %}
           <a href="{% url 'bidding_procurement:licitacoes' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Licitações</a>
@@ -164,9 +162,9 @@
 
       {% if request.user.is_admin %}
       <!-- Usuários -->
-      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
-        <button
-          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -188,10 +186,9 @@
           </li>
         </ul>
 
-        <div x-show="sidebarCollapsed && showFloating" x-transition @mouseenter="showFloating = true"
-          @mouseleave="showFloating = false"
+        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`top: ${$el.parentElement.getBoundingClientRect().top}px`">
+          :style="`top: ${top}px`">
           <a href="{% url 'authenticate:show_users' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
           <a href="{% url 'authenticate:register_user' %}"
@@ -216,7 +213,7 @@
             </path>
           </svg>
         </button>
-        <button @click="sidebarCollapsed = !sidebarCollapsed"
+        <button @click="toggleSidebar()"
           class="hidden sm:block p-2 text-gray-400 dark:text-gray-500 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd"
@@ -238,7 +235,7 @@
           </div>
         </button>
 
-        <div x-show="userMenuOpen" x-transition
+        <div x-show="userMenuOpen" x-transition x-cloak
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
           :style="`bottom: 20px`">
           <a href="{% url 'authenticate:profile' %}"
