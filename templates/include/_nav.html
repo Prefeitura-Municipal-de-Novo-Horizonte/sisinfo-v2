@@ -188,7 +188,8 @@
         <ul x-show="open && !sidebarCollapsed" x-transition class="mt-2 ml-8 space-y-1">
           {% if request.user.is_tech %}<li><a href="{% url 'bidding_procurement:licitacoes' %}"
               class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Licitações</a>
-          </li>{% endif %}
+          </li>
+          {% endif %}
           <li><a href="{% url 'suppliers:fornecedores' %}"
               class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Fornecedores</a>
           </li>
@@ -201,9 +202,10 @@
           <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
             class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
             :style="`top: ${top}px`">
-            {% if request.user.is_tech %}<a href="{% url 'bidding_procurement:licitacoes' %}"
-              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Licitações</a>{%
-            endif %}
+            {% if request.user.is_tech %}
+            <a href="{% url 'bidding_procurement:licitacoes' %}"
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Licitações</a>
+            {% endif %}
             <a href="{% url 'suppliers:fornecedores' %}"
               class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Fornecedores</a>
             <a href="{% url 'bidding_procurement:materiais' %}"
