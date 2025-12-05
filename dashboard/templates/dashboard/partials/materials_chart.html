@@ -1,0 +1,73 @@
+<div id="chart-top-materials-content" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
+
+<script>
+    (function () {
+        const materialLabels = {{ material_labels| safe }};
+    const materialSeries = {{ material_series| safe }};
+
+    if (materialLabels.length === 0) {
+        document.querySelector("#chart-top-materials-content").innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
+        return;
+    }
+
+    const options = {
+        series: [{
+            name: 'Quantidade',
+            data: materialSeries
+        }],
+        chart: {
+            type: 'bar',
+            height: 400,
+            width: '100%',
+            toolbar: { show: false },
+            background: 'transparent',
+            fontFamily: 'Inter, sans-serif'
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                horizontal: true,
+                distributed: false
+            }
+        },
+        colors: ['#1D4ED8'],
+        dataLabels: {
+            enabled: true,
+            style: {
+                colors: ['#fff']
+            }
+        },
+        xaxis: {
+            categories: materialLabels,
+            labels: {
+                style: {
+                    colors: '#6B7280',
+                    fontSize: '12px'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#6B7280',
+                    fontSize: '12px'
+                }
+            }
+        },
+        legend: { show: false },
+        grid: { borderColor: '#F3F4F6' },
+        theme: {
+            mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        }
+    };
+
+    if (document.documentElement.classList.contains('dark')) {
+        options.grid.borderColor = '#374151';
+        options.xaxis.labels.style.colors = '#9CA3AF';
+        options.yaxis.labels.style.colors = '#9CA3AF';
+    }
+
+    const chart = new ApexCharts(document.querySelector("#chart-top-materials-content"), options);
+    chart.render();
+    }) ();
+</script>

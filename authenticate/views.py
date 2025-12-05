@@ -24,7 +24,7 @@ def show_users(request):
     context = {
         'users': users,
     }
-    return render(request, 'users.html', context)
+    return render(request, 'users/users.html', context)
 
 
 ################################################################
@@ -37,15 +37,7 @@ def login_page(request):
     Redireciona para dashboard se já autenticado.
     Se primeiro login, redireciona para troca de senha.
     """
-    if request.user.is_authenticated:
-        return redirect('dashboard:index')
-    elif request.method == 'GET':
-        form = AuthenticationFormCustom(request)
-        context = {
-            'form': form,
-        }
-        return render(request, 'login.html', context)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         form = AuthenticationFormCustom(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
@@ -55,11 +47,17 @@ def login_page(request):
                 context = {
                     'form': form
                 }
-                return render(request, 'change_password.html', context)
+                return render(request, 'users/change_password.html', context)
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
-        return redirect('authenticate:login')
+        return render(request, 'auth/login.html', {'form': form})
+
+    form = AuthenticationFormCustom(request)
+    context = {
+        'form': form,
+    }
+    return render(request, 'auth/login.html', context)
 
 
 @login_required
@@ -82,7 +80,7 @@ def change_password(request):
     context = {
         'form': form,
     }
-    return render(request, 'change_password.html', context)
+    return render(request, 'users/change_password.html', context)
 
 
 @login_required
@@ -96,7 +94,7 @@ def alter_user(request):
             context = {
                 'form': form,
             }
-            return render(request, 'profile_professional.html', context)
+            return render(request, 'users/profile_professional.html', context)
         if request.method == 'POST':
             form = UserChangeForm(request.POST, files=request.FILES,
                                   instance=request.user)
@@ -143,7 +141,7 @@ def register_user(request):
     context = {
         'form': form,
     }
-    return render(request, 'register_user.html', context)
+    return render(request, 'users/register_user.html', context)
 
 
 # --- Deabilita e Habilita Usuário ---
@@ -217,4 +215,4 @@ def profile_user(request, slug):
     context = {
         'user': user,
     }
-    return render(request, 'profiles.html', context)
+    return render(request, 'users/profile_professional.html', context)

@@ -1,82 +1,81 @@
 {% extends "_base.html" %}
 {% load ui_tags %}
-{% block title %}
-Setores
-{% endblock title %}
+
+{% block title %}Setores{% endblock title %}
+
 {% block content %}
-<section id="setores">
-    <!-- TITULO -->
-    <div class="{% header_container %}">
-        <p class="text-2xl text-gray-400 dark:text-gray-500">
-        <h1 class="{% header_title %}">
-            <mark class="{% header_mark %}">
-                Setores
-            </mark>
-        </h1>
-        </p>
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Setores</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Gerencie os setores da organização.</p>
     </div>
-    <!-- Dois Grids -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto">
-        <!-- FORMULÁRIO DE CADASTRO -->
-        <div class="{% form_container %}">
-            <div class="w-full max-w-full flex justify-start mb-6">
-                <span
-                    class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Formulário
-                    de Cadastro</span>
+    <a href="{% url 'organizational_structure:create_setor' %}"
+        class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 dark:focus:ring-brand-900 transition-colors">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Novo Setor
+    </a>
+</div>
+
+<!-- Filters Section (Collapsible) -->
+<div x-data="{ showFilters: false }"
+    class="mb-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+        @click="showFilters = !showFilters">
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                </path>
+            </svg>
+            Filtros de Pesquisa
+        </h3>
+        <button type="button" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <svg class="w-5 h-5 transform transition-transform duration-200" :class="{'rotate-180': showFilters}"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <div x-show="showFilters" x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2" class="p-4" style="display: none;">
+        <form action="" method="get" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="{{ myFilter.form.name.id_for_label }}"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
+                {{ myFilter.form.name }}
             </div>
-            <form class="max-w-full mx-auto w-full" action="" method="post">{% csrf_token %}
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.name.errors }}{{ form.name }}
-                    <label for="{{ form.name.id_for_label }}" class="{% input_label %}">Nome
-                        do Setor</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.accountable.errors }}{{ form.accountable }}
-                    <label for="{{ form.accountable.id_for_label }}" class="{% input_label %}">Responsável</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.direction.errors }}{{ form.direction }}
-                    <label for="form.direction.id_for_label" class="{% input_label %}">Diretoria</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.phone.errors }}{{ form.phone }}
-                    <label for="form.phone.id_for_label" class="{% input_label %}">Telefone</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    {{ form.email.errors }}{{ form.email }}
-                    <label for="form.email.id_for_label" class="{% input_label %}">E-mail</label>
-                </div>
-                <div class="relative z-0 w-full mb-5 group">
-                    <label for="{{ form.address.id_for_label }}"
-                        class="block mb-2 text-sm text-gray-500 dark:text-gray-400">Endereço</label>
-                    {{ form.address.errors }}{{ form.address }}
-                </div>
-                <div class="flex justify-between items-center gap-10">
-                    <button type="submit" class="{{ submit_class }}">{{ btn }}</button>
-                    {% if 'Atualizar' in btn %}
-                    <a href="{% url 'organizational_structure:setores' %}">
-                        <button type="button" class="{{ cancel_class }}">
-                            Setores
-                        </button>
-                    </a>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
-        <!-- Formulário de pesquisa -->
-        <div class="{% search_container %}">
-            {% include "organizational_structure/include/_search_setor.html" %}
-        </div>
+            <div>
+                <label for="{{ myFilter.form.accountable.id_for_label }}"
+                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Responsável</label>
+                {{ myFilter.form.accountable }}
+            </div>
+            <div class="md:col-span-2 flex justify-end">
+                <button type="submit"
+                    class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Filtrar
+                </button>
+            </div>
+        </form>
     </div>
-    <!-- MESSAGES -->
-    {% include "include/_alert.html" %}
-    <!-- LISTA DE DADOS -->
-    <div class="{% page_container %}">
-        {% include "organizational_structure/include/_table_setor.html" %}
-        <!-- Pagination -->
-        <div class="w-full flex justify-center mt-4">
-            {% include "include/_pagination.html" %}
-        </div>
+</div>
+
+<!-- Tabela de Setores -->
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {% include "organizational_structure/include/_table_setor.html" %}
+
+    <!-- Pagination -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700">
+        {% include "include/_pagination.html" %}
     </div>
-</section>
+</div>
 {% endblock content %}

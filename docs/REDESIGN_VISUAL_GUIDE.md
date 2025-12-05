@@ -18,6 +18,14 @@
 8. [Node.js e Ferramentas](#nodejs-e-ferramentas)
 9. [Roadmap de Implementação](#roadmap-de-implementação)
 
+> [!NOTE]
+> **Especificações de UX/UI Detalhadas**  
+> Para detalhes completos de melhorias de interface, experiência do usuário e implementação de componentes avançados, consulte:
+> - **[UX_UI_SPECIFICATION.md](UX_UI_SPECIFICATION.md)** - Especificações detalhadas por página
+> - **[ADVANCED_IMPLEMENTATION.md](ADVANCED_IMPLEMENTATION.md)** - Implementação técnica completa
+>
+> Este documento (REDESIGN_VISUAL_GUIDE.md) contém o levantamento e análise. Os documentos acima contêm as especificações de implementação.
+
 ---
 
 ## 🔍 Descobertas Importantes

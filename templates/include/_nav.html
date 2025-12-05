@@ -1,247 +1,276 @@
 {% load static %}
 
-<nav
-   class="fixed top-0 z-50 w-full bg-blue-700 text-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-   <div class="px-3 py-3 lg:px-5 lg:pl-3">
-      <div class="flex items-center justify-between">
-         <div class="flex items-center justify-start rtl:justify-end">
-            <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
-               type="button"
-               class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
-               <span class="sr-only">Open sidebar</span>
-               <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path clip-rule="evenodd" fill-rule="evenodd"
-                     d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
-                  </path>
-               </svg>
-            </button>
-            <a href="#" class="flex ms-2 statmd:me-24">
-               <img src="{% static 'img/logo/logo.png' %}" class="h-9 me-3" alt="Brasão Novo Horizonte" />
-               <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">SISInfo -
-                  Sistema de Gerenciamento de TI</span>
-            </a>
-         </div>
-         <div class="flex items-center">
-            <div class="flex items-center ms-3">
-               <div>
-                  <button type="button"
-                     class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                     aria-expanded="false" data-dropdown-toggle="dropdown-user">
-                     <span class="sr-only">Open user menu</span>
-                     <img class="w-8 h-8 rounded-full" src="{% static 'img/profile-empty.png' %}" alt="user photo">
-                  </button>
-               </div>
-               <div
-                  class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
-                  id="dropdown-user">
-                  <div class="px-4 py-3" role="none">
-                     <p class="text-sm text-gray-900 dark:text-white" role="none">
-                        {{request.user.fullname}}
-                     </p>
-                     <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                        {{request.user.email}}
-                     </p>
-                  </div>
-                  <ul class="py-1" role="none">
-                     <li>
-                        <a href="{% url 'authenticate:profile' %}"
-                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                           role="menuitem">Profile</a>
-                     </li>
-                     <li>
-                        <a href="{% url 'authenticate:change_password' %}"
-                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                           role="menuitem">Trocar a senha!</a>
-                     </li>
-                     <li>
-                        <a href="{% url 'authenticate:logout' %}"
-                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
-                           role="menuitem">Logout</a>
-                     </li>
-                  </ul>
-               </div>
-            </div>
-         </div>
+<!-- Sidebar -->
+<!-- Sidebar -->
+<aside :class="sidebarCollapsed ? 'w-16' : 'w-64'" x-show="sidebarOpen"
+  x-transition:enter="transition-all duration-300 ease-in-out"
+  x-transition:leave="transition-all duration-300 ease-in-out"
+  class="flex-shrink-0 z-40 h-full transition-all duration-300 bg-slate-900 dark:bg-white border-r border-slate-800 dark:border-gray-200 shadow-lg relative flex flex-col">
+  <div class="h-full px-3 py-4 overflow-y-auto flex flex-col custom-scrollbar">
+
+    <!-- Logo -->
+    <div class="flex items-center justify-center mb-6 pb-4 border-b border-slate-800 dark:border-gray-200">
+      <div x-show="!sidebarCollapsed" class="flex items-center">
+        <img src="{% static 'img/logo/logo.png' %}" class="h-8 mr-2" alt="Logo">
+        <span class="text-xl font-semibold text-white dark:text-gray-900">SISInfo V2</span>
       </div>
-   </div>
-</nav>
+      <div x-show="sidebarCollapsed" class="flex items-center justify-center">
+        <img src="{% static 'img/logo/logo.png' %}" class="h-8" alt="Logo">
+      </div>
+    </div>
 
-<aside id="logo-sidebar"
-   class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700"
-   aria-label="Sidebar">
-   <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-      <ul class="space-y-2 font-medium">
-         <li>
-            <a href="{% url 'dashboard:index' %}"
-               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-               <svg
-                  class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
-                  <path
-                     d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-                  <path
-                     d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
-               </svg>
-               <span class="ms-3">Dashboard</span>
-            </a>
-         </li>
-         <li>
-            <button type="button"
-               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-               aria-controls="dropdown-setores" data-collapse-toggle="dropdown-setores">
-               <svg
-                  class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 18">
-                  <path
-                     d="M17 16h-1V2a1 1 0 1 0 0-2H2a1 1 0 0 0 0 2v14H1a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM5 4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Zm0 5V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Zm6 7H7v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3Zm2-7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Zm0-4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Z" />
-               </svg>
-               <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Setores</span>
+    <!-- Menu -->
+    <ul class="space-y-2 font-medium flex-1">
+      <!-- Dashboard -->
+      <li>
+        <a href="{% url 'dashboard:index' %}"
+          class="flex items-center p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="currentColor" viewBox="0 0 22 21">
+            <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
+            <path
+              d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="ml-3">Dashboard</span>
+        </a>
+      </li>
 
-               <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="m1 1 4 4 4-4" />
-               </svg>
-            </button>
-            <ul id="dropdown-setores" class="hidden py-2 space-y-2">
-               <li>
-                  <a href="{% url 'organizational_structure:diretorias' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Diretorias</a>
-               </li>
-               <li>
-                  <a href="{% url 'organizational_structure:setores' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Setores</a>
-               </li>
-            </ul>
-         </li>
-         <li>
-            <button type="button"
-               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-               aria-controls="dropdown-laudos" data-collapse-toggle="dropdown-laudos">
-               <svg
-                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0   16 20">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="M6 1v4a1 1 0 0 1-1 1H1m8-2h3M9 7h3m-4 3v6m-4-3h8m3-11v16a.969.969 0 0 1-.932 1H1.934A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.829 1h8.239A.969.969 0 0 1 15 2ZM4 10h8v6H4v-6Z" />
-               </svg>
-               <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Laudos</span>
+      <!-- Setores -->
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
+          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="currentColor" viewBox="0 0 18 18">
+            <path
+              d="M17 16h-1V2a1 1 0 1 0 0-2H2a1 1 0 0 0 0 2v14H1a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM5 4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Zm0 5V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Zm6 7H7v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3Zm2-7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Zm0-4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Z" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Setores</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
 
-               <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="m1 1 4 4 4-4" />
-               </svg>
-            </button>
-            <ul id="dropdown-laudos" class="hidden py-2 space-y-2">
-               <li>
-                  <a href="{% url 'reports:reports' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Exibir
-                     Laudos</a>
-               </li>
-               <li>
-                  <a href="{% url 'reports:register_report' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Cadastrar</a>
-               </li>
-            </ul>
-         </li>
-         <li>
-            <button type="button"
-               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-               aria-controls="dropdown-licitacao" data-collapse-toggle="dropdown-licitacao">
-               <svg
-                  class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 12 20">
-                  <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
-                     d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6" />
-               </svg>
-               <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap">Licitações</span>
-               <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="m1 1 4 4 4-4" />
-               </svg>
-            </button>
-            <ul id="dropdown-licitacao" class="hidden py-2 space-y-2">
-               {% if request.user.is_tech is True%}
-               <li>
-                  <a href="{% url 'bidding_procurement:licitacoes' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Licitações</a>
-               </li>
-               {% endif %}
-               <li>
-                  <a href="{% url 'suppliers:fornecedores' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Fornecedores</a>
-               </li>
-               <li>
-                  <a href="{% url 'bidding_procurement:materiais' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Materiais</a>
-               </li>
-            </ul>
-         </li>
-         {% if request.user.is_admin is True %}
-         <li>
-            <button type="button"
-               class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-               aria-controls="dropdown-users" data-collapse-toggle="dropdown-users">
-               <svg
-                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 18">
-                  <path
-                     d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
-               </svg>
-               <span class="flex-1 ms-3 text-left rtl:text-right whitespace-nowrap"">Usuários</span>
-                  <span class=" inline-flex items-center justify-center px-2 ms-3 text-sm font-medium text-gray-800
-                  bg-gray-100 rounded-full dark:bg-gray-700 dark:text-gray-300">Admin</span>
-               <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 10 6">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                     d="m1 1 4 4 4-4" />
-               </svg>
-            </button>
-            <ul id="dropdown-users" class="hidden py-2 space-y-2">
-               <li>
-                  <a href="{% url 'authenticate:show_users' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Controle
-                     de Usuários</a>
-               </li>
-               <li>
-                  <a href="{% url 'authenticate:register_user' %}"
-                     class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Cadastrar
-                     Usuário</a>
-               </li>
-            </ul>
-         </li>
-         {% endif %}
-         <li>
-            <a href="{% url 'authenticate:logout' %}"
-               class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-               <svg
-                  class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 20">
-                  <path
-                     d="M14 7h-1.5V4.5a4.5 4.5 0 1 0-9 0V7H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-5 8a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm1.5-8h-5V4.5a2.5 2.5 0 1 1 5 0V7Z" />
-               </svg>
-               <span class="flex-1 ms-3 whitespace-nowrap">Logout</span>
-            </a>
-         </li>
-      </ul>
-   </div>
+        <!-- Submenu Normal -->
+        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+          <li><a href="{% url 'organizational_structure:diretorias' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
+          </li>
+          <li><a href="{% url 'organizational_structure:setores' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Setores</a>
+          </li>
+        </ul>
+
+        <!-- Submenu Flutuante -->
+        <template x-teleport="body">
+          <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
+            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            :style="`top: ${top}px`">
+            <a href="{% url 'organizational_structure:diretorias' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
+            <a href="{% url 'organizational_structure:setores' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Setores</a>
+          </div>
+        </template>
+      </li>
+
+      <!-- Laudos -->
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
+          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="none" viewBox="0 0 16 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 1v4a1 1 0 0 1-1 1H1m8-2h3M9 7h3m-4 3v6m-4-3h8m3-11v16a.969.969 0 0 1-.932 1H1.934A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.829 1h8.239A.969.969 0 0 1 15 2ZM4 10h8v6H4v-6Z" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Laudos</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
+
+        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+          <li><a href="{% url 'reports:reports' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
+              Laudos</a></li>
+          <li><a href="{% url 'reports:register_report' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+          </li>
+        </ul>
+
+        <template x-teleport="body">
+          <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
+            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            :style="`top: ${top}px`">
+            <a href="{% url 'reports:reports' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
+              Laudos</a>
+            <a href="{% url 'reports:register_report' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+          </div>
+        </template>
+      </li>
+
+      <!-- Licitações -->
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
+          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="none" viewBox="0 0 12 20">
+            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
+              d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Licitações</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
+
+        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+          {% if request.user.is_tech %}
+          <li><a href="{% url 'bidding_procurement:licitacoes' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Licitações</a>
+          </li>
+          {% endif %}
+          <li><a href="{% url 'suppliers:fornecedores' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Fornecedores</a>
+          </li>
+          <li><a href="{% url 'bidding_procurement:materiais' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Materiais</a>
+          </li>
+        </ul>
+
+        <template x-teleport="body">
+          <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
+            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            :style="`top: ${top}px`">
+            {% if request.user.is_tech %}
+            <a href="{% url 'bidding_procurement:licitacoes' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Licitações</a>
+            {% endif %}
+            <a href="{% url 'suppliers:fornecedores' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Fornecedores</a>
+            <a href="{% url 'bidding_procurement:materiais' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Materiais</a>
+          </div>
+        </template>
+      </li>
+
+      {% if request.user.is_admin %}
+      <!-- Usuários -->
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
+          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="currentColor" viewBox="0 0 20 18">
+            <path
+              d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Usuários</span>
+          <span x-show="!sidebarCollapsed"
+            class="px-2 text-xs font-medium text-brand-200 bg-brand-900 dark:bg-brand-100 dark:text-brand-800 rounded-full">Admin</span>
+        </button>
+
+        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+          <li><a href="{% url 'authenticate:show_users' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
+          </li>
+          <li><a href="{% url 'authenticate:register_user' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+          </li>
+        </ul>
+
+        <template x-teleport="body">
+          <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
+            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            :style="`top: ${top}px`">
+            <a href="{% url 'authenticate:show_users' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
+            <a href="{% url 'authenticate:register_user' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+          </div>
+        </template>
+      </li>
+      {% endif %}
+    </ul>
+
+    <!-- Footer -->
+    <div class="pt-4 mt-4 border-t border-slate-800 dark:border-gray-200 space-y-3">
+      <!-- Controls -->
+      <div class="flex gap-4" :class="sidebarCollapsed ? 'flex-col items-center' : 'items-center justify-center'">
+        <button @click="toggleTheme()"
+          class="p-2 text-gray-400 dark:text-gray-500 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">
+          <svg x-show="!darkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+          </svg>
+          <svg x-show="darkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z">
+            </path>
+          </svg>
+        </button>
+        <button @click="toggleSidebar()"
+          class="hidden sm:block p-2 text-gray-400 dark:text-gray-500 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z">
+            </path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- User -->
+      <div x-data="{ userMenuOpen: false }" @mouseenter="userMenuOpen = true" @mouseleave="userMenuOpen = false">
+        <button
+          class="flex items-center w-full p-2 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <img class="w-8 h-8 rounded-full" src="{% static 'img/profile-empty.png' %}" alt="user">
+          <div x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">
+            <p class="text-sm font-medium">{{ request.user.fullname }}</p>
+            <p class="text-xs text-gray-400 dark:text-gray-500 truncate">{{ request.user.email }}</p>
+          </div>
+        </button>
+
+        <div x-show="userMenuOpen" x-transition x-cloak
+          class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
+          :style="`bottom: 20px`">
+          <a href="{% url 'authenticate:profile' %}"
+            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Perfil</a>
+          <a href="{% url 'authenticate:change_password' %}"
+            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Trocar
+            Senha</a>
+          <a href="{% url 'authenticate:logout' %}"
+            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Sair</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </aside>
 
+<!-- Mobile Button -->
+<button @click="sidebarOpen = !sidebarOpen"
+  class="fixed top-4 left-4 z-50 p-2 text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+    <path fill-rule="evenodd"
+      d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z">
+    </path>
+  </svg>
+</button>
 
-
-{% comment %} <li>
-   <a href="#"
-      class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
-      <svg
-         class="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-         aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-         <path
-            d="m17.418 3.623-.018-.008a6.713 6.713 0 0 0-2.4-.569V2h1a1 1 0 1 0 0-2h-2a1 1 0 0 0-1 1v2H9.89A6.977 6.977 0 0 1 12 8v5h-2V8A5 5 0 1 0 0 8v6a1 1 0 0 0 1 1h8v4a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-4h6a1 1 0 0 0 1-1V8a5 5 0 0 0-2.582-4.377ZM6 12H4a1 1 0 0 1 0-2h2a1 1 0 0 1 0 2Z" />
-      </svg>
-      <span class="flex-1 ms-3 whitespace-nowrap">Inbox</span>
-      <span
-         class="inline-flex items-center justify-center w-3 h-3 p-3 ms-3 text-sm font-medium text-blue-800 bg-blue-100 rounded-full dark:bg-blue-900 dark:text-blue-300">3</span>
-   </a>
-</li> {% endcomment %}
+<!-- Mobile Overlay -->
+<div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition
+  class="fixed inset-0 z-30 bg-gray-900 bg-opacity-50 sm:hidden"></div>

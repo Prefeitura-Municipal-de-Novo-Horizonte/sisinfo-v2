@@ -1,28 +1,39 @@
 from django import forms
 
-from core.mixins import CapitalizeFieldMixin, TailwindFormMixin
+from core.mixins import CapitalizeFieldMixin
+from core.constants import STANDARD_INPUT_CLASS
 from bidding_procurement.models import Bidding, Material, MaterialBidding
 
 
-class BiddingForm(TailwindFormMixin, CapitalizeFieldMixin, forms.ModelForm):
+class BiddingForm(CapitalizeFieldMixin, forms.ModelForm):
     class Meta:
         model = Bidding
         fields = ["name", "date", "status"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = STANDARD_INPUT_CLASS
+
     def clean_name(self):
         return self.extract_from_clean("name")
 
 
-class MaterialForm(TailwindFormMixin, CapitalizeFieldMixin, forms.ModelForm):
+class MaterialForm(CapitalizeFieldMixin, forms.ModelForm):
     class Meta:
         model = Material
         fields = ["name"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = STANDARD_INPUT_CLASS
+
     def clean_name(self):
         return self.extract_from_clean("name")
 
 
-class MaterialBiddingForm(TailwindFormMixin, forms.ModelForm):
+class MaterialBiddingForm(forms.ModelForm):
     class Meta:
         model = MaterialBidding
         fields = ["material", "supplier", "price", "readjustment", "status"]
@@ -33,3 +44,8 @@ class MaterialBiddingForm(TailwindFormMixin, forms.ModelForm):
             'readjustment': 'Reajuste (%)',
             'status': 'Status',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = STANDARD_INPUT_CLASS

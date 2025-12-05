@@ -1,149 +1,142 @@
 {% extends "_base.html" %}
 {% load static %}
 {% block title %}
-    {{supplier.trade}}
+{{supplier.trade}}
 {% endblock title %}
 {% block content %}
-<div class="flex items-center justify-end h-auto mb-4 rounded bg-gray-100 dark:bg-gray-800 p-6">
-    <h1 class="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-        <mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500">
-            {{supplier.cnpj}}
-        </mark>
-    </h1>
-</div>
+{% block content %}
+<div class="mx-auto max-w-4xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Licitações</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'suppliers:fornecedores' %}">Fornecedores</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Editar</span>
+    </div>
 
-<form action="" method="post">{% csrf_token %}
-    <div class="grid grid-cols-2 gap-4 mb-4 h-auto bg-gray-100  dark:bg-gray-800 rounded p-4">
-        <div class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-white dark:bg-gray-500 p-4 gap-3">
-            <div class="relative z-0 w-full mb-5 group">
-                {{ form.company.errors }}{{ form.company }}
-                <label for="{{ form.company.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.company.label }}</label>
-            </div>
-            <div class="relative z-0 w-full mb-5 group">
-                {{ form.trade.errors }}{{ form.trade }}
-                <label for="{{ form.trade.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.trade.label }}</label>
-            </div>
-            <div class="relative z-0 w-full mb-5 group">
-                {{ form.cnpj.errors }}{{ form.cnpj }}
-                <label for="{{ form.cnpj.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ form.cnpj.label }}</label>
-            </div>
-            <div class="relative z-0 w-full mb-5 group">
-                <label for="{{ form.address.id_for_label }}" class="block mb-2 text-sm text-gray-500 dark:text-gray-400">{{ form.address.label }}</label>
-                {{ form.address.errors }}{{ form.address }}
-            </div>
-            <div class="flex justify-between items-center gap-10">
-                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex justify-around gap-2 items-center">
-                    {{ btn }}
-                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.994 19a8.999 8.999 0 1 1 3.53-17.281M5.995 9l4 4 7-8m-1 8v5m-2.5-2.5h5"/>
-                    </svg>  
-                </button>
-                
-                {% if 'Atualizar' in btn %}
-                    <a href="{% url 'suppliers:fornecedores' %}">
-                        <button type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:focus:ring-yellow-900 flex justify-around gap-2 items-center">
-                            Fornecedores
-                            <svg class="w-4 h-4 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 14">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7 1 4l3-3m0 12h6.5a4.5 4.5 0 1 0 0-9H2"/>
-                            </svg>
-                        </button>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="flex-col items-center justify-center border-2 border-blue-500 rounded bg-white dark:bg-gray-500 p-4 gap-3">
-            <div class="relative z-0 w-full mb-5 group">
-                 <mark class="px-2 text-white bg-blue-700 rounded dark:bg-blue-500 text-xl">
-                    Contatos
-                </mark>
-            </div>
-            <div class="relative z-0 w-full mb-5 group">
-                {{form_contact.management_form}}
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg" id="inline_form">
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <td scope="col" class="px-6 py-3">
-                                    Tipo
-                                </td>
-                                <th scope="col" class="px-6 py-3">
-                                    Contato
-                                </th>
-                                <th scope="col" class="px-6 py-3">
-                                    Whastapp?
-                                </th>
-                                {% if 'Atualizar' in btn %}
-                                <th scope="col" class="px-6 py-3">
-                                    Ações
-                                </th>
-                                {% endif %}
-                                <th scope="col" class="px-6 py-3">
-                                    
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for fc in form_contact %}
-                            {{fc.id}}
-                            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                                <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ fc.kind.errors }}{{ fc.kind }}
-                                    <label for="{{ fc.kind.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fc.kind.label }}</label>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ fc.value.errors }}{{ fc.value }}
-                                    <label for="{{ fc.value.id_for_label }}" class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transfc -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">{{ fc.value.label }}</label>
-                                </td>
-                                <td class="px-6 py-4">
-                                   <label class="relative inline-flex items-center cursor-pointer">
-                                        {{ fc.whatsapp.errors }}{{ fc.whatsapp }}
-                                        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+            Editar Fornecedor
+        </h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Atualize as informações do fornecedor abaixo.</p>
+    </div>
+
+    <!-- Alerts -->
+    {% include "include/_alert.html" %}
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <form action="" method="post">{% csrf_token %}
+            <div class="space-y-8">
+                <!-- Informações Principais -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informações Gerais</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="relative z-0 w-full group">
+                            {{ form.company }}
+                            <label for="{{ form.company.id_for_label }}"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Razão
+                                Social</label>
+                            {{ form.company.errors }}
+                        </div>
+                        <div class="relative z-0 w-full group">
+                            {{ form.trade }}
+                            <label for="{{ form.trade.id_for_label }}"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nome
+                                Fantasia</label>
+                            {{ form.trade.errors }}
+                        </div>
+                        <div class="relative z-0 w-full group">
+                            {{ form.cnpj }}
+                            <label for="{{ form.cnpj.id_for_label }}"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CNPJ</label>
+                            {{ form.cnpj.errors }}
+                        </div>
+                        <div class="relative z-0 w-full group">
+                            {{ form.address }}
+                            <label for="{{ form.address.id_for_label }}"
+                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Endereço</label>
+                            {{ form.address.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contatos -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Contatos</h3>
+                    {{ form_contact.management_form }}
+                    <div id="inline_form">
+                        {% for form in form_contact %}
+                        <div
+                            class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 items-end p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700 relative group">
+                            {{ form.id }}
+                            <div class="md:col-span-3 relative z-0 w-full group">
+                                {{ form.kind }}
+                                <label
+                                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Tipo</label>
+                            </div>
+                            <div class="md:col-span-5 relative z-0 w-full group">
+                                {{ form.value }}
+                                <label
+                                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contato</label>
+                            </div>
+                            <div class="md:col-span-3 flex items-center h-10">
+                                {{ form.whatsapp }}
+                                <label
+                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Whatsapp?</label>
+                            </div>
+                            <div class="md:col-span-1 flex justify-end">
+                                {% if form.instance.pk %}
+                                <div class="flex items-center h-10">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        {{ form.DELETE }}
+                                        <span class="ml-2 text-sm text-red-600 hover:text-red-800">Excluir</span>
                                     </label>
-                                </td>
-                                {% if fc.instance.pk is not None %}
-                                    {% if 'Atualizar' in btn %}
-                                        <td class="px-6 py-4 flex justify-center gap-1">
-                                            <a href="{% url 'suppliers:contato_delete' fc.instance.pk %}">
-                                                <button type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-2.5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                                                    <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                                        <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z"/>
-                                                    </svg>
-                                                </button>
-                                            </a>
-                                        </td>
-                                    {% endif %}
-                                    <td style="visibility: hidden;">
-                                    </td>
-                                {% else %}
-                                <td class="px-6 py-4">
-                                </td>
+                                </div>
                                 {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <a href="{% url 'suppliers:fornecedores' %}"
+                        class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors">
+                        Cancelar
+                    </a>
+                    <button type="submit"
+                        class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Salvar Alterações
+                    </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-</form>
-<!-- MESSAGES -->
-{% include "include/_alert.html" %}
-<!-- SEARCH -->
+</div>
 {% endblock content %}
+
 {% block script %}
 <script src="{% static 'js/jquery.formset.js' %}"></script>
-
 <script type="text/javascript">
-    $(function() {
+    $(function () {
         $('#inline_form table tbody tr').formset({
             prefix: '{{ form_contact.prefix }}',
-            addText: '&#10003; Novo',
-            deleteText: '&#10005;',
-            addCssClass : 'text-2xl ml-5',
-            deleteCssClass: 'text-2xl',
+            addText: 'Adicionar Contato',
+            deleteText: 'Remover',
+            addCssClass: 'inline-flex items-center px-3 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 dark:text-brand-400 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors mt-2',
+            deleteCssClass: 'text-red-600 hover:text-red-800 text-sm font-medium',
         });
     })
 </script>
-
 {% endblock script %}

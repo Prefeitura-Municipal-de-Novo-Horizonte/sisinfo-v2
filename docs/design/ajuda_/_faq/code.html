@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html class="light" lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ajuda / FAQ</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1D4ED8",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#111521",
+                        "neutral-gray": "#6B7280",
+                        "light-gray": "#F3F4F6"
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col">
+<!-- TopNavBar -->
+<header class="bg-white dark:bg-background-dark w-full border-b border-gray-200 dark:border-gray-700">
+<div class="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
+<div class="flex items-center gap-4 text-gray-800 dark:text-gray-100">
+<span class="material-symbols-outlined text-primary text-3xl">database</span>
+<h2 class="text-lg font-bold">Sistema de Gestão</h2>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-neutral-gray dark:text-gray-300 hover:text-primary dark:hover:text-white" href="#">Dashboard</a>
+<a class="text-sm font-medium text-neutral-gray dark:text-gray-300 hover:text-primary dark:hover:text-white" href="#">Relatórios</a>
+<a class="text-sm font-medium text-neutral-gray dark:text-gray-300 hover:text-primary dark:hover:text-white" href="#">Usuários</a>
+<a class="text-sm font-bold text-primary dark:text-white" href="#">Ajuda</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-light-gray dark:bg-gray-700 text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-light-gray dark:bg-gray-700 text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZoMlC5wNsZBCyJZ5YGAIfLH9nad67RGPrwI2JrzfE99Tbs-hEXLPZMx8ZfqcwYlHiclD4g8U8BInOplAGd4Q3b_PCrGdjgY9TBwjyEKzItTEnmKi4g4kNarOQPGz8mgBtFus_hJey-IgZS0KKLn3Sdk4P1r4YhMXCRkJ8yqm4zKQxNghDvKRsVVPi-3KeDrALHckrc53VU9BArvK4-DrcMcAvdIiQr1ICfytNCbHIe1F8TnolAwrVNksnz4Qbe_AjyBotygl7Lk4");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow">
+<div class="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+<div class="flex flex-col gap-8">
+<!-- PageHeading -->
+<div class="flex flex-col gap-2 text-center">
+<h1 class="text-primary dark:text-blue-400 text-4xl font-black tracking-tight">Ajuda / FAQ</h1>
+<p class="text-neutral-gray dark:text-gray-400 text-lg">Encontre respostas para as suas perguntas mais frequentes.</p>
+</div>
+<!-- SearchBar -->
+<div class="w-full">
+<label class="flex flex-col">
+<div class="relative flex w-full items-stretch">
+<span class="absolute inset-y-0 left-0 flex items-center pl-4 text-neutral-gray dark:text-gray-400">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 h-14 pl-12 pr-4 text-gray-900 dark:text-white placeholder:text-neutral-gray dark:placeholder:text-gray-400 focus:border-primary focus:ring-primary text-base" placeholder="Pesquise por palavras-chave ou perguntas..." type="search"/>
+</div>
+</label>
+</div>
+<!-- Chips/Filters -->
+<div class="flex flex-wrap items-center justify-center gap-3">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-4 text-sm font-medium text-white">Todos</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-light-gray dark:bg-gray-700 px-4 text-sm font-medium text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">Acesso e Login</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-light-gray dark:bg-gray-700 px-4 text-sm font-medium text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">Relatórios</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-light-gray dark:bg-gray-700 px-4 text-sm font-medium text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">Cadastro</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-light-gray dark:bg-gray-700 px-4 text-sm font-medium text-neutral-gray dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">Problemas Comuns</button>
+</div>
+<!-- Accordions -->
+<div class="flex flex-col gap-2 pt-4">
+<details class="flex flex-col rounded-lg bg-white dark:bg-gray-800 p-1 group" open="">
+<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
+<h3 class="text-base font-medium text-gray-900 dark:text-white">Como redefinir minha senha?</h3>
+<span class="material-symbols-outlined text-neutral-gray dark:text-gray-400 transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-4 pb-4">
+<p class="text-neutral-gray dark:text-gray-300 text-sm leading-relaxed">Para redefinir sua senha, clique no link 'Esqueceu a senha?' na página de login. Você receberá um e-mail com instruções para criar uma nova senha. Certifique-se de verificar sua caixa de spam se não receber o e-mail em alguns minutos.</p>
+</div>
+</details>
+<details class="flex flex-col rounded-lg bg-white dark:bg-gray-800 p-1 group">
+<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
+<h3 class="text-base font-medium text-gray-900 dark:text-white">Onde encontro o relatório de atividades mensais?</h3>
+<span class="material-symbols-outlined text-neutral-gray dark:text-gray-400 transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-4 pb-4">
+<p class="text-neutral-gray dark:text-gray-300 text-sm leading-relaxed">O relatório de atividades mensais pode ser acessado no menu principal, na seção 'Relatórios'. Selecione o período desejado e clique em 'Gerar Relatório' para visualizar ou baixar o documento em formato PDF.</p>
+</div>
+</details>
+<details class="flex flex-col rounded-lg bg-white dark:bg-gray-800 p-1 group">
+<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
+<h3 class="text-base font-medium text-gray-900 dark:text-white">Como cadastrar um novo usuário no sistema?</h3>
+<span class="material-symbols-outlined text-neutral-gray dark:text-gray-400 transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-4 pb-4">
+<p class="text-neutral-gray dark:text-gray-300 text-sm leading-relaxed">Para cadastrar um novo usuário, vá até a seção 'Usuários' e clique no botão 'Adicionar Novo Usuário'. Preencha os campos obrigatórios, como nome, e-mail e nível de permissão, e salve as alterações. O novo usuário receberá um e-mail para definir sua senha inicial.</p>
+</div>
+</details>
+<details class="flex flex-col rounded-lg bg-white dark:bg-gray-800 p-1 group">
+<summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
+<h3 class="text-base font-medium text-gray-900 dark:text-white">O que fazer se o sistema apresentar lentidão?</h3>
+<span class="material-symbols-outlined text-neutral-gray dark:text-gray-400 transition-transform duration-300 group-open:rotate-180">expand_more</span>
+</summary>
+<div class="px-4 pb-4">
+<p class="text-neutral-gray dark:text-gray-300 text-sm leading-relaxed">Caso o sistema apresente lentidão, primeiro verifique sua conexão com a internet. Tente limpar o cache do seu navegador ou acessar de uma janela anônima. Se o problema persistir, entre em contato com nosso suporte técnico para que possamos investigar a causa.</p>
+</div>
+</details>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

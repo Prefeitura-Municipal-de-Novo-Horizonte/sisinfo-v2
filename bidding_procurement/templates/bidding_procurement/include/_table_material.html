@@ -1,66 +1,71 @@
-{% load ui_tags %}
-<div class="{% table_container %}">
-    <table class="{% table_base %}">
-        <thead class="{% table_head %}">
+<div class="relative overflow-x-auto">
+    <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-                <th scope="col" class="px-6 py-3">Nome</th>
-                <th scope="col" class="px-6 py-3">Status</th>
-                <th scope="col" class="px-6 py-3">Fornecedor</th>
-                <th scope="col" class="px-6 py-3">Preço</th>
-                <th scope="col" class="px-6 py-3">Reajuste</th>
-                <th scope="col" class="px-6 py-3">Total</th>
-                <th scope="col" class="px-6 py-3">Ações</th>
+                <th scope="col" class="px-3 py-2">Nome</th>
+                <th scope="col" class="px-3 py-2">Status</th>
+                <th scope="col" class="px-3 py-2">Fornecedor</th>
+                <th scope="col" class="px-3 py-2">Preço</th>
+                <th scope="col" class="px-3 py-2">Reajuste</th>
+                <th scope="col" class="px-3 py-2">Total</th>
+                <th scope="col" class="px-3 py-2 text-right">Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for assoc in material_associations %}
-            <tr class="{% table_row %}">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <tr
+                class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                <th scope="row"
+                    class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-xs truncate"
+                    title="{{ assoc.material.name }}">
                     {{ assoc.material.name }}
                 </th>
-                <td class="px-6 py-4">
+                <td class="px-3 py-2">
                     {% if assoc.status == '1' %}
                     <span
-                        class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Ativo</span>
+                        class="bg-green-100 text-green-800 text-[10px] font-medium px-2 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Ativo</span>
                     {% else %}
                     <span
-                        class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Inativo</span>
+                        class="bg-red-100 text-red-800 text-[10px] font-medium px-2 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Inativo</span>
                     {% endif %}
                 </td>
-                <td class="px-6 py-4">{{ assoc.supplier|default:"-" }}</td>
-                <td class="px-6 py-4">R$ {{ assoc.price|floatformat:2 }}</td>
-                <td class="px-6 py-4">{{ assoc.readjustment }}%</td>
-                <td class="px-6 py-4">R$ {{ assoc.total_price|floatformat:2 }}</td>
-                <td class="px-6 py-4 flex justify-normal items-center gap-2">
-                    {% if licitacao.status == '1' %}
-                    <a href="{% url 'bidding_procurement:toggle_status_material' assoc.id %}">
-                        {% if assoc.status == '1' %}
-                        <button type="button" class="flex justify-center gap-2 items-center {% btn_secondary %}">
-                            <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M1 5v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H1Zm0 0V2a1 1 0 0 1 1-1h5.443a1 1 0 0 1 .8.4l2.7 3.6H1Z" />
+                <td class="px-3 py-2 max-w-xs truncate" title="{{ assoc.supplier|default:'-' }}">{{ assoc.supplier|default:"-" }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">R$ {{ assoc.price|floatformat:2 }}</td>
+                <td class="px-3 py-2">{{ assoc.readjustment }}%</td>
+                <td class="px-3 py-2 whitespace-nowrap">R$ {{ assoc.total_price|floatformat:2 }}</td>
+                <td class="px-3 py-2 text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <a href="{% url 'bidding_procurement:toggle_status_material' assoc.id %}"
+                            class="{% if assoc.status == '1' %}text-red-600 dark:text-red-500{% else %}text-green-600 dark:text-green-500{% endif %} hover:underline"
+                            title="{% if assoc.status == '1' %}Desativar{% else %}Ativar{% endif %}">
+                            {% if assoc.status == '1' %}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                                </path>
                             </svg>
-                            Desativar
-                        </button>
-                        {% else %}
-                        <button type="button" class="flex justify-center gap-2 items-center {% btn_primary %}">
-                            <svg class="w-3 h-3 text-white dark:text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            {% else %}
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
-                            Excluir
-                        </button>
-                        {% endif %}
-                    </a>
-                    {% endif %}
+                            {% endif %}
+                        </a>
+                    </div>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td class="px-6 py-4" colspan="7">Nenhum material cadastrado!!!</td>
+                <td class="px-3 py-8 text-center text-gray-500 dark:text-gray-400" colspan="7">
+                    <div class="flex flex-col items-center justify-center">
+                        <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+                            </path>
+                        </svg>
+                        <p class="text-sm">Nenhum material cadastrado.</p>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

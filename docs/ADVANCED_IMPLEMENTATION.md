@@ -725,6 +725,655 @@ function toggleTheme() {
 
 ---
 
+## 📅 Calendário (FullCalendar)
+
+### Biblioteca Recomendada: FullCalendar
+
+**Por quê FullCalendar?**
+- ✅ Completo e maduro
+- ✅ Suporte a múltiplas visualizações (mês, semana, dia)
+- ✅ Interativo e responsivo
+- ✅ Fácil integração com Django
+- ✅ Suporte a temas
+
+### Instalação
+
+**package.json:**
+```json
+{
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.0",
+    "@fullcalendar/daygrid": "^6.1.0",
+    "@fullcalendar/interaction": "^6.1.0"
+  }
+}
+```
+
+**Ou via CDN:**
+```html
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.0/index.global.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.0/index.global.min.js'></script>
+```
+
+### Implementação no Dashboard
+
+**Template (dashboard/index.html):**
+```html
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+  <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+    📅 Calendário de Eventos
+  </h3>
+  
+  <div id="calendar"></div>
+</div>
+```
+
+**JavaScript:**
+```javascript
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
+document.addEventListener('DOMContentLoaded', function() {
+  const calendarEl = document.getElementById('calendar');
+  
+  const calendar = new Calendar(calendarEl, {
+    plugins: [dayGridPlugin, interactionPlugin],
+    initialView: 'dayGridMonth',
+    locale: 'pt-br',
+    
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,dayGridWeek'
+    },
+    
+    // Carregar eventos via API
+    events: '/dashboard/eventos/',
+    
+    // Ao clicar em um evento
+    eventClick: function(info) {
+      // Abrir modal com detalhes
+      showEventModal(info.event);
+    },
+    
+    // Ao clicar em uma data
+    dateClick: function(info) {
+      // Criar novo evento
+      showCreateEventModal(info.date);
+    },
+    
+    // Estilização
+    themeSystem: 'standard',
+    eventColor: '#89b4fa',  // Catppuccin blue
+    
+    // Altura automática
+    height: 'auto'
+  });
+  
+  calendar.render();
+  
+  // Atualizar tema ao trocar
+  window.addEventListener('themeChanged', function(e) {
+    if (e.detail.theme === 'dark') {
+      calendarEl.classList.add('fc-dark');
+    } else {
+      calendarEl.classList.remove('fc-dark');
+    }
+  });
+});
+```
+
+**CSS Customizado:**
+```css
+/* Tema escuro para FullCalendar */
+.dark #calendar {
+  --fc-border-color: #45475a;
+  --fc-button-bg-color: #89b4fa;
+  --fc-button-border-color: #89b4fa;
+  --fc-button-hover-bg-color: #74c7ec;
+  --fc-button-hover-border-color: #74c7ec;
+  --fc-button-active-bg-color: #74c7ec;
+  --fc-button-active-border-color: #74c7ec;
+  --fc-event-bg-color: #89b4fa;
+  --fc-event-border-color: #89b4fa;
+  --fc-today-bg-color: rgba(137, 180, 250, 0.1);
+}
+
+.dark .fc .fc-col-header-cell-cushion,
+.dark .fc .fc-daygrid-day-number {
+  color: #cdd6f4;
+}
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+  background-color: rgba(137, 180, 250, 0.1);
+}
+```
+
+**API de Eventos (dashboard/views.py):**
+```python
+from django.http import JsonResponse
+from datetime import datetime, timedelta
+
+def eventos_api(request):
+    """
+    Retorna eventos para o calendário
+    """
+    # Parâmetros do FullCalendar
+    start = request.GET.get('start')
+    end = request.GET.get('end')
+    
+    # Converter para datetime
+    start_date = datetime.fromisoformat(start.replace('Z', '+00:00'))
+    end_date = datetime.fromisoformat(end.replace('Z', '+00:00'))
+    
+    # Buscar laudos no período
+    laudos = Report.objects.filter(
+        created_at__gte=start_date,
+        created_at__lte=end_date
+    ).select_related('sector')
+    
+    # Formatar eventos
+    events = []
+    for laudo in laudos:
+        events.append({
+            'id': laudo.id,
+            'title': f"Laudo {laudo.number_report}",
+            'start': laudo.created_at.isoformat(),
+            'url': f"/reports/{laudo.slug}/",
+            'backgroundColor': get_status_color(laudo.status),
+            'borderColor': get_status_color(laudo.status),
+            'extendedProps': {
+                'sector': laudo.sector.name if laudo.sector else 'Sem setor',
+                'status': laudo.get_status_display()
+            }
+        })
+    
+    return JsonResponse(events, safe=False)
+
+def get_status_color(status):
+    """Retorna cor baseada no status"""
+    colors = {
+        'pending': '#f9e2af',  # Yellow
+        'approved': '#a6e3a1',  # Green
+        'rejected': '#f38ba8',  # Red
+    }
+    return colors.get(status, '#89b4fa')  # Blue default
+```
+
+**URL (dashboard/urls.py):**
+```python
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('eventos/', views.eventos_api, name='eventos_api'),
+]
+```
+
+---
+
+## 🔔 Sistema de Notificações (Toasts)
+
+### Implementação com Alpine.js
+
+**Template Global (templates/include/_toasts.html):**
+```html
+<!-- Sistema de Toasts -->
+<div x-data="toastManager()" 
+     @toast.window="addToast($event.detail)"
+     class="fixed top-20 right-4 z-50 space-y-2">
+  
+  <template x-for="toast in toasts" :key="toast.id">
+    <div x-show="toast.show"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 transform translate-x-full"
+         x-transition:enter-end="opacity-100 transform translate-x-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         :class="{
+           'bg-green-500': toast.type === 'success',
+           'bg-red-500': toast.type === 'error',
+           'bg-blue-500': toast.type === 'info',
+           'bg-yellow-500': toast.type === 'warning'
+         }"
+         class="rounded-lg shadow-lg p-4 text-white min-w-[300px] max-w-md">
+      
+      <div class="flex items-start gap-3">
+        <!-- Ícone -->
+        <div class="flex-shrink-0">
+          <template x-if="toast.type === 'success'">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'error'">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'info'">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </template>
+          <template x-if="toast.type === 'warning'">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </template>
+        </div>
+        
+        <!-- Conteúdo -->
+        <div class="flex-1">
+          <p class="font-semibold" x-text="toast.title" x-show="toast.title"></p>
+          <p class="text-sm" x-text="toast.message"></p>
+        </div>
+        
+        <!-- Botão fechar -->
+        <button @click="removeToast(toast.id)" class="flex-shrink-0 hover:opacity-75">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Barra de progresso -->
+      <div class="mt-2 h-1 bg-white bg-opacity-30 rounded-full overflow-hidden">
+        <div class="h-full bg-white transition-all duration-[5000ms] ease-linear"
+             :style="toast.show ? 'width: 0%' : 'width: 100%'"></div>
+      </div>
+    </div>
+  </template>
+</div>
+
+<script>
+function toastManager() {
+  return {
+    toasts: [],
+    nextId: 1,
+    
+    addToast(data) {
+      const id = this.nextId++;
+      const toast = {
+        id,
+        show: true,
+        title: data.title || '',
+        message: data.message,
+        type: data.type || 'info',
+        duration: data.duration || 5000
+      };
+      
+      this.toasts.push(toast);
+      
+      // Auto-remover após duração
+      setTimeout(() => {
+        this.removeToast(id);
+      }, toast.duration);
+    },
+    
+    removeToast(id) {
+      const index = this.toasts.findIndex(t => t.id === id);
+      if (index > -1) {
+        this.toasts[index].show = false;
+        setTimeout(() => {
+          this.toasts.splice(index, 1);
+        }, 300);
+      }
+    }
+  };
+}
+
+// Helper function global
+function showToast(message, type = 'info', title = '', duration = 5000) {
+  window.dispatchEvent(new CustomEvent('toast', {
+    detail: { message, type, title, duration }
+  }));
+}
+</script>
+```
+
+**Incluir no _base.html:**
+```html
+<body>
+  {% include "include/_nav.html" %}
+  {% include "include/_toasts.html" %}  <!-- ADICIONAR -->
+  
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+```
+
+**Uso em Templates:**
+```html
+<!-- Após salvar formulário -->
+<script>
+document.querySelector('form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const response = await fetch(this.action, {
+    method: 'POST',
+    body: new FormData(this)
+  });
+  
+  if (response.ok) {
+    showToast('Laudo salvo com sucesso!', 'success', 'Sucesso');
+    setTimeout(() => window.location.href = '/reports/', 1000);
+  } else {
+    showToast('Erro ao salvar laudo', 'error', 'Erro');
+  }
+});
+</script>
+```
+
+**Uso em Views (Django Messages):**
+```python
+from django.contrib import messages
+
+def create_report(request):
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Laudo criado com sucesso!')
+            return redirect('reports:reports')
+        else:
+            messages.error(request, 'Erro ao criar laudo')
+    
+    return render(request, 'register_reports.html', {'form': form})
+```
+
+**Converter Django Messages para Toasts:**
+```html
+<!-- No _base.html, após incluir _toasts.html -->
+{% if messages %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  {% for message in messages %}
+    showToast(
+      '{{ message }}',
+      '{{ message.tags }}',
+      '',
+      5000
+    );
+  {% endfor %}
+});
+</script>
+{% endif %}
+```
+
+---
+
+## 🎯 Modais de Cadastro Rápido
+
+### Modal Genérico Reutilizável
+
+**Template (templates/include/_modal.html):**
+```html
+<!-- Modal Container -->
+<div x-data="{ modalOpen: false, modalData: {} }"
+     @open-modal.window="modalOpen = true; modalData = $event.detail"
+     @close-modal.window="modalOpen = false">
+  
+  <div x-show="modalOpen" 
+       x-cloak
+       class="fixed inset-0 z-50 overflow-y-auto"
+       @keydown.escape.window="modalOpen = false">
+    
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+         @click="modalOpen = false"
+         x-transition:enter="ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+    </div>
+    
+    <!-- Modal Content -->
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full p-6"
+           x-transition:enter="ease-out duration-300"
+           x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+           x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+           x-transition:leave="ease-in duration-200"
+           x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+           x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+           @click.stop>
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xl font-bold text-gray-900 dark:text-white" 
+              x-text="modalData.title || 'Modal'"></h3>
+          <button @click="modalOpen = false" 
+                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Body -->
+        <div id="modal-body" x-html="modalData.content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Helper para abrir modal
+function openModal(title, content) {
+  window.dispatchEvent(new CustomEvent('open-modal', {
+    detail: { title, content }
+  }));
+}
+
+function closeModal() {
+  window.dispatchEvent(new CustomEvent('close-modal'));
+}
+</script>
+```
+
+### Exemplo: Modal de Cadastro de Setor
+
+**No formulário de laudo:**
+```html
+<div class="mb-6">
+  <label class="block text-sm font-medium mb-2">Setor</label>
+  <div class="flex gap-2">
+    <select id="id_sector" name="sector" class="form-select flex-1">
+      <option value="">Selecione...</option>
+      {% for setor in setores %}
+      <option value="{{ setor.id }}">{{ setor.name }}</option>
+      {% endfor %}
+    </select>
+    <button type="button" 
+            @click="openSetorModal()" 
+            class="btn btn-secondary whitespace-nowrap">
+      + Novo Setor
+    </button>
+  </div>
+</div>
+
+<script>
+function openSetorModal() {
+  const content = `
+    <form id="quick-setor-form" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-2">Nome do Setor</label>
+        <input type="text" 
+               name="name" 
+               class="form-input w-full" 
+               required>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium mb-2">Diretoria</label>
+        <select name="direction" class="form-select w-full">
+          <option value="">Selecione...</option>
+          {% for direction in directions %}
+          <option value="{{ direction.id }}">{{ direction.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <div>
+        <label class="block text-sm font-medium mb-2">Responsável</label>
+        <input type="text" 
+               name="accountable" 
+               class="form-input w-full">
+      </div>
+      
+      <div class="flex gap-4">
+        <button type="submit" class="btn btn-primary flex-1">Salvar</button>
+        <button type="button" 
+                onclick="closeModal()" 
+                class="btn btn-secondary flex-1">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  `;
+  
+  openModal('Cadastrar Novo Setor', content);
+  
+  // Aguardar modal abrir e adicionar listener
+  setTimeout(() => {
+    document.getElementById('quick-setor-form').addEventListener('submit', saveSetor);
+  }, 100);
+}
+
+async function saveSetor(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+  
+  try {
+    const response = await fetch('/structure/setores/quick-create/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      // Adicionar ao select
+      const select = document.getElementById('id_sector');
+      const option = new Option(result.setor.name, result.setor.id, true, true);
+      select.add(option);
+      
+      // Fechar modal
+      closeModal();
+      
+      // Mostrar toast
+      showToast('Setor cadastrado com sucesso!', 'success');
+    } else {
+      showToast(result.error || 'Erro ao cadastrar setor', 'error');
+    }
+  } catch (error) {
+    showToast('Erro ao cadastrar setor', 'error');
+  }
+}
+
+// Helper para pegar CSRF token
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+</script>
+```
+
+**API de Criação Rápida (organizational_structure/views.py):**
+```python
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@require_POST
+def quick_create_setor(request):
+    """
+    API para criação rápida de setor via modal
+    """
+    try:
+        data = json.loads(request.body)
+        
+        # Validar dados
+        if not data.get('name'):
+            return JsonResponse({
+                'success': False,
+                'error': 'Nome do setor é obrigatório'
+            }, status=400)
+        
+        # Criar setor
+        setor = Sector.objects.create(
+            name=data['name'],
+            direction_id=data.get('direction') if data.get('direction') else None,
+            accountable=data.get('accountable', '')
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'setor': {
+                'id': setor.id,
+                'name': setor.name
+            }
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+```
+
+**URL (organizational_structure/urls.py):**
+```python
+urlpatterns = [
+    # ... outras URLs
+    path('setores/quick-create/', views.quick_create_setor, name='quick_create_setor'),
+]
+```
+
+### Atualizar package.json
+
+**Adicionar novas dependências:**
+```json
+{
+  "dependencies": {
+    "alpinejs": "^3.13.0",
+    "apexcharts": "^3.45.0",
+    "flatpickr": "^4.6.13",
+    "@fullcalendar/core": "^6.1.0",
+    "@fullcalendar/daygrid": "^6.1.0",
+    "@fullcalendar/interaction": "^6.1.0"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.5",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.0"
+  }
+}
+```
+
+---
+
 ## ⚡ WebSockets e Tempo Real
 
 ### Casos de Uso Identificados

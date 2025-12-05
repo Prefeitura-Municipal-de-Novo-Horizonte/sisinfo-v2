@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Alpine.js Cloak */
+[x-cloak] {
+    display: none !important;
+}
+
+/* Responsive Typography */
+html {
+    font-size: 14px; /* Base size for mobile */
+}
+
+@media (min-width: 640px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1024px) {
+    html {
+        font-size: 16px; /* Standard size for desktop */
+    }
+}
+
+@media (min-width: 1536px) {
+    html {
+        font-size: 17px; /* Slightly larger for huge screens */
+    }
+}
+
+/* Custom Scrollbar for Sidebar */
+aside div::-webkit-scrollbar {
+    width: 4px;
+}
+
+aside div::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+aside div::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
+}

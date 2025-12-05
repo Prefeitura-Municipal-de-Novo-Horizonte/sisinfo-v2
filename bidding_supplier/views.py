@@ -81,7 +81,7 @@ def supplier_detail(request, slug):
     View para exibir detalhes de um fornecedor, incluindo contatos, materiais e licitações.
     """
     context = SupplierService.get_supplier_details(slug)
-    return render(request, 'supllier.html', context)
+    return render(request, 'supplier_detail.html', context)
 
 
 @login_required(login_url='login')

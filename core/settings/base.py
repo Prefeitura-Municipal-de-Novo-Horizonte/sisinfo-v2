@@ -73,6 +73,12 @@ LOGIN_URL = 'authenticate:login'
 LOGOUT_URL = 'authenticate:logout'
 LOGIN_REDIRECT_URL = 'dashboard:index'
 
+# Configurações de Sessão (Auto-logout)
+SESSION_COOKIE_AGE = 1800  # 30 minutos de inatividade
+SESSION_SAVE_EVERY_REQUEST = True  # Renova sessão a cada requisição
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Logout ao fechar navegador
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",

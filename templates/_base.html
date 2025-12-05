@@ -2,35 +2,67 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="keywords" content="meta">
   <meta name="description" content="description">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      {% block title %}
-      {% endblock title %}
-      - SISInfo - Prefeitura Municipal de Novo Horizonte
-    </title>
-    {% include "include/_favicon.html" %}
-    {% include "include/_css.html" %}
-  </head>
-  <body>
-    <header>
-      {% include "include/_nav.html" %}
-    </header>
-    <main>
-      <div class="p-4 sm:ml-64">
-   <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-      {% block content %}
-      {% endblock content %}
-      </div></div>
-    </main>
-    <footer>
-      {% include "include/_footer.html" %}
-    </footer>
-    {% include "include/_js.html" %}
-    {% block script %}
-    {% endblock script %}
-  </body>
+  <title>
+    {% block title %}
+    {% endblock title %}
+    - SISInfo - Prefeitura Municipal de Novo Horizonte
+  </title>
+  {% include "include/_favicon.html" %}
+  {% include "include/_css.html" %}
+</head>
+
+<body>
+  <div x-data="{
+      sidebarOpen: window.innerWidth >= 640,
+      sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
+      darkMode: localStorage.getItem('theme') === 'dark',
+      toggleTheme() {
+        this.darkMode = !this.darkMode;
+        if (this.darkMode) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        }
+      },
+      toggleSidebar() {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
+        localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
+      }
+    }"
+    x-init="if(darkMode) document.documentElement.classList.add('dark'); $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))"
+    class="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden" x-cloak>
+
+    <!-- Sidebar -->
+    {% include "include/_nav.html" %}
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col overflow-hidden relative w-full">
+      <!-- Main Content -->
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-slate-900 p-6 w-full">
+        {% block content %}
+        {% endblock content %}
+      </main>
+
+      <footer class="transition-all duration-300">
+        {% include "include/_footer.html" %}
+      </footer>
+    </div>
+  </div>
+
+  {% include "include/_js.html" %}
+  <!-- Toast Notifications -->
+  {% include "include/_toast.html" %}
+
+  {% block script %}
+  {% endblock script %}
+</body>
+
 </html>

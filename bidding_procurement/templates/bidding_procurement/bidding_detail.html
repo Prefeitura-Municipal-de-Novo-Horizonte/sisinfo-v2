@@ -1,96 +1,184 @@
 {% extends "_base.html" %}
-{% load ui_tags %}
+
 {% block title %}
 {{ licitacao.name }}
 {% endblock title %}
-{% block content %}
-<!-- TITULO -->
-<div class="{% header_container %}">
-    <p class="text-2xl text-gray-400 dark:text-gray-500">
-    <h1 class="{% header_title %}">
-        <mark class="{% header_mark %}">
-            {{ licitacao.name }}
-        </mark>
-    </h1>
-    </p>
-</div>
-<!-- CABEÇALHO -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 h-auto">
-    <div class="{% form_container %}">
-        <div class="w-full max-w-full flex justify-start mb-6">
-            <span
-                class="bg-blue-100 text-blue-800 text-xl font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-blue-400 border border-blue-400">Cadastro
-                de Materiais:</span>
-        </div>
-        <form class="max-w-full mx-auto w-full" action="" method="post">{% csrf_token %}
-            {% include "bidding_procurement/include/_form_material.html" %}
-            <div class="flex justify-between items-center gap-10">
-                <button type="submit" class="w-full {% btn_primary %} flex justify-around gap-2 items-center">
-                    {{ btn }}
-                    <svg class="w-4 h-4 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20"
-                        height="20" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9.994 19a8.999 8.999 0 1 1 3.53-17.281M5.995 9l4 4 7-8m-1 8v5m-2.5-2.5h5" />
-                    </svg>
-                </button>
-            </div>
-        </form>
-    </div>
-    <div class="{% form_container %} gap-3">
-        <!-- Formulário de pesquisa -->
-        <dl class="max-w-full text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700 w-full mb-8">
-            <div class="flex flex-col pb-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Data:</dt>
-                <dd class="text-lg font-semibold">{{ licitacao.date }}</dd>
-            </div>
-            <div class="flex flex-col py-3">
-                <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">Quantidade de materiais:</dt>
-                <dd class="text-lg font-semibold">{{ total_materiais }}</dd>
-            </div>
-        </dl>
-        <a href="{% url 'bidding_procurement:licitacoes' %}">
-            <button type="button" class="{% btn_warning %} flex justify-around gap-2 items-center">
-                Licitações
-                <svg class="w-4 h-4 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 16 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 7 1 4l3-3m0 12h6.5a4.5 4.5 0 1 0 0-9H2" />
-                </svg>
-            </button>
-        </a>
-    </div>
-</div>
-{% include "include/_alert.html" %}
-<!-- Search -->
-<div class="{% header_container %} py-1 px-6">
-    <form action="" method="get" class="w-full flex justify-arround p-5 max-w-full gap-2 items-center">
-        <div class="pb-4 max-w-full w-full">
-            <label for="{{ myFilter.form.name.id_for_label }}" class="text-sm text-blue-900 font-bold">Pesquisar por
-                Nome</label>
-            <div class="relative mt-1 max-w-full w-full">
-                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                </div>
-                {{ myFilter.form.name }}
-            </div>
-        </div>
-        <button type="submit" class="h-9 {% btn_primary %} flex justify-center items-center gap-4 mt-4">
-            <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-            </svg>
-            Pesquisar
-        </button>
-    </form>
-</div>
 
-<!-- LISTA MATERIAIS -->
-<div class="{% page_container %}">
-    {% include "bidding_procurement/include/_table_material.html" %}
+{% block content %}
+<div class="mx-auto max-w-7xl" x-data="{ 
+        showMaterialForm: {% if form.errors %}true{% else %}false{% endif %}, 
+        showFilters: false,
+        activeTab: 'materiais'
+    }">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Licitações</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'bidding_procurement:licitacoes' %}">Processos</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">{{ licitacao.name }}</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ licitacao.name }}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Detalhes do processo licitatório e materiais.</p>
+        </div>
+        <div class="flex gap-2">
+            <button @click="showFilters = !showFilters"
+                class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z">
+                    </path>
+                </svg>
+                Filtros
+            </button>
+            <button @click="showMaterialForm = !showMaterialForm" x-show="activeTab === 'materiais'"
+                class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 focus:outline-none dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span x-text="showMaterialForm ? 'Cancelar Cadastro' : 'Adicionar Material'"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Alerts -->
+    {% include "include/_alert.html" %}
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data do Processo</dt>
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{{ licitacao.date|date:"d/m/Y" }}</dd>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                {% if licitacao.status == '1' %}
+                <span class="text-green-600 dark:text-green-400">Ativo</span>
+                {% else %}
+                <span class="text-red-600 dark:text-red-400">Inativo</span>
+                {% endif %}
+            </dd>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Materiais</dt>
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{{ total_materiais }}</dd>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+            <li class="me-2">
+                <button @click="activeTab = 'materiais'"
+                    :class="activeTab === 'materiais' ? 'inline-block p-4 text-brand-600 border-b-2 border-brand-600 rounded-t-lg active dark:text-brand-500 dark:border-brand-500' : 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'"
+                    type="button">
+                    Materiais
+                </button>
+            </li>
+            <li class="me-2">
+                <button @click="activeTab = 'detalhes'"
+                    :class="activeTab === 'detalhes' ? 'inline-block p-4 text-brand-600 border-b-2 border-brand-600 rounded-t-lg active dark:text-brand-500 dark:border-brand-500' : 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'"
+                    type="button">
+                    Detalhes
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Tab Content: Materiais -->
+    <div x-show="activeTab === 'materiais'" x-transition:enter="transition ease-out duration-300" class="space-y-6">
+
+        <!-- Filters Section (Collapsible) -->
+        <div x-show="showFilters" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-4" style="display: none;">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <form action="" method="get" class="flex flex-col sm:flex-row gap-4 items-end">
+                    {% include "include/_form_field_standard.html" with field=myFilter.form.name %}
+                    <button type="submit"
+                        class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Pesquisar
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Material Form Section (Collapsible) -->
+        <div x-show="showMaterialForm" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 transform -translate-y-4"
+            x-transition:enter-end="opacity-100 transform translate-y-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 transform translate-y-0"
+            x-transition:leave-end="opacity-0 transform -translate-y-4" style="display: none;">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Adicionar Material</h3>
+                <form action="" method="post">{% csrf_token %}
+                    {% include "bidding_procurement/include/_form_material.html" %}
+                    <div class="flex justify-end mt-6">
+                        <button type="submit"
+                            class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7">
+                                </path>
+                            </svg>
+                            Salvar Material
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Materials List -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Materiais Cadastrados</h3>
+            </div>
+            <div class="relative overflow-x-auto">
+                {% include "bidding_procurement/include/_table_material.html" %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Content: Detalhes -->
+    <div x-show="activeTab === 'detalhes'" x-transition:enter="transition ease-out duration-300" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informações Detalhadas</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nome da Licitação</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ licitacao.name }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Data de Abertura</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ licitacao.date|date:"d/m/Y" }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status Atual</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">
+                        {% if licitacao.status == '1' %}Ativo{% else %}Inativo{% endif %}
+                    </dd>
+                </div>
+                <!-- Adicionar mais campos se houver -->
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

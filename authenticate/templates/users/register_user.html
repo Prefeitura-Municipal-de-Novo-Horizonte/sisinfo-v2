@@ -1,0 +1,91 @@
+{% extends "_base.html" %}
+{% block title %}Cadastro de Usuário{% endblock title %}
+
+{% block content %}
+<div class="mx-auto max-w-7xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">Administração</span>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'authenticate:show_users' %}">Usuários</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Novo Usuário</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Cadastrar Novo Usuário</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Preencha as informações abaixo para criar um novo usuário no
+            sistema.</p>
+    </div>
+
+    <!-- Form -->
+    <form action="" method="post">{% csrf_token %}
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informações Pessoais</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% include "include/_form_field_standard.html" with field=form.first_name %}
+                {% include "include/_form_field_standard.html" with field=form.last_name %}
+                {% include "include/_form_field_standard.html" with field=form.email %}
+                {% include "include/_form_field_standard.html" with field=form.username %}
+                {% include "include/_form_field_standard.html" with field=form.registration %}
+            </div>
+        </div>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Senha</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% include "include/_form_field_standard.html" with field=form.password1 %}
+                {% include "include/_form_field_standard.html" with field=form.password2 %}
+            </div>
+        </div>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Permissões</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Checkbox Técnico -->
+                <div class="flex items-center">
+                    {{ form.is_tech }}
+                    <label for="{{ form.is_tech.id_for_label }}"
+                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {{ form.is_tech.label }}
+                    </label>
+                </div>
+
+                <!-- Checkbox Admin -->
+                <div class="flex items-center">
+                    {{ form.is_admin }}
+                    <label for="{{ form.is_admin.id_for_label }}"
+                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        {{ form.is_admin.label }}
+                    </label>
+                </div>
+            </div>
+            <p class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                * Se administrador ou técnico não for selecionado, o usuário será cadastrado como estagiário.
+            </p>
+        </div>
+
+        <div class="flex justify-end gap-3">
+            <a href="{% url 'authenticate:show_users' %}"
+                class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-colors">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 focus:outline-none dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Cadastrar Usuário
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
