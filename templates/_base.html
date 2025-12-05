@@ -44,16 +44,16 @@
     {% include "include/_nav.html" %}
 
     <!-- Main Content -->
-    <main :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="p-4 transition-all duration-300">
-      <div class="p-4">
-        {% block content %}
-        {% endblock content %}
-      </div>
-    </main>
+    <main :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'"
+      class="flex-1 w-full p-6 transition-all duration-300 overflow-x-hidden">
+      {% block content %}
+      {% endblock content %}
+  </div>
+  </main>
 
-    <footer :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="transition-all duration-300">
-      {% include "include/_footer.html" %}
-    </footer>
+  <footer :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="transition-all duration-300">
+    {% include "include/_footer.html" %}
+  </footer>
   </div>
 
   {% include "include/_js.html" %}
