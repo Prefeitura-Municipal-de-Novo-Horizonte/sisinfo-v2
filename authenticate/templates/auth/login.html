@@ -9,12 +9,15 @@
     <!-- Left Side: Brand -->
     <div class="hidden lg:flex lg:w-1/2 bg-brand-700 flex-col justify-center items-center p-12 relative">
         <div class="relative z-10 text-center">
-            <img src="{% static 'img/logo/logo.png' %}" alt="Brasão Novo Horizonte" class="h-48 w-auto mb-8 mx-auto drop-shadow-lg">
+            <img src="{% static 'img/logo/logo.png' %}" alt="Brasão Novo Horizonte"
+                class="h-48 w-auto mb-8 mx-auto drop-shadow-lg">
             <h1 class="text-5xl font-bold text-white mb-4 drop-shadow-md">SISInfo V2</h1>
             <p class="text-blue-100 text-xl font-light">Sistema de Gestão de TI Municipal</p>
         </div>
         <!-- Decorative pattern -->
-        <div class="absolute inset-0 opacity-10 bg-repeat" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+        <div class="absolute inset-0 opacity-10 bg-repeat"
+            style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');">
+        </div>
     </div>
 
     <!-- Right Side: Login Form -->
@@ -37,33 +40,55 @@
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800" role="alert">
+                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800"
+                    role="alert">
                     {{ form.non_field_errors }}
                 </div>
                 {% endif %}
 
                 <div class="space-y-5">
                     <div>
-                        <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Usuário</label>
-                        {{ form.username|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500" }}
+                        <label for="{{ form.username.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        {{ form.username|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm
+                        rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800
+                        dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500
+                        dark:focus:border-brand-500" }}
                         {% if form.username.errors %}
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.username.errors.0 }}</p>
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.username.errors.0 }}</p>
                         {% endif %}
                     </div>
 
                     <div>
-                        <label for="{{ form.password.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Senha</label>
+                        <label for="{{ form.password.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Senha</label>
                         <div class="relative">
-                            {{ form.password|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500 pr-10" }}
-                            <button type="button" @click="showPassword = !showPassword; $el.previousElementSibling.type = showPassword ? 'text' : 'password'"
-                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-                                    type="button">
-                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.059 10.059 0 013.945-5.301m4.241-2.386l7.85 7.85m-6.396 1.155A3.003 3.003 0 0115 12.001m-3.001 3a3.003 3.003 0 01-2.999-2.999m8.225-8.225l-12 12"></path></svg>
+                            {{ form.password|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm
+                            rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800
+                            dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500
+                            dark:focus:border-brand-500 pr-10" }}
+                            <button type="button"
+                                @click="showPassword = !showPassword; $el.previousElementSibling.type = showPassword ? 'text' : 'password'"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white cursor-pointer"
+                                type="button">
+                                <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                                <svg x-show="showPassword" class="w-5 h-5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" style="display: none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.059 10.059 0 013.945-5.301m4.241-2.386l7.85 7.85m-6.396 1.155A3.003 3.003 0 0115 12.001m-3.001 3a3.003 3.003 0 01-2.999-2.999m8.225-8.225l-12 12">
+                                    </path>
+                                </svg>
                             </button>
                         </div>
                         {% if form.password.errors %}
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.password.errors.0 }}</p>
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.password.errors.0 }}</p>
                         {% endif %}
                     </div>
                 </div>
@@ -73,14 +98,16 @@
                         <!-- Optional Remember Me -->
                     </div>
                     <div class="text-sm">
-                        <a href="{% url 'authenticate:password_reset' %}" class="font-medium text-brand-600 hover:text-brand-500 dark:text-brand-400">
+                        <a href="{% url 'authenticate:password_reset' %}"
+                            class="font-medium text-brand-600 hover:text-brand-500 dark:text-brand-400">
                             Esqueceu a senha?
                         </a>
                     </div>
                 </div>
 
                 <div>
-                    <button type="submit" class="group relative flex w-full justify-center rounded-lg bg-brand-700 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors duration-200">
+                    <button type="submit"
+                        class="group relative flex w-full justify-center rounded-lg bg-brand-700 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition-colors duration-200">
                         Entrar
                     </button>
                 </div>
