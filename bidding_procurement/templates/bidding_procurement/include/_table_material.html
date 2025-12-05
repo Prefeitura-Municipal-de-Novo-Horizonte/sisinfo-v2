@@ -29,8 +29,7 @@
                         class="bg-red-100 text-red-800 text-[10px] font-medium px-2 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Inativo</span>
                     {% endif %}
                 </td>
-                <td class="px-3 py-2 max-w-xs truncate" title="{{ assoc.supplier|default:'-' }}">{{
-                    assoc.supplier|default:"-" }}</td>
+                <td class="px-3 py-2 max-w-xs truncate" title="{{ assoc.supplier|default:'-' }}">{{ assoc.supplier|default:"-" }}</td>
                 <td class="px-3 py-2 whitespace-nowrap">R$ {{ assoc.price|floatformat:2 }}</td>
                 <td class="px-3 py-2">{{ assoc.readjustment }}%</td>
                 <td class="px-3 py-2 whitespace-nowrap">R$ {{ assoc.total_price|floatformat:2 }}</td>

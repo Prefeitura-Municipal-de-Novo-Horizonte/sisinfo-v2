@@ -61,13 +61,11 @@
             class="border-t border-gray-200 dark:border-gray-700 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Responsável</p>
-                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{
-                    diretoria.accountable }}</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{ diretoria.accountable }}</p>
             </div>
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Tipo</p>
-                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{
-                    diretoria.get_kind_display|default:"-" }}</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{ diretoria.get_kind_display|default:"-" }}</p>
             </div>
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Total de Setores</p>
