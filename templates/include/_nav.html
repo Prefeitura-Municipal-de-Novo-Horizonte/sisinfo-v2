@@ -39,7 +39,7 @@
       <!-- Setores -->
       <li x-data="{ open: false, showFloating: false, top: 0 }"
         @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
-        @mouseleave="open = false; showFloating = false">
+        @mouseleave="if (!sidebarCollapsed) { open = false }">
         <button x-ref="btn"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
@@ -82,7 +82,7 @@
       <!-- Laudos -->
       <li x-data="{ open: false, showFloating: false, top: 0 }"
         @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
-        @mouseleave="open = false; showFloating = false">
+        @mouseleave="if (!sidebarCollapsed) { open = false }">
         <button x-ref="btn"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
@@ -124,7 +124,7 @@
       <!-- Licitações -->
       <li x-data="{ open: false, showFloating: false, top: 0 }"
         @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
-        @mouseleave="open = false; showFloating = false">
+        @mouseleave="if (!sidebarCollapsed) { open = false }">
         <button x-ref="btn"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
@@ -175,7 +175,7 @@
       <!-- Usuários -->
       <li x-data="{ open: false, showFloating: false, top: 0 }"
         @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
-        @mouseleave="open = false; showFloating = false">
+        @mouseleave="if (!sidebarCollapsed) { open = false }">
         <button x-ref="btn"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
