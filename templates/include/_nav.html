@@ -35,9 +35,9 @@
       </li>
 
       <!-- Setores -->
-      <li x-data="{ open: false, showFloating: false }" @mouseenter="if (sidebarCollapsed) showFloating = true"
-        @mouseleave="if (sidebarCollapsed) showFloating = false">
-        <button @click="if (!sidebarCollapsed) open = !open"
+      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
+        <button
+          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -64,10 +64,9 @@
         </ul>
 
         <!-- Submenu Flutuante -->
-        <div x-show="sidebarCollapsed && showFloating" x-transition @mouseenter="showFloating = true"
-          @mouseleave="showFloating = false"
+        <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition
           class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`top: ${$el.parentElement.getBoundingClientRect().top}px`">
+          :style="`top: ${itemTop}px`">
           <a href="{% url 'organizational_structure:diretorias' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
           <a href="{% url 'organizational_structure:setores' %}"
@@ -76,9 +75,9 @@
       </li>
 
       <!-- Laudos -->
-      <li x-data="{ open: false, showFloating: false }" @mouseenter="if (sidebarCollapsed) showFloating = true"
-        @mouseleave="if (sidebarCollapsed) showFloating = false">
-        <button @click="if (!sidebarCollapsed) open = !open"
+      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
+        <button
+          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -116,9 +115,9 @@
       </li>
 
       <!-- Licitações -->
-      <li x-data="{ open: false, showFloating: false }" @mouseenter="if (sidebarCollapsed) showFloating = true"
-        @mouseleave="if (sidebarCollapsed) showFloating = false">
-        <button @click="if (!sidebarCollapsed) open = !open"
+      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
+        <button
+          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -165,9 +164,9 @@
 
       {% if request.user.is_admin %}
       <!-- Usuários -->
-      <li x-data="{ open: false, showFloating: false }" @mouseenter="if (sidebarCollapsed) showFloating = true"
-        @mouseleave="if (sidebarCollapsed) showFloating = false">
-        <button @click="if (!sidebarCollapsed) open = !open"
+      <li x-data="{ open: false, showFloating: false, itemTop: 0 }">
+        <button
+          @click="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; $nextTick(() => { itemTop = $el.getBoundingClientRect().top }) }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
