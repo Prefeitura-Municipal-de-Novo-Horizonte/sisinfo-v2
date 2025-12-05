@@ -55,7 +55,7 @@ Licitações
         x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-6" style="display: none;">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <form action="" method="get" class="flex flex-col sm:flex-row gap-4 items-end">
-                {% include "bidding_procurement/include/_form_field_standard.html" with field=myFilter.form.name %}
+                {% include "include/_form_field_standard.html" with field=myFilter.form.name %}
                 <button type="submit"
                     class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,10 +80,10 @@ Licitações
             <form action="" method="post">{% csrf_token %}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="md:col-span-2">
-                        {% include "bidding_procurement/include/_form_field_standard.html" with field=form.name %}
+                        {% include "include/_form_field_standard.html" with field=form.name %}
                     </div>
-                    {% include "bidding_procurement/include/_form_field_standard.html" with field=form.date %}
-                    {% include "bidding_procurement/include/_form_field_standard.html" with field=form.status %}
+                    {% include "include/_form_field_standard.html" with field=form.date %}
+                    {% include "include/_form_field_standard.html" with field=form.status %}
                 </div>
                 <div class="flex justify-end">
                     <button type="submit"

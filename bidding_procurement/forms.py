@@ -1,10 +1,8 @@
 from django import forms
 
 from core.mixins import CapitalizeFieldMixin
+from core.constants import STANDARD_INPUT_CLASS
 from bidding_procurement.models import Bidding, Material, MaterialBidding
-
-# Constante de Estilo (Padronização com reports e organizational_structure)
-STANDARD_INPUT_CLASS = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
 
 
 class BiddingForm(CapitalizeFieldMixin, forms.ModelForm):
