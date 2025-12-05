@@ -20,7 +20,7 @@
 <body>
   <div x-data="{
       sidebarOpen: window.innerWidth >= 640,
-      sidebarCollapsed: false,
+      sidebarCollapsed: localStorage.getItem('sidebarCollapsed') === 'true',
       darkMode: localStorage.getItem('theme') === 'dark',
       toggleTheme() {
         this.darkMode = !this.darkMode;
@@ -31,19 +31,14 @@
           document.documentElement.classList.remove('dark');
           localStorage.setItem('theme', 'light');
         }
-        window.dispatchEvent(new CustomEvent('themeChanged', {
-          detail: { theme: this.darkMode ? 'dark' : 'light' }
-        }));
       },
-      init() {
-        if (this.darkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+      toggleSidebar() {
+        this.sidebarCollapsed = !this.sidebarCollapsed;
+        localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed);
       }
-    }" @resize.window="sidebarOpen = window.innerWidth >= 640" x-init="init()" x-cloak
-    class="bg-gray-50 dark:bg-gray-900">
+    }"
+    x-init="if(darkMode) document.documentElement.classList.add('dark'); $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))"
+    class="flex h-screen bg-gray-50 dark:bg-slate-900" x-cloak>
 
     <!-- Sidebar -->
     {% include "include/_nav.html" %}
