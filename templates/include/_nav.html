@@ -1,219 +1,262 @@
 {% load static %}
 
 <!-- Sidebar -->
-<!-- Sidebar -->
-<aside :class="sidebarCollapsed ? 'w-16' : 'w-64'" x-show="sidebarOpen"
+<aside :class="sidebarCollapsed ? 'w-20' : 'w-72'" x-show="sidebarOpen"
   x-transition:enter="transition-all duration-300 ease-in-out"
   x-transition:leave="transition-all duration-300 ease-in-out"
-  class="flex-shrink-0 z-40 h-full transition-all duration-300 bg-slate-900 dark:bg-white border-r border-slate-800 dark:border-gray-200 shadow-lg relative flex flex-col">
-  <div class="h-full px-3 py-4 overflow-y-auto flex flex-col custom-scrollbar">
+  class="flex-shrink-0 z-40 h-full transition-all duration-300 bg-gradient-to-b from-gray-900/95 to-gray-900/98 backdrop-blur-xl border-r border-white/10 shadow-2xl relative flex flex-col">
+  <div class="h-full px-4 py-6 overflow-y-auto flex flex-col custom-scrollbar">
+
+    <!-- User Profile (Top) -->
+    <div x-data="{ userMenuOpen: false }" class="mb-8 pb-6 border-b border-white/10">
+      <button @click="userMenuOpen = !userMenuOpen"
+        class="flex items-center w-full p-3 text-white rounded-xl hover:bg-white/10 transition-all duration-200 group"
+        :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+        <img class="w-10 h-10 rounded-full ring-2 ring-brand-500/30" src="{% static 'img/profile-empty.png' %}"
+          alt="user">
+        <div x-show="!sidebarCollapsed" class="flex-1 text-left">
+          <p class="text-sm font-semibold text-white">{{ request.user.fullname }}</p>
+          <p class="text-xs text-gray-400 truncate">{{ request.user.email }}</p>
+        </div>
+        <svg x-show="!sidebarCollapsed" :class="{'rotate-180': userMenuOpen}"
+          class="w-4 h-4 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <!-- User Menu Dropdown -->
+      <div x-show="userMenuOpen && !sidebarCollapsed" x-transition class="mt-2 space-y-1">
+        <a href="{% url 'authenticate:profile' %}"
+          class="block px-4 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Perfil</a>
+        <a href="{% url 'authenticate:change_password' %}"
+          class="block px-4 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Trocar
+          Senha</a>
+        <a href="{% url 'authenticate:logout' %}"
+          class="block px-4 py-2 text-sm text-red-400 rounded-lg hover:bg-red-500/10 hover:text-red-300 transition-all">Sair</a>
+      </div>
+
+      <!-- User Menu Floating (when collapsed) -->
+      <template x-teleport="body">
+        <div x-show="sidebarCollapsed && userMenuOpen" @click.away="userMenuOpen = false" x-transition x-cloak
+          class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
+          :style="`bottom: 20px`">
+          <a href="{% url 'authenticate:profile' %}"
+            class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Perfil</a>
+          <a href="{% url 'authenticate:change_password' %}"
+            class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Trocar
+            Senha</a>
+          <a href="{% url 'authenticate:logout' %}"
+            class="block px-3 py-2 text-sm text-red-400 rounded-lg hover:bg-red-500/10 hover:text-red-300 transition-all">Sair</a>
+        </div>
+      </template>
+    </div>
 
     <!-- Logo -->
-    <div class="flex items-center justify-center mb-6 pb-4 border-b border-slate-800 dark:border-gray-200">
-      <div x-show="!sidebarCollapsed" class="flex items-center">
-        <img src="{% static 'img/logo/logo.png' %}" class="h-8 mr-2" alt="Logo">
-        <span class="text-xl font-semibold text-white dark:text-gray-900">SISInfo V2</span>
+    <div class="mb-6 text-center" :class="sidebarCollapsed ? '' : 'px-2'">
+      <div x-show="!sidebarCollapsed" class="flex items-center justify-center space-x-3">
+        <img src="{% static 'img/logo/logo.png' %}" class="h-10 w-auto" alt="Logo">
+        <div class="text-left">
+          <h1 class="text-lg font-bold text-white">SISInfo</h1>
+          <p class="text-xs text-gray-400">V2</p>
+        </div>
       </div>
       <div x-show="sidebarCollapsed" class="flex items-center justify-center">
-        <img src="{% static 'img/logo/logo.png' %}" class="h-8" alt="Logo">
+        <img src="{% static 'img/logo/logo.png' %}" class="h-8 w-auto" alt="Logo">
       </div>
     </div>
 
-    <!-- Menu -->
-    <ul class="space-y-2 font-medium flex-1">
+    <!-- Navigation Menu -->
+    <nav class="flex-1 space-y-2">
+      <p x-show="!sidebarCollapsed" class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Menu
+        Principal</p>
+
       <!-- Dashboard -->
-      <li>
-        <a href="{% url 'dashboard:index' %}"
-          class="flex items-center p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
-            fill="currentColor" viewBox="0 0 22 21">
-            <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z" />
-            <path
-              d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z" />
-          </svg>
-          <span x-show="!sidebarCollapsed" class="ml-3">Dashboard</span>
-        </a>
-      </li>
+      <a href="{% url 'dashboard:index' %}"
+        class="flex items-center px-3 py-2.5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 group"
+        :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+        <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-400 transition-colors" fill="currentColor"
+          viewBox="0 0 20 20">
+          <path
+            d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+        </svg>
+        <span x-show="!sidebarCollapsed" class="text-sm font-medium">Dashboard</span>
+      </a>
 
       <!-- Setores -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }" class="list-none">
         <button x-ref="btn"
           @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
-          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
-            fill="currentColor" viewBox="0 0 18 18">
-            <path
-              d="M17 16h-1V2a1 1 0 1 0 0-2H2a1 1 0 0 0 0 2v14H1a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM5 4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4Zm0 5V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Zm6 7H7v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3Zm2-7a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Zm0-4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1Z" />
+          class="flex items-center w-full px-3 py-2.5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 group"
+          :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-400 transition-colors" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z"
+              clip-rule="evenodd" />
           </svg>
-          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Setores</span>
-          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
-            viewBox="0 0 10 6">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m1 1 4 4 4-4" />
+          <span x-show="!sidebarCollapsed" class="flex-1 text-sm font-medium text-left">Setores</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}"
+            class="w-4 h-4 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
-        <!-- Submenu Normal -->
-        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+        <!-- Submenu Inline -->
+        <ul x-show="open && !sidebarCollapsed" x-transition class="mt-2 ml-8 space-y-1">
           <li><a href="{% url 'organizational_structure:diretorias' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Diretorias</a>
           </li>
           <li><a href="{% url 'organizational_structure:setores' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Setores</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Setores</a>
           </li>
         </ul>
 
-        <!-- Submenu Flutuante -->
+        <!-- Submenu Floating -->
         <template x-teleport="body">
           <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
             :style="`top: ${top}px`">
             <a href="{% url 'organizational_structure:diretorias' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Diretorias</a>
             <a href="{% url 'organizational_structure:setores' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Setores</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Setores</a>
           </div>
         </template>
       </li>
 
       <!-- Laudos -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }" class="list-none">
         <button x-ref="btn"
           @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
-          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
-            fill="none" viewBox="0 0 16 20">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M6 1v4a1 1 0 0 1-1 1H1m8-2h3M9 7h3m-4 3v6m-4-3h8m3-11v16a.969.969 0 0 1-.932 1H1.934A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.829 1h8.239A.969.969 0 0 1 15 2ZM4 10h8v6H4v-6Z" />
+          class="flex items-center w-full px-3 py-2.5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 group"
+          :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-400 transition-colors" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+              d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+              clip-rule="evenodd" />
           </svg>
-          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Laudos</span>
-          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
-            viewBox="0 0 10 6">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m1 1 4 4 4-4" />
+          <span x-show="!sidebarCollapsed" class="flex-1 text-sm font-medium text-left">Laudos</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}"
+            class="w-4 h-4 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
-        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+        <ul x-show="open && !sidebarCollapsed" x-transition class="mt-2 ml-8 space-y-1">
           <li><a href="{% url 'reports:reports' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Exibir
               Laudos</a></li>
           <li><a href="{% url 'reports:register_report' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Cadastrar</a>
           </li>
         </ul>
 
         <template x-teleport="body">
           <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
             :style="`top: ${top}px`">
             <a href="{% url 'reports:reports' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Exibir
               Laudos</a>
             <a href="{% url 'reports:register_report' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Cadastrar</a>
           </div>
         </template>
       </li>
 
       <!-- Licitações -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }" class="list-none">
         <button x-ref="btn"
           @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
-          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
-            fill="none" viewBox="0 0 12 20">
-            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
-              d="M1 6v8a5 5 0 1 0 10 0V4.5a3.5 3.5 0 1 0-7 0V13a2 2 0 0 0 4 0V6" />
+          class="flex items-center w-full px-3 py-2.5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 group"
+          :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-400 transition-colors" fill="currentColor"
+            viewBox="0 0 20 20">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path fill-rule="evenodd"
+              d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+              clip-rule="evenodd" />
           </svg>
-          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Licitações</span>
-          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
-            viewBox="0 0 10 6">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m1 1 4 4 4-4" />
+          <span x-show="!sidebarCollapsed" class="flex-1 text-sm font-medium text-left">Licitações</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}"
+            class="w-4 h-4 text-gray-400 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
           </svg>
         </button>
 
-        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
-          {% if request.user.is_tech %}
-          <li><a href="{% url 'bidding_procurement:licitacoes' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Licitações</a>
-          </li>
-          {% endif %}
+        <ul x-show="open && !sidebarCollapsed" x-transition class="mt-2 ml-8 space-y-1">
+          {% if request.user.is_tech %}<li><a href="{% url 'bidding_procurement:licitacoes' %}"
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Licitações</a>
+          </li>{% endif %}
           <li><a href="{% url 'suppliers:fornecedores' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Fornecedores</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Fornecedores</a>
           </li>
           <li><a href="{% url 'bidding_procurement:materiais' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Materiais</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Materiais</a>
           </li>
         </ul>
 
         <template x-teleport="body">
           <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
             :style="`top: ${top}px`">
-            {% if request.user.is_tech %}
-            <a href="{% url 'bidding_procurement:licitacoes' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Licitações</a>
-            {% endif %}
+            {% if request.user.is_tech %}<a href="{% url 'bidding_procurement:licitacoes' %}"
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Licitações</a>{%
+            endif %}
             <a href="{% url 'suppliers:fornecedores' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Fornecedores</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Fornecedores</a>
             <a href="{% url 'bidding_procurement:materiais' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Materiais</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Materiais</a>
           </div>
         </template>
       </li>
 
       {% if request.user.is_admin %}
       <!-- Usuários -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }" class="list-none">
         <button x-ref="btn"
           @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
-          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
-            fill="currentColor" viewBox="0 0 20 18">
+          class="flex items-center w-full px-3 py-2.5 text-gray-300 rounded-xl hover:bg-white/10 hover:text-white transition-all duration-200 group"
+          :class="sidebarCollapsed ? 'justify-center' : 'space-x-3'">
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-brand-400 transition-colors" fill="currentColor"
+            viewBox="0 0 20 20">
             <path
-              d="M14 2a3.963 3.963 0 0 0-1.4.267 6.439 6.439 0 0 1-1.331 6.638A4 4 0 1 0 14 2Zm1 9h-1.264A6.957 6.957 0 0 1 15 15v2a2.97 2.97 0 0 1-.184 1H19a1 1 0 0 0 1-1v-1a5.006 5.006 0 0 0-5-5ZM6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Z" />
+              d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
           </svg>
-          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Usuários</span>
+          <span x-show="!sidebarCollapsed" class="flex-1 text-sm font-medium text-left">Usuários</span>
           <span x-show="!sidebarCollapsed"
-            class="px-2 text-xs font-medium text-brand-200 bg-brand-900 dark:bg-brand-100 dark:text-brand-800 rounded-full">Admin</span>
+            class="px-2 py-0.5 text-xs font-medium text-brand-200 bg-brand-600/20 rounded-full">Admin</span>
         </button>
 
-        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+        <ul x-show="open && !sidebarCollapsed" x-transition class="mt-2 ml-8 space-y-1">
           <li><a href="{% url 'authenticate:show_users' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Controle</a>
           </li>
           <li><a href="{% url 'authenticate:register_user' %}"
-              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+              class="block px-3 py-2 text-sm text-gray-400 rounded-lg hover:bg-white/5 hover:text-white transition-all">Cadastrar</a>
           </li>
         </ul>
 
         <template x-teleport="body">
           <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            class="fixed left-24 bg-gray-900/95 backdrop-blur-xl shadow-2xl rounded-xl p-2 z-50 min-w-[200px] border border-white/10"
             :style="`top: ${top}px`">
             <a href="{% url 'authenticate:show_users' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Controle</a>
             <a href="{% url 'authenticate:register_user' %}"
-              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Cadastrar</a>
+              class="block px-3 py-2 text-sm text-gray-300 rounded-lg hover:bg-white/5 hover:text-white transition-all">Cadastrar</a>
           </div>
         </template>
       </li>
       {% endif %}
-    </ul>
+    </nav>
 
-    <!-- Footer -->
-    <div class="pt-4 mt-4 border-t border-slate-800 dark:border-gray-200 space-y-3">
-      <!-- Controls -->
-      <div class="flex gap-4" :class="sidebarCollapsed ? 'flex-col items-center' : 'items-center justify-center'">
+    <!-- Footer Controls -->
+    <div class="pt-6 mt-6 border-t border-white/10">
+      <div class="flex items-center" :class="sidebarCollapsed ? 'justify-center' : 'justify-between'">
         <button @click="toggleTheme()"
-          class="p-2 text-gray-400 dark:text-gray-500 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">
+          class="p-2.5 text-gray-400 rounded-xl hover:bg-white/10 hover:text-white transition-all">
           <svg x-show="!darkMode" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
           </svg>
@@ -223,47 +266,20 @@
             </path>
           </svg>
         </button>
-        <button @click="toggleSidebar()"
-          class="hidden sm:block p-2 text-gray-400 dark:text-gray-500 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">
-          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd"
-              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z">
-            </path>
+        <button x-show="!sidebarCollapsed" @click="toggleSidebar()"
+          class="p-2.5 text-gray-400 rounded-xl hover:bg-white/10 hover:text-white transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
           </svg>
         </button>
-      </div>
-
-      <!-- User -->
-      <div x-data="{ userMenuOpen: false }" @mouseenter="userMenuOpen = true" @mouseleave="userMenuOpen = false">
-        <button
-          class="flex items-center w-full p-2 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100"
-          :class="sidebarCollapsed ? 'justify-center' : ''">
-          <img class="w-8 h-8 rounded-full" src="{% static 'img/profile-empty.png' %}" alt="user">
-          <div x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">
-            <p class="text-sm font-medium">{{ request.user.fullname }}</p>
-            <p class="text-xs text-gray-400 dark:text-gray-500 truncate">{{ request.user.email }}</p>
-          </div>
-        </button>
-
-        <div x-show="userMenuOpen" x-transition x-cloak
-          class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
-          :style="`bottom: 20px`">
-          <a href="{% url 'authenticate:profile' %}"
-            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Perfil</a>
-          <a href="{% url 'authenticate:change_password' %}"
-            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Trocar
-            Senha</a>
-          <a href="{% url 'authenticate:logout' %}"
-            class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Sair</a>
-        </div>
       </div>
     </div>
   </div>
 </aside>
 
-<!-- Mobile Button -->
+<!-- Mobile Toggle Button -->
 <button @click="sidebarOpen = !sidebarOpen"
-  class="fixed top-4 left-4 z-50 p-2 text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700">
+  class="fixed top-4 left-4 z-50 p-2.5 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 rounded-xl shadow-lg sm:hidden hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">
   <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
     <path fill-rule="evenodd"
       d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z">
@@ -273,4 +289,4 @@
 
 <!-- Mobile Overlay -->
 <div x-show="sidebarOpen" @click="sidebarOpen = false" x-transition
-  class="fixed inset-0 z-30 bg-gray-900 bg-opacity-50 sm:hidden"></div>
+  class="fixed inset-0 z-30 bg-gray-900/50 backdrop-blur-sm sm:hidden"></div>
