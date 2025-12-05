@@ -51,10 +51,7 @@
                     <div>
                         <label for="{{ form.username.id_for_label }}"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                        {{ form.username|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm
-                        rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800
-                        dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500
-                        dark:focus:border-brand-500" }}
+                        {{ form.username|style_input }}
                         {% if form.username.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.username.errors.0 }}</p>
                         {% endif %}
@@ -64,14 +61,10 @@
                         <label for="{{ form.password.id_for_label }}"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Senha</label>
                         <div class="relative">
-                            {{ form.password|add_class:"bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm
-                            rounded-lg focus:ring-brand-600 focus:border-brand-600 block w-full p-2.5 dark:bg-gray-800
-                            dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500
-                            dark:focus:border-brand-500 pr-10" }}
+                            {{ form.password|style_input:"pr-10" }}
                             <button type="button"
                                 @click="showPassword = !showPassword; $el.previousElementSibling.type = showPassword ? 'text' : 'password'"
-                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white cursor-pointer"
-                                type="button">
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white cursor-pointer">
                                 <svg x-show="!showPassword" class="w-5 h-5" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
