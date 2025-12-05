@@ -139,6 +139,9 @@
   }
 }
 
+/* Alpine.js - Evitar flash de conteúdo não estilizado */
+[x-cloak] { display: none !important; }
+
 /* Full Width Section */
 .dashboard-section-full {
   grid-column: span 1;

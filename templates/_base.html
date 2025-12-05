@@ -42,7 +42,8 @@
           document.documentElement.classList.remove('dark');
         }
       }
-    }" @resize.window="sidebarOpen = window.innerWidth >= 640" x-init="init()" class="bg-gray-50 dark:bg-gray-900">
+    }" @resize.window="sidebarOpen = window.innerWidth >= 640" x-init="init()" x-cloak
+    class="bg-gray-50 dark:bg-gray-900">
 
     <!-- Sidebar -->
     {% include "include/_nav.html" %}
