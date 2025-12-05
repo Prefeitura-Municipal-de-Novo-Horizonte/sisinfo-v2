@@ -1,287 +1,45 @@
-/* ============================================
-   SISInfo V2 - Custom Styles
-   ============================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* ============================================
-   1. UTILITIES & HELPERS
-   ============================================ */
-
-/* Prevent overflow in chart containers */
-.chart-container {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-.chart-container > div {
-  width: 100% !important;
-}
-
-/* Page Headers */
-.page-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.dark .page-header {
-  border-bottom-color: #374151;
-}
-
-.page-title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: #111827;
-  margin: 0;
-}
-
-.dark .page-title {
-  color: #ffffff;
-}
-
-@media (min-width: 768px) {
-  .page-title {
-    font-size: 2.25rem;
-  }
-}
-
-.page-subtitle {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
-}
-
-.dark .page-subtitle {
-  color: #9ca3af;
-}
-
-/* ============================================
-   2. DASHBOARD COMPONENTS
-   ============================================ */
-
-/* Dashboard Cards */
-.dashboard-card {
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  border: 1px solid #e5e7eb;
-  padding: 1.5rem;
-  transition: all 0.2s ease;
-}
-
-.dark .dashboard-card {
-  background-color: #1f2937;
-  border-color: #374151;
-}
-
-.dashboard-card:hover {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dashboard-card-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 1rem;
-}
-
-.dark .dashboard-card-title {
-  color: #ffffff;
-}
-
-/* Compact Calendar Widget */
-.calendar-widget {
-  background-color: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  padding: 1rem;
-}
-
-.dark .calendar-widget {
-  background-color: #1f2937;
-  border-color: #374151;
-}
-
-.calendar-widget .fc {
-  font-size: 0.875rem;
-}
-
-.calendar-widget .fc-toolbar {
-  font-size: 0.75rem;
-}
-
-.calendar-widget .fc-daygrid-day-number {
-  font-size: 0.75rem;
-}
-
-/* ============================================
-   3. RESPONSIVE GRID SYSTEM
-   ============================================ */
-
-/* Dashboard Grid */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Alpine.js - Evitar flash de conteúdo não estilizado */
-[x-cloak] { display: none !important; }
-
-/* Full Width Section */
-.dashboard-section-full {
-  grid-column: span 1;
-}
-
-@media (min-width: 768px) {
-  .dashboard-section-full {
-    grid-column: span 2;
-  }
-}
-
-@media (min-width: 1024px) {
-  .dashboard-section-full {
-    grid-column: span 3;
-  }
-}
-
-/* Two-thirds Width */
-.dashboard-section-2-3 {
-  grid-column: span 1;
-}
-
-@media (min-width: 1024px) {
-  .dashboard-section-2-3 {
-    grid-column: span 2;
-  }
-}
-
-/* One-third Width */
-.dashboard-section-1-3 {
-  grid-column: span 1;
-}
-
-/* ============================================
-   4. SIDEBAR ENHANCEMENTS
-   ============================================ */
-
-/* Sidebar Menu Items */
-.sidebar-menu-item {
-  display: flex;
-  align-items: center;
-  padding: 0.625rem;
-  color: #111827;
-  border-radius: 0.5rem;
-  transition: all 0.15s ease;
-}
-
-.dark .sidebar-menu-item {
-  color: #ffffff;
-}
-
-.sidebar-menu-item:hover {
-  background-color: #f3f4f6;
-}
-
-.dark .sidebar-menu-item:hover {
-  background-color: #374151;
-}
-
-.sidebar-menu-item-active {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-}
-
-.dark .sidebar-menu-item-active {
-  background-color: #1e3a8a;
-  color: #93c5fd;
-}
-
-.sidebar-menu-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: #6b7280;
-  transition: all 0.075s ease;
-}
-
-.dark .sidebar-menu-icon {
-  color: #9ca3af;
-}
-
-.sidebar-menu-item:hover .sidebar-menu-icon {
-  color: #111827;
-}
-
-.dark .sidebar-menu-item:hover .sidebar-menu-icon {
-  color: #ffffff;
-}
-
-/* ============================================
-   5. ANIMATIONS
-   ============================================ */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* ============================================
-   6. MOBILE OPTIMIZATIONS
-   ============================================ */
-
-@media (max-width: 640px) {
-  .page-title {
-    font-size: 1.25rem;
-  }
-  
-  .dashboard-card {
-    padding: 1rem;
-  }
-  
-  .chart-container {
-    min-height: 250px;
-  }
-}
-
-/* ============================================
-   7. PRINT STYLES
-   ============================================ */
-
-@media print {
-  .sidebar,
-  .page-header,
-  nav,
-  footer {
+/* Alpine.js Cloak */
+[x-cloak] {
     display: none !important;
-  }
-  
-  .dashboard-card {
-    box-shadow: none;
-    border: 1px solid #000;
-    page-break-inside: avoid;
-  }
+}
+
+/* Responsive Typography */
+html {
+    font-size: 14px; /* Base size for mobile */
+}
+
+@media (min-width: 640px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 1024px) {
+    html {
+        font-size: 16px; /* Standard size for desktop */
+    }
+}
+
+@media (min-width: 1536px) {
+    html {
+        font-size: 17px; /* Slightly larger for huge screens */
+    }
+}
+
+/* Custom Scrollbar for Sidebar */
+aside div::-webkit-scrollbar {
+    width: 4px;
+}
+
+aside div::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+aside div::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 20px;
 }
