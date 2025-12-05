@@ -37,9 +37,10 @@
       </li>
 
       <!-- Setores -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }"
+        @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
+        @mouseleave="open = false; showFloating = false">
         <button x-ref="btn"
-          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -79,9 +80,10 @@
       </li>
 
       <!-- Laudos -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }"
+        @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
+        @mouseleave="open = false; showFloating = false">
         <button x-ref="btn"
-          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -120,9 +122,10 @@
       </li>
 
       <!-- Licitações -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }"
+        @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
+        @mouseleave="open = false; showFloating = false">
         <button x-ref="btn"
-          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
@@ -170,9 +173,10 @@
 
       {% if request.user.is_admin %}
       <!-- Usuários -->
-      <li x-data="{ open: false, showFloating: false, top: 0 }">
+      <li x-data="{ open: false, showFloating: false, top: 0 }"
+        @mouseenter="if (!sidebarCollapsed) { open = true } else { showFloating = true; top = $refs.btn.getBoundingClientRect().top; }"
+        @mouseleave="open = false; showFloating = false">
         <button x-ref="btn"
-          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
           class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
           :class="sidebarCollapsed ? 'justify-center' : ''">
           <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
