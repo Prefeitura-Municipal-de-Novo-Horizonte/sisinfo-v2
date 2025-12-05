@@ -38,22 +38,23 @@
       }
     }"
     x-init="if(darkMode) document.documentElement.classList.add('dark'); $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))"
-    class="flex min-h-screen w-full bg-gray-50 dark:bg-slate-900 overflow-x-hidden" x-cloak>
+    class="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden" x-cloak>
 
     <!-- Sidebar -->
     {% include "include/_nav.html" %}
 
-    <!-- Main Content -->
-    <main :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'"
-      class="flex-1 w-full p-6 transition-all duration-300 overflow-x-hidden">
-      {% block content %}
-      {% endblock content %}
-  </div>
-  </main>
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col overflow-hidden relative w-full">
+      <!-- Main Content -->
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-slate-900 p-6 w-full">
+        {% block content %}
+        {% endblock content %}
+      </main>
 
-  <footer :class="sidebarCollapsed ? 'sm:ml-16' : 'sm:ml-64'" class="transition-all duration-300">
-    {% include "include/_footer.html" %}
-  </footer>
+      <footer class="transition-all duration-300">
+        {% include "include/_footer.html" %}
+      </footer>
+    </div>
   </div>
 
   {% include "include/_js.html" %}
