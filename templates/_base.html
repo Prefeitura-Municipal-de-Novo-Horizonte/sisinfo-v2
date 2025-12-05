@@ -38,7 +38,7 @@
       }
     }"
     x-init="if(darkMode) document.documentElement.classList.add('dark'); $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))"
-    class="flex h-screen bg-gray-50 dark:bg-slate-900" x-cloak>
+    class="flex min-h-screen w-full bg-gray-50 dark:bg-slate-900 overflow-x-hidden" x-cloak>
 
     <!-- Sidebar -->
     {% include "include/_nav.html" %}

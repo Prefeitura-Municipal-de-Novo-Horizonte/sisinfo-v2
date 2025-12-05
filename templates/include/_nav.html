@@ -65,7 +65,7 @@
 
         <!-- Submenu Flutuante -->
         <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-          class="fixed left-20 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
+          class="fixed left-24 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[220px] border border-slate-700 dark:border-gray-200"
           :style="`top: ${top}px`">
           <a href="{% url 'organizational_structure:diretorias' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Diretorias</a>
@@ -103,7 +103,7 @@
         </ul>
 
         <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-          class="fixed left-20 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
+          class="fixed left-24 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[220px] border border-slate-700 dark:border-gray-200"
           :style="`top: ${top}px`">
           <a href="{% url 'reports:reports' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Exibir
@@ -147,7 +147,7 @@
         </ul>
 
         <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-          class="fixed left-20 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
+          class="fixed left-24 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[220px] border border-slate-700 dark:border-gray-200"
           :style="`top: ${top}px`">
           {% if request.user.is_tech %}
           <a href="{% url 'bidding_procurement:licitacoes' %}"
@@ -187,7 +187,7 @@
         </ul>
 
         <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
-          class="fixed left-20 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[180px] border border-slate-700 dark:border-gray-200"
+          class="fixed left-24 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[220px] border border-slate-700 dark:border-gray-200"
           :style="`top: ${top}px`">
           <a href="{% url 'authenticate:show_users' %}"
             class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Controle</a>
