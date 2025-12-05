@@ -215,4 +215,4 @@ def profile_user(request, slug):
     context = {
         'user': user,
     }
-    return render(request, 'users/profiles.html', context)
+    return render(request, 'users/profile_professional.html', context)
