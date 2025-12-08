@@ -1,0 +1,19 @@
+# requirements-dev.txt
+# Dependências apenas para desenvolvimento e análise de dados
+# Não são necessárias em produção
+
+# Análise de dados
+pandas>=2.0.0
+openpyxl>=3.1.0  # Para ler arquivos .xlsx
+xlrd>=2.0.0      # Para ler arquivos .xls antigos
+
+# Jupyter para análise interativa
+jupyter>=1.0.0
+ipython>=8.0.0
+
+# Visualização de dados
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Ferramentas de desenvolvimento
+ipdb>=0.13.0     # Debugger interativo
