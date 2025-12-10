@@ -151,12 +151,12 @@
             margin-top: 0.3cm;
             border-collapse: collapse;
             width: 100%;
-            font-size: 10pt;
+            font-size: 8pt;
         }
 
         table#materials th {
             border-bottom: .5mm solid #a9a;
-            font-size: 10pt;
+            font-size: 8pt;
             font-weight: 700;
             padding-bottom: .25cm;
             text-transform: uppercase;
@@ -176,17 +176,24 @@
 
         table#materials th,
         table#materials td {
-            text-align: center;
+            text-align: left;
         }
 
         table#materials th:first-of-type,
         table#materials td:first-of-type {
+            text-align: center;
+            width: 10%;
+        }
+
+        table#materials th:nth-child(2),
+        table#materials td:nth-child(2) {
             text-align: left;
         }
 
         table#materials th:last-of-type,
         table#materials td:last-of-type {
-            text-align: right;
+            text-align: left;
+            width: 30%;
         }
 
         #rodape {
@@ -261,14 +268,8 @@
                             {% for material in report.laudos.all %}
                             <tr>
                                 <td>{{material.quantity}}</td>
-                                <td>{{material.material.name}}</td>
-                                <td>
-                                    {% for bidding_assoc in material.material.bidding_associations.all %}
-                                    {{ bidding_assoc.bidding.name }}{% if not forloop.last %}, {% endif %}
-                                    {% empty %}
-                                    Sem licitação
-                                    {% endfor %}
-                                </td>
+                                <td>{{material.material_bidding.material.name}}</td>
+                                <td>{{material.material_bidding.bidding.name|cut:"Processo Licitatório "}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
