@@ -15,7 +15,7 @@ def index(request):
     sector_data = DashboardService.get_reports_by_sector(30)
 
     # Top Materials
-    materials_data = DashboardService.get_top_materials()
+    materials_data = DashboardService.get_top_materials_by_period(30)
 
     # Calendar Events
     calendar_events = DashboardService.get_recent_reports_for_calendar()

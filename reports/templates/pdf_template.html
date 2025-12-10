@@ -63,6 +63,17 @@
                     <article>
                         <p><b>Justificativa:</b> {{report.justification}}</p>
                     </article>
+                    <style>
+                        #materials {
+                            font-size: 8pt !important;
+                        }
+
+                        #materials th,
+                        #materials td {
+                            font-size: 8pt !important;
+                            text-align: left !important;
+                        }
+                    </style>
                     <table id="materials">
                         <thead>
                             <tr>
@@ -76,7 +87,7 @@
                             <tr>
                                 <td>{{material.quantity}}</td>
                                 <td>{{material.material_bidding.material.name}}</td>
-                                <td>{{material.material_bidding.bidding.name}}</td>
+                                <td>{{material.material_bidding.bidding.name|cut:"Processo Licitatório "}}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
