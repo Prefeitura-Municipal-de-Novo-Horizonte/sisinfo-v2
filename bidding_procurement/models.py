@@ -107,6 +107,20 @@ class Material(AbsBiddingMaterial):
     
     A relação com Bidding é Many-to-Many através da tabela intermediária MaterialBidding.
     """
+    # Campos adicionais
+    brand = models.CharField(
+        "marca",
+        max_length=200,
+        blank=True,
+        help_text="Marca do material (ex: TSA AD-09, DEKO 764-J CAT6)"
+    )
+    unit = models.CharField(
+        "unidade",
+        max_length=20,
+        blank=True,
+        help_text="Unidade de medida (ex: un, M, pc, cx)"
+    )
+    
     # Many-to-Many com Bidding através de MaterialBidding
     biddings = models.ManyToManyField(
         Bidding,

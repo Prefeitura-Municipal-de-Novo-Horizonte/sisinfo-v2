@@ -1,7 +1,8 @@
 from datetime import date, datetime
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
+from django.core.exceptions import PermissionDenied
 from reports.models import Report, MaterialReport, InterestRequestMaterial
 
 
@@ -47,3 +48,23 @@ def update_report_status_on_interest_request(sender, instance, created, **kwargs
     if created and instance.report and instance.report.status == '1':
         instance.report.status = '2'  # Aguardando
         instance.report.save(update_fields=['status'])
+
+
+@receiver(pre_delete, sender='bidding_procurement.MaterialBidding')
+def protect_material_reports(sender, instance, **kwargs):
+    """
+    Previne deleção de MaterialBidding que tem MaterialReports associados.
+    
+    Este signal protege a integridade dos laudos, impedindo que MaterialBiddings
+    sejam deletados quando há laudos dependentes.
+    """
+    # Verificar se há MaterialReports usando este MaterialBidding
+    reports = MaterialReport.objects.filter(material_bidding=instance)
+    
+    if reports.exists():
+        raise PermissionDenied(
+            f'❌ Não é possível deletar MaterialBidding {instance.id} '
+            f'({instance.material.name}) pois há {reports.count()} laudos associados! '
+            f'Para deletar, primeiro remova ou reatribua os laudos.'
+        )
+
