@@ -321,3 +321,4 @@ pyrightconfig.json
 .docker/
 
 *backup.json*
+backups/
