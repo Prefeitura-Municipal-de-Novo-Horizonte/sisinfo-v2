@@ -22,8 +22,12 @@ def unauthenticated_user(view_func):
 
 
 def admin_only(view_func):
+    """
+    Decorator que permite acesso apenas para administradores ativos.
+    Usa o método can_access_admin() do modelo.
+    """
     def wrapper_function(request, *args, **kwargs):
-        if not request.user.is_admin:
+        if not hasattr(request.user, 'can_access_admin') or not request.user.can_access_admin():
             messages.add_message(request, constants.ERROR,
                                  'Você não tem autorização de administrador.')
             return redirect('dashboard:index')

@@ -57,8 +57,19 @@ class ProfessionalUserManager(BaseUserManager):
 
 class ProfessionalUser(AbstractBaseUser):
     """
-    Modelo de usuário personalizado para o sistema.
-    Substitui o usuário padrão do Django.
+    Modelo de usuário personalizado para o SISInfo V2.
+    
+    Este modelo substitui o usuário padrão do Django e adiciona
+    campos específicos para gestão de profissionais da TI municipal.
+    
+    Attributes:
+        email: Email do usuário (identificador único)
+        first_name: Primeiro nome do usuário
+        last_name: Sobrenome do usuário
+        registration: Número de matrícula funcional (opcional)
+        is_tech: Indica se possui privilégios de técnico
+        is_admin: Indica se possui privilégios de administrador
+        first_login: Indica se ainda não completou onboarding
     """
     first_name = models.CharField('primeiro nome', max_length=100)
     last_name = models.CharField('ultimo nome', max_length=150)
@@ -121,16 +132,33 @@ class ProfessionalUser(AbstractBaseUser):
 
     @property
     def fullname(self):
+        """Retorna nome completo do usuário."""
         return f"{self.first_name} {self.last_name}"
 
     @property
     def is_staff(self):
-        "Este usuário é um Tecnico?"
-        # Resposta mais simples possível: Todos Administradores são tecnicos
+        """Indica se usuário é técnico (compatibilidade Django admin)."""
         return self.is_tech
 
     @property
     def is_superuser(self):
-        "Este usuário é um Administrador?"
-        # Resposta mais simples possível: somente usuario administrator
+        """Indica se usuário é administrador (compatibilidade Django admin)."""
         return self.is_admin
+    
+    def can_access_admin(self) -> bool:
+        """
+        Verifica se usuário pode acessar painel administrativo.
+        
+        Returns:
+            bool: True se usuário está ativo e é administrador
+        """
+        return self.is_active and self.is_admin
+    
+    def get_role_display(self) -> str:
+        """
+        Retorna nome amigável do cargo do usuário.
+        
+        Returns:
+            str: Nome do cargo baseado em permissões
+        """
+        return self.officer()

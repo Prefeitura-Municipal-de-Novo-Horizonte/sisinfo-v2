@@ -59,6 +59,11 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
+    """
+    Formulário para edição de perfil de usuários existentes.
+    
+    Não permite alteração de senha (use PasswordChangeForm).
+    """
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -74,6 +79,11 @@ class UserChangeForm(forms.ModelForm):
 
 
 class AuthenticationFormCustom(AuthenticationForm):
+    """
+    Formulário customizado de autenticação.
+    
+    Usa email como username e aplica estilos floating label.
+    """
     username = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': ''}))
     password = forms.CharField(widget=forms.PasswordInput(

@@ -119,3 +119,18 @@ class AuthenticateService:
         user.is_tech = False
         user.save()
         return f"Usuario desabilitado como tecnico com sucesso: {user}"
+    
+    @staticmethod
+    def get_active_users() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas usuários ativos."""
+        return ProfessionalUser.objects.filter(is_active=True)
+    
+    @staticmethod
+    def get_admins() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas administradores ativos."""
+        return ProfessionalUser.objects.filter(is_admin=True, is_active=True)
+    
+    @staticmethod
+    def get_techs() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas técnicos ativos."""
+        return ProfessionalUser.objects.filter(is_tech=True, is_active=True)
