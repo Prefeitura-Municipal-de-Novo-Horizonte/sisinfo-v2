@@ -6,6 +6,14 @@ from django.shortcuts import redirect
 def unauthenticated_user(view_func):
     def wrapper_func(request, *args, **kwargs):
         if request.user.is_authenticated:
+            # Importação local para evitar circular import
+            from authenticate.models import ProfessionalUser
+            
+            # Se usuário está no primeiro login, redireciona para onboarding
+            if isinstance(request.user, ProfessionalUser) and request.user.first_login:
+                return redirect('authenticate:onboarding')
+            
+            # Caso contrário, redireciona para dashboard
             return redirect('dashboard:index')
         else:
             return view_func(request, *args, **kwargs)
