@@ -26,6 +26,17 @@ Este arquivo configura os serviços necessários para desenvolvimento local.
   - `mongodb_data` (dados)
   - `mongodb_config` (configuração)
 
+### Browserless
+- **Imagem**: browserless/chrome:latest
+- **Container**: sisinfo_browserless
+- **Porta**: 3000
+- **Token**: `sisinfo_dev_token`
+- **Uso**: Geração de PDFs de laudos técnicos
+- **Configurações**:
+  - Max sessões concorrentes: 10
+  - Timeout de conexão: 60s
+  - Tamanho máximo da fila: 10
+
 ## Comandos
 
 ### Iniciar serviços
@@ -65,6 +76,21 @@ Para produção (MongoDB Atlas):
 ```bash
 # MongoDB Atlas (Produção)
 DATABASE_MONGODB_LOGS=mongodb+srv://user:password@cluster.mongodb.net/sisinfo_audit
+```
+
+### Browserless
+
+Para usar o Browserless local, configure no `.env`:
+
+```bash
+# Browserless Local (Docker)
+BROWSERLESS_API_KEY=ws://localhost:3000?token=sisinfo_dev_token
+```
+
+Para produção (Browserless.io):
+```bash
+# Browserless.io (Produção)
+BROWSERLESS_API_KEY=your_browserless_io_api_key
 ```
 
 ## Acessar MongoDB

@@ -35,8 +35,16 @@ class PDFGenerator:
             Exception: Se houver erro na geração do PDF
         """
         try:
-            # URL do Browserless com API key (novo endpoint de produção)
-            browserless_url = f"wss://production-sfo.browserless.io?token={settings.BROWSERLESS_API_KEY}"
+            # URL do Browserless (local ou produção)
+            api_key = settings.BROWSERLESS_API_KEY
+            
+            # Detecta se é ambiente local (ws://) ou produção (wss://)
+            if api_key.startswith('ws://'):
+                # Desenvolvimento local (Docker)
+                browserless_url = api_key
+            else:
+                # Produção (Browserless.io)
+                browserless_url = f"wss://production-sfo.browserless.io?token={api_key}"
             
             # Renderizar template HTML com CSS inline
             html_content = render_to_string('pdf_download_template.html', {'report': report})

@@ -26,6 +26,18 @@ services:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
 
+  browserless:
+    image: browserless/chrome:latest
+    container_name: sisinfo_browserless
+    restart: always
+    environment:
+      - TOKEN=sisinfo_dev_token
+      - MAX_CONCURRENT_SESSIONS=10
+      - CONNECTION_TIMEOUT=60000
+      - MAX_QUEUE_LENGTH=10
+    ports:
+      - "3000:3000"
+
 volumes:
   postgres_data:
   mongodb_data:
