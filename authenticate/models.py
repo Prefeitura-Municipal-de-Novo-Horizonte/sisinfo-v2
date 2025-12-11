@@ -11,6 +11,7 @@ class ProfessionalUserManager(BaseUserManager):
     """
     Manager personalizado para o modelo ProfessionalUser.
     """
+
     def create_user(self, email, first_name, last_name, password=None, **extra_fields):
         """
         Cria e salva um usuário com o email e senha fornecidos.
