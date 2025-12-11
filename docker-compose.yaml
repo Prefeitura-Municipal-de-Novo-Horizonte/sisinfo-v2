@@ -1,12 +1,32 @@
 services:
   db:
-    image: postgres:14-alpine3.20
+    image: postgres:latest
+    container_name: sisinfo_postgres
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: sisinfo
+      POSTGRES_USER: sisinfo
+      POSTGRES_PASSWORD: sisinfo
     ports:
-      - 5432:5432
-    # volumes:
-    #   - .docker/postgres/data:/var/lib/postgresql/data
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:7.0
+    container_name: sisinfo_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: sisinfo
+      MONGO_INITDB_ROOT_PASSWORD: sisinfo
+      MONGO_INITDB_DATABASE: sisinfo_audit
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  mongodb_config:
