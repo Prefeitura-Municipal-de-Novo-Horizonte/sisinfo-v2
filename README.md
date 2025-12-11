@@ -15,6 +15,8 @@
     <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" />
     <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+    <img src="https://img.shields.io/badge/htmx-3D72D7?style=for-the-badge&logo=htmx&logoColor=white" alt="HTMX" />
+    <img src="https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=black" alt="Alpine.js" />
 </div>
 </div>
 
@@ -43,9 +45,11 @@ O projeto segue uma arquitetura **Service Layer** sobre o padrão MVT do Django,
 | `Django` | `5.2.6` | Framework Web |
 | `PostgreSQL` | `Latest` | Banco de Dados Principal |
 | `MongoDB` | `Atlas Free` | Logs de Auditoria |
-| `TailwindCSS` | `3.3.5` | Estilização |
-| `Flowbite` | `2.0.0` | Componentes UI |
-| `Alpine.js` | `Latest` | Interatividade Frontend |
+| `TailwindCSS` | `3.4.x` | Estilização |
+| `Alpine.js` | `3.13.3` | Reatividade Frontend |
+| `HTMX` | `1.9.10` | Interações AJAX |
+| `jQuery` | `3.7.1` | Manipulação DOM |
+| `ApexCharts` | `Latest` | Gráficos e Dashboards |
 | `Docker` | `Latest` | Containerização (Opcional) |
 
 ## 🛠️ Setup Local

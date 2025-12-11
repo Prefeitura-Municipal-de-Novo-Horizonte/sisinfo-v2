@@ -12,14 +12,14 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
 *   **Linguagens:** Python (3.12.x preferencial, 3.11.x compatível), JavaScript.
 *   **Frameworks e Runtimes:**
     *   Backend: Django 5.2.6
-    *   Frontend: Tailwind CSS 3.3.5, Flowbite 2.0.0, Alpine.js
+    *   Frontend: Tailwind CSS 3.4.x, Alpine.js 3.13.3, HTMX 1.9.10
     *   Runtime: Node.js 20.9.0+ (para ferramentas de frontend)
 *   **Bancos de Dados:** 
     *   PostgreSQL (via Docker) - Banco principal
     *   MongoDB Atlas (Free Tier) - Logs de auditoria
 *   **Bibliotecas/Dependências Chave:**
     *   Python: `django`, `psycopg2-binary`, `python-decouple`, `django-filter`, `django-extensions`, `pillow`, `djlint`, `pymongo`.
-    *   JavaScript: `tailwindcss`, `prettier`, `prettier-plugin-tailwindcss`, `flowbite`.
+    *   JavaScript: `tailwindcss`, `prettier`, `prettier-plugin-tailwindcss`.
 *   **Gerenciadores de Pacotes:** `pip` (Python), `npm` (Node.js).
 
 ## 3. Padrões Arquiteturais
