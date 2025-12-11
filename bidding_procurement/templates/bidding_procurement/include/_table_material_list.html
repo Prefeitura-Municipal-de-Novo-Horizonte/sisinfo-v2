@@ -3,6 +3,8 @@
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" class="px-3 py-2">Nome</th>
+                <th scope="col" class="px-3 py-2">Marca</th>
+                <th scope="col" class="px-3 py-2">Unidade</th>
                 <th scope="col" class="px-3 py-2 text-right">Ações</th>
             </tr>
         </thead>
@@ -13,6 +15,12 @@
                 <th scope="row" class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {{ material.name }}
                 </th>
+                <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
+                    {{ material.brand|default:"-" }}
+                </td>
+                <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
+                    {{ material.unit|default:"-" }}
+                </td>
                 <td class="px-3 py-2 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <a href="{% url 'bidding_procurement:update_material' material.slug %}"
@@ -36,7 +44,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td class="px-3 py-8 text-center text-gray-500 dark:text-gray-400" colspan="2">
+                <td class="px-3 py-8 text-center text-gray-500 dark:text-gray-400" colspan="4">
                     <div class="flex flex-col items-center justify-center">
                         <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

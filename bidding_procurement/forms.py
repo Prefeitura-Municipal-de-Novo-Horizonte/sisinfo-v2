@@ -22,7 +22,16 @@ class BiddingForm(CapitalizeFieldMixin, forms.ModelForm):
 class MaterialForm(CapitalizeFieldMixin, forms.ModelForm):
     class Meta:
         model = Material
-        fields = ["name"]
+        fields = ["name", "brand", "unit"]
+        labels = {
+            'name': 'Nome',
+            'brand': 'Marca',
+            'unit': 'Unidade',
+        }
+        help_texts = {
+            'brand': 'Marca do material (ex: TSA AD-09, DEKO 764-J CAT6)',
+            'unit': 'Unidade de medida (ex: un, M, pc, cx)',
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
