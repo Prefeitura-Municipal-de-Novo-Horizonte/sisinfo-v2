@@ -48,7 +48,6 @@ O projeto segue uma arquitetura **Service Layer** sobre o padrão MVT do Django,
 | `TailwindCSS` | `3.4.x` | Estilização |
 | `Alpine.js` | `3.13.3` | Reatividade Frontend |
 | `HTMX` | `1.9.10` | Interações AJAX |
-| `jQuery` | `3.7.1` | Manipulação DOM |
 | `ApexCharts` | `Latest` | Gráficos e Dashboards |
 | `Docker` | `Latest` | Containerização (Opcional) |
 
