@@ -1,4 +1,4 @@
-{% extends "_base.html" %}
+{% extends "_base_external.html" %}
 {% load static %}
 {% load ui_tags %}
 
@@ -6,7 +6,7 @@
 
 {% block content %}
 <!-- Backdrop escurecido -->
-<div class="fixed inset-0 bg-gray-900/75 dark:bg-black/80 backdrop-blur-sm z-40"></div>
+<div class="fixed inset-0 bg-gray-900/80 dark:bg-black/90 z-40"></div>
 
 <!-- Modal Container -->
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data="onboardingData()">
@@ -120,7 +120,7 @@
                     definir uma senha segura</p>
             </div>
 
-            <form method="post" action="{% url 'authenticate:onboarding' %}" class="max-w-md mx-auto">
+            <form method="post" action="{% url 'authenticate:onboarding' %}">
                 {% csrf_token %}
 
                 <div class="space-y-4">
