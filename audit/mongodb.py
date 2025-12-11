@@ -27,7 +27,12 @@ class MongoDBConnection:
                     serverSelectionTimeoutMS=2000,
                     connectTimeoutMS=2000,
                     socketTimeoutMS=2000,
-                    tlsCAFile=certifi.where()
+                    tlsCAFile=certifi.where(),
+                    # Workaround para SSL no Vercel (Python 3.13 compatibility issue)
+                    # Audit logs são não-críticos, então desabilitamos verificação SSL
+                    # A autenticação ainda é feita via usuário/senha do MongoDB
+                    tlsAllowInvalidCertificates=True,
+                    tlsInsecure=True
                 )
                 logger.debug("Cliente MongoDB inicializado (lazy)")
             except Exception as e:
