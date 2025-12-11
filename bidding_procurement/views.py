@@ -216,15 +216,18 @@ class MaterialListView(
     """
     model = Material
     template_name = "bidding_procurement/materials.html"
-    context_object_name = "page_obj"
+    context_object_name = "materiais"  # Corrigido: era page_obj, agora materiais
     filterset_class = MaterialFilter
     paginate_by = 15
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Adiciona page_obj para compatibilidade com template
+        if 'page_obj' not in context and 'materiais' in context:
+            context['page_obj'] = context['materiais']
         context['form'] = MaterialForm()
         context['btn'] = "Adicionar novo material"
-        context['total_materiais'] = self.get_queryset().count()
+        context['total_materiais'] = Material.objects.count()
         return context
 
 
@@ -290,9 +293,18 @@ class MaterialUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
         materiais = MaterialService.get_all_materials()
         myFilter = MaterialFilter(self.request.GET, queryset=materiais)
         
-        context['materiais'] = myFilter.qs
+        # Paginação para listagem
+        from django.core.paginator import Paginator
+        paginator = Paginator(myFilter.qs, 15)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        
+        context['page_obj'] = page_obj
         context['myFilter'] = myFilter
         context['btn'] = "Atualizar Material"
+        context['total_materiais'] = Material.objects.count()
+        # Indica que estamos editando
+        context['editing'] = True
         return context
     
     def form_valid(self, form):
@@ -306,23 +318,19 @@ class MaterialUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
         return self.form_invalid(form)
 
 
-class MaterialDeleteView(LoginRequiredMixin, MessageMixin, DeleteView):
+class MaterialDeleteView(LoginRequiredMixin, View):
     """
-    View para excluir um material.
+    View para excluir um material diretamente sem template de confirmação.
     """
-    model = Material
-    success_url = reverse_lazy("bidding_procurement:materiais")
-    success_message = "O suprimento {object.name} foi excluido com sucesso!"
-    
-    def delete(self, request, *args, **kwargs):
-        """Sobrescreve delete para usar o service."""
-        self.object = self.get_object()
-        name = self.object.name
-        MaterialService.delete_material(self.object)
+    def get(self, request, slug):
+        """Exclui o material e redireciona."""
+        material = MaterialService.get_material_by_slug(slug)
+        name = material.name
+        MaterialService.delete_material(material)
         
         messages.add_message(
             request,
             constants.ERROR,
-            f"O suprimento {name} foi excluido com sucesso!"
+            f"O suprimento {name} foi excluído com sucesso!"
         )
-        return redirect(self.success_url)
+        return redirect("bidding_procurement:materiais")

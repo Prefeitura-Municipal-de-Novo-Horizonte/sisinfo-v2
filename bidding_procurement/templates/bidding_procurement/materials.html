@@ -78,19 +78,28 @@ Materiais
         x-transition:enter-end="opacity-100 transform translate-y-0"
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-8" style="display: none;">
+        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-8" {% if editing %}style="display: block;"
+        {% else %}style="display: none;" {% endif %}>
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Novo Material</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                {% if editing %}Editar Material{% else %}Novo Material{% endif %}
+            </h3>
             <form action="" method="post">{% csrf_token %}
                 {% include "bidding_procurement/include/_form_material_generic.html" %}
-                <div class="flex justify-end mt-6">
+                <div class="flex justify-end gap-3 mt-6">
+                    {% if editing %}
+                    <a href="{% url 'bidding_procurement:materiais' %}"
+                        class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors">
+                        Cancelar
+                    </a>
+                    {% endif %}
                     <button type="submit"
                         class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
-                        Salvar Material
+                        {{ btn|default:"Salvar Material" }}
                     </button>
                 </div>
             </form>
