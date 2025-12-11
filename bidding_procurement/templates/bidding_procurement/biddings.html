@@ -152,24 +152,44 @@ Licitações
                     Materiais: {{ licitacao.material_associations.count }}
                 </p>
 
-                <div class="mt-auto flex flex-col gap-2">
+                <div class="mt-auto">
                     <a href="{{ licitacao.get_absolute_url }}"
-                        class="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-50 text-brand-600 h-9 px-3 text-sm font-bold leading-normal hover:bg-brand-100 dark:bg-gray-700 dark:text-brand-400 dark:hover:bg-gray-600 transition-colors">
+                        class="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-50 text-brand-600 h-9 px-3 text-sm font-bold leading-normal hover:bg-brand-100 dark:bg-gray-700 dark:text-brand-400 dark:hover:bg-gray-600 transition-colors mb-3">
                         Ver Detalhes
                     </a>
 
-                    <div
-                        class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <!-- Botões de ação -->
+                    <div class="grid grid-cols-3 gap-2">
                         <a href="{% url 'bidding_procurement:update_licitacao' licitacao.slug %}"
-                            class="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                            class="flex items-center justify-center gap-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40 h-8 px-2 text-xs font-medium transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg>
                             Editar
                         </a>
                         <a href="{% url 'bidding_procurement:toggle_status_licitacao' licitacao.slug %}"
-                            class="text-xs font-medium {% if licitacao.status == '1' %}text-red-600 hover:text-red-800{% else %}text-green-600 hover:text-green-800{% endif %} transition-colors">
+                            class="flex items-center justify-center gap-1 rounded-lg {% if licitacao.status == '1' %}bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40{% else %}bg-green-50 text-green-600 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/40{% endif %} h-8 px-2 text-xs font-medium transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                {% if licitacao.status == '1' %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636">
+                                </path>
+                                {% else %}
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                {% endif %}
+                            </svg>
                             {% if licitacao.status == '1' %}Desativar{% else %}Ativar{% endif %}
                         </a>
                         <a href="{% url 'bidding_procurement:delete_licitacao' licitacao.slug %}"
-                            class="text-xs font-medium text-gray-500 hover:text-red-600 transition-colors">
+                            class="flex items-center justify-center gap-1 rounded-lg bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-red-900/20 dark:hover:text-red-400 h-8 px-2 text-xs font-medium transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
                             Excluir
                         </a>
                     </div>
