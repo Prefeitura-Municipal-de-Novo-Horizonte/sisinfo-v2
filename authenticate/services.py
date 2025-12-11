@@ -102,7 +102,7 @@ class AuthenticateService:
         """Remove privilégios de Administrador."""
         user.is_admin = False
         user.save()
-        return f"Usuario desabilitador como administrador com sucesso: {user}"
+        return f"Usuario desabilitado como administrador com sucesso: {user}"
 
     @staticmethod
     def promote_to_tech(user: ProfessionalUser) -> str:

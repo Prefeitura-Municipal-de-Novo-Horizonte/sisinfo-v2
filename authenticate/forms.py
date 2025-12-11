@@ -11,9 +11,12 @@ from core.constants import STANDARD_INPUT_CLASS
 from authenticate.models import ProfessionalUser
 
 
-
-
 class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
+    """
+    Formulário para criação de novos usuários profissionais.
+    
+    Inclui validação de senha e capitalização automática de nomes.
+    """
     password1 = forms.CharField(label="Senha", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Confirmação de Senha", widget=forms.PasswordInput
@@ -46,8 +49,6 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
     def clean_last_name(self):
         return self.extract_from_clean('last_name')
 
-
-
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super().save(commit=False)
@@ -55,8 +56,6 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
         if commit:
             user.save()
         return user
-
-
 
 
 class UserChangeForm(forms.ModelForm):

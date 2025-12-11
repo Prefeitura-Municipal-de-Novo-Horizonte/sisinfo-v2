@@ -144,6 +144,9 @@ def logout_page(request):
     """
     View para logout.
     """
+    # Log de logout
+    if request.user.is_authenticated:
+        AuditService.log_event('auth', request.user, 'ProfessionalUser', request.user.id, 'logout', request=request)
     logout(request)
     messages.add_message(
         request, constants.SUCCESS, "Logout com sucesso!")
