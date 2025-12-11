@@ -11,6 +11,7 @@ from authenticate.forms import (
     UserChangeForm,
     UserCreationForm,
 )
+from authenticate.models import ProfessionalUser
 from authenticate.services import AuthenticateService
 
 
@@ -42,12 +43,8 @@ def login_page(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            if user.first_login is True:
-                form = PasswordChangeCustomForm(request.user)
-                context = {
-                    'form': form
-                }
-                return render(request, 'users/change_password.html', context)
+            if isinstance(user, ProfessionalUser) and user.first_login:
+                return redirect('authenticate:onboarding')
             return redirect('dashboard:index')
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
@@ -81,6 +78,30 @@ def change_password(request):
         'form': form,
     }
     return render(request, 'users/change_password.html', context)
+
+
+@login_required
+def onboarding_view(request):
+    """
+    View para onboarding de primeiro login.
+    Exibe tour do sistema e formulário de troca de senha.
+    """
+    if not isinstance(request.user, ProfessionalUser) or not request.user.first_login:
+        return redirect('dashboard:index')
+    
+    if request.method == 'POST':
+        form = PasswordChangeCustomForm(request.user, data=request.POST)
+        if AuthenticateService.change_password(form):
+            AuthenticateService.update_first_login(request.user)
+            messages.add_message(request, constants.SUCCESS,
+                               "Bem-vindo! Sua senha foi configurada com sucesso!")
+            return redirect('dashboard:index')
+        messages.add_message(request, constants.ERROR, 
+                           "Erro ao configurar senha. Verifique os requisitos.")
+    
+    form = PasswordChangeCustomForm(request.user)
+    context = {'form': form}
+    return render(request, 'auth/onboarding.html', context)
 
 
 @login_required

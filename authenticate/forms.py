@@ -21,7 +21,7 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
 
     class Meta:
         model = ProfessionalUser
-        fields = ["first_name", "last_name", "username",
+        fields = ["first_name", "last_name",
                   "email", "registration", "is_tech", "is_admin"]
 
     def __init__(self, *args, **kwargs):
@@ -46,10 +46,6 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
     def clean_last_name(self):
         return self.extract_from_clean('last_name')
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        return username.lower()
-
 
 
     def save(self, commit=True):
@@ -68,7 +64,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = ProfessionalUser
-        fields = ["first_name", "last_name", "username",
+        fields = ["first_name", "last_name",
                   "email", "registration"]
 
     def __init__(self, *args, **kwargs):
@@ -76,10 +72,6 @@ class UserChangeForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.HiddenInput):
                 field.widget.attrs['class'] = STANDARD_INPUT_CLASS
-        
-        instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
-            self.fields["username"].widget.attrs["readonly"] = True
 
 
 class AuthenticationFormCustom(AuthenticationForm):

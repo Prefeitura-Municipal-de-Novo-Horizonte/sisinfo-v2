@@ -64,8 +64,6 @@ class ProfessionalUser(AbstractBaseUser):
     """
     first_name = models.CharField('primeiro nome', max_length=100)
     last_name = models.CharField('ultimo nome', max_length=150)
-    username = models.CharField('usuario', unique=True,
-                                max_length=100, blank=True, null=True)
     registration = models.CharField(
         'numero de matrícula', max_length=8, blank=True, null=True)
     slug = models.SlugField('slug', unique=True, max_length=150)
@@ -100,7 +98,7 @@ class ProfessionalUser(AbstractBaseUser):
         return f'{self.fullname} - Matrícula: {self.registration}'
 
     def save(self, *args, **kwargs):
-        if not self.id or not self.slug:
+        if not self.pk:
             self.slug = uuid.uuid4()
         return super().save(*args, **kwargs)
 
