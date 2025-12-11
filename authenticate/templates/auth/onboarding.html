@@ -1,5 +1,6 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load ui_tags %}
 
 {% block title %}Bem-vindo ao SISInfo V2{% endblock %}
 
@@ -8,7 +9,7 @@
 <div class="fixed inset-0 bg-gray-900/75 dark:bg-black/80 backdrop-blur-sm z-40"></div>
 
 <!-- Modal Container -->
-<div class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4" x-data="onboardingData()">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data="onboardingData()">
     <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
         <!-- Progress Indicators -->
         <div class="bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-4">
@@ -129,7 +130,7 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Senha Temporária
                         </label>
-                        {{ form.old_password }}
+                        {{ form.old_password|style_input }}
                         {% if form.old_password.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.old_password.errors.0 }}</p>
                         {% endif %}
@@ -141,7 +142,7 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Nova Senha
                         </label>
-                        {{ form.new_password1 }}
+                        {{ form.new_password1|style_input }}
                         {% if form.new_password1.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password1.errors.0 }}</p>
                         {% endif %}
@@ -153,7 +154,7 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Confirmar Nova Senha
                         </label>
-                        {{ form.new_password2 }}
+                        {{ form.new_password2|style_input }}
                         {% if form.new_password2.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password2.errors.0 }}</p>
                         {% endif %}
@@ -203,7 +204,7 @@
                     </ul>
                 </div>
 
-                <div class="mt-6 flex justify-end">
+                <div class="mt-6">
                     <button type="submit"
                         class="w-full px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
