@@ -5,7 +5,7 @@ Materiais
 {% endblock title %}
 {% block content %}
 <div class="mx-auto max-w-7xl"
-    x-data="{ showForm: {% if form.errors %}true{% else %}false{% endif %}, showFilters: false }">
+    x-data="{ showForm: {% if form.errors or editing %}true{% else %}false{% endif %}, showFilters: false }">
     <!-- Breadcrumbs -->
     <div class="mb-6 flex flex-wrap gap-2 items-center">
         <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
