@@ -39,7 +39,7 @@ class AuditService:
         """
         try:
             mongo = MongoDBConnection()
-            if not mongo.logs:
+            if mongo.logs is None:
                 logger.warning("MongoDB não disponível, log não registrado")
                 return
             
