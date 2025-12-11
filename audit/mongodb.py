@@ -4,6 +4,7 @@ Conexão com MongoDB para logs de auditoria.
 from pymongo import MongoClient
 from decouple import config
 import logging
+import certifi
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +24,14 @@ class MongoDBConnection:
                 connection_string = config('DATABASE_MONGODB_LOGS')
                 cls._client = MongoClient(
                     connection_string,
-                    serverSelectionTimeoutMS=5000
+                    serverSelectionTimeoutMS=2000,
+                    connectTimeoutMS=2000,
+                    socketTimeoutMS=2000,
+                    tlsCAFile=certifi.where()
                 )
-                # Testa conexão
-                cls._client.server_info()
-                logger.info("MongoDB conectado com sucesso para auditoria")
+                logger.debug("Cliente MongoDB inicializado (lazy)")
             except Exception as e:
-                logger.error(f"Erro ao conectar MongoDB: {e}")
+                logger.error(f"Erro ao inicializar MongoDB: {e}")
                 cls._client = None
         return cls._instance
     
