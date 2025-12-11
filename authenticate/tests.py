@@ -9,16 +9,14 @@ class PermissionsModelTest(TestCase):
             email='testuser@example.com',
             first_name='Test',
             last_name='User',
-            password='password123',
-            username='testuser'
+            password='password123'
         )
 
         self.admin_user = ProfessionalUser.objects.create_superuser(
             email='adminuser@example.com',
             first_name='Admin',
             last_name='User',
-            password='password123',
-            username='adminuser'
+            password='password123'
         )
 
     def test_non_admin_has_no_permissions(self):
@@ -52,8 +50,7 @@ class AuthenticationViewsTest(TestCase):
             email='testuser@example.com',
             first_name='Test',
             last_name='User',
-            password='password123',
-            username='testuser'
+            password='password123'
         )
         # A view that requires login. 'show_users' is a good candidate.
         self.protected_url = reverse('authenticate:show_users')

@@ -11,9 +11,12 @@ from core.constants import STANDARD_INPUT_CLASS
 from authenticate.models import ProfessionalUser
 
 
-
-
 class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
+    """
+    Formulário para criação de novos usuários profissionais.
+    
+    Inclui validação de senha e capitalização automática de nomes.
+    """
     password1 = forms.CharField(label="Senha", widget=forms.PasswordInput)
     password2 = forms.CharField(
         label="Confirmação de Senha", widget=forms.PasswordInput
@@ -21,7 +24,7 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
 
     class Meta:
         model = ProfessionalUser
-        fields = ["first_name", "last_name", "username",
+        fields = ["first_name", "last_name",
                   "email", "registration", "is_tech", "is_admin"]
 
     def __init__(self, *args, **kwargs):
@@ -46,12 +49,6 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
     def clean_last_name(self):
         return self.extract_from_clean('last_name')
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        return username.lower()
-
-
-
     def save(self, commit=True):
         # Save the provided password in hashed format
         user = super().save(commit=False)
@@ -61,14 +58,17 @@ class UserCreationForm(CapitalizeFieldMixin, forms.ModelForm):
         return user
 
 
-
-
 class UserChangeForm(forms.ModelForm):
+    """
+    Formulário para edição de perfil de usuários existentes.
+    
+    Não permite alteração de senha (use PasswordChangeForm).
+    """
     password = ReadOnlyPasswordHashField()
 
     class Meta:
         model = ProfessionalUser
-        fields = ["first_name", "last_name", "username",
+        fields = ["first_name", "last_name",
                   "email", "registration"]
 
     def __init__(self, *args, **kwargs):
@@ -76,13 +76,14 @@ class UserChangeForm(forms.ModelForm):
         for field in self.fields.values():
             if not isinstance(field.widget, forms.HiddenInput):
                 field.widget.attrs['class'] = STANDARD_INPUT_CLASS
-        
-        instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
-            self.fields["username"].widget.attrs["readonly"] = True
 
 
 class AuthenticationFormCustom(AuthenticationForm):
+    """
+    Formulário customizado de autenticação.
+    
+    Usa email como username e aplica estilos floating label.
+    """
     username = forms.CharField(widget=forms.TextInput(
         attrs={'placeholder': ''}))
     password = forms.CharField(widget=forms.PasswordInput(
