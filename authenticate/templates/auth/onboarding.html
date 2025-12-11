@@ -1,0 +1,282 @@
+{% extends "_base_external.html" %}
+{% load static %}
+
+{% block title %}Bem-vindo ao SISInfo V2{% endblock %}
+
+{% block content %}
+<!-- Backdrop escurecido -->
+<div class="fixed inset-0 bg-gray-900/80 dark:bg-black/90 z-40"></div>
+
+<!-- Modal Container -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data="onboardingData()">
+    <div class="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden animate-fade-in">
+        <!-- Progress Indicators -->
+        <div class="bg-gradient-to-r from-brand-500 to-brand-600 px-6 py-4">
+            <div class="flex justify-center items-center gap-3">
+                <template x-for="i in 3" :key="i">
+                    <div class="h-2 rounded-full transition-all duration-300"
+                        :class="currentStep >= i ? 'w-12 bg-white' : 'w-2 bg-white/40'"></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Step 1: Welcome -->
+        <div x-show="currentStep === 1" x-transition class="p-8 sm:p-10">
+            <div class="text-center">
+                <div class="mb-6">
+                    <img src="{% static 'img/logo/logo.png' %}" alt="Brasão Novo Horizonte" class="h-20 w-auto mx-auto">
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">Bem-vindo ao SISInfo V2</h1>
+                <p class="text-base text-gray-600 dark:text-gray-300 max-w-lg mx-auto leading-relaxed">
+                    Vamos configurar sua conta. Este tour rápido ajudará você a se familiarizar com os principais
+                    recursos de nossa plataforma de gestão de TI municipal.
+                </p>
+            </div>
+        </div>
+
+        <!-- Step 2: System Overview -->
+        <div x-show="currentStep === 2" x-transition class="p-8 sm:p-10">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Principais Recursos</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Conheça as funcionalidades do sistema</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Feature 1 -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-blue-600 dark:bg-blue-500 rounded-lg p-2">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Gestão de Ativos</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-300">Controle completo de equipamentos, softwares e
+                        infraestrutura de TI.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div
+                    class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-green-600 dark:bg-green-500 rounded-lg p-2">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Central de Serviços</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-300">Sistema de helpdesk para gerenciar solicitações
+                        e suporte técnico.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div
+                    class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-purple-600 dark:bg-purple-500 rounded-lg p-2">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Gestão de Projetos</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-300">Acompanhamento de projetos e iniciativas de TI.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div
+                    class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="bg-orange-600 dark:bg-orange-500 rounded-lg p-2">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white">Relatórios e Análises</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 dark:text-gray-300">Dashboards e relatórios detalhados para tomada
+                        de decisões.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Password Setup -->
+        <div x-show="currentStep === 3" x-transition class="p-8 sm:p-10">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Configure sua Senha</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300">Como este é seu primeiro acesso, você precisa
+                    definir uma senha segura</p>
+            </div>
+
+            <form method="post" action="{% url 'authenticate:onboarding' %}" class="max-w-md mx-auto">
+                {% csrf_token %}
+
+                <div class="space-y-4">
+                    <!-- Old Password (required by Django) -->
+                    <div>
+                        <label for="{{ form.old_password.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Senha Temporária
+                        </label>
+                        <input type="password" name="{{ form.old_password.name }}"
+                            id="{{ form.old_password.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
+                        {% if form.old_password.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.old_password.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- New Password -->
+                    <div>
+                        <label for="{{ form.new_password1.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Nova Senha
+                        </label>
+                        <input type="password" name="{{ form.new_password1.name }}"
+                            id="{{ form.new_password1.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
+                        {% if form.new_password1.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password1.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="{{ form.new_password2.id_for_label }}"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                            Confirmar Nova Senha
+                        </label>
+                        <input type="password" name="{{ form.new_password2.name }}"
+                            id="{{ form.new_password2.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
+                        {% if form.new_password2.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password2.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password Requirements -->
+                <div class="mt-5 bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Sua senha deve conter:</p>
+                    <ul class="space-y-1.5 text-xs">
+                        <li class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <svg style="width: 14px; height: 14px; flex-shrink: 0;" class="text-green-500"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Mínimo de 8 caracteres
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <svg style="width: 14px; height: 14px; flex-shrink: 0;" class="text-green-500"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Não pode ser muito similar às suas informações pessoais
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <svg style="width: 14px; height: 14px; flex-shrink: 0;" class="text-green-500"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Não pode ser uma senha comumente usada
+                        </li>
+                        <li class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                            <svg style="width: 14px; height: 14px; flex-shrink: 0;" class="text-green-500"
+                                fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Não pode ser inteiramente numérica
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit"
+                        class="w-full px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Configurar Senha e Começar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Navigation Buttons (for steps 1 and 2) -->
+        <div x-show="currentStep < 3"
+            class="bg-gray-50 dark:bg-gray-700/50 px-6 py-4 flex justify-between items-center border-t border-gray-200 dark:border-gray-600">
+            <button @click="previousStep()" x-show="currentStep > 1"
+                class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium transition-colors">
+                Anterior
+            </button>
+            <div x-show="currentStep === 1"></div>
+            <button @click="nextStep()"
+                class="px-4 py-2 text-sm bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+                <span>Próximo</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.3s ease-out;
+    }
+</style>
+
+<script>
+    function onboardingData() {
+        return {
+            currentStep: 1,
+            nextStep() {
+                if (this.currentStep < 3) {
+                    this.currentStep++;
+                }
+            },
+            previousStep() {
+                if (this.currentStep > 1) {
+                    this.currentStep--;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

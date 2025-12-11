@@ -94,3 +94,23 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
     *   Para dependências Python: Adicione ao `requirements.txt` e execute `pip install -r requirements.txt`.
     *   Para dependências Node.js/Frontend: Adicione ao `package.json` e execute `npm install`.
 *   **Mensagens de Commit:** **É mandatório** seguir a especificação de Conventional Commits. Isso é crucial para manter um histórico de commits limpo e facilitar a automação de tarefas como a geração de changelogs.
+
+## 8. Ferramentas de Manutenção e Importação
+
+O projeto possui comandos personalizados (`management commands`) essenciais para a manutenção da integridade dos dados e importação de novos processos.
+
+### Importação de Licitações
+*   `python manage.py import_bidding_from_xlsx <caminho_arquivo>`: Importa licitações completas a partir de planilhas XLSX. É o método preferencial e mais confiável.
+*   `python manage.py sync_bidding_with_pdf <caminho_arquivo>`: Sincroniza e valida os dados importados comparando com o arquivo PDF original.
+*   `python manage.py import_bidding_pdf <caminho_arquivo>`: (Fallback) Importa dados diretamente do PDF. Use apenas se o XLSX não estiver disponível.
+
+### Diagnóstico e Limpeza
+*   `python manage.py diagnose_data`: Executa um diagnóstico completo do banco de dados, identificando duplicatas, órfãos e inconsistências.
+*   `python manage.py clean_duplicate_biddings`: Identifica e remove licitações duplicadas, consolidando os materiais.
+*   `python manage.py clean_duplicate_materials`: Identifica e funde materiais duplicados com base em similaridade de nome.
+*   `python manage.py consolidate_suppliers`: Normaliza e consolida fornecedores duplicados.
+
+### Relatórios
+*   `python manage.py report_all_materials`: Gera um CSV detalhado com todos os materiais cadastrados e seu uso.
+
+> **Nota:** Ao realizar manutenções críticas, sempre faça um backup antes utilizando `python manage.py backup_database`.

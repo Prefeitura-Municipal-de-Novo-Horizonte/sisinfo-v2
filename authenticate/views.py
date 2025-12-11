@@ -11,7 +11,9 @@ from authenticate.forms import (
     UserChangeForm,
     UserCreationForm,
 )
+from authenticate.models import ProfessionalUser
 from authenticate.services import AuthenticateService
+from audit.services import AuditService
 
 
 @login_required
@@ -42,13 +44,14 @@ def login_page(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            if user.first_login is True:
-                form = PasswordChangeCustomForm(request.user)
-                context = {
-                    'form': form
-                }
-                return render(request, 'users/change_password.html', context)
+            # Log de login bem-sucedido
+            AuditService.log_event('auth', user, 'ProfessionalUser', user.id, 'login', request=request)
+            if isinstance(user, ProfessionalUser) and user.first_login:
+                return redirect('authenticate:onboarding')
             return redirect('dashboard:index')
+        # Log de tentativa de login falha
+        AuditService.log_event('auth', None, 'ProfessionalUser', None, 'login_failed', 
+                              request=request, metadata={'username': request.POST.get('username')})
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
         return render(request, 'auth/login.html', {'form': form})
@@ -71,6 +74,8 @@ def change_password(request):
         form = PasswordChangeCustomForm(user, data=request.POST)
         if AuthenticateService.change_password(form):
             AuthenticateService.update_first_login(user)
+            # Log de troca de senha
+            AuditService.log_event('auth', user, 'ProfessionalUser', user.id, 'password_change', request=request)
             messages.add_message(request, constants.SUCCESS,
                                  "Senha trocada com sucesso!")
             return redirect('dashboard:index')
@@ -81,6 +86,33 @@ def change_password(request):
         'form': form,
     }
     return render(request, 'users/change_password.html', context)
+
+
+@login_required
+def onboarding_view(request):
+    """
+    View para onboarding de primeiro login.
+    Exibe tour do sistema e formulário de troca de senha.
+    """
+    if not isinstance(request.user, ProfessionalUser) or not request.user.first_login:
+        return redirect('dashboard:index')
+    
+    if request.method == 'POST':
+        form = PasswordChangeCustomForm(request.user, data=request.POST)
+        if AuthenticateService.change_password(form):
+            AuthenticateService.update_first_login(request.user)
+            # Log de conclusão de onboarding
+            AuditService.log_event('auth', request.user, 'ProfessionalUser', request.user.id, 
+                                  'first_login_completed', request=request)
+            messages.add_message(request, constants.SUCCESS,
+                               "Bem-vindo! Sua senha foi configurada com sucesso!")
+            return redirect('dashboard:index')
+        messages.add_message(request, constants.ERROR, 
+                           "Erro ao configurar senha. Verifique os requisitos.")
+    
+    form = PasswordChangeCustomForm(request.user)
+    context = {'form': form}
+    return render(request, 'auth/onboarding.html', context)
 
 
 @login_required
@@ -112,6 +144,9 @@ def logout_page(request):
     """
     View para logout.
     """
+    # Log de logout
+    if request.user.is_authenticated:
+        AuditService.log_event('auth', request.user, 'ProfessionalUser', request.user.id, 'logout', request=request)
     logout(request)
     messages.add_message(
         request, constants.SUCCESS, "Logout com sucesso!")

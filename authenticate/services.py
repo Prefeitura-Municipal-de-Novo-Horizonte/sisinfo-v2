@@ -1,8 +1,9 @@
-from typing import Optional, List
+from typing import Optional
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from .models import ProfessionalUser
 from .forms import UserCreationForm, UserChangeForm, PasswordChangeCustomForm
+
 
 class AuthenticateService:
     """
@@ -23,10 +24,10 @@ class AuthenticateService:
     def create_user(form: UserCreationForm) -> Optional[ProfessionalUser]:
         """
         Cria um novo usuário a partir de um formulário validado.
-        
+
         Args:
             form (UserCreationForm): Formulário preenchido.
-            
+
         Returns:
             ProfessionalUser: O usuário criado se sucesso, None caso contrário.
         """
@@ -38,11 +39,11 @@ class AuthenticateService:
     def update_user_profile(user: ProfessionalUser, form: UserChangeForm) -> Optional[ProfessionalUser]:
         """
         Atualiza o perfil de um usuário.
-        
+
         Args:
             user (ProfessionalUser): Usuário a ser atualizado.
             form (UserChangeForm): Formulário com novos dados.
-            
+
         Returns:
             ProfessionalUser: O usuário atualizado se sucesso, None caso contrário.
         """
@@ -54,10 +55,10 @@ class AuthenticateService:
     def change_password(form: PasswordChangeCustomForm) -> bool:
         """
         Altera a senha do usuário.
-        
+
         Args:
             form (PasswordChangeCustomForm): Formulário de troca de senha.
-            
+
         Returns:
             bool: True se sucesso, False caso contrário.
         """
@@ -101,7 +102,7 @@ class AuthenticateService:
         """Remove privilégios de Administrador."""
         user.is_admin = False
         user.save()
-        return f"Usuario desabilitador como administrador com sucesso: {user}"
+        return f"Usuario desabilitado como administrador com sucesso: {user}"
 
     @staticmethod
     def promote_to_tech(user: ProfessionalUser) -> str:
@@ -118,3 +119,18 @@ class AuthenticateService:
         user.is_tech = False
         user.save()
         return f"Usuario desabilitado como tecnico com sucesso: {user}"
+    
+    @staticmethod
+    def get_active_users() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas usuários ativos."""
+        return ProfessionalUser.objects.filter(is_active=True)
+    
+    @staticmethod
+    def get_admins() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas administradores ativos."""
+        return ProfessionalUser.objects.filter(is_admin=True, is_active=True)
+    
+    @staticmethod
+    def get_techs() -> QuerySet[ProfessionalUser]:
+        """Retorna apenas técnicos ativos."""
+        return ProfessionalUser.objects.filter(is_tech=True, is_active=True)
