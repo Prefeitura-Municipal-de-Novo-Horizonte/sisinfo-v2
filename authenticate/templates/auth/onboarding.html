@@ -1,6 +1,5 @@
 {% extends "_base_external.html" %}
 {% load static %}
-{% load ui_tags %}
 
 {% block title %}Bem-vindo ao SISInfo V2{% endblock %}
 
@@ -120,7 +119,7 @@
                     definir uma senha segura</p>
             </div>
 
-            <form method="post" action="{% url 'authenticate:onboarding' %}">
+            <form method="post" action="{% url 'authenticate:onboarding' %}" class="max-w-md mx-auto">
                 {% csrf_token %}
 
                 <div class="space-y-4">
@@ -130,7 +129,10 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Senha Temporária
                         </label>
-                        {{ form.old_password|style_input }}
+                        <input type="password" name="{{ form.old_password.name }}"
+                            id="{{ form.old_password.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
                         {% if form.old_password.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.old_password.errors.0 }}</p>
                         {% endif %}
@@ -142,7 +144,10 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Nova Senha
                         </label>
-                        {{ form.new_password1|style_input }}
+                        <input type="password" name="{{ form.new_password1.name }}"
+                            id="{{ form.new_password1.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
                         {% if form.new_password1.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password1.errors.0 }}</p>
                         {% endif %}
@@ -154,7 +159,10 @@
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                             Confirmar Nova Senha
                         </label>
-                        {{ form.new_password2|style_input }}
+                        <input type="password" name="{{ form.new_password2.name }}"
+                            id="{{ form.new_password2.id_for_label }}"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-brand-500 dark:focus:border-brand-500"
+                            required>
                         {% if form.new_password2.errors %}
                         <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ form.new_password2.errors.0 }}</p>
                         {% endif %}
