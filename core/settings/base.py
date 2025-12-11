@@ -31,6 +31,7 @@ MY_APPS = [
     "reports.apps.ReportsConfig",
     "organizational_structure.apps.OrganizationalStructureConfig",
     "bidding_procurement.apps.BiddingProcurementConfig",
+    "audit.apps.AuditConfig",  # Sistema de auditoria
     "core",
 ]
 
@@ -45,6 +46,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "authenticate.middleware.OnboardingMiddleware",  # Força onboarding em first_login
+    "audit.middleware.AuditMiddleware",  # Auditoria de operações
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

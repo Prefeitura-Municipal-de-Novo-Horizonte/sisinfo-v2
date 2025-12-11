@@ -13,6 +13,7 @@ from authenticate.forms import (
 )
 from authenticate.models import ProfessionalUser
 from authenticate.services import AuthenticateService
+from audit.services import AuditService
 
 
 @login_required
@@ -43,9 +44,14 @@ def login_page(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            # Log de login bem-sucedido
+            AuditService.log_event('auth', user, 'ProfessionalUser', user.id, 'login', request=request)
             if isinstance(user, ProfessionalUser) and user.first_login:
                 return redirect('authenticate:onboarding')
             return redirect('dashboard:index')
+        # Log de tentativa de login falha
+        AuditService.log_event('auth', None, 'ProfessionalUser', None, 'login_failed', 
+                              request=request, metadata={'username': request.POST.get('username')})
         messages.add_message(request, constants.ERROR,
                              "Usuário ou Senha inválidos!")
         return render(request, 'auth/login.html', {'form': form})
@@ -68,6 +74,8 @@ def change_password(request):
         form = PasswordChangeCustomForm(user, data=request.POST)
         if AuthenticateService.change_password(form):
             AuthenticateService.update_first_login(user)
+            # Log de troca de senha
+            AuditService.log_event('auth', user, 'ProfessionalUser', user.id, 'password_change', request=request)
             messages.add_message(request, constants.SUCCESS,
                                  "Senha trocada com sucesso!")
             return redirect('dashboard:index')
@@ -93,6 +101,9 @@ def onboarding_view(request):
         form = PasswordChangeCustomForm(request.user, data=request.POST)
         if AuthenticateService.change_password(form):
             AuthenticateService.update_first_login(request.user)
+            # Log de conclusão de onboarding
+            AuditService.log_event('auth', request.user, 'ProfessionalUser', request.user.id, 
+                                  'first_login_completed', request=request)
             messages.add_message(request, constants.SUCCESS,
                                "Bem-vindo! Sua senha foi configurada com sucesso!")
             return redirect('dashboard:index')
