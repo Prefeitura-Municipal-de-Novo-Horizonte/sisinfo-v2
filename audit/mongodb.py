@@ -36,15 +36,15 @@ class MongoDBConnection:
     @property
     def db(self):
         """Retorna database sisinfo_audit"""
-        if self._client:
+        if self._client is not None:
             return self._client.sisinfo_audit
         return None
     
     @property
     def logs(self):
         """Retorna collection audit_logs"""
-        if self.db:
-            return self.db.audit_logs
+        if self._client is not None:
+            return self._client.sisinfo_audit.audit_logs
         return None
     
     def close(self):
