@@ -12,11 +12,13 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
 *   **Linguagens:** Python (3.12.x preferencial, 3.11.x compatível), JavaScript.
 *   **Frameworks e Runtimes:**
     *   Backend: Django 5.2.6
-    *   Frontend: Tailwind CSS 3.3.5, Flowbite 2.0.0
+    *   Frontend: Tailwind CSS 3.3.5, Flowbite 2.0.0, Alpine.js
     *   Runtime: Node.js 20.9.0+ (para ferramentas de frontend)
-*   **Bancos de Dados:** PostgreSQL (via Docker).
+*   **Bancos de Dados:** 
+    *   PostgreSQL (via Docker) - Banco principal
+    *   MongoDB Atlas (Free Tier) - Logs de auditoria
 *   **Bibliotecas/Dependências Chave:**
-    *   Python: `django`, `psycopg2-binary` (PostgreSQL adapter), `python-decouple` (configuração de ambiente), `django-filter`, `django-extensions`, `pillow`, `djlint`.
+    *   Python: `django`, `psycopg2-binary`, `python-decouple`, `django-filter`, `django-extensions`, `pillow`, `djlint`, `pymongo`.
     *   JavaScript: `tailwindcss`, `prettier`, `prettier-plugin-tailwindcss`, `flowbite`.
 *   **Gerenciadores de Pacotes:** `pip` (Python), `npm` (Node.js).
 
@@ -26,6 +28,7 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
 *   **Filosofia da Estrutura de Diretórios:**
     *   `/core`: Contém as configurações globais do projeto Django (settings, urls, wsgi, asgi).
     *   `/authenticate`: App Django para gerenciamento de autenticação e usuários.
+    *   `/audit`: App Django para sistema de auditoria e logs (MongoDB).
     *   `/bidding_supplier`: App Django para gerenciamento de fornecedores e licitações.
     *   `/dashboard`: App Django para o painel principal e funcionalidades relacionadas.
     *   `/reports`: App Django para geração e gerenciamento de relatórios.
@@ -112,5 +115,15 @@ O projeto possui comandos personalizados (`management commands`) essenciais para
 
 ### Relatórios
 *   `python manage.py report_all_materials`: Gera um CSV detalhado com todos os materiais cadastrados e seu uso.
+
+### Auditoria
+*   `python manage.py backup_audit_logs`: Faz backup dos logs de auditoria do MongoDB.
+    *   `--days N`: Backup apenas dos últimos N dias
+    *   `--model MODEL`: Filtrar por modelo específico
+    *   `--compress`: Comprimir arquivo de saída com gzip
+*   `python manage.py clean_audit_logs`: Limpa logs antigos de auditoria.
+    *   `--days N`: Remover logs mais antigos que N dias (padrão: 90)
+    *   `--dry-run`: Mostra o que seria deletado sem deletar
+    *   `--backup-first`: Faz backup antes de limpar
 
 > **Nota:** Ao realizar manutenções críticas, sempre faça um backup antes utilizando `python manage.py backup_database`.
