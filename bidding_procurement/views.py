@@ -141,9 +141,18 @@ class BiddingUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
         licitacoes = BiddingService.get_all_biddings()
         myFilter = BiddingFilter(self.request.GET, queryset=licitacoes)
         
-        context['licitacoes'] = myFilter.qs
+        # Paginação para listagem
+        from django.core.paginator import Paginator
+        paginator = Paginator(myFilter.qs, 15)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        
+        context['page_obj'] = page_obj
         context['myFilter'] = myFilter
         context['btn'] = "Atualizar Licitação"
+        context['total_licitacoes'] = Bidding.objects.count()
+        # Indica que estamos editando
+        context['editing'] = True
         return context
     
     def form_valid(self, form):
@@ -157,26 +166,22 @@ class BiddingUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
         return self.form_invalid(form)
 
 
-class BiddingDeleteView(LoginRequiredMixin, MessageMixin, DeleteView):
+class BiddingDeleteView(LoginRequiredMixin, View):
     """
-    View para excluir uma licitação.
+    View para excluir uma licitação diretamente sem template de confirmação.
     """
-    model = Bidding
-    success_url = reverse_lazy("bidding_procurement:licitacoes")
-    success_message = "A licitação {object.name} foi excluida com sucesso!"
-    
-    def delete(self, request, *args, **kwargs):
-        """Sobrescreve delete para usar o service."""
-        self.object = self.get_object()
-        name = self.object.name
-        BiddingService.delete_bidding(self.object)
+    def get(self, request, slug):
+        """Exclui a licitação e redireciona."""
+        licitacao = BiddingService.get_bidding_by_slug(slug)
+        name = licitacao.name
+        BiddingService.delete_bidding(licitacao)
         
         messages.add_message(
             request,
             constants.ERROR,
-            f"A licitação {name} foi excluida com sucesso!"
+            f"A licitação {name} foi excluída com sucesso!"
         )
-        return redirect(self.success_url)
+        return redirect("bidding_procurement:licitacoes")
 
 
 class BiddingToggleStatusView(LoginRequiredMixin, View):

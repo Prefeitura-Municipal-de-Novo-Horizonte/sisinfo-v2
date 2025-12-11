@@ -6,7 +6,7 @@ Licitações
 {% block content %}
 
 <div class="mx-auto max-w-7xl"
-    x-data="{ showForm: {% if form.errors %}true{% else %}false{% endif %}, showFilters: false }">
+    x-data="{ showForm: {% if form.errors or editing %}true{% else %}false{% endif %}, showFilters: false }">
     <!-- Breadcrumbs -->
     <div class="mb-6 flex flex-wrap gap-2 items-center">
         <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
@@ -54,16 +54,22 @@ Licitações
         x-transition:leave-start="opacity-100 transform translate-y-0"
         x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-6" style="display: none;">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <form action="" method="get" class="flex flex-col sm:flex-row gap-4 items-end">
-                {% include "include/_form_field_standard.html" with field=myFilter.form.name %}
-                <button type="submit"
-                    class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    Pesquisar
-                </button>
+            <form action="" method="get" class="flex flex-col gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% include "include/_form_field_standard.html" with field=myFilter.form.name %}
+                    {% include "include/_form_field_standard.html" with field=myFilter.form.date %}
+                    {% include "include/_form_field_standard.html" with field=myFilter.form.status %}
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                        class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Pesquisar
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -74,25 +80,36 @@ Licitações
         x-transition:enter-end="opacity-100 transform translate-y-0"
         x-transition:leave="transition ease-in duration-200"
         x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-8" style="display: none;">
+        x-transition:leave-end="opacity-0 transform -translate-y-4" class="mb-8" {% if editing %}style="display: block;"
+        {% else %}style="display: none;" {% endif %}>
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Nova Licitação</h3>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                {% if editing %}Editar Licitação{% else %}Nova Licitação{% endif %}
+            </h3>
             <form action="" method="post">{% csrf_token %}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="md:col-span-2">
                         {% include "include/_form_field_standard.html" with field=form.name %}
                     </div>
+                    {% include "include/_form_field_standard.html" with field=form.administrative_process %}
                     {% include "include/_form_field_standard.html" with field=form.date %}
+                    {% include "include/_form_field_standard.html" with field=form.validity_date %}
                     {% include "include/_form_field_standard.html" with field=form.status %}
                 </div>
-                <div class="flex justify-end">
+                <div class="flex justify-end gap-3 mt-8">
+                    {% if editing %}
+                    <a href="{% url 'bidding_procurement:licitacoes' %}"
+                        class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors">
+                        Cancelar
+                    </a>
+                    {% endif %}
                     <button type="submit"
                         class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
                             </path>
                         </svg>
-                        Salvar Licitação
+                        {{ btn|default:"Salvar Licitação" }}
                     </button>
                 </div>
             </form>
@@ -123,8 +140,16 @@ Licitações
                     {% endif %}
                 </div>
 
-                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal mb-4">
-                    Data: {{ licitacao.date|date:"d/m/Y" }}
+                <p class="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal mb-2">
+                    Data: {{ licitacao.date|date:"d/m/Y"|default:"-" }}
+                </p>
+                {% if licitacao.administrative_process %}
+                <p class="text-gray-500 dark:text-gray-400 text-xs font-normal leading-normal mb-2">
+                    Processo: {{ licitacao.administrative_process }}
+                </p>
+                {% endif %}
+                <p class="text-gray-500 dark:text-gray-400 text-xs font-normal leading-normal mb-4">
+                    Materiais: {{ licitacao.material_associations.count }}
                 </p>
 
                 <div class="mt-auto flex flex-col gap-2">
@@ -135,6 +160,10 @@ Licitações
 
                     <div
                         class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{% url 'bidding_procurement:update_licitacao' licitacao.slug %}"
+                            class="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors">
+                            Editar
+                        </a>
                         <a href="{% url 'bidding_procurement:toggle_status_licitacao' licitacao.slug %}"
                             class="text-xs font-medium {% if licitacao.status == '1' %}text-red-600 hover:text-red-800{% else %}text-green-600 hover:text-green-800{% endif %} transition-colors">
                             {% if licitacao.status == '1' %}Desativar{% else %}Ativar{% endif %}

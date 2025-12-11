@@ -8,7 +8,28 @@ from bidding_procurement.models import Bidding, Material, MaterialBidding
 class BiddingForm(CapitalizeFieldMixin, forms.ModelForm):
     class Meta:
         model = Bidding
-        fields = ["name", "date", "status"]
+        fields = [
+            "name",
+            "administrative_process",
+            "date",
+            "validity_date",
+            "status"
+        ]
+        labels = {
+            'name': 'Nome',
+            'administrative_process': 'Processo Administrativo',
+            'date': 'Data',
+            'validity_date': 'Prazo de Validade',
+            'status': 'Status',
+        }
+        help_texts = {
+            'administrative_process': 'Ex: 121/25',
+            'validity_date': 'Data de validade da licitação',
+        }
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'validity_date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -45,7 +45,17 @@ class BiddingFilter(TailwindFilterMixin, django_filters.FilterSet):
         field_name="status",
         choices=STATUS_CHOICES
     )
+    description = CharFilter(
+        label="Descrição:",
+        field_name="description",
+        lookup_expr="icontains"
+    )
+    responsible = CharFilter(
+        label="Responsável:",
+        field_name="responsible",
+        lookup_expr="icontains"
+    )
     
     class Meta:
         model = Bidding
-        fields = ['name', 'date', 'status']
+        fields = ['name', 'date', 'status', 'description', 'responsible']
