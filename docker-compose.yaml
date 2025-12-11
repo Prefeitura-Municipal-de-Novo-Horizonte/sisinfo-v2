@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:latest
+    image: postgres:17-alpine
     container_name: sisinfo_postgres
     restart: always
     environment:
@@ -13,7 +13,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   mongodb:
-    image: mongo:7.0
+    image: mongo:7.0-jammy
     container_name: sisinfo_mongodb
     restart: always
     environment:
