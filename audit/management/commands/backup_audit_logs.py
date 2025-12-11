@@ -41,7 +41,7 @@ class Command(BaseCommand):
         try:
             # Conecta ao MongoDB
             mongo = MongoDBConnection()
-            if not mongo.logs:
+            if mongo.logs is None:
                 self.stdout.write(self.style.ERROR('MongoDB não disponível'))
                 return
 
