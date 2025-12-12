@@ -1,1 +1,5 @@
-{% include "include/_form_field_standard.html" with field=form.name %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {% include "include/_form_field_standard.html" with field=form.name %}
+    {% include "include/_form_field_standard.html" with field=form.brand %}
+    {% include "include/_form_field_standard.html" with field=form.unit %}
+</div>

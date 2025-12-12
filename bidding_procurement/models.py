@@ -97,6 +97,24 @@ class Bidding(AbsBiddingMaterial):
         if not self.slug:
             return "#"  # Retorna # se slug estiver vazio
         return r("bidding_procurement:licitacao", kwargs={"slug": self.slug})
+    
+    def get_active_materials(self):
+        """
+        Retorna apenas materiais ativos vinculados a esta licitação.
+        
+        Returns:
+            QuerySet: MaterialBidding com status ativo ('1')
+        """
+        return self.material_associations.filter(status='1').select_related('material', 'supplier')
+    
+    def get_inactive_materials(self):
+        """
+        Retorna apenas materiais inativos vinculados a esta licitação.
+        
+        Returns:
+            QuerySet: MaterialBidding com status inativo ('2')
+        """
+        return self.material_associations.filter(status='2').select_related('material', 'supplier')
 
 
 

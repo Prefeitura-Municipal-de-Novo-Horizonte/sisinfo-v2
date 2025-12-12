@@ -31,9 +31,20 @@ def generate_material_slug(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Bidding)
 def propagate_bidding_status(sender, instance, created, **kwargs):
+    """
+    Propaga o status da licitação para todos os materiais vinculados.
+    
+    Caso de uso: Quando uma licitação é desativada, todos os materiais
+    vinculados devem ser desativados automaticamente para não aparecerem
+    em listagens de materiais ativos.
+    
+    Args:
+        sender: Classe do modelo (Bidding)
+        instance: Instância da licitação sendo salva
+        created: True se é uma nova instância, False se é atualização
+        **kwargs: Argumentos adicionais do signal
+    """
     if not created:
-        # Propagate status to MaterialBidding associations
-        # Note: This updates all associated MaterialBidding to match the Bidding status.
-        # This might overwrite individual material statuses if they were manually set differently.
-        # Based on previous logic: self.material_associations.update(status=self.status)
+        # Atualiza status de todos os MaterialBidding associados
+        # para corresponder ao status da licitação
         instance.material_associations.update(status=instance.status)

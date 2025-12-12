@@ -1,260 +1,340 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
-from django.core.paginator import Paginator
 from django.db.models import Sum
-from django.shortcuts import redirect, render
-
-from bidding_procurement.filters import (
-    BiddingFilter,
-    MaterialFilter,
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    View,
 )
+
+from bidding_procurement.filters import BiddingFilter, MaterialFilter
 from bidding_procurement.forms import (
     BiddingForm,
     MaterialBiddingForm,
     MaterialForm,
 )
-from bidding_procurement.models import (
-    Bidding,
-    Material,
+from bidding_procurement.mixins import (
+    FilteredListMixin,
+    PaginatedListMixin,
+    MessageMixin,
 )
+from bidding_procurement.models import Bidding, Material, MaterialBidding
+from bidding_procurement.services import BiddingService, MaterialService
 from reports.models import MaterialReport
-from .services import BiddingService, MaterialService
 
 
-@login_required
-def biddings(request):
+# ==================== BIDDING VIEWS ====================
+
+class BiddingListView(
+    LoginRequiredMixin,
+    FilteredListMixin,
+    PaginatedListMixin,
+    ListView
+):
     """
-    View para listar e criar licitações.
+    View para listar licitações com filtros e paginação.
+    """
+    model = Bidding
+    template_name = "bidding_procurement/biddings.html"
+    context_object_name = "page_obj"
+    filterset_class = BiddingFilter
+    paginate_by = 15
     
-    GET: Lista todas as licitações com paginação e filtro.
-    POST: Cria uma nova licitação.
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = BiddingForm()
+        context['btn'] = "Adicionar nova Licitação"
+        context['total_licitacoes'] = self.get_queryset().count()
+        return context
+
+
+class BiddingCreateView(LoginRequiredMixin, MessageMixin, CreateView):
     """
-    licitacoes = BiddingService.get_all_biddings()
-    if request.method == "POST":
-        form = BiddingForm(request.POST)
+    View para criar uma nova licitação.
+    """
+    model = Bidding
+    form_class = BiddingForm
+    success_url = reverse_lazy("bidding_procurement:licitacoes")
+    success_message = "Inserido com sucesso!"
+    error_message = "Ocorreu um erro!"
+    
+    def form_valid(self, form):
         if BiddingService.create_bidding(form):
-            messages.add_message(request, constants.SUCCESS,
-                                 "Inserido com sucesso!")
+            messages.add_message(
+                self.request,
+                constants.SUCCESS,
+                self.success_message
+            )
         else:
-            messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect("bidding_procurement:licitacoes")
-    total_licitacoes = licitacoes.count()
-    form = BiddingForm()
-    myFilter = BiddingFilter(request.GET, queryset=licitacoes)
-    licitacoes = myFilter.qs
-    
-    paginator = Paginator(licitacoes, 15)  # Show 15 biddings per page.
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        "form": form,
-        "page_obj": page_obj,
-        "myFilter": myFilter,
-        "btn": "Adicionar nova Licitação",
-        "total_licitacoes": total_licitacoes,
-    }
-    return render(request, "bidding_procurement/biddings.html", context)
+            messages.add_message(
+                self.request,
+                constants.ERROR,
+                self.error_message
+            )
+        return redirect(self.success_url)
 
 
-@login_required
-def bidding_detail(request, slug):
+class BiddingDetailView(LoginRequiredMixin, DetailView):
     """
     View para exibir detalhes de uma licitação e vincular materiais.
-    
-    GET: Exibe detalhes da licitação e lista de materiais vinculados.
-    POST: Vincula um novo material à licitação.
     """
-    licitacao = BiddingService.get_bidding_by_slug(slug)
-    # Materiais agora vêm de MaterialBidding (tabela intermediária)
-    material_associations = licitacao.material_associations.all().select_related('material', 'supplier')
-    total_materiais = material_associations.count()
-    if request.method == "POST":
+    model = Bidding
+    template_name = "bidding_procurement/bidding_detail.html"
+    context_object_name = "licitacao"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        licitacao = self.object
+        
+        # Usa o novo método do modelo para pegar materiais ativos
+        material_associations = licitacao.material_associations.all().select_related(
+            'material', 'supplier'
+        )
+        
+        context['form'] = MaterialBiddingForm()
+        context['material_associations'] = material_associations
+        context['myFilter'] = MaterialFilter(
+            self.request.GET,
+            queryset=MaterialService.get_all_materials()
+        )
+        context['total_materiais'] = material_associations.count()
+        context['btn'] = "Vincular Material"
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        """Processa vinculação de material à licitação."""
+        self.object = self.get_object()
         form_material = MaterialBiddingForm(request.POST)
-        success, msg = BiddingService.add_material_to_bidding(licitacao, form_material)
+        
+        success, msg = BiddingService.add_material_to_bidding(
+            self.object,
+            form_material
+        )
+        
         if success:
             messages.add_message(request, constants.SUCCESS, msg)
         else:
             messages.add_message(request, constants.ERROR, msg)
-        return redirect("bidding_procurement:licitacao", slug=slug)
-
-    form_material = MaterialBiddingForm()
-    myFilter = MaterialFilter(request.GET, queryset=MaterialService.get_all_materials())
-    context = {
-        "licitacao": licitacao,
-        "form": form_material,
-        "material_associations": material_associations,
-        "myFilter": myFilter,
-        "total_materiais": total_materiais,
-        "btn": "Vincular Material",
-    }
-    return render(request, "bidding_procurement/bidding_detail.html", context)
+        
+        return redirect("bidding_procurement:licitacao", slug=self.object.slug)
 
 
-@login_required
-def bidding_update(request, slug):
+class BiddingUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
     """
     View para atualizar uma licitação existente.
     """
-    licitacao = BiddingService.get_bidding_by_slug(slug)
-    form = BiddingForm(instance=licitacao)
-    licitacoes = BiddingService.get_all_biddings()
-    myFilter = BiddingFilter(request.GET, queryset=licitacoes)
-    licitacoes = myFilter.qs
-    context = {
-        "licitacao": licitacao,
-        "licitacoes": licitacoes,
-        "form": form,
-        "myFilter": myFilter,
-        "btn": "Atualizar Licitação",
-    }
+    model = Bidding
+    form_class = BiddingForm
+    template_name = "bidding_procurement/biddings.html"
+    context_object_name = "licitacao"
+    success_url = reverse_lazy("bidding_procurement:licitacoes")
+    success_message = "Atualizado com Sucesso!"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        licitacoes = BiddingService.get_all_biddings()
+        myFilter = BiddingFilter(self.request.GET, queryset=licitacoes)
+        
+        # Paginação para listagem
+        from django.core.paginator import Paginator
+        paginator = Paginator(myFilter.qs, 15)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        
+        context['page_obj'] = page_obj
+        context['myFilter'] = myFilter
+        context['btn'] = "Atualizar Licitação"
+        context['total_licitacoes'] = Bidding.objects.count()
+        # Indica que estamos editando
+        context['editing'] = True
+        return context
+    
+    def form_valid(self, form):
+        if BiddingService.update_bidding(self.object, form):
+            messages.add_message(
+                self.request,
+                constants.SUCCESS,
+                self.success_message
+            )
+            return redirect(self.success_url)
+        return self.form_invalid(form)
 
-    if request.method == "POST":
-        form = BiddingForm(request.POST, instance=licitacao)
-        if BiddingService.update_bidding(licitacao, form):
-            messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-            return redirect("bidding_procurement:licitacoes")
-        else:
-            return render(request, "bidding_procurement/biddings.html", context)
-    elif request.method == "GET":
-        return render(request, "bidding_procurement/biddings.html", context)
 
-    return redirect("bidding_procurement:licitacao")
-
-
-@login_required
-def bidding_delete(request, slug):
+class BiddingDeleteView(LoginRequiredMixin, View):
     """
-    View para excluir uma licitação.
+    View para excluir uma licitação diretamente sem template de confirmação.
     """
-    licitacao = BiddingService.get_bidding_by_slug(slug)
-    name = licitacao.name
-    BiddingService.delete_bidding(licitacao)
-    messages.add_message(
-        request,
-        constants.ERROR,
-        f"A licitação {name} foi excluido com sucesso!",
-    )
-    return redirect("bidding_procurement:licitacoes")
+    def get(self, request, slug):
+        """Exclui a licitação e redireciona."""
+        licitacao = BiddingService.get_bidding_by_slug(slug)
+        name = licitacao.name
+        BiddingService.delete_bidding(licitacao)
+        
+        messages.add_message(
+            request,
+            constants.ERROR,
+            f"A licitação {name} foi excluída com sucesso!"
+        )
+        return redirect("bidding_procurement:licitacoes")
 
 
-@login_required
-def toggle_bidding_status(request, slug):
+class BiddingToggleStatusView(LoginRequiredMixin, View):
     """
     View para alternar o status de uma licitação (Ativo/Inativo).
     """
-    licitacao = BiddingService.get_bidding_by_slug(slug)
-    msg = BiddingService.toggle_status(licitacao)
-    messages.add_message(request, constants.SUCCESS, msg)
-    return redirect("bidding_procurement:licitacoes")
+    def get(self, request, slug):
+        licitacao = BiddingService.get_bidding_by_slug(slug)
+        msg = BiddingService.toggle_status(licitacao)
+        messages.add_message(request, constants.SUCCESS, msg)
+        return redirect("bidding_procurement:licitacoes")
 
 
-@login_required
-def toggle_material_status(request, id):
+class MaterialToggleStatusView(LoginRequiredMixin, View):
     """
     View para alternar o status de um material em uma licitação específica.
     """
-    material_bidding, msg = BiddingService.toggle_material_status(id)
-    messages.add_message(request, constants.SUCCESS, msg)
-    return redirect("bidding_procurement:licitacao", slug=material_bidding.bidding.slug)
+    def get(self, request, id):
+        material_bidding, msg = BiddingService.toggle_material_status(id)
+        messages.add_message(request, constants.SUCCESS, msg)
+        return redirect(
+            "bidding_procurement:licitacao",
+            slug=material_bidding.bidding.slug
+        )
 
 
-@login_required
-def materials(request):
+# ==================== MATERIAL VIEWS ====================
+
+class MaterialListView(
+    LoginRequiredMixin,
+    FilteredListMixin,
+    PaginatedListMixin,
+    ListView
+):
     """
-    View para listar e criar materiais.
+    View para listar materiais com filtros e paginação.
+    """
+    model = Material
+    template_name = "bidding_procurement/materials.html"
+    context_object_name = "materiais"  # Corrigido: era page_obj, agora materiais
+    filterset_class = MaterialFilter
+    paginate_by = 15
     
-    GET: Lista todos os materiais com paginação e filtro.
-    POST: Cria um novo material.
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Adiciona page_obj para compatibilidade com template
+        if 'page_obj' not in context and 'materiais' in context:
+            context['page_obj'] = context['materiais']
+        context['form'] = MaterialForm()
+        context['btn'] = "Adicionar novo material"
+        context['total_materiais'] = Material.objects.count()
+        return context
+
+
+class MaterialCreateView(LoginRequiredMixin, MessageMixin, CreateView):
     """
-    materiais = MaterialService.get_all_materials()
-    total_materiais = materiais.count()
-    if request.method == "POST":
-        form_material = MaterialForm(request.POST)
-        if MaterialService.create_material(form_material):
-            messages.add_message(request, constants.SUCCESS,
-                                 "Inserido com sucesso!")
+    View para criar um novo material.
+    """
+    model = Material
+    form_class = MaterialForm
+    success_url = reverse_lazy("bidding_procurement:materiais")
+    success_message = "Inserido com sucesso!"
+    error_message = "Ocorreu um erro!"
+    
+    def form_valid(self, form):
+        if MaterialService.create_material(form):
+            messages.add_message(
+                self.request,
+                constants.SUCCESS,
+                self.success_message
+            )
         else:
-            messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect("bidding_procurement:materiais")
-    form_material = MaterialForm()
-    myFilter = MaterialFilter(request.GET, queryset=materiais)
-    materiais = myFilter.qs
-    
-    paginator = Paginator(materiais, 15)
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        "form": form_material,
-        "page_obj": page_obj,
-        "btn": "Adicionar novo material",
-        "myFilter": myFilter,
-        "total_materiais": total_materiais,
-    }
-    return render(request, "bidding_procurement/materials.html", context)
+            messages.add_message(
+                self.request,
+                constants.ERROR,
+                self.error_message
+            )
+        return redirect(self.success_url)
 
 
-@login_required
-def material_detail(request, slug):
+class MaterialDetailView(LoginRequiredMixin, DetailView):
     """
     View para exibir detalhes de um material e seu histórico de uso.
     """
-    material = MaterialService.get_material_by_slug(slug)
-    reports = MaterialReport.objects.filter(material=material.id)
-    total_quantity = reports.aggregate(total_value=Sum("quantity"))
-    total_quantity = total_quantity.get("total_value")
-    context = {
-        "material": material,
-        "reports": reports,
-        "total_quantity": total_quantity,
-    }
-    return render(request, "bidding_procurement/material_detail.html", context)
+    model = Material
+    template_name = "bidding_procurement/material_detail.html"
+    context_object_name = "material"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        material = self.object
+        
+        reports = MaterialReport.objects.filter(material=material.id)
+        total_quantity = reports.aggregate(total_value=Sum("quantity"))
+        
+        context['reports'] = reports
+        context['total_quantity'] = total_quantity.get("total_value")
+        return context
 
 
-@login_required
-def material_update(request, slug):
+class MaterialUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
     """
     View para atualizar um material existente.
     """
-    material = MaterialService.get_material_by_slug(slug)
-    form_material = MaterialForm(instance=material)
-    materiais = MaterialService.get_all_materials()
-    myFilter = MaterialFilter(request.GET, queryset=materiais)
-    materiais = myFilter.qs
-    context = {
-        "material": material,
-        "materiais": materiais,
-        "form": form_material,
-        "myFilter": myFilter,
-        "btn": "Atualizar Material",
-    }
+    model = Material
+    form_class = MaterialForm
+    template_name = "bidding_procurement/materials.html"
+    context_object_name = "material"
+    success_url = reverse_lazy("bidding_procurement:materiais")
+    success_message = "Atualizado com Sucesso!"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        materiais = MaterialService.get_all_materials()
+        myFilter = MaterialFilter(self.request.GET, queryset=materiais)
+        
+        # Paginação para listagem
+        from django.core.paginator import Paginator
+        paginator = Paginator(myFilter.qs, 15)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        
+        context['page_obj'] = page_obj
+        context['myFilter'] = myFilter
+        context['btn'] = "Atualizar Material"
+        context['total_materiais'] = Material.objects.count()
+        # Indica que estamos editando
+        context['editing'] = True
+        return context
+    
+    def form_valid(self, form):
+        if MaterialService.update_material(self.object, form):
+            messages.add_message(
+                self.request,
+                constants.SUCCESS,
+                self.success_message
+            )
+            return redirect(self.success_url)
+        return self.form_invalid(form)
 
-    if request.method == "POST":
-        form_material = MaterialForm(request.POST, instance=material)
-        if MaterialService.update_material(material, form_material):
-            messages.add_message(request, constants.SUCCESS, "Atualizado com Sucesso!")
-            return redirect("bidding_procurement:materiais")
-        else:
-            return render(request, "bidding_procurement/materials.html", context)
-    elif request.method == "GET":
-        return render(request, "bidding_procurement/materials.html", context)
 
-    return redirect("bidding_procurement:licitacao")
-
-
-@login_required
-def material_delete(request, slug):
+class MaterialDeleteView(LoginRequiredMixin, View):
     """
-    View para excluir um material.
+    View para excluir um material diretamente sem template de confirmação.
     """
-    material = MaterialService.get_material_by_slug(slug)
-    name = material.name
-    MaterialService.delete_material(material)
-    messages.add_message(
-        request,
-        constants.ERROR,
-        f"O suprimento {name} foi excluido com sucesso!",
-    )
-    return redirect("bidding_procurement:materiais")
+    def get(self, request, slug):
+        """Exclui o material e redireciona."""
+        material = MaterialService.get_material_by_slug(slug)
+        name = material.name
+        MaterialService.delete_material(material)
+        
+        messages.add_message(
+            request,
+            constants.ERROR,
+            f"O suprimento {name} foi excluído com sucesso!"
+        )
+        return redirect("bidding_procurement:materiais")
