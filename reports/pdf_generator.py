@@ -60,13 +60,15 @@ class PDFGenerator:
                 page.set_content(html_content, wait_until='networkidle')
                 
                 # Gerar PDF com configurações A4
+                # Gerar PDF com configurações A4
                 pdf_bytes = page.pdf(
                     format='A4',
                     print_background=True,
                     display_header_footer=True,
-                    header_template='''
-                        <div style="font-size: 10px; width: 100%; text-align: right; padding-right: 15mm; margin-top: 5px;">
-                            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+                    header_template=f'''
+                        <div style="font-size: 10px; width: 100%; padding-left: 10mm; padding-right: 15mm; margin-top: 5px; display: flex; justify-content: space-between;">
+                            <span>Laudo: {report.number_report}</span>
+                            <span>Página <span class="pageNumber"></span> de <span class="totalPages"></span></span>
                         </div>
                     ''',
                     footer_template='<div></div>',

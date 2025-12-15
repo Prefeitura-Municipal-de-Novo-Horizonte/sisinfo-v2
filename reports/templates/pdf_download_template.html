@@ -268,7 +268,10 @@
                 background: white;
                 text-align: center;
                 z-index: 1000;
-                /* Ensure footer doesn't overlap text if margins fail, though @page bottom margin helps */
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding-bottom: 5mm;
             }
         }
     </style>
