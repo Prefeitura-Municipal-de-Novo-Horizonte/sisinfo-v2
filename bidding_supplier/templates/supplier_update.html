@@ -1,10 +1,11 @@
 {% extends "_base.html" %}
 {% load static %}
+{% load ui_tags %}
 {% block title %}
-{{supplier.trade}}
+Editar - {{supplier.trade}}
 {% endblock title %}
 {% block content %}
-<div class="mx-auto max-w-4xl">
+<div class="mx-auto max-w-7xl">
     <!-- Breadcrumbs -->
     <div class="mb-6 flex flex-wrap gap-2 items-center">
         <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
@@ -18,94 +19,75 @@
         <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Editar</span>
     </div>
 
-    <!-- Page Header -->
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-            Editar Fornecedor
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Atualize as informações do fornecedor abaixo.</p>
+    <!-- Header -->
+    <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Editar Fornecedor</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Atualize as informações de {{ supplier.trade }}.</p>
+        </div>
+        <a href="{% url 'suppliers:fornecedores' %}"
+            class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Voltar
+        </a>
     </div>
 
     <!-- Alerts -->
     {% include "include/_alert.html" %}
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <form action="" method="post">{% csrf_token %}
-            <div class="space-y-8">
-                <!-- Informações Principais -->
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informações Gerais</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="relative z-0 w-full group">
-                            {{ form.company }}
-                            <label for="{{ form.company.id_for_label }}"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Razão
-                                Social</label>
-                            {{ form.company.errors }}
-                        </div>
-                        <div class="relative z-0 w-full group">
-                            {{ form.trade }}
-                            <label for="{{ form.trade.id_for_label }}"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nome
-                                Fantasia</label>
-                            {{ form.trade.errors }}
-                        </div>
-                        <div class="relative z-0 w-full group">
-                            {{ form.cnpj }}
-                            <label for="{{ form.cnpj.id_for_label }}"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">CNPJ</label>
-                            {{ form.cnpj.errors }}
-                        </div>
-                        <div class="relative z-0 w-full group">
-                            {{ form.address }}
-                            <label for="{{ form.address.id_for_label }}"
-                                class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Endereço</label>
-                            {{ form.address.errors }}
-                        </div>
-                    </div>
+    <!-- Form Section -->
+    <div class="mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Editar Fornecedor</h3>
+            <form action="" method="post">{% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {% for field in form %}
+                    {% include "include/_form_field_standard.html" with field=field %}
+                    {% endfor %}
                 </div>
 
-                <!-- Contatos -->
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Contatos</h3>
+                <!-- Contacts Formset -->
+                <div class="mb-6">
+                    <h4 class="text-md font-medium text-gray-900 dark:text-white mb-4">Contatos</h4>
                     {{ form_contact.management_form }}
                     <div id="inline_form">
-                        {% for form in form_contact %}
-                        <div
-                            class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4 items-end p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700 relative group">
-                            {{ form.id }}
-                            <div class="md:col-span-3 relative z-0 w-full group">
-                                {{ form.kind }}
-                                <label
-                                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Tipo</label>
-                            </div>
-                            <div class="md:col-span-5 relative z-0 w-full group">
-                                {{ form.value }}
-                                <label
-                                    class="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-brand-600 peer-focus:dark:text-brand-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Contato</label>
-                            </div>
-                            <div class="md:col-span-3 flex items-center h-10">
-                                {{ form.whatsapp }}
-                                <label
-                                    class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Whatsapp?</label>
-                            </div>
-                            <div class="md:col-span-1 flex justify-end">
-                                {% if form.instance.pk %}
-                                <div class="flex items-center h-10">
-                                    <label class="inline-flex items-center cursor-pointer">
-                                        {{ form.DELETE }}
-                                        <span class="ml-2 text-sm text-red-600 hover:text-red-800">Excluir</span>
-                                    </label>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        {% endfor %}
+                        <table class="w-full">
+                            <tbody>
+                                {% for form in form_contact %}
+                                <tr class="border-b border-gray-200 dark:border-gray-700">
+                                    {{ form.id }}
+                                    <td class="px-2 py-2">
+                                        {% include "include/_form_field_standard.html" with field=form.kind %}
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        {% include "include/_form_field_standard.html" with field=form.value %}
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        <div class="flex items-center h-full pt-7">
+                                            {{ form.whatsapp }}
+                                            <label
+                                                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Whatsapp?</label>
+                                        </div>
+                                    </td>
+                                    <td class="px-2 py-2">
+                                        {% if form.instance.pk %}
+                                        <div class="flex items-center h-full pt-7">
+                                            {{ form.DELETE }}
+                                            <label class="ms-2 text-sm text-red-600 hover:text-red-800">Excluir</label>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Actions -->
-                <div class="flex items-center justify-end gap-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div class="flex justify-end gap-3 mt-6">
                     <a href="{% url 'suppliers:fornecedores' %}"
                         class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors">
                         Cancelar
@@ -119,12 +101,11 @@
                         Salvar Alterações
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock content %}
-
 {% block script %}
 <script src="{% static 'js/jquery.formset.js' %}"></script>
 <script type="text/javascript">
