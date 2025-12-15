@@ -3,14 +3,18 @@
 
 {% block title %}Dashboard{% endblock %}
 
+{% block extra_head %}
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <!-- Page Header -->
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Bem-vindo, {{ request.user.fullname|default:"Usuário" }}
-        </p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo, {{ request.user.fullname|default:"Usuário"
+            }}</p>
     </div>
 
     <!-- Ações Rápidas -->
@@ -25,8 +29,8 @@
     </div>
 </div>
 
-<!-- Stats Cards (3 cards) -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+<!-- Stats Cards (3 cards na mesma linha) -->
+<div class="grid grid-cols-3 gap-6 mb-6">
     <!-- Total de Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between">
@@ -77,11 +81,10 @@
     </div>
 </div>
 
-<!-- Top Materials Chart + Calendar (Grid 3/4 + 1/4) -->
-<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
-    <!-- Top Materials Chart (3/4) -->
-    <div
-        class="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+<!-- Top Materials Chart + Calendar -->
+<div class="flex gap-6 mb-6">
+    <!-- Top Materials Chart (75%) -->
+    <div class="w-3/4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between mb-4">
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
 
@@ -108,12 +111,11 @@
             </div>
         </div>
 
-        <div id="chart-top-materials" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
+        <div id="chart-top-materials" class="w-full" style="min-height: 350px;"></div>
     </div>
 
-    <!-- Calendar (1/4) -->
-    <div
-        class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <!-- Calendar (25%) -->
+    <div class="w-1/4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calendário</h5>
         <div id="mini-calendar"></div>
     </div>
@@ -165,6 +167,10 @@
 {% endblock %}
 
 {% block script %}
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/pt-br.global.min.js"></script>
+
 <style>
     .htmx-indicator {
         display: none;
@@ -180,29 +186,37 @@
 
     /* Mini Calendar Styles */
     #mini-calendar {
-        font-size: 0.875rem;
+        font-size: 0.75rem;
     }
 
     #mini-calendar .fc-toolbar-title {
-        font-size: 1rem !important;
+        font-size: 0.875rem !important;
     }
 
     #mini-calendar .fc-button {
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.75rem !important;
+        padding: 0.15rem 0.35rem !important;
+        font-size: 0.7rem !important;
     }
 
     #mini-calendar .fc-daygrid-day-number {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
+        padding: 2px !important;
+    }
+
+    #mini-calendar .fc-col-header-cell-cushion {
+        font-size: 0.65rem;
+    }
+
+    #mini-calendar .fc-event {
+        font-size: 0.6rem;
     }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Get data from JSON script tag
         const dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);
 
         // ============================================
-        // Top Materials Chart Initial Render
+        // Top Materials Chart
         // ============================================
         let materialLabels = dashboardData.materialLabels || [];
         let materialSeries = dashboardData.materialSeries || [];
@@ -215,66 +229,19 @@
             }
 
             var options = {
-                series: [{
-                    name: 'Quantidade',
-                    data: materialSeries
-                }],
+                series: [{ name: 'Quantidade', data: materialSeries }],
                 chart: {
-                    type: 'bar',
-                    height: 350,
-                    width: '100%',
-                    toolbar: { show: false },
-                    background: 'transparent',
-                    fontFamily: 'Inter, sans-serif'
+                    type: 'bar', height: 350, width: '100%',
+                    toolbar: { show: false }, background: 'transparent', fontFamily: 'Inter, sans-serif'
                 },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 4,
-                        horizontal: true,
-                        distributed: false,
-                        dataLabels: {
-                            position: 'center'
-                        }
-                    }
-                },
+                plotOptions: { bar: { borderRadius: 4, horizontal: true, dataLabels: { position: 'center' } } },
                 colors: ['#1D4ED8'],
-                dataLabels: {
-                    enabled: true,
-                    style: {
-                        colors: ['#fff']
-                    }
-                },
-                xaxis: {
-                    categories: materialLabels,
-                    labels: {
-                        style: {
-                            colors: '#6B7280',
-                            fontSize: '12px'
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        style: {
-                            colors: '#6B7280',
-                            fontSize: '12px'
-                        }
-                    }
-                },
+                dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+                xaxis: { categories: materialLabels, labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
+                yaxis: { labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
                 legend: { show: false },
                 grid: { borderColor: '#F3F4F6' },
-                theme: {
-                    mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-                },
-                responsive: [{
-                    breakpoint: 640,
-                    options: {
-                        chart: { height: 300 },
-                        plotOptions: {
-                            bar: { horizontal: false }
-                        }
-                    }
-                }]
+                theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }
             };
 
             if (document.documentElement.classList.contains('dark')) {
@@ -286,16 +253,6 @@
             if (document.querySelector("#chart-top-materials")) {
                 const chart = new ApexCharts(document.querySelector("#chart-top-materials"), options);
                 chart.render();
-
-                // Theme change handler
-                window.addEventListener('themeChanged', function (e) {
-                    chart.updateOptions({
-                        theme: { mode: e.detail.theme },
-                        grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
-                        xaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
-                        yaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } }
-                    });
-                });
             }
         }
 
@@ -304,26 +261,19 @@
         // ============================================
         function renderMiniCalendar() {
             var calendarEl = document.getElementById('mini-calendar');
-            if (!calendarEl) return;
+            if (!calendarEl || typeof FullCalendar === 'undefined') return;
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 locale: 'pt-br',
-                headerToolbar: {
-                    left: 'prev',
-                    center: 'title',
-                    right: 'next'
-                },
-                height: 350,
+                headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+                height: 320,
                 events: dashboardData.calendarEvents || [],
                 eventClick: function (info) {
-                    if (info.event.url) {
-                        window.location.href = info.event.url;
-                        info.jsEvent.preventDefault();
-                    }
+                    if (info.event.url) { window.location.href = info.event.url; info.jsEvent.preventDefault(); }
                 },
                 eventDisplay: 'dot',
-                dayMaxEvents: 3
+                dayMaxEvents: 2
             });
             calendar.render();
         }
