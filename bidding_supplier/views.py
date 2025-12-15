@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 
 from authenticate.decorators import tech_only
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm

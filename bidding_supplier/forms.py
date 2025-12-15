@@ -28,8 +28,12 @@ class SupplierForm(CapitalizeFieldMixin, forms.ModelForm):
 
     def clean(self):
         self.cleaned_data = super().clean()
-        if cpfcnpj.validate(self.cleaned_data.get("cnpj")) is False:
+        cnpj = self.cleaned_data.get("cnpj")
+        
+        # Permite CNPJ vazio ou valida se preenchido
+        if cnpj and not cpfcnpj.validate(cnpj):
             raise forms.ValidationError("CNPJ Inválido!")
+        
         return self.cleaned_data
 
 
