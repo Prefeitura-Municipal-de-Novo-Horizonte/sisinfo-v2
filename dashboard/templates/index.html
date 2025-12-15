@@ -5,10 +5,101 @@
 
 {% block content %}
 <!-- Page Header -->
-<div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo, {{ request.user.fullname|default:"Usuário" }}
-    </p>
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo, {{ request.user.fullname|default:"Usuário"
+            }}</p>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="flex items-center gap-3">
+        <a href="{% url 'reports:laudo_create' %}"
+            class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-brand-600 dark:hover:bg-brand-700 focus:outline-none dark:focus:ring-brand-800 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Novo Laudo
+        </a>
+        <a href="{% url 'suppliers:fornecedores' %}"
+            class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                </path>
+            </svg>
+            Fornecedores
+        </a>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Total de Laudos -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Laudos</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports|default:0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meus Laudos -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Meus Laudos</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports_user|default:0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pendentes -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendentes</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ pending_reports|default:0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fornecedores -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center">
+            <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+                    </path>
+                </svg>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Fornecedores</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_suppliers|default:0 }}</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Main Chart Section (Full Width) -->
@@ -18,15 +109,26 @@
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos por Setor</h5>
 
             <!-- Filter -->
-            <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
-                hx-target="#chart-reports-container"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="7">Últimos 7 dias</option>
-                <option value="15">Últimos 15 dias</option>
-                <option value="30" selected>Últimos 30 dias</option>
-                <option value="90">Últimos 90 dias</option>
-                <option value="365">Último Ano</option>
-            </select>
+            <div class="flex items-center gap-2">
+                <div id="loading-sector" class="htmx-indicator">
+                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
+                <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
+                    hx-target="#chart-reports-container" hx-indicator="#loading-sector"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="15">Últimos 15 dias</option>
+                    <option value="30" selected>Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="365">Último Ano</option>
+                </select>
+            </div>
         </div>
 
         <div id="chart-reports-container" class="w-full" style="max-width: 100%; overflow: hidden;">
@@ -42,14 +144,26 @@
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
 
             <!-- Filter por Período -->
-            <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <option value="7">Últimos 7 dias</option>
-                <option value="15">Últimos 15 dias</option>
-                <option value="30" selected>Últimos 30 dias</option>
-                <option value="90">Últimos 90 dias</option>
-                <option value="365">Último Ano</option>
-            </select>
+            <div class="flex items-center gap-2">
+                <div id="loading-materials" class="htmx-indicator">
+                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
+                <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
+                    hx-indicator="#loading-materials"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="15">Últimos 15 dias</option>
+                    <option value="30" selected>Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="365">Último Ano</option>
+                </select>
+            </div>
         </div>
 
         <div id="chart-top-materials" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
@@ -66,6 +180,19 @@
 {% endblock %}
 
 {% block script %}
+<style>
+    .htmx-indicator {
+        display: none;
+    }
+
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
+
+    .htmx-request.htmx-indicator {
+        display: inline-block;
+    }
+</style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         // Get data from JSON script tag
