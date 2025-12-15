@@ -206,12 +206,22 @@
                 background: white;
             }
 
-            .subpage {
+            .book,
+            .page,
+            .subpage,
+            #tudo,
+            #conteudo {
+                display: block !important;
+                position: relative !important;
+                width: 100% !important;
                 height: auto !important;
-                padding: 0 !important;
                 margin: 0 !important;
-                outline: none !important;
+                padding: 0 !important;
                 border: none !important;
+                box-shadow: none !important;
+                background: white !important;
+                overflow: visible !important;
+                float: none !important;
             }
 
             /* Set Margins via @page to handle footer space and content area */
@@ -231,17 +241,19 @@
 
             /* Header repetition */
             thead {
-                display: table-header-group;
+                display: table-header-group !important;
             }
 
             tfoot {
-                display: table-footer-group;
+                display: table-footer-group !important;
             }
 
             /* Avoid breaks inside rows */
-            tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
+            tr,
+            td,
+            th {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             /* Footer positioning */
