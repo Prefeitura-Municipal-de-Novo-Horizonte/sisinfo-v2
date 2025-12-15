@@ -76,6 +76,44 @@
                 background: initial;
                 page-break-after: always;
             }
+
+            /* Repetir cabeçalho em cada página */
+            thead {
+                display: table-header-group;
+            }
+
+            /* Evitar quebra no meio da linha */
+            tr {
+                page-break-inside: avoid;
+            }
+
+            /* Numeração de página */
+            @page {
+                /* Cabeçalho/Rodapé automático se suportado pelo navegador */
+                margin: 1cm;
+
+                @bottom-right {
+                    content: "Página " counter(page);
+                    font-size: 9pt;
+                }
+            }
+
+            /* Ajustes para conteúdo fluir em múltiplas páginas */
+            .subpage {
+                height: auto !important;
+                /* Permite crescer */
+                border: none;
+                padding: 0;
+            }
+
+            #tudo {
+                height: auto !important;
+            }
+
+            #rodape {
+                position: fixed;
+                bottom: 0;
+            }
         }
 
         dl {

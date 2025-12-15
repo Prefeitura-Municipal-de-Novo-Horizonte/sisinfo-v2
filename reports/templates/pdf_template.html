@@ -7,6 +7,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laudo Tecnico</title>
     <link rel="stylesheet" href="{% static 'css/reports.css' %}">
+    <style>
+        @media print {
+
+            /* Repetir cabeçalho em cada página */
+            thead {
+                display: table-header-group;
+            }
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+            .page {
+                border: none;
+                box-shadow: none;
+                margin: 0;
+                width: auto;
+                height: auto;
+            }
+
+            .subpage {
+                height: auto !important;
+                border: none;
+            }
+
+            @page {
+                margin: 1cm;
+
+                @bottom-right {
+                    content: "Página " counter(page);
+                    font-size: 9pt;
+                }
+            }
+
+            #rodape {
+                position: fixed;
+                bottom: 0;
+                width: 100%;
+                background: white;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -83,7 +125,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for material in report.laudos.all %}
+                            {% for material in report.materiais.all %}
                             <tr>
                                 <td>{{material.quantity}}</td>
                                 <td>{{material.material_bidding.material.name}}</td>
