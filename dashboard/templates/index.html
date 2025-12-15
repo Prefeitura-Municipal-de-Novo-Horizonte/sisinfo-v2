@@ -8,8 +8,9 @@
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Bem-vindo, {{ request.user.fullname|default:"Usuário"
-            }}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Bem-vindo, {{ request.user.fullname|default:"Usuário" }}
+        </p>
     </div>
 
     <!-- Ações Rápidas -->
@@ -21,23 +22,14 @@
             </svg>
             Novo Laudo
         </a>
-        <a href="{% url 'suppliers:fornecedores' %}"
-            class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 transition-colors flex items-center gap-2">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
-                </path>
-            </svg>
-            Fornecedores
-        </a>
     </div>
 </div>
 
-<!-- Stats Cards -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<!-- Stats Cards (3 cards) -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
     <!-- Total de Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex items-center">
+        <div class="flex items-center justify-between">
             <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -45,7 +37,7 @@
                     </path>
                 </svg>
             </div>
-            <div class="ml-4">
+            <div class="text-right">
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Laudos</p>
                 <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports|default:0 }}</p>
             </div>
@@ -54,14 +46,14 @@
 
     <!-- Meus Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex items-center">
+        <div class="flex items-center justify-between">
             <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
             </div>
-            <div class="ml-4">
+            <div class="text-right">
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Meus Laudos</p>
                 <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports_user|default:0 }}</p>
             </div>
@@ -70,39 +62,64 @@
 
     <!-- Pendentes -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex items-center">
+        <div class="flex items-center justify-between">
             <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             </div>
-            <div class="ml-4">
+            <div class="text-right">
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendentes</p>
                 <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ pending_reports|default:0 }}</p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Fornecedores -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex items-center">
-            <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
-                    </path>
-                </svg>
-            </div>
-            <div class="ml-4">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Fornecedores</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_suppliers|default:0 }}</p>
+<!-- Top Materials Chart + Calendar (Grid 3/4 + 1/4) -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+    <!-- Top Materials Chart (3/4) -->
+    <div
+        class="lg:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
+
+            <!-- Filter por Período -->
+            <div class="flex items-center gap-2">
+                <div id="loading-materials" class="htmx-indicator">
+                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                </div>
+                <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
+                    hx-indicator="#loading-materials"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="15">Últimos 15 dias</option>
+                    <option value="30" selected>Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="365">Último Ano</option>
+                </select>
             </div>
         </div>
+
+        <div id="chart-top-materials" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
+    </div>
+
+    <!-- Calendar (1/4) -->
+    <div
+        class="lg:col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calendário</h5>
+        <div id="mini-calendar"></div>
     </div>
 </div>
 
-<!-- Main Chart Section (Full Width) -->
+<!-- Sector Chart (Full Width) -->
 <div class="mb-6">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between mb-4">
@@ -137,44 +154,12 @@
     </div>
 </div>
 
-<!-- Top Materials Chart (Full Width) -->
-<div class="mb-6">
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
-
-            <!-- Filter por Período -->
-            <div class="flex items-center gap-2">
-                <div id="loading-materials" class="htmx-indicator">
-                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                    </svg>
-                </div>
-                <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
-                    hx-indicator="#loading-materials"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    <option value="7">Últimos 7 dias</option>
-                    <option value="15">Últimos 15 dias</option>
-                    <option value="30" selected>Últimos 30 dias</option>
-                    <option value="90">Últimos 90 dias</option>
-                    <option value="365">Último Ano</option>
-                </select>
-            </div>
-        </div>
-
-        <div id="chart-top-materials" class="w-full" style="max-width: 100%; overflow: hidden;"></div>
-    </div>
-</div>
-
 <!-- Data for JavaScript -->
 <script id="dashboard-data" type="application/json">
 {
   "materialLabels": {{ material_labels|safe }},
-  "materialSeries": {{ material_series|safe }}
+  "materialSeries": {{ material_series|safe }},
+  "calendarEvents": {{ calendar_events|safe }}
 }
 </script>
 {% endblock %}
@@ -191,6 +176,24 @@
 
     .htmx-request.htmx-indicator {
         display: inline-block;
+    }
+
+    /* Mini Calendar Styles */
+    #mini-calendar {
+        font-size: 0.875rem;
+    }
+
+    #mini-calendar .fc-toolbar-title {
+        font-size: 1rem !important;
+    }
+
+    #mini-calendar .fc-button {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    #mini-calendar .fc-daygrid-day-number {
+        font-size: 0.75rem;
     }
 </style>
 <script>
@@ -218,7 +221,7 @@
                 }],
                 chart: {
                     type: 'bar',
-                    height: 400,
+                    height: 350,
                     width: '100%',
                     toolbar: { show: false },
                     background: 'transparent',
@@ -296,8 +299,38 @@
             }
         }
 
+        // ============================================
+        // Mini Calendar
+        // ============================================
+        function renderMiniCalendar() {
+            var calendarEl = document.getElementById('mini-calendar');
+            if (!calendarEl) return;
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                headerToolbar: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                },
+                height: 350,
+                events: dashboardData.calendarEvents || [],
+                eventClick: function (info) {
+                    if (info.event.url) {
+                        window.location.href = info.event.url;
+                        info.jsEvent.preventDefault();
+                    }
+                },
+                eventDisplay: 'dot',
+                dayMaxEvents: 3
+            });
+            calendar.render();
+        }
+
         // Initial render
         renderMaterialsChart();
+        renderMiniCalendar();
     });
 </script>
 {% endblock %}
