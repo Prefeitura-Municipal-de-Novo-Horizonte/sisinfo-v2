@@ -62,18 +62,19 @@
 
             html,
             body {
-                width: 210mm;
-                height: 297mm;
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 0;
+                background: white;
             }
 
             .page {
                 margin: 0;
-                border: initial;
-                border-radius: initial;
-                width: initial;
-                min-height: initial;
-                box-shadow: initial;
-                background: initial;
+                border: none;
+                width: 100%;
+                box-shadow: none;
+                background: white;
                 page-break-after: always;
             }
 
@@ -87,32 +88,34 @@
                 page-break-inside: avoid;
             }
 
-            /* Numeração de página */
+            /* Configuração básica de página */
             @page {
-                /* Cabeçalho/Rodapé automático se suportado pelo navegador */
-                margin: 1cm;
-
-                @bottom-right {
-                    content: "Página " counter(page);
-                    font-size: 9pt;
-                }
+                margin: 0;
+                /* Margens são controladas pelo Playwright */
+                size: A4;
             }
 
-            /* Ajustes para conteúdo fluir em múltiplas páginas */
+            /* Ajustes para conteúdo */
             .subpage {
                 height: auto !important;
-                /* Permite crescer */
                 border: none;
                 padding: 0;
+                outline: none;
             }
 
             #tudo {
                 height: auto !important;
+                min-height: auto;
             }
 
             #rodape {
+                /* Rodapé fixo na parte inferior da área de conteúdo */
                 position: fixed;
                 bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                padding-top: 10px;
             }
         }
 
