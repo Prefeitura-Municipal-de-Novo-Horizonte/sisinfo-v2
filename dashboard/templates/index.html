@@ -3,11 +3,6 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block extra_head %}
-<!-- FullCalendar CSS -->
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
 <!-- Page Header -->
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -29,7 +24,7 @@
     </div>
 </div>
 
-<!-- Stats Cards (3 cards na mesma linha) -->
+<!-- Stats Cards (3 cards) -->
 <div class="grid grid-cols-3 gap-6 mb-6">
     <!-- Total de Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
@@ -81,15 +76,13 @@
     </div>
 </div>
 
-<!-- Top Materials Chart + Calendar -->
+<!-- Top Materials Chart + Calendar (grid 4 colunas: 3+1) -->
 <div class="grid grid-cols-4 gap-6 mb-6">
-    <!-- Top Materials Chart (3 colunas) -->
+    <!-- Top Materials Chart (3 colunas = 75%) -->
     <div
         class="col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between mb-4">
             <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
-
-            <!-- Filter por Período -->
             <div class="flex items-center gap-2">
                 <div id="loading-materials" class="htmx-indicator">
                     <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
@@ -109,168 +102,141 @@
                     <option value="90">Últimos 90 dias</option>
                     <option value="365">Último Ano</option>
                 </select>
-                <div class="mb-6">
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos por Setor</h5>
+            </div>
+        </div>
+        <div id="chart-top-materials" class="w-full" style="min-height: 350px;"></div>
+    </div>
 
-                            <!-- Filter -->
-                            <div class="flex items-center gap-2">
-                                <div id="loading-sector" class="htmx-indicator">
-                                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                            stroke-width="4">
-                                        </circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
-                                    hx-target="#chart-reports-container" hx-indicator="#loading-sector"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="7">Últimos 7 dias</option>
-                                    <option value="15">Últimos 15 dias</option>
-                                    <option value="30" selected>Últimos 30 dias</option>
-                                    <option value="90">Últimos 90 dias</option>
-                                    <option value="365">Último Ano</option>
-                                </select>
-                            </div>
-                        </div>
+    <!-- Calendar (1 coluna = 25%) -->
+    <div
+        class="col-span-1 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+        <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calendário</h5>
+        <div id="mini-calendar"></div>
+    </div>
+</div>
 
-                        <div id="chart-reports-container" class="w-full" style="max-width: 100%; overflow: hidden;">
-                            {% include "dashboard/partials/sector_chart.html" %}
-                        </div>
-                    </div>
+<!-- Sector Chart (Full Width) -->
+<div class="mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos por Setor</h5>
+            <div class="flex items-center gap-2">
+                <div id="loading-sector" class="htmx-indicator">
+                    <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
                 </div>
+                <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
+                    hx-target="#chart-reports-container" hx-indicator="#loading-sector"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="15">Últimos 15 dias</option>
+                    <option value="30" selected>Últimos 30 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="365">Último Ano</option>
+                </select>
+            </div>
+        </div>
+        <div id="chart-reports-container" class="w-full">
+            {% include "dashboard/partials/sector_chart.html" %}
+        </div>
+    </div>
+</div>
 
-                <!-- Data for JavaScript -->
-                <script id="dashboard-data" type="application/json">
+<!-- Data for JavaScript -->
+<script id="dashboard-data" type="application/json">
 {
   "materialLabels": {{ material_labels|safe }},
   "materialSeries": {{ material_series|safe }},
   "calendarEvents": {{ calendar_events|safe }}
 }
 </script>
-                {% endblock %}
+{% endblock %}
 
-                {% block script %}
-                <!-- FullCalendar JS -->
-                <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-                <script
-                    src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/pt-br.global.min.js"></script>
+{% block script %}
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.10/locales/pt-br.global.min.js"></script>
 
-                <style>
-                    .htmx-indicator {
-                        display: none;
-                    }
+<style>
+    .htmx-indicator {
+        display: none;
+    }
 
-                    .htmx-request .htmx-indicator {
-                        display: inline-block;
-                    }
+    .htmx-request .htmx-indicator {
+        display: inline-block;
+    }
 
-                    .htmx-request.htmx-indicator {
-                        display: inline-block;
-                    }
+    #mini-calendar {
+        font-size: 0.75rem;
+    }
 
-                    /* Mini Calendar Styles */
-                    #mini-calendar {
-                        font-size: 0.75rem;
-                    }
+    #mini-calendar .fc-toolbar-title {
+        font-size: 0.875rem !important;
+    }
 
-                    #mini-calendar .fc-toolbar-title {
-                        font-size: 0.875rem !important;
-                    }
+    #mini-calendar .fc-button {
+        padding: 0.15rem 0.35rem !important;
+        font-size: 0.7rem !important;
+    }
 
-                    #mini-calendar .fc-button {
-                        padding: 0.15rem 0.35rem !important;
-                        font-size: 0.7rem !important;
-                    }
+    #mini-calendar .fc-daygrid-day-number {
+        font-size: 0.7rem;
+        padding: 2px !important;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);
+        let materialLabels = dashboardData.materialLabels || [];
+        let materialSeries = dashboardData.materialSeries || [];
 
-                    #mini-calendar .fc-daygrid-day-number {
-                        font-size: 0.7rem;
-                        padding: 2px !important;
-                    }
+        // Materials Chart
+        function renderMaterialsChart() {
+            const container = document.querySelector("#chart-top-materials");
+            if (!container) return;
+            if (materialLabels.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
+                return;
+            }
+            var options = {
+                series: [{ name: 'Quantidade', data: materialSeries }],
+                chart: { type: 'bar', height: 350, toolbar: { show: false }, background: 'transparent', fontFamily: 'Inter, sans-serif' },
+                plotOptions: { bar: { borderRadius: 4, horizontal: true, dataLabels: { position: 'center' } } },
+                colors: ['#1D4ED8'],
+                dataLabels: { enabled: true, style: { colors: ['#fff'] } },
+                xaxis: { categories: materialLabels, labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
+                yaxis: { labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
+                legend: { show: false },
+                grid: { borderColor: document.documentElement.classList.contains('dark') ? '#374151' : '#F3F4F6' },
+                theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }
+            };
+            new ApexCharts(container, options).render();
+        }
 
-                    #mini-calendar .fc-col-header-cell-cushion {
-                        font-size: 0.65rem;
-                    }
+        // Mini Calendar
+        function renderMiniCalendar() {
+            var calendarEl = document.getElementById('mini-calendar');
+            if (!calendarEl || typeof FullCalendar === 'undefined') return;
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                headerToolbar: { left: 'prev', center: 'title', right: 'next' },
+                height: 320,
+                events: dashboardData.calendarEvents || [],
+                eventClick: function (info) { if (info.event.url) { window.location.href = info.event.url; info.jsEvent.preventDefault(); } },
+                eventDisplay: 'dot',
+                dayMaxEvents: 2
+            });
+            calendar.render();
+        }
 
-                    #mini-calendar .fc-event {
-                        font-size: 0.6rem;
-                    }
-                </style>
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        const dashboardData = JSON.parse(document.getElementById('dashboard-data').textContent);
-
-                        // ============================================
-                        // Top Materials Chart
-                        // ============================================
-                        let materialLabels = dashboardData.materialLabels || [];
-                        let materialSeries = dashboardData.materialSeries || [];
-
-                        function renderMaterialsChart() {
-                            if (materialLabels.length === 0) {
-                                const container = document.querySelector("#chart-top-materials");
-                                if (container) container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
-                                return;
-                            }
-
-                            var options = {
-                                series: [{ name: 'Quantidade', data: materialSeries }],
-                                chart: {
-                                    type: 'bar', height: 350, width: '100%',
-                                    toolbar: { show: false }, background: 'transparent', fontFamily: 'Inter, sans-serif'
-                                },
-                                plotOptions: { bar: { borderRadius: 4, horizontal: true, dataLabels: { position: 'center' } } },
-                                colors: ['#1D4ED8'],
-                                dataLabels: { enabled: true, style: { colors: ['#fff'] } },
-                                xaxis: { categories: materialLabels, labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
-                                yaxis: { labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
-                                legend: { show: false },
-                                grid: { borderColor: '#F3F4F6' },
-                                theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }
-                            };
-
-                            if (document.documentElement.classList.contains('dark')) {
-                                options.grid.borderColor = '#374151';
-                                options.xaxis.labels.style.colors = '#9CA3AF';
-                                options.yaxis.labels.style.colors = '#9CA3AF';
-                            }
-
-                            if (document.querySelector("#chart-top-materials")) {
-                                const chart = new ApexCharts(document.querySelector("#chart-top-materials"), options);
-                                chart.render();
-                            }
-                        }
-
-                        // ============================================
-                        // Mini Calendar
-                        // ============================================
-                        function renderMiniCalendar() {
-                            var calendarEl = document.getElementById('mini-calendar');
-                            if (!calendarEl || typeof FullCalendar === 'undefined') return;
-
-                            var calendar = new FullCalendar.Calendar(calendarEl, {
-                                initialView: 'dayGridMonth',
-                                locale: 'pt-br',
-                                headerToolbar: { left: 'prev', center: 'title', right: 'next' },
-                                height: 320,
-                                events: dashboardData.calendarEvents || [],
-                                eventClick: function (info) {
-                                    if (info.event.url) { window.location.href = info.event.url; info.jsEvent.preventDefault(); }
-                                },
-                                eventDisplay: 'dot',
-                                dayMaxEvents: 2
-                            });
-                            calendar.render();
-                        }
-
-                        // Initial render
-                        renderMaterialsChart();
-                        renderMiniCalendar();
-                    });
-                </script>
-                {% endblock %}
+        renderMaterialsChart();
+        renderMiniCalendar();
+    });
+</script>
+{% endblock %}
