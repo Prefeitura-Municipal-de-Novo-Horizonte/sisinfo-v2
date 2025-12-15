@@ -70,7 +70,7 @@ class Sector(AbsctactDirectionSector):
         Direction,
         on_delete=models.SET_NULL,
         verbose_name="diretoria",
-        related_name="diretorias",
+        related_name="setores",
         blank=True,
         null=True,
     )
