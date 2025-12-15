@@ -226,8 +226,8 @@
 
             /* Set Margins via @page to handle footer space and content area */
             @page {
-                margin: 20mm 10mm 15mm 10mm;
-                /* Increased header top margin */
+                margin: 20mm 10mm 35mm 10mm;
+                /* Increased header top margin, Increased bottom for signature footer */
                 size: A4;
             }
 
@@ -262,7 +262,8 @@
                 bottom: 0;
                 left: 0;
                 right: 0;
-                height: 10mm;
+                height: 30mm;
+                /* Increased height for signature */
                 width: 100%;
                 background: white;
                 text-align: center;
@@ -350,14 +351,12 @@
                     </table>
                 </div><!-- Final da div conteudo -->
 
-                <!-- Signature Block (Flow Content) -->
-                <div style="margin-top: 50px; text-align: center; page-break-inside: avoid;">
-                    ____________________________________________<br />
-                    <p style="margin-top: 5px;"><b>{{report.pro_accountable}}</b></p>
-                </div>
-
                 <!-- Fixed Footer (Copyright Only) -->
                 <div id="rodape">
+                    <div style="margin-bottom: 5px;">
+                        ____________________________________________<br />
+                        <b>{{report.pro_accountable}}</b>
+                    </div>
                     Prefeitura Municipal de Novo Horizonte - SISInfo &copy;
                 </div>
             </div><!-- Final da Página -->

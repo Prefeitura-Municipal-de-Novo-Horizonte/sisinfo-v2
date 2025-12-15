@@ -63,6 +63,13 @@ class PDFGenerator:
                 pdf_bytes = page.pdf(
                     format='A4',
                     print_background=True,
+                    display_header_footer=True,
+                    header_template='''
+                        <div style="font-size: 10px; width: 100%; text-align: right; padding-right: 15mm; margin-top: 5px;">
+                            Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+                        </div>
+                    ''',
+                    footer_template='<div></div>',
                     margin={
                         'top': '20mm',
                         'bottom': '20mm',
