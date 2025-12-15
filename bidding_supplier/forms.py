@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import inlineformset_factory
-from pycpfcnpj import cpfcnpj
+from validate_docbr import CNPJ
 
 from core.mixins import CapitalizeFieldMixin
 from core.constants import STANDARD_INPUT_CLASS, TEXTAREA_CLASS
@@ -35,7 +35,8 @@ class SupplierForm(CapitalizeFieldMixin, forms.ModelForm):
             raise forms.ValidationError("CNPJ precisa ser preenchido!")
         
         # Valida CNPJ se preenchido
-        if not cpfcnpj.validate(cnpj):
+        cnpj_validator = CNPJ()
+        if not cnpj_validator.validate(cnpj):
             raise forms.ValidationError("CNPJ Inválido!")
         
         return self.cleaned_data

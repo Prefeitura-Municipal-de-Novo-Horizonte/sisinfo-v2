@@ -8,7 +8,7 @@ django-filter==25.1
 pillow==11.3.0
 pymongo==4.6.1
 urllib3==1.26.6
-cpf-cnpj-validate==1.4
+validate-docbr==1.11.1
 dj-static==0.0.6
 playwright==1.48.0
 certifi==2024.2.2
