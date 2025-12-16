@@ -102,6 +102,9 @@ Este documento fornece o contexto essencial para os modelos de IA que interagem 
 
 O projeto possui comandos personalizados (`management commands`) essenciais para a manutenção da integridade dos dados e importação de novos processos.
 
+### Manutenção de Fornecedores
+*   `python manage.py consolidate_suppliers`: Normaliza e consolida fornecedores duplicados.
+
 ### Importação de Licitações
 *   `python manage.py import_bidding_from_xlsx <caminho_arquivo>`: Importa licitações completas a partir de planilhas XLSX. É o método preferencial e mais confiável.
 *   `python manage.py sync_bidding_with_pdf <caminho_arquivo>`: Sincroniza e valida os dados importados comparando com o arquivo PDF original.
@@ -111,10 +114,10 @@ O projeto possui comandos personalizados (`management commands`) essenciais para
 *   `python manage.py diagnose_data`: Executa um diagnóstico completo do banco de dados, identificando duplicatas, órfãos e inconsistências.
 *   `python manage.py clean_duplicate_biddings`: Identifica e remove licitações duplicadas, consolidando os materiais.
 *   `python manage.py clean_duplicate_materials`: Identifica e funde materiais duplicados com base em similaridade de nome.
-*   `python manage.py consolidate_suppliers`: Normaliza e consolida fornecedores duplicados.
 
-### Relatórios
-*   `python manage.py report_all_materials`: Gera um CSV detalhado com todos os materiais cadastrados e seu uso.
+### Recuperação de Dados (Reports)
+*   `python manage.py restore_material_reports_from_json`: Restaura laudos a partir de backup JSON.
+*   `python manage.py fix_orphan_material_reports`: Corrige inconsistências em laudos órfãos.
 
 ### Auditoria
 *   `python manage.py backup_audit_logs`: Faz backup dos logs de auditoria do MongoDB.
