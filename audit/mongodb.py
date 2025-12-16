@@ -22,17 +22,20 @@ class MongoDBConnection:
             cls._instance = super().__new__(cls)
             try:
                 connection_string = config('DATABASE_MONGODB_LOGS')
-                cls._client = MongoClient(
-                    connection_string,
-                    serverSelectionTimeoutMS=2000,
-                    connectTimeoutMS=2000,
-                    socketTimeoutMS=2000,
-                    tlsCAFile=certifi.where(),
+                
+                client_options = {
+                    'serverSelectionTimeoutMS': 2000,
+                    'connectTimeoutMS': 2000,
+                    'socketTimeoutMS': 2000,
+                }
+                
+                # Configurar SSL/TLS apenas se não for localhost
+                if 'localhost' not in connection_string and '127.0.0.1' not in connection_string:
+                    client_options['tlsCAFile'] = certifi.where()
                     # Workaround para SSL no Vercel (Python 3.13 compatibility issue)
-                    # Audit logs são não-críticos, então desabilitamos verificação SSL
-                    # A autenticação ainda é feita via usuário/senha do MongoDB
-                    tlsInsecure=True
-                )
+                    client_options['tlsInsecure'] = True
+                    
+                cls._client = MongoClient(connection_string, **client_options)
                 logger.debug("Cliente MongoDB inicializado (lazy)")
             except Exception as e:
                 logger.error(f"Erro ao inicializar MongoDB: {e}")
