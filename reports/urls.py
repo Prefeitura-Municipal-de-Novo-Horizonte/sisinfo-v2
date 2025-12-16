@@ -1,8 +1,9 @@
 from django.urls import path
 
-from reports.views import (
     ReportDetailView,
     ReportListView,
+    create_sector_api,
+    generate_pdf_report,
     material_report_delete,
     report_register,
     report_update,
