@@ -1,46 +1,59 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages import constants
-from django.core.paginator import Paginator
 from django.forms import inlineformset_factory
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.text import slugify
+from django.views.generic import DetailView, ListView, View
+from django.core.paginator import Paginator
 
+# Imports locais movidos para o topo
 from reports.filters import ReportFilter
 from reports.forms import MaterialReportForm, MaterialReportFormset, ReportForm, ReportUpdateForm
 from reports.models import MaterialReport, Report
+from reports.pdf_generator import PDFGenerator
 from reports.services import ReportService
+from organizational_structure.models import Sector
+import json
 
 
 # Create your views here.
-@login_required(login_url='login')
-def reports(request):
+class ReportListView(LoginRequiredMixin, ListView):
     """
-    View para listar laudos.
-    
-    GET: Lista todos os laudos com paginação e filtro.
+    Lista todos os laudos com paginação e filtro.
+    Substitui a FBV `reports`.
     """
-    reports_list = ReportService.get_all_reports()
-    myFilter = ReportFilter(request.GET, queryset=reports_list)
-    reports_list = myFilter.qs
-    paginator = Paginator(reports_list, 15)  # Show 15 reports per page.
+    model = Report
+    template_name = 'reports.html'
+    context_object_name = 'page_obj'
+    paginate_by = 15
+    context_object_name = 'page_obj'
+    paginate_by = 15
+    login_url = 'authenticate:login'
 
-    page_number = request.GET.get("page")
-    page_obj = paginator.get_page(page_number)
-    context = {
-        "page_obj": page_obj,
-        "myFilter": myFilter,
-    }
-    return render(request, 'reports.html', context)
+    def get_queryset(self):
+        queryset = ReportService.get_all_reports()
+        self.filterset = ReportFilter(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['myFilter'] = self.filterset
+        return context
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def report_register(request):
     """
     View para registrar um novo laudo.
+    Mantida como FBV devido à complexidade do inline formset.
     """
     if request.method == 'POST':
         form = ReportForm(request.POST, request=request)
+        # Formset para materiais
         form_material_factory = inlineformset_factory(
             Report, MaterialReport, form=MaterialReportForm)
         form_material = form_material_factory(request.POST)
@@ -65,22 +78,37 @@ def report_register(request):
     return render(request, 'register_reports.html', context)
 
 
-@login_required(login_url='login')
-def report_view(request, slug):
+class ReportDetailView(LoginRequiredMixin, DetailView):
     """
-    View para visualizar detalhes de um laudo.
+    Visualiza detalhes de um laudo.
+    Substitui a FBV `report_view`.
     """
-    context = ReportService.get_report_details(slug)
-    return render(request, 'report.html', context)
+    model = Report
+    template_name = 'report.html'
+    context_object_name = 'report'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+    login_url = 'authenticate:login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Usa o service para pegar detalhes adicionais (como preço total)
+        # O service retorna um dict com 'report' e 'total_price'
+        details = ReportService.get_report_details(self.object.slug)
+        context.update(details)
+        return context
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def report_update(request, slug):
     """
-    View para atualizar um laudo existente.
-    Apenas o profissional responsável ou o criador podem editar.
+    Atualiza um laudo existente.
+    Mantida como FBV verificação de permissão customizada e formset.
     """
     report = ReportService.get_report_by_slug(slug)
+    # Verifica permissão: apenas o profissional ou responsável podem editar
     if request.user in [report.professional, report.pro_accountable]:
         form = ReportUpdateForm(request.POST or None,
                                 instance=report, request=request)
@@ -110,48 +138,31 @@ def report_update(request, slug):
         return redirect('reports:reports')
 
 
-def pdf_report(request, slug):
-    """
-    View para gerar visualização de impressão (PDF) do laudo.
-    """
-    report = ReportService.get_report_by_slug(slug)
-    context = {
-        'report': report,
-    }
-    return render(request, 'pdf_template.html', context)
 
 
-@login_required(login_url='login')
+
+@login_required(login_url='authenticate:login')
 def material_report_delete(request, report_slug, pk):
     """
-    View para excluir um material de um laudo.
+    Exclui um material de um laudo.
     """
     report, msg = ReportService.delete_material_report(pk)
     messages.add_message(request, constants.SUCCESS, msg)
     return redirect(reverse('reports:report_update', kwargs={'slug': report.slug}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def generate_pdf_report(request, slug):
     """
-    Gera e retorna PDF do laudo usando Browserless.io.
-    
-    Args:
-        request: HttpRequest
-        slug: Slug do laudo
-        
-    Returns:
-        HttpResponse com PDF gerado
+    Gera e retorna PDF do laudo usando Browserless.io/PDFGenerator.
     """
-    from reports.pdf_generator import PDFGenerator
-    from django.http import HttpResponse
-    
     report = ReportService.get_report_by_slug(slug)
     
     try:
         pdf_bytes = PDFGenerator.generate_report_pdf(report)
         
         response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        # nome do arquivo para download
         response['Content-Disposition'] = f'inline; filename="laudo_{report.number_report}.pdf"'
         return response
     except Exception as e:
@@ -159,17 +170,11 @@ def generate_pdf_report(request, slug):
         return redirect(reverse('reports:report_view', kwargs={'slug': slug}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def create_sector_api(request):
     """
     API para criar um novo setor via AJAX.
-    Retorna JSON com {id, name} ou erro.
     """
-    from django.http import JsonResponse
-    from django.utils.text import slugify
-    from organizational_structure.models import Sector
-    import json
-
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -178,12 +183,11 @@ def create_sector_api(request):
             if not name:
                 return JsonResponse({'error': 'Nome do setor é obrigatório'}, status=400)
                 
-            # Verifica se já existe
+            # Verifica se já existe (independente de maiúsculas/minúsculas)
             if Sector.objects.filter(name__iexact=name).exists():
                 return JsonResponse({'error': 'Setor já existe'}, status=400)
                 
-            # Cria o setor
-            # Slug é obrigatório no model, então geramos aqui
+            # Cria o setor e gera slug
             slug = slugify(name)
             sector = Sector.objects.create(name=name, slug=slug)
             

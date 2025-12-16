@@ -53,7 +53,7 @@ class MaterialReport(models.Model):
     Representa um material incluído em um laudo.
     """
     report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='laudos')
+        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='materiais')
     material_bidding = models.ForeignKey(
         MaterialBidding, verbose_name='material da licitação', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais_laudos')
     quantity = models.IntegerField(

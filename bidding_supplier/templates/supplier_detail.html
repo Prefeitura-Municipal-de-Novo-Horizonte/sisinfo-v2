@@ -50,7 +50,8 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Contatos</dt>
-            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{{ supplier.suppliers.count }}</dd>
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                {{ supplier.contacts.count }}</dd>
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Licitações Participantes</dt>
@@ -58,7 +59,8 @@
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Cadastrado em</dt>
-            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{{ supplier.created_at|date:"d/m/Y" }}
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
+                {{ supplier.created_at|date:"d/m/Y" }}
             </dd>
         </div>
     </div>
@@ -78,7 +80,8 @@
                 </div>
                 <div class="md:col-span-2">
                     <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Endereço</dt>
-                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ supplier.address|default:"-" }}</dd>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">
+                        {{ supplier.address|default:"-" }}</dd>
                 </div>
             </div>
         </div>
@@ -94,7 +97,7 @@
                 Contatos
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {% for sc in supplier.suppliers.all %}
+                {% for sc in supplier.contacts.all %}
                 <div
                     class="flex items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-700">
                     <div
@@ -114,7 +117,8 @@
                         {% endif %}
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate" title="{{ sc.value }}">{{ sc.value }}</p>
+                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate" title="{{ sc.value }}">
+                            {{ sc.value }}</p>
                         {% if sc.whatsapp %}
                         <span class="inline-flex items-center gap-1 text-xs text-green-600 dark:text-green-400 mt-0.5">
                             <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">

@@ -41,6 +41,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 # Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Serve static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

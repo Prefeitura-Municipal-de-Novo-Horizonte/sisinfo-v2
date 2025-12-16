@@ -41,6 +41,19 @@ class Supplier(models.Model):
                 self.trade = self.company
             self.slug = slugify(self.trade)
         return super().save()
+    
+    def get_active_biddings(self):
+        """
+        Retorna licitações ativas deste fornecedor.
+        
+        Returns:
+            QuerySet: Licitações com status ativo ('1')
+        """
+        from bidding_procurement.models import Bidding
+        return Bidding.objects.filter(
+            material_associations__supplier=self,
+            status='1'
+        ).distinct()
 
 
 class Contact(models.Model):
@@ -54,7 +67,7 @@ class Contact(models.Model):
         (PHONE, 'Telefone')
     )
     supplier = models.ForeignKey(
-        'Supplier', on_delete=models.CASCADE, verbose_name='fornecedor', related_name='suppliers')
+        'Supplier', on_delete=models.CASCADE, verbose_name='fornecedor', related_name='contacts')
     kind = models.CharField('tipo', max_length=1, choices=KINDS)
     value = models.CharField('contato', max_length=255)
     whatsapp = models.BooleanField('whatsapp', default=False)

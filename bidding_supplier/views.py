@@ -1,111 +1,190 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
-from django.forms import inlineformset_factory
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    View,
+)
 
-from authenticate.decorators import tech_only
+from authenticate.mixins import TechOnlyMixin
+from bidding_supplier.filters import SupplierFilter
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
+from bidding_supplier.mixins import MessageMixin, FormsetMixin
 from bidding_supplier.models import Contact, Supplier
 from bidding_supplier.services import SupplierService
 
 
-# Create your views here.
-@login_required(login_url='login')
-def suppliers(request):
+# ==================== SUPPLIER VIEWS ====================
+
+class SupplierListView(LoginRequiredMixin, ListView):
     """
-    View para listar e criar fornecedores.
+    View para listar fornecedores com filtros e paginação.
+    """
+    model = Supplier
+    template_name = "suppliers.html"
+    context_object_name = "suppliers"
+    filterset_class = SupplierFilter
+    paginate_by = 15
     
-    GET: Lista todos os fornecedores.
-    POST: Cria um novo fornecedor com contatos.
+    def get_queryset(self):
+        """Aplica filtros ao queryset."""
+        queryset = SupplierService.get_all_suppliers()
+        self.filterset = self.filterset_class(self.request.GET, queryset=queryset)
+        return self.filterset.qs
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona form e filtros ao contexto."""
+        context = super().get_context_data(**kwargs)
+        context['form'] = SupplierForm()
+        context['form_contact'] = ContactInlineForm()
+        context['myFilter'] = self.filterset
+        context['btn'] = 'Adicionar novo Fornecedor'
+        return context
+
+
+class SupplierCreateView(LoginRequiredMixin, MessageMixin, FormsetMixin, CreateView):
     """
-    suppliers_list = SupplierService.get_all_suppliers()
-    if request.method == 'POST':
-        form = SupplierForm(request.POST)
-        form_contact_factory = inlineformset_factory(
-            Supplier, Contact, form=ContactForm)
-        form_contact = form_contact_factory(request.POST)
+    View para criar um novo fornecedor com contatos.
+    """
+    model = Supplier
+    form_class = SupplierForm
+    formset_class = ContactInlineForm
+    template_name = "suppliers.html"
+    success_url = reverse_lazy("suppliers:fornecedores")
+    success_message = "Um novo fornecedor inserido com sucesso"
+    error_message = "Ocorreu um erro!"
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona lista de fornecedores ao contexto."""
+        context = super().get_context_data(**kwargs)
+        context['suppliers'] = SupplierService.get_all_suppliers()
+        context['btn'] = 'Adicionar novo Fornecedor'
+        return context
+
+
+class SupplierDetailView(LoginRequiredMixin, DetailView):
+    """
+    View para exibir detalhes de um fornecedor.
+    """
+    model = Supplier
+    template_name = "supplier_detail.html"
+    context_object_name = "supplier"
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona contatos, materiais e licitações ao contexto."""
+        context = super().get_context_data(**kwargs)
+        details = SupplierService.get_supplier_details(self.object.slug)
+        context.update(details)
+        return context
+
+
+class SupplierUpdateView(LoginRequiredMixin, MessageMixin, FormsetMixin, UpdateView):
+    """
+    View para atualizar um fornecedor e seus contatos.
+    """
+    model = Supplier
+    form_class = SupplierForm
+    formset_class = ContactInlineForm
+    template_name = "supplier_update.html"
+    context_object_name = "supplier"
+    
+    def get_success_url(self):
+        """Retorna para a própria página de edição."""
+        return reverse_lazy('suppliers:fornecedor_update', kwargs={'slug': self.object.slug})
+    
+    def get_success_message(self):
+        """Mensagem dinâmica com nome do fornecedor."""
+        return f'O fornecedor {self.object.trade} foi atualizado com sucesso'
+    
+    def get_form(self, form_class=None):
+        """Adiciona prefix ao form principal."""
+        form = super().get_form(form_class)
+        form.prefix = 'main'
+        return form
+    
+    def get_context_data(self, **kwargs):
+        """Adiciona lista de fornecedores e formset ao contexto."""
+        context = super().get_context_data(**kwargs)
         
-        if SupplierService.create_supplier(form, form_contact):
-            messages.add_message(
-                request, constants.SUCCESS, "Um novo fornecedor inserido com sucesso")
+        # Formset com prefix
+        if self.request.POST:
+            context['formset'] = self.formset_class(
+                self.request.POST, 
+                instance=self.object,
+                prefix='suppliers'
+            )
         else:
-            messages.add_message(request, constants.ERROR, "Ocorreu um erro!")
-        return redirect(reverse("suppliers:fornecedores"))
+            context['formset'] = self.formset_class(
+                instance=self.object,
+                prefix='suppliers'
+            )
         
-    form = SupplierForm()
-    form_contact = inlineformset_factory(
-        Supplier, Contact, form=ContactForm, extra=2)
-    context = {
-        'suppliers': suppliers_list,
-        'form': form,
-        'form_contact': form_contact,
-        'btn': 'Adicionar novo Fornecedor',
-    }
-    return render(request, "suppliers.html", context)
-
-
-@login_required(login_url='login')
-def supplier_update(request, slug):
-    """
-    View para atualizar um fornecedor existente e seus contatos.
-    """
-    supplier = SupplierService.get_supplier_by_slug(slug)
-    form = SupplierForm(request.POST or None, instance=supplier, prefix='main')
-    form_contact = ContactInlineForm(
-        request.POST or None, instance=supplier, prefix='suppliers')
-    suppliers_list = SupplierService.get_all_suppliers()
-
-    if request.method == 'POST':
-        if SupplierService.update_supplier(form, form_contact):
+        context['form_contact'] = context['formset']  # Alias para compatibilidade
+        context['suppliers'] = SupplierService.get_all_suppliers()
+        context['btn'] = 'Atualizar Fornecedor'
+        return context
+    
+    def form_valid(self, form):
+        """Valida e salva form + formset."""
+        context = self.get_context_data()
+        formset = context['formset']
+        
+        if formset.is_valid():
+            self.object = form.save()
+            formset.instance = self.object
+            formset.save()
+            
             messages.add_message(
-                request, constants.SUCCESS, f'O fornecedor {supplier.trade} foi atualizado com sucesso')
-            return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
-        messages.add_message(request, constants.WARNING,
-                             f'Não foi possível atualizar o fornecedor {supplier.trade}')
-        return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': slug}))
-    context = {
-        'form': form,
-        'supplier': supplier,
-        'form_contact': form_contact,
-        'suppliers': suppliers_list,
-        'btn': 'Atualizar Fornecedor'
-    }
-    return render(request, 'supplier_update.html', context)
+                self.request,
+                constants.SUCCESS,
+                self.get_success_message()
+            )
+            return redirect(self.get_success_url())
+        else:
+            messages.add_message(
+                self.request,
+                constants.WARNING,
+                f'Não foi possível atualizar o fornecedor {self.object.trade}'
+            )
+            return self.form_invalid(form)
 
 
-@login_required(login_url='login')
-def supplier_detail(request, slug):
-    """
-    View para exibir detalhes de um fornecedor, incluindo contatos, materiais e licitações.
-    """
-    context = SupplierService.get_supplier_details(slug)
-    return render(request, 'supplier_detail.html', context)
-
-
-@login_required(login_url='login')
-@tech_only
-def supplier_delete(request, slug):
+class SupplierDeleteView(LoginRequiredMixin, TechOnlyMixin, View):
     """
     View para excluir um fornecedor (apenas técnicos).
     """
-    supplier = get_object_or_404(Supplier, slug=slug)
-    trade = supplier.trade
-    if SupplierService.delete_supplier(supplier):
-        messages.add_message(request, constants.ERROR,
-                             f'O Fornecedor {trade} foi excluido com sucesso!')
-        return redirect(reverse('suppliers:fornecedores'))
-    messages.add_message(request, constants.WARNING,
-                         f'Não foi possivel excluir o fornecedor {trade}')
-    return redirect(reverse('suppliers:fornecedores'))
+    def get(self, request, slug):
+        """Exclui o fornecedor e redireciona."""
+        supplier = get_object_or_404(Supplier, slug=slug)
+        trade = supplier.trade
+        
+        if SupplierService.delete_supplier(supplier):
+            messages.add_message(
+                request,
+                constants.ERROR,
+                f'O Fornecedor {trade} foi excluído com sucesso!'
+            )
+        else:
+            messages.add_message(
+                request,
+                constants.WARNING,
+                f'Não foi possível excluir o fornecedor {trade}'
+            )
+        
+        return redirect(reverse_lazy('suppliers:fornecedores'))
 
 
-@login_required(login_url='login')
-def contact_supplier_delete(request, id):
+class ContactDeleteView(LoginRequiredMixin, View):
     """
     View para excluir um contato de fornecedor.
     """
-    supplier, msg = SupplierService.delete_contact(id)
-    messages.add_message(request, constants.ERROR, msg)
-    return redirect(reverse('suppliers:fornecedor_update', kwargs={'slug': supplier.slug}))
+    def get(self, request, id):
+        """Exclui o contato e redireciona."""
+        supplier, msg = SupplierService.delete_contact(id)
+        messages.add_message(request, constants.ERROR, msg)
+        return redirect(reverse_lazy('suppliers:fornecedor_update', kwargs={'slug': supplier.slug}))

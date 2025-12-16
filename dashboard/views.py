@@ -11,6 +11,9 @@ def index(request):
     """
     View principal do Dashboard.
     """
+    # Estatísticas para cards
+    stats = DashboardService.get_dashboard_data(request.user)
+    
     # Initial data for main chart (30 days)
     sector_data = DashboardService.get_reports_by_sector(30)
 
@@ -21,6 +24,9 @@ def index(request):
     calendar_events = DashboardService.get_recent_reports_for_calendar()
 
     context = {
+        # Stats for cards
+        **stats,
+        
         # Main Chart Data (passed to partial logic or initial render)
         'sector_labels': json.dumps([item['sector__name'] for item in sector_data]),
         'sector_series': json.dumps([item['count'] for item in sector_data]),

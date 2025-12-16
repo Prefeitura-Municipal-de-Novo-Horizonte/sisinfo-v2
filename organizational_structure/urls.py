@@ -1,35 +1,31 @@
 from django.urls import path
 
 from organizational_structure.views import (
-    direction_create,
-    direction_delete,
-    direction_detail,
-    direction_update,
-    directions,
-    sector_create,
-    sector_delete,
-    sector_detail,
-    sector_update,
-    sectors,
+    DirectionListView,
+    DirectionCreateView,
+    DirectionDetailView,
+    DirectionUpdateView,
+    DirectionDeleteView,
+    SectorListView,
+    SectorCreateView,
+    SectorDetailView,
+    SectorUpdateView,
+    SectorDeleteView,
 )
 
 app_name = "organizational_structure"
 
 urlpatterns = [
     # Diretorias
-    path("diretorias/", directions, name="diretorias"),
-    path("diretoria/create/", direction_create, name="create_diretoria"),
-    path("diretoria/<slug:slug>/", direction_detail, name="diretoria"),
-    path("diretoria/<slug:slug>/update/", direction_update, name="update_diretoria"),
-    path(
-        "diretoria/<slug:slug>/delete/",
-        direction_delete,
-        name="delete_diretoria",
-    ),
+    path("diretorias/", DirectionListView.as_view(), name="diretorias"),
+    path("diretoria/create/", DirectionCreateView.as_view(), name="create_diretoria"),
+    path("diretoria/<slug:slug>/", DirectionDetailView.as_view(), name="diretoria"),
+    path("diretoria/<slug:slug>/update/", DirectionUpdateView.as_view(), name="update_diretoria"),
+    path("diretoria/<slug:slug>/delete/", DirectionDeleteView.as_view(), name="delete_diretoria"),
     # Setores
-    path("setores/", sectors, name="setores"),
-    path("setor/create/", sector_create, name="create_setor"),
-    path("diretoria/setor/<slug:slug>/", sector_detail, name="setor"),
-    path("diretoria/setor/<slug:slug>/update/", sector_update, name="update_setor"),
-    path("diretoria/setor/<slug:slug>/delete/", sector_delete, name="delete_setor"),
+    path("setores/", SectorListView.as_view(), name="setores"),
+    path("setor/create/", SectorCreateView.as_view(), name="create_setor"),
+    path("diretoria/setor/<slug:slug>/", SectorDetailView.as_view(), name="setor"),
+    path("diretoria/setor/<slug:slug>/update/", SectorUpdateView.as_view(), name="update_setor"),
+    path("diretoria/setor/<slug:slug>/delete/", SectorDeleteView.as_view(), name="delete_setor"),
 ]
