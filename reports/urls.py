@@ -1,5 +1,6 @@
 from django.urls import path
 
+from reports.views import (
     ReportDetailView,
     ReportListView,
     create_sector_api,
