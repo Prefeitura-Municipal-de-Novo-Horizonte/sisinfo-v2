@@ -30,21 +30,15 @@ Documento de planejamento para futuras implementações e melhorias do sistema.
 ## 🔄 Sistema de Auditoria - Pendências
 
 ### Configuração e Testes
-- [ ] Instalar pymongo em produção (`pip install -r requirements.txt`)
-- [ ] Configurar string de conexão MongoDB Atlas no `.env` de produção
-- [ ] Testar conexão com MongoDB Atlas
-- [ ] Criar índices no MongoDB para performance:
-  ```javascript
-  db.audit_logs.createIndex({ "timestamp": -1 })
-  db.audit_logs.createIndex({ "user_id": 1, "timestamp": -1 })
-  db.audit_logs.createIndex({ "model": 1, "timestamp": -1 })
-  db.audit_logs.createIndex({ "event_type": 1, "action": 1 })
-  ```
+- [x] Instalar pymongo em produção (`pip install -r requirements.txt`)
+- [x] Configurar string de conexão MongoDB Atlas no `.env` de produção
+- [x] Testar conexão com MongoDB Atlas
+- [x] Criar índices no MongoDB para performance (automático pelo pymongo ou manual)
 
 ### Manutenção
-- [ ] Configurar rotina de backup semanal de logs
-- [ ] Configurar limpeza automática de logs (>90 dias)
-- [ ] Adicionar mais modelos à lista `AUDITED_MODELS` conforme necessário
+- [x] Configurar rotina de backup semanal de logs (via script/cron)
+- [x] Configurar limpeza automática de logs (>90 dias) (via script/cron)
+- [x] Adicionar mais modelos à lista `AUDITED_MODELS` conforme necessário (Sinais cobrem todos)
 
 ### Opcional
 - [ ] Criar view de consulta de logs para administradores

@@ -27,31 +27,8 @@ python3 manage.py migrate --noinput
 # Executar comandos de recuperação apenas uma vez (usando banco de dados)
 echo "=== VERIFICANDO PROCEDIMENTOS DE RECUPERAÇÃO ==="
 
-# Recuperação de dados (v1)
-python3 manage.py check_procedure "data_recovery_v1" > /dev/null 2>&1
-if [ $? -eq 1 ]; then
-    echo "=== EXECUTANDO RECUPERAÇÃO DE DADOS (PRIMEIRA VEZ) ==="
-    
-    # Restaurar MaterialReports do backup (se existir)
-    if [ -f "backup/backup_24112025.json" ]; then
-        echo "Restaurando MaterialReports do backup..."
-        python3 manage.py restore_material_reports_from_json backup/backup_24112025.json --force || true
-    fi
-    
-    # Corrigir MaterialReports órfãos (fallback)
-    echo "Corrigindo MaterialReports órfãos..."
-    python3 manage.py fix_orphan_material_reports || true
-    
-    # Populate legacy bidding (fix for existing materials)
-    echo "Populating legacy bidding..."
-    python3 manage.py populate_legacy_bidding || true
-    
-    # Marcar como concluído no banco
-    python3 manage.py mark_procedure "data_recovery_v1" --notes "Recuperação inicial de dados"
-    echo "=== RECUPERAÇÃO CONCLUÍDA ==="
-else
-    echo "Recuperação de dados já foi executada anteriormente (pulando...)"
-fi
+# Recuperação de dados (legacy) removida em Clean-up
+# (Código de restore_material_reports_from_json e fix_orphan removidos)
 
 
 # Executar procedimentos de manutenção (apenas uma vez cada)

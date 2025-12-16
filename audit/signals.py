@@ -31,16 +31,23 @@ AUDITED_MODELS = [
     # Licitações e Fornecedores
     'Bidding',
     'Supplier',
+    'Contact',
     'Material',
     'BiddingMaterial',
+    'MaterialBidding',
     
     # Estrutura Organizacional
     'Department',
     'Position',
     'Employee',
+    'Direction',
+    'Sector',
     
     # Relatórios
     'Report',
+    'Invoice',
+    'InterestRequestMaterial',
+    'MaterialReport',
     
     # Adicionar novos modelos aqui conforme necessário
 ]

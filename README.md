@@ -142,7 +142,6 @@ python manage.py test --nomigrations
 
 - **[GEMINI.md](docs/GEMINI.md)**: Guia completo para colaboração com IA
 - **[PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md)**: Roadmap e próximos passos
-- **[POS_DEPLOY_COMMANDS.md](docs/POS_DEPLOY_COMMANDS.md)**: Comandos pós-deploy
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Guia de contribuição
 
 ## 🤝 Como Contribuir
