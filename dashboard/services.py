@@ -61,6 +61,8 @@ class DashboardService:
         """
         stats = MaterialReport.objects.values(
             'material_bidding__material__name'
+        ).exclude(
+            material_bidding__material__name__icontains='Perdido'
         ).annotate(
             total_qty=Sum('quantity')
         ).order_by('-total_qty')[:limit]
@@ -101,6 +103,8 @@ class DashboardService:
         
         stats = MaterialReport.objects.filter(
             report__created_at__gte=start_date
+        ).exclude(
+            material_bidding__material__name__icontains='Perdido'
         ).values(
             'material_bidding__material__name'
         ).annotate(
