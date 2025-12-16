@@ -30,7 +30,9 @@ class ReportListView(LoginRequiredMixin, ListView):
     template_name = 'reports.html'
     context_object_name = 'page_obj'
     paginate_by = 15
-    login_url = 'login'
+    context_object_name = 'page_obj'
+    paginate_by = 15
+    login_url = 'authenticate:login'
 
     def get_queryset(self):
         queryset = ReportService.get_all_reports()
@@ -43,7 +45,7 @@ class ReportListView(LoginRequiredMixin, ListView):
         return context
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def report_register(request):
     """
     View para registrar um novo laudo.
@@ -86,7 +88,9 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'report'
     slug_field = 'slug'
     slug_url_kwarg = 'slug'
-    login_url = 'login'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+    login_url = 'authenticate:login'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -97,7 +101,7 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def report_update(request, slug):
     """
     Atualiza um laudo existente.
@@ -134,23 +138,10 @@ def report_update(request, slug):
         return redirect('reports:reports')
 
 
-class ReportPDFView(LoginRequiredMixin, DetailView):
-    """
-    Gera visualização de impressão (PDF) do laudo.
-    Substitui a FBV `pdf_report`.
-    """
-    model = Report
-    template_name = 'pdf_template.html'
-    context_object_name = 'report'
-    slug_field = 'slug'
-    slug_url_kwarg = 'slug'
-    login_url = 'login'
-    
-    # Sobrescreve get_object para usar o service se necessário, 
-    # mas o padrão do DetailView já busca pelo slug corretamente.
 
 
-@login_required(login_url='login')
+
+@login_required(login_url='authenticate:login')
 def material_report_delete(request, report_slug, pk):
     """
     Exclui um material de um laudo.
@@ -160,7 +151,7 @@ def material_report_delete(request, report_slug, pk):
     return redirect(reverse('reports:report_update', kwargs={'slug': report.slug}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def generate_pdf_report(request, slug):
     """
     Gera e retorna PDF do laudo usando Browserless.io/PDFGenerator.
@@ -179,7 +170,7 @@ def generate_pdf_report(request, slug):
         return redirect(reverse('reports:report_view', kwargs={'slug': slug}))
 
 
-@login_required(login_url='login')
+@login_required(login_url='authenticate:login')
 def create_sector_api(request):
     """
     API para criar um novo setor via AJAX.

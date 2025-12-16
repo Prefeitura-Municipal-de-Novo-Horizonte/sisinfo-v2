@@ -3,9 +3,6 @@ from django.urls import path
 from reports.views import (
     ReportDetailView,
     ReportListView,
-    ReportPDFView,
-    create_sector_api,
-    generate_pdf_report,
     material_report_delete,
     report_register,
     report_update,
@@ -20,7 +17,6 @@ urlpatterns = [
     path('report/<slug:slug>/update', report_update, name='report_update'),
     path('report/<slug:report_slug>/material/<int:pk>/delete',
          material_report_delete, name="material_report_delete"),
-    path('report/<slug:slug>/pdf', ReportPDFView.as_view(), name='pdf_report'),
     path('report/<slug:slug>/download-pdf', generate_pdf_report, name='generate_pdf'),
     path('api/create-sector/', create_sector_api, name='create_sector_api'),
 ]
