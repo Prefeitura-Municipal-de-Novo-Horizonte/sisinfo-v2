@@ -324,4 +324,5 @@ pyrightconfig.json
 backups/
 
 
-.~lock.*
+.~lock.*backup/
+data/

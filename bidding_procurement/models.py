@@ -229,8 +229,38 @@ class MaterialBidding(models.Model):
         null=True,
         help_text="Snapshot do preço do material quando foi adicionado à licitação"
     )
+    
+    # Controle de limite de compras da licitação
+    quantity_purchased = models.PositiveIntegerField(
+        "quantidade comprada",
+        default=0,
+        help_text="Quantidade já comprada via notas fiscais (não pode ultrapassar o limite licitado)"
+    )
+    
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+    
+    @property
+    def available_for_purchase(self):
+        """Quantidade ainda disponível para compra (limite - comprado)."""
+        return max(0, (self.quantity or 0) - (self.quantity_purchased or 0))
+    
+    @property
+    def usage_percentage(self):
+        """Percentual do limite de compra já utilizado."""
+        if not self.quantity or self.quantity == 0:
+            return 0
+        return round((self.quantity_purchased / self.quantity) * 100, 1)
+    
+    @property
+    def is_near_limit(self):
+        """Verifica se está próximo do limite (>= 80% usado)."""
+        return self.usage_percentage >= 80
+    
+    @property
+    def is_at_limit(self):
+        """Verifica se atingiu o limite de compras."""
+        return self.quantity_purchased >= self.quantity
 
     def get_available_quantity(self):
         """

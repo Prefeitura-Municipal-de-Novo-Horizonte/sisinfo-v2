@@ -1,0 +1,59 @@
+{% extends "_base.html" %}
+
+{% block title %}{% if is_update %}Editar{% else %}Novo{% endif %} Empenho{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-2xl">
+    <div class="mb-6">
+        <a href="{% url 'reports:commitments' %}"
+            class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 mb-2">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{% if is_update %}Editar{% else %}Novo{% endif %}
+            Empenho</h1>
+    </div>
+
+    <form method="post" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        {% csrf_token %}
+
+        <div class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número do Empenho <span
+                        class="text-red-500">*</span></label>
+                {{ form.number }}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Laudo</label>
+                {{ form.report }}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nota Fiscal</label>
+                {{ form.invoice }}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data do Empenho <span
+                        class="text-red-500">*</span></label>
+                {{ form.commitment_date }}
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Observações</label>
+                {{ form.notes }}
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{% url 'reports:commitments' %}"
+                class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 rounded-lg">Cancelar</a>
+            <button type="submit"
+                class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg">Salvar</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

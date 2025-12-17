@@ -119,6 +119,51 @@
         </template>
       </li>
 
+      <!-- Notas Fiscais -->
+      <li x-data="{ open: false, showFloating: false, top: 0 }">
+        <button x-ref="btn"
+          @click.stop="if (!sidebarCollapsed) { open = !open } else { showFloating = !showFloating; top = $refs.btn.getBoundingClientRect().top; }"
+          class="flex items-center w-full p-2.5 text-gray-300 dark:text-gray-700 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors group"
+          :class="sidebarCollapsed ? 'justify-center' : ''">
+          <svg class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-white dark:group-hover:text-brand-600"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span x-show="!sidebarCollapsed" class="flex-1 ml-3 text-left">Notas Fiscais</span>
+          <svg x-show="!sidebarCollapsed" :class="{'rotate-180': open}" class="w-3 h-3 transition-transform" fill="none"
+            viewBox="0 0 10 6">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 4 4 4-4" />
+          </svg>
+        </button>
+
+        <ul x-show="open && !sidebarCollapsed" x-transition class="py-2 space-y-1 pl-11">
+          <li><a href="{% url 'reports:invoices' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Notas</a>
+          </li>
+          <li><a href="{% url 'reports:commitments' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Empenhos</a>
+          </li>
+          <li><a href="{% url 'reports:deliveries' %}"
+              class="block p-2 text-gray-400 dark:text-gray-600 rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Entregas</a>
+          </li>
+        </ul>
+
+        <template x-teleport="body">
+          <div x-show="sidebarCollapsed && showFloating" @click.away="showFloating = false" x-transition x-cloak
+            class="fixed left-16 bg-slate-800 dark:bg-white shadow-2xl rounded-lg p-2 z-50 min-w-[260px] border border-slate-700 dark:border-gray-200"
+            :style="`top: ${top}px`">
+            <a href="{% url 'reports:invoices' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Notas</a>
+            <a href="{% url 'reports:commitments' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Empenhos</a>
+            <a href="{% url 'reports:deliveries' %}"
+              class="block px-3 py-2 rounded-lg text-gray-300 dark:text-gray-700 hover:bg-slate-700 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600">Entregas</a>
+          </div>
+        </template>
+      </li>
+
       <!-- Licitações -->
       <li x-data="{ open: false, showFloating: false, top: 0 }">
         <button x-ref="btn"

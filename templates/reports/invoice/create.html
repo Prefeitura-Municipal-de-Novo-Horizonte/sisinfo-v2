@@ -1,0 +1,300 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}{% if is_update %}Editar{% else %}Nova{% endif %} Nota Fiscal{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-4xl" x-data="invoiceForm()">
+  <div class="mb-6">
+    <a href="{% url 'reports:invoices' %}"
+      class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Voltar
+    </a>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{% if is_update %}Editar{% else %}Nova{% endif %} Nota
+      Fiscal</h1>
+    <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{% if is_update %}Atualize os dados{% else %}Revise e
+      complete os dados{% endif %}</p>
+  </div>
+
+  <!-- Dados extraídos automaticamente -->
+  <template x-if="extractedData && extractedData.confidence">
+    <div class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+      <div class="flex items-center gap-2 text-green-700 dark:text-green-400">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clip-rule="evenodd" />
+        </svg>
+        <span class="font-medium">Dados extraídos automaticamente</span>
+        <span class="text-sm">(<span x-text="Math.round(extractedData.confidence * 100)"></span>% confiança)</span>
+      </div>
+    </div>
+  </template>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Campos ocultos para dados do OCR -->
+    <input type="hidden" name="photo_url" x-model="extractedData.photo_url">
+    <input type="hidden" name="photo_public_id" x-model="extractedData.photo_public_id">
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Coluna Principal (Formulário) span-2 -->
+      <div class="lg:col-span-2 space-y-6 order-2 lg:order-1">
+
+        <!-- 1. Dados Básicos -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Dados da Nota</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Número -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número da Nota *</label>
+              {{ form.number }}
+            </div>
+
+            <!-- Série -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Série</label>
+              <input type="text" name="series" x-model="extractedData.series"
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+            </div>
+
+            <!-- Data de Emissão -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data de Emissão *</label>
+              <input type="text" name="issue_date" x-model="extractedData.issue_date" x-mask="99/99/9999"
+                placeholder="dd/mm/aaaa"
+                class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+            </div>
+
+            <!-- Valor Total (Oculto) -->
+            <input type="hidden" name="total_value" x-model="extractedData.total_value">
+
+            <!-- Fornecedor -->
+            <div class="md:col-span-2 lg:col-span-3">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fornecedor *</label>
+              <template x-if="extractedData.supplier">
+                <div class="flex items-center gap-3">
+                  <div
+                    class="flex-1 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <p class="font-medium text-gray-900 dark:text-white" x-text="extractedData.supplier.name"></p>
+                    <p class="text-sm text-gray-500" x-text="'CNPJ: ' + extractedData.supplier.cnpj"></p>
+                  </div>
+                  <input type="hidden" name="supplier" x-model="extractedData.supplier.id">
+                  <button type="button" @click="extractedData.supplier = null"
+                    class="text-sm text-gray-500 hover:text-red-500">Trocar</button>
+                </div>
+              </template>
+              <template x-if="!extractedData.supplier">
+                <div>
+                  {{ form.supplier }}
+                  <template x-if="extractedData.supplier_name_detected">
+                    <p class="mt-1 text-xs text-amber-600">
+                      Detectado: <span x-text="extractedData.supplier_name_detected"></span>
+                      (CNPJ: <span x-text="extractedData.supplier_cnpj_detected"></span>) - não encontrado no sistema
+                    </p>
+                  </template>
+                </div>
+              </template>
+            </div>
+
+            <!-- Chave de Acesso -->
+            <div class="md:col-span-3">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Chave de Acesso (44
+                dígitos)</label>
+              <input type="text" name="access_key" x-model="extractedData.access_key" maxlength="44"
+                class="w-full font-mono text-sm rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Materiais -->
+        <template x-if="extractedData.materials && extractedData.materials.length > 0">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Materiais da Nota</h2>
+
+            <template x-for="(item, index) in extractedData.materials" :key="index">
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                <div class="flex items-start gap-4">
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white" x-text="item.product.description"></p>
+                    <p class="text-sm text-gray-500">
+                      Qtd: <span x-text="item.product.quantity"></span> |
+                      Preço: R$ <span x-text="item.product.unit_price"> ></span> |
+                      Total: R$ <span x-text="item.product.total_price"> ></span>
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Seleção de material do sistema -->
+                <template x-if="item.suggestions && item.suggestions.length > 0">
+                  <div class="mt-3 pl-4 border-l-2 border-brand-500">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Vincular a material:</p>
+                    <div class="space-y-2">
+                      <template x-for="(sug, sugIndex) in item.suggestions" :key="sug.id">
+                        <label
+                          class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer border border-transparent hover:border-gray-200 dark:hover:border-gray-600">
+                          <input type="radio" :name="'material_' + index" :value="sug.id"
+                            x-model="item.selected_material" class="text-brand-600 focus:ring-brand-500">
+                          <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white" x-text="sug.name"></p>
+                            <div class="flex gap-2 text-xs text-gray-500">
+                              <span x-text="sug.bidding"></span>
+                              <span class="text-green-600 dark:text-green-400 font-medium"
+                                x-text="'Saldo Disp.: ' + sug.available"></span>
+                            </div>
+                          </div>
+                          <span class="text-sm text-gray-500">R$ <span x-text="sug.price"></span></span>
+                        </label>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+
+                <template x-if="!item.suggestions || item.suggestions.length === 0">
+                  <p class="mt-2 text-sm text-amber-600">⚠️ Nenhum material similar encontrado no sistema para este
+                    fornecedor</p>
+                </template>
+              </div>
+            </template>
+
+            <!-- Hidden inputs para materiais selecionados -->
+            <template x-for="(item, index) in extractedData.materials" :key="'hidden_' + index">
+              <div>
+                <!-- Importante: Usar :value para garantir que o valor seja submetido, x-model em hidden pode falhar em forms dinâmicos -->
+                <input type="hidden" :name="'item_material_' + index" :value="item.selected_material">
+                <input type="hidden" :name="'item_quantity_' + index" :value="item.product.quantity">
+                <input type="hidden" :name="'item_price_' + index" :value="item.product.unit_price">
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <!-- 3. Observações -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Observações</label>
+          {{ form.observations }}
+        </div>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-3">
+          <a href="{% url 'reports:invoices' %}"
+            class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-white">Cancelar</a>
+          <button type="submit"
+            class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg shadow-md font-bold transition-colors">
+            {% if is_update %}Atualizar{% else %}Salvar Nota e Itens{% endif %}
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Coluna Lateral (Imagem) span-1 sticky -->
+      <div class="lg:col-span-1 order-1 lg:order-2">
+        <div class="sticky top-6 space-y-6">
+
+          <!-- Preview Imagem -->
+          <template x-if="extractedData.photo_url">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+              <h3 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">Visualização da Nota</h3>
+              <div class="relative rounded-lg overflow-hidden group">
+                <img :src="extractedData.photo_url" class="w-full h-auto object-contain bg-gray-100"
+                  @click="window.open(extractedData.photo_url, '_blank')" style="cursor: zoom-in;"
+                  title="Clique para ampliar">
+              </div>
+              <p class="text-xs text-center text-gray-500 mt-2">Clique na imagem para ampliar</p>
+            </div>
+          </template>
+
+          <!-- Upload Manual (se não veio do OCR) -->
+          <div x-show="!extractedData.photo_url"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Upload da Foto</label>
+            {{ form.photo }}
+          </div>
+
+        </div>
+      </div>
+
+    </div> <!-- Final do Grid -->
+  </form>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js" defer></script>
+<script>
+  function invoiceForm() {
+    // Tentar ler dados da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const dataParam = urlParams.get('data');
+
+    // Estado inicial
+    let extractedData = {
+      photo_url: '',
+      photo_public_id: '',
+      number: '',
+      series: '',
+      access_key: '',
+      issue_date: '',
+      total_value: '',
+      supplier: null,
+      supplier_name_detected: '',
+      supplier_cnpj_detected: '',
+      materials: [],
+      confidence: 0
+    };
+
+    if (dataParam) {
+      try {
+        const parsed = JSON.parse(decodeURIComponent(dataParam));
+
+        extractedData = { ...extractedData, ...parsed };
+
+        // Preencher campos do form (usando requestAnimationFrame para garantir render)
+        const fillFields = () => {
+          // 1. Campo Número
+          const numberInput = document.getElementById('id_number');
+          if (numberInput && extractedData.number) {
+            numberInput.value = extractedData.number;
+          }
+
+          // 2. Campo Observações
+          const obsInput = document.getElementById('id_observations');
+          if (obsInput && extractedData.observations) {
+            obsInput.value = extractedData.observations;
+          }
+        };
+
+        setTimeout(fillFields, 100);
+        setTimeout(fillFields, 800);
+
+      } catch (e) {
+        console.error('Erro ao parsear dados da URL:', e);
+      }
+    } else {
+      // Se não tem dados na URL (ex: erro ou acesso direto), tentar pegar do contexto Django se possível
+      // Mas por enquanto, foca só no fluxo via URL do OCR
+    }
+
+    // Auto-selecionar materiais se houver sugestões únicas ou confiáveis
+    // Isso garante que os hidden inputs sejam preenchidos mesmo sem clique do usuário
+    if (extractedData.materials && extractedData.materials.length > 0) {
+      extractedData.materials.forEach(item => {
+        if (!item.selected_material && item.suggestions && item.suggestions.length > 0) {
+          // Seleciona o primeiro (que é o melhor match pelo backend)
+          item.selected_material = item.suggestions[0].id;
+        }
+      });
+    }
+
+    return {
+      extractedData
+    };
+  }
+</script>
+{% endblock script %}

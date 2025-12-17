@@ -1,0 +1,84 @@
+{% extends "_base.html" %}
+
+{% block title %}Ficha de Entrega #{{ delivery.pk }}{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-3xl">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <a href="{% url 'reports:deliveries' %}"
+                class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 mb-2">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Voltar
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Ficha de Entrega #{{ delivery.pk }}</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ delivery.received_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <a href="{% url 'reports:delivery_pdf' pk=delivery.pk %}" target="_blank"
+            class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors text-sm">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Gerar PDF
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Setor</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ delivery.sector.name }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Recebido por</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ delivery.received_by }}</p>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Nota Fiscal</p>
+                    <a href="{% url 'reports:invoice_detail' pk=delivery.invoice.pk %}"
+                        class="text-brand-600 hover:text-brand-700">
+                        {{ delivery.invoice.number }}
+                    </a>
+                </div>
+                <div>
+                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Entregue por</p>
+                    <p class="text-gray-700 dark:text-gray-300">{{ delivery.delivered_by.fullname }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Itens Entregues</h2>
+            <table class="min-w-full">
+                <thead>
+                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <th class="text-left py-2 text-xs font-medium text-gray-500 uppercase">Material</th>
+                        <th class="text-center py-2 text-xs font-medium text-gray-500 uppercase">Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr class="border-b border-gray-100 dark:border-gray-700 last:border-0">
+                        <td class="py-3 text-sm text-gray-900 dark:text-white">{{
+                            item.invoice_item.material_bidding.material.name }}</td>
+                        <td class="py-3 text-center text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                            item.quantity_delivered }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if delivery.observations %}
+        <div class="p-6 bg-gray-50 dark:bg-gray-700/50">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Observações</p>
+            <p class="text-gray-700 dark:text-gray-300">{{ delivery.observations }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

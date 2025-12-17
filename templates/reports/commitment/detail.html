@@ -1,0 +1,59 @@
+{% extends "_base.html" %}
+
+{% block title %}Empenho {{ commitment.number }}{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-3xl">
+    <div class="flex justify-between items-start mb-6">
+        <div>
+            <a href="{% url 'reports:commitments' %}"
+                class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 mb-2">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Voltar
+            </a>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Empenho {{ commitment.number }}</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Data: {{ commitment.commitment_date|date:"d/m/Y" }}
+            </p>
+        </div>
+        <a href="{% url 'reports:commitment_update' pk=commitment.pk %}"
+            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-lg text-sm">
+            Editar
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">
+        {% if commitment.report %}
+        <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Laudo</p>
+            <a href="{{ commitment.report.get_absolute_url }}"
+                class="text-lg font-semibold text-brand-600 hover:text-brand-700">
+                {{ commitment.report.number_report }}
+            </a>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ commitment.report.sector.name|default:"Sem
+                setor" }}</p>
+        </div>
+        {% endif %}
+
+        {% if commitment.invoice %}
+        <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Nota Fiscal</p>
+            <a href="{% url 'reports:invoice_detail' pk=commitment.invoice.pk %}"
+                class="text-lg font-semibold text-brand-600 hover:text-brand-700">
+                {{ commitment.invoice.number }}
+            </a>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{
+                commitment.invoice.supplier.trade|default:commitment.invoice.supplier.company }}</p>
+        </div>
+        {% endif %}
+
+        {% if commitment.notes %}
+        <div>
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Observações</p>
+            <p class="text-gray-700 dark:text-gray-300">{{ commitment.notes }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

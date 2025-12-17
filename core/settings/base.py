@@ -22,6 +22,8 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_extensions",
     "django_filters",
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 MY_APPS = [
@@ -160,3 +162,37 @@ MESSAGE_TAGS = {
     constants.WARNING: "flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800 gap-4 w-full",
     constants.INFO: "flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800 gap-4 w-full",
 }
+
+# Cloudinary - Configuração para upload de fotos de notas fiscais
+from decouple import config
+import cloudinary
+import os
+
+CLOUDINARY_STORAGE = {
+    # Configurações adicionais do storage se necessário
+}
+
+cloudinary_url = config('CLOUDINARY_URL', default=None)
+
+if cloudinary_url:
+    # Se CLOUDINARY_URL estiver definida, usa ela para configurar SDK e Storage
+    # O .strip() remove espaços acidentais
+    os.environ['CLOUDINARY_URL'] = cloudinary_url.strip()
+else:
+    # Fallback para chaves individuais
+    CLOUDINARY_STORAGE.update({
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='').strip(),
+        'API_KEY': config('CLOUDINARY_API_KEY', default='').strip(),
+        'API_SECRET': config('CLOUDINARY_API_SECRET', default='').strip(),
+    })
+
+    # Configurar SDK globalmente para uso direto nas views
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE.get('CLOUD_NAME'),
+        api_key=CLOUDINARY_STORAGE.get('API_KEY'),
+        api_secret=CLOUDINARY_STORAGE.get('API_SECRET')
+    )
+
+# Usar Cloudinary apenas para uploads específicos (não como DEFAULT_FILE_STORAGE)
+# Os uploads de notas fiscais usarão CloudinaryField explicitamente
+
