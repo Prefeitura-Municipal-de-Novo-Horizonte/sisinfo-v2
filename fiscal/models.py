@@ -119,7 +119,18 @@ class Invoice(models.Model):
         if photo_str.startswith('local/'):
             from django.conf import settings
             filename = photo_str.replace('local/', '')
+            # Adiciona extensão .jpg se não tiver (CloudinaryResource pode remover a extensão do str)
+            if not filename.lower().endswith('.jpg'):
+                filename = f"{filename}.jpg"
             return f"{settings.MEDIA_URL}invoices/{filename}"
+        
+        # Se não tem prefixo 'local/' mas não é Cloudinary (ex: ImageField padrão), 
+        # tenta retornar a URL se possível ou assume local
+        if not hasattr(self.photo, 'public_id'): 
+             try:
+                 return self.photo.url
+             except:
+                 pass
         
         # Caso contrário, usa URL do Cloudinary
         try:
