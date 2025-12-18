@@ -56,6 +56,30 @@ else
     echo "Limpeza de licitações duplicadas já executada (pulando...)"
 fi
 
+# Corrigir laudos abertos com licitações fechadas (v1)
+python3 manage.py check_procedure "close_stale_reports_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    echo "Fechando laudos com licitações inativas..."
+    python3 manage.py close_stale_reports --dry-run && \
+    python3 manage.py close_stale_reports && \
+    python3 manage.py mark_procedure "close_stale_reports_v1" --notes "Fechamento automático de laudos" || \
+    python3 manage.py mark_procedure "close_stale_reports_v1" --failed --notes "Falha no fechamento de laudos"
+else
+    echo "Fechamento de laudos já executado (pulando...)"
+fi
+
+# Corrigir MaterialReports órfãos (v1)
+python3 manage.py check_procedure "fix_orphan_material_reports_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    echo "Corrigindo MaterialReports órfãos..."
+    python3 manage.py fix_orphan_material_reports --dry-run && \
+    python3 manage.py fix_orphan_material_reports && \
+    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --notes "Correção de dados órfãos" || \
+    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --failed --notes "Falha na correção"
+else
+    echo "Correção de dados órfãos já executada (pulando...)"
+fi
+
 # Collect static files
 echo "Collecting static files..."
 python3 manage.py collectstatic --noinput --clear

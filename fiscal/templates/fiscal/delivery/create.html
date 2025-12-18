@@ -68,12 +68,14 @@
                             {% for item in items %}
                             <tr>
                                 <td class="px-4 py-3">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{
-                                        item.material_bidding.material.name }}</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ item.material_bidding.material.name }}
+                                    </p>
                                     <input type="hidden" name="item_id" value="{{ item.pk }}">
                                 </td>
-                                <td class="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">{{
-                                    item.quantity }}</td>
+                                <td class="px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">
+                                    {{ item.quantity }}
+                                </td>
                                 <td class="px-4 py-3 text-center">
                                     <input type="number" name="quantity_delivered" value="{{ item.quantity }}" min="0"
                                         max="{{ item.quantity }}"

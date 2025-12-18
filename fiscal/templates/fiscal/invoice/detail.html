@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Status</p>
             {% if invoice.status == 'P' %}
@@ -60,6 +60,42 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Emissão</p>
             <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ invoice.issue_date|date:"d/m/Y" }}</p>
+        </div>
+
+        <!-- Card Empenho Inline -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4"
+            x-data="{ editing: false, number: '{{ invoice.commitment.number|default:'' }}', saving: false }">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Empenho</p>
+
+            <!-- Modo Visualização -->
+            <div x-show="!editing" class="flex items-center justify-between">
+                {% if invoice.commitment %}
+                <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ invoice.commitment.number }}</p>
+                {% else %}
+                <p class="text-sm text-gray-400 italic">Não informado</p>
+                {% endif %}
+                <button @click="editing = true" class="text-xs text-brand-600 hover:text-brand-700 dark:text-brand-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modo Edição -->
+            <form x-show="editing" x-cloak method="post"
+                action="{% url 'fiscal:invoice_set_commitment' pk=invoice.pk %}" @submit="saving = true"
+                class="flex gap-2">
+                {% csrf_token %}
+                <input type="text" name="commitment_number" x-model="number" placeholder="Ex: 2024/001"
+                    class="flex-1 text-sm rounded border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-2 py-1">
+                <button type="submit" :disabled="saving"
+                    class="px-2 py-1 bg-brand-600 hover:bg-brand-700 text-white text-xs rounded">
+                    <span x-show="!saving">OK</span>
+                    <span x-show="saving">...</span>
+                </button>
+                <button type="button" @click="editing = false" class="px-2 py-1 text-gray-500 text-xs">✕</button>
+            </form>
         </div>
     </div>
 
@@ -91,10 +127,12 @@
                             {% for item in items %}
                             <tr>
                                 <td class="px-6 py-4">
-                                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{
-                                        item.material_bidding.material.name }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{
-                                        item.material_bidding.bidding.name }}</p>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ item.material_bidding.material.name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ item.material_bidding.bidding.name }}
+                                    </p>
                                     {% if item.material_bidding.is_near_limit %}
                                     <span
                                         class="inline-flex items-center mt-1 px-2 py-0.5 rounded text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400">
@@ -102,12 +140,15 @@
                                     </span>
                                     {% endif %}
                                 </td>
-                                <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-300">{{
-                                    item.quantity }}</td>
-                                <td class="px-6 py-4 text-right text-sm text-gray-700 dark:text-gray-300">R$ {{
-                                    item.unit_price }}</td>
-                                <td class="px-6 py-4 text-right text-sm font-medium text-gray-900 dark:text-white">R$ {{
-                                    item.total_price }}</td>
+                                <td class="px-6 py-4 text-center text-sm text-gray-700 dark:text-gray-300">
+                                    {{ item.quantity }}
+                                </td>
+                                <td class="px-6 py-4 text-right text-sm text-gray-700 dark:text-gray-300">
+                                    R$ {{ item.unit_price }}
+                                </td>
+                                <td class="px-6 py-4 text-right text-sm font-medium text-gray-900 dark:text-white">
+                                    R$ {{ item.total_price }}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>
@@ -151,6 +192,69 @@
                 </div>
             </div>
             {% endif %}
+
+            <!-- Laudo Vinculado ou Sugestões -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        {% if linked_report %}Laudo Vinculado{% else %}Vincular a Laudo{% endif %}
+                    </h2>
+                </div>
+                <div class="p-4">
+                    {% if linked_report %}
+                    <!-- Laudo já vinculado -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <a href="{% url 'reports:report_view' slug=linked_report.slug %}"
+                                class="text-brand-600 hover:text-brand-700 font-medium">
+                                {{ linked_report.number_report }}
+                            </a>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                Setor: {{ linked_report.sector.name|default:"—" }}
+                            </p>
+                        </div>
+                        <a href="{% url 'fiscal:invoice_unlink_report' pk=invoice.pk %}"
+                            class="text-red-500 hover:text-red-700 text-sm"
+                            onclick="return confirm('Remover vínculo com este laudo?')">
+                            Desvincular
+                        </a>
+                    </div>
+                    {% elif report_suggestions %}
+                    <!-- Sugestões de laudos -->
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                        Laudos sugeridos com itens similares:
+                    </p>
+                    <ul class="space-y-2">
+                        {% for suggestion in report_suggestions %}
+                        <li class="flex items-center justify-between p-2 rounded bg-gray-50 dark:bg-gray-700">
+                            <div>
+                                <span class="font-medium text-gray-900 dark:text-white">
+                                    {{ suggestion.report.number_report }}
+                                </span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                                    {{ suggestion.sector_name }}
+                                </span>
+                                <span
+                                    class="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    {{ suggestion.matching_items }} iten{{ suggestion.matching_items|pluralize:"s,s" }}
+                                    em comum
+                                </span>
+                            </div>
+                            <a href="{% url 'fiscal:invoice_link_report' pk=invoice.pk report_pk=suggestion.report.pk %}"
+                                class="px-3 py-1 text-xs bg-brand-600 hover:bg-brand-700 text-white rounded">
+                                Vincular
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <!-- Sem laudo e sem sugestões -->
+                    <p class="text-sm text-gray-400 italic">
+                        Nenhum laudo compatível encontrado. Adicione itens à nota para ver sugestões.
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
 
             {% if invoice.status != 'E' %}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">

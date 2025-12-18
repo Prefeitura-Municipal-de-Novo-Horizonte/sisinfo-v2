@@ -68,6 +68,13 @@ class Invoice(models.Model):
     # Controle de status
     status = models.CharField(
         'status', max_length=1, choices=STATUS_CHOICES, default='P')
+    
+    # Empenho (Simplificado)
+    
+    # Empenho (Simplificado) - Removido em favor do modelo Commitment separado
+    # commitment_number = models.CharField(
+    #     'número do empenho', max_length=30, blank=True)
+
     delivered_to_purchases = models.BooleanField(
         'entregue ao compras', default=False)
     delivered_to_purchases_at = models.DateTimeField(
@@ -177,29 +184,56 @@ class InvoiceItem(models.Model):
             self.material_bidding.save(update_fields=['quantity_purchased'])
 
 
+
+
+
 class Commitment(models.Model):
     """
-    Representa um Empenho vinculado a um laudo e nota fiscal.
+    Representa um Empenho vinculado a uma nota fiscal.
+    Relacionamento 1:1 com Invoice para auditoria.
     """
+    invoice = models.OneToOneField(
+        Invoice, on_delete=models.CASCADE,
+        related_name='commitment', verbose_name='nota fiscal')
     number = models.CharField(
         'número do empenho', max_length=30, unique=True)
-    report = models.ForeignKey(
-        Report, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='commitments', verbose_name='laudo')
-    invoice = models.ForeignKey(
-        Invoice, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='commitments', verbose_name='nota fiscal')
-    commitment_date = models.DateField('data do empenho')
-    notes = models.TextField('observações', blank=True)
     created_at = models.DateTimeField('criado em', auto_now_add=True)
+    updated_at = models.DateTimeField('atualizado em', auto_now=True)
 
     class Meta:
-        ordering = ['-commitment_date', '-created_at']
+        ordering = ['-created_at']
         verbose_name = 'empenho'
         verbose_name_plural = 'empenhos'
 
     def __str__(self):
         return f"Empenho {self.number}"
+
+
+class InvoiceReportLink(models.Model):
+    """
+    Tabela intermediária para vincular Nota Fiscal a Laudo.
+    Permite auditoria de quem/quando fez o vínculo.
+    Regra: 1 Laudo -> N Notas, 1 Nota -> 1 Laudo
+    """
+    invoice = models.OneToOneField(
+        Invoice, on_delete=models.CASCADE,
+        related_name='report_link', verbose_name='nota fiscal')
+    report = models.ForeignKey(
+        Report, on_delete=models.CASCADE,
+        related_name='invoice_links', verbose_name='laudo')
+    linked_by = models.ForeignKey(
+        ProfessionalUser, on_delete=models.SET_NULL, null=True,
+        related_name='invoice_report_links', verbose_name='vinculado por')
+    linked_at = models.DateTimeField('vinculado em', auto_now_add=True)
+    notes = models.TextField('observações', blank=True)
+
+    class Meta:
+        verbose_name = 'vínculo nota-laudo'
+        verbose_name_plural = 'vínculos nota-laudo'
+        ordering = ['-linked_at']
+
+    def __str__(self):
+        return f"NF {self.invoice.number} → Laudo {self.report.number_report}"
 
 
 class DeliveryNote(models.Model):
@@ -209,9 +243,6 @@ class DeliveryNote(models.Model):
     invoice = models.ForeignKey(
         Invoice, on_delete=models.PROTECT,
         related_name='deliveries', verbose_name='nota fiscal')
-    commitment = models.ForeignKey(
-        Commitment, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='deliveries', verbose_name='empenho')
     sector = models.ForeignKey(
         Sector, on_delete=models.PROTECT,
         verbose_name='setor destinatário')

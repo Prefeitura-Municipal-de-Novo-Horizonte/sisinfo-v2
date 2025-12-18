@@ -15,10 +15,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         dry_run = options['dry_run']
         
-        # Reports abertos (1) ou aguardando (2)
+        # Reports abertos (status='1')
         # Que possuem materiais vinculados a uma Licitação com status '2' (Inativo)
         stale_reports = Report.objects.filter(
-            status__in=['1', '2'],
+            status='1',
             materiais__material_bidding__bidding__status='2'
         ).distinct()
 

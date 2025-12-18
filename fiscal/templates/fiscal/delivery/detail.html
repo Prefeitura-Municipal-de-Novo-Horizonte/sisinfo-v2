@@ -63,10 +63,12 @@
                 <tbody>
                     {% for item in items %}
                     <tr class="border-b border-gray-100 dark:border-gray-700 last:border-0">
-                        <td class="py-3 text-sm text-gray-900 dark:text-white">{{
-                            item.invoice_item.material_bidding.material.name }}</td>
-                        <td class="py-3 text-center text-sm font-medium text-gray-700 dark:text-gray-300">{{
-                            item.quantity_delivered }}</td>
+                        <td class="py-3 text-sm text-gray-900 dark:text-white">
+                            {{ item.invoice_item.material_bidding.material.name }}
+                        </td>
+                        <td class="py-3 text-center text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {{ item.quantity_delivered }}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

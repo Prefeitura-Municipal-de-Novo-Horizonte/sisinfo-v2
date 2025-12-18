@@ -32,8 +32,9 @@
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 {% for delivery in deliveries %}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">{{ delivery.received_at|date:"d/m/Y H:i"
-                        }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                        {{ delivery.received_at|date:"d/m/Y H:i" }}
+                    </td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.sector.name }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.received_by }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.invoice.number }}</td>

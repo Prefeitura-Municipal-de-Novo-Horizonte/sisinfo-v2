@@ -4,56 +4,66 @@
 
 {% block content %}
 <div class="container mx-auto max-w-3xl">
-    <div class="flex justify-between items-start mb-6">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6">
         <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Empenho #{{ commitment.number }}</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Detalhes do empenho fiscal</p>
+        </div>
+        <div class="flex space-x-2">
+            <a href="{% url 'fiscal:commitment_update' pk=commitment.pk %}"
+                class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-sm">
+                Editar
+            </a>
             <a href="{% url 'fiscal:commitments' %}"
-                class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 mb-2">
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                </svg>
+                class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm">
                 Voltar
             </a>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Empenho {{ commitment.number }}</h1>
-            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Data: {{ commitment.commitment_date|date:"d/m/Y" }}
-            </p>
         </div>
-        <a href="{% url 'fiscal:commitment_update' pk=commitment.pk %}"
-            class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-lg text-sm">
-            Editar
-        </a>
     </div>
 
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 space-y-6">
-        {% if commitment.report %}
-        <div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Laudo</p>
-            <a href="{{ commitment.report.get_absolute_url }}"
-                class="text-lg font-semibold text-brand-600 hover:text-brand-700">
-                {{ commitment.report.number_report }}
-            </a>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ commitment.report.sector.name|default:"Sem
-                setor" }}</p>
+    <!-- Detalhes -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Informações Principais</h3>
         </div>
-        {% endif %}
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Número</dt>
+                <dd class="mt-1 text-lg font-semibold text-gray-900 dark:text-white">{{ commitment.number }}</dd>
+            </div>
 
-        {% if commitment.invoice %}
-        <div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Nota Fiscal</p>
-            <a href="{% url 'fiscal:invoice_detail' pk=commitment.invoice.pk %}"
-                class="text-lg font-semibold text-brand-600 hover:text-brand-700">
-                {{ commitment.invoice.number }}
-            </a>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{
-                commitment.invoice.supplier.trade|default:commitment.invoice.supplier.company }}</p>
-        </div>
-        {% endif %}
+            <div>
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Criado em</dt>
+                <dd class="mt-1 text-gray-900 dark:text-white">{{ commitment.created_at|date:"d/m/Y H:i" }}</dd>
+            </div>
 
-        {% if commitment.notes %}
-        <div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Observações</p>
-            <p class="text-gray-700 dark:text-gray-300">{{ commitment.notes }}</p>
+            {% if commitment.invoice %}
+            <div class="md:col-span-2">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Nota Fiscal Vinculada</dt>
+                <dd class="mt-2 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">NF: {{ commitment.invoice.number }}</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">{{ commitment.invoice.supplier.trade }}
+                            </p>
+                        </div>
+                        <a href="{% url 'fiscal:invoice_detail' pk=commitment.invoice.pk %}"
+                            class="text-brand-600 hover:text-brand-500 font-medium text-sm">
+                            Ver Nota
+                        </a>
+                    </div>
+                </dd>
+            </div>
+            {% else %}
+            <div class="md:col-span-2">
+                <p
+                    class="text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/30 p-3 rounded-md border border-yellow-200 dark:border-yellow-900">
+                    ⚠️ Este empenho não está vinculado a nenhuma nota fiscal.
+                </p>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
-{% endblock content %}
+{% endblock %}

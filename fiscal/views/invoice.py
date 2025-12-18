@@ -13,6 +13,7 @@ from django.views.generic import CreateView, DetailView, ListView, UpdateView, D
 from django.db.models import Sum
 
 # Imports do app Fiscal
+# Imports do app Fiscal
 from fiscal.models import Invoice, InvoiceItem, Commitment
 from fiscal.forms import InvoiceForm, InvoiceItemForm, InvoiceItemFormSet, CommitmentForm
 
@@ -135,12 +136,23 @@ class InvoiceDetailView(LoginRequiredMixin, DetailView):
     login_url = 'authenticate:login'
     
     def get_context_data(self, **kwargs):
+        from fiscal.services.matching import suggest_reports_for_invoice, get_invoice_linked_report
+        
         context = super().get_context_data(**kwargs)
         context['items'] = self.object.items.select_related(
             'material_bidding__material', 'material_bidding__bidding'
         ).all()
-        context['commitments'] = self.object.commitments.select_related('report').all()
         context['deliveries'] = self.object.deliveries.select_related('sector', 'delivered_by').all()
+        
+        # Laudo vinculado (via InvoiceReportLink)
+        context['linked_report'] = get_invoice_linked_report(self.object)
+        
+        # Sugestões de laudos (se não estiver vinculada)
+        if not context['linked_report']:
+            context['report_suggestions'] = suggest_reports_for_invoice(self.object, limit=5)
+        else:
+            context['report_suggestions'] = []
+        
         return context
 
 
@@ -211,71 +223,125 @@ def invoice_mark_delivered(request, pk):
     return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
 
 
-# =====================
-# EMPENHOS
-# =====================
-
-class CommitmentListView(LoginRequiredMixin, ListView):
-    """Lista todos os empenhos com paginação."""
-    model = Commitment
-    template_name = 'fiscal/commitment/list.html'
-    context_object_name = 'commitments'
-    paginate_by = 20
-    login_url = 'authenticate:login'
+@login_required(login_url='authenticate:login')
+def invoice_set_commitment(request, pk):
+    """
+    Salva o número do empenho inline na nota fiscal.
+    Cria ou atualiza o Commitment vinculado à Invoice.
+    """
+    invoice = get_object_or_404(Invoice, pk=pk)
     
-    def get_queryset(self):
-        return Commitment.objects.select_related(
-            'report__sector', 'invoice__supplier'
-        ).order_by('-commitment_date', '-created_at')
-
-
-class CommitmentCreateView(LoginRequiredMixin, CreateView):
-    """Cria um novo empenho."""
-    model = Commitment
-    form_class = CommitmentForm
-    template_name = 'fiscal/commitment/create.html'
-    login_url = 'authenticate:login'
+    if request.method == 'POST':
+        commitment_number = request.POST.get('commitment_number', '').strip()
+        
+        if commitment_number:
+            # Criar ou atualizar o Commitment
+            commitment, created = Commitment.objects.update_or_create(
+                invoice=invoice,
+                defaults={'number': commitment_number}
+            )
+            action = 'cadastrado' if created else 'atualizado'
+            messages.success(request, f'Empenho {commitment_number} {action} com sucesso!')
+        else:
+            # Se vazio, remover o commitment existente
+            try:
+                invoice.commitment.delete()
+                messages.info(request, 'Empenho removido.')
+            except Commitment.DoesNotExist:
+                pass
     
-    def get_success_url(self):
-        messages.success(self.request, f'Empenho {self.object.number} cadastrado com sucesso!')
-        return reverse('fiscal:commitments')
+    return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
+
+
+@login_required(login_url='authenticate:login')
+def invoice_link_report(request, pk, report_pk):
+    """
+    Vincula uma Nota Fiscal a um Laudo.
+    Cria um InvoiceReportLink com auditoria de quem/quando vinculou.
+    """
+    from fiscal.models import InvoiceReportLink
+    from reports.models import Report
+    from fiscal.services.report_sync import check_and_close_report_if_complete
     
-    def get_initial(self):
-        initial = super().get_initial()
-        # Se veio de uma nota fiscal, pré-selecionar
-        invoice_pk = self.request.GET.get('invoice')
-        if invoice_pk:
-            initial['invoice'] = invoice_pk
-        # Se veio de um laudo, pré-selecionar
-        report_pk = self.request.GET.get('report')
-        if report_pk:
-            initial['report'] = report_pk
-        return initial
-
-
-class CommitmentDetailView(LoginRequiredMixin, DetailView):
-    """Visualiza detalhes de um empenho."""
-    model = Commitment
-    template_name = 'fiscal/commitment/detail.html'
-    context_object_name = 'commitment'
-    login_url = 'authenticate:login'
-
-
-class CommitmentUpdateView(LoginRequiredMixin, UpdateView):
-    """Atualiza um empenho."""
-    model = Commitment
-    form_class = CommitmentForm
-    template_name = 'fiscal/commitment/create.html'
-    login_url = 'authenticate:login'
+    invoice = get_object_or_404(Invoice, pk=pk)
+    report = get_object_or_404(Report, pk=report_pk)
     
-    def get_success_url(self):
-        messages.success(self.request, f'Empenho {self.object.number} atualizado com sucesso!')
-        return reverse('fiscal:commitment_detail', kwargs={'pk': self.object.pk})
+    # Verificar se já existe vínculo
+    if hasattr(invoice, 'report_link'):
+        messages.warning(request, f'Esta nota já está vinculada ao laudo {invoice.report_link.report.number_report}')
+        return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['is_update'] = True
-        return context
+    # Criar vínculo
+    InvoiceReportLink.objects.create(
+        invoice=invoice,
+        report=report,
+        linked_by=request.user,
+        notes=''
+    )
+    
+    # Verificar se todos os materiais do laudo já foram atendidos
+    # (têm notas fiscais vinculadas com os mesmos materiais)
+    report_was_closed = False
+    try:
+        report_was_closed = check_and_close_report_if_complete(report)
+    except Exception as e:
+        # Log do erro mas não impede o vínculo
+        pass
+    
+    if report_was_closed:
+        messages.success(
+            request, 
+            f'Nota vinculada ao laudo {report.number_report} com sucesso! '
+            f'✨ Laudo fechado automaticamente (todos os materiais atendidos).'
+        )
+    else:
+        messages.success(request, f'Nota vinculada ao laudo {report.number_report} com sucesso!')
+    
+    return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
+
+
+@login_required(login_url='authenticate:login')
+def invoice_unlink_report(request, pk):
+    """
+    Remove o vínculo entre Nota Fiscal e Laudo.
+    Se o laudo estava fechado e agora ficou incompleto, reabre automaticamente.
+    """
+    from fiscal.models import InvoiceReportLink
+    from fiscal.services.report_sync import check_report_still_complete
+    
+    invoice = get_object_or_404(Invoice, pk=pk)
+    
+    if hasattr(invoice, 'report_link'):
+        report = invoice.report_link.report
+        report_number = report.number_report
+        was_closed = report.status == '3'
+        
+        # Remove o vínculo
+        invoice.report_link.delete()
+        
+        # Verifica se o laudo precisa ser reaberto
+        # (se estava fechado e agora não tem mais todos os materiais cobertos)
+        report_was_reopened = False
+        if was_closed:
+            # Checa se ainda está completo após remover esta nota
+            still_complete = check_report_still_complete(report)
+            if not still_complete:
+                report.status = '1'  # Reabrir
+                report.save(update_fields=['status'])
+                report_was_reopened = True
+        
+        if report_was_reopened:
+            messages.info(
+                request, 
+                f'Vínculo com laudo {report_number} removido. '
+                f'⚠️ Laudo reaberto (materiais pendentes).'
+            )
+        else:
+            messages.info(request, f'Vínculo com laudo {report_number} removido.')
+    else:
+        messages.warning(request, 'Esta nota não está vinculada a nenhum laudo.')
+    
+    return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
 
 
 # =====================
@@ -512,3 +578,66 @@ def invoice_process(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+# =====================
+# EMPENHOS
+# =====================
+
+class CommitmentListView(LoginRequiredMixin, ListView):
+    """Lista todos os empenhos com paginação."""
+    model = Commitment
+    template_name = 'fiscal/commitment/list.html'
+    context_object_name = 'commitments'
+    paginate_by = 20
+    login_url = 'authenticate:login'
+    
+    def get_queryset(self):
+        return Commitment.objects.select_related(
+            'invoice__supplier', 'invoice__report_link__report__sector'
+        ).order_by('-created_at')
+
+
+class CommitmentCreateView(LoginRequiredMixin, CreateView):
+    """Cria um novo empenho."""
+    model = Commitment
+    form_class = CommitmentForm
+    template_name = 'fiscal/commitment/create.html'
+    login_url = 'authenticate:login'
+    
+    def get_success_url(self):
+        messages.success(self.request, f'Empenho {self.object.number} cadastrado com sucesso!')
+        return reverse('fiscal:commitments')
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        # Se veio de uma nota fiscal, pré-selecionar
+        invoice_pk = self.request.GET.get('invoice')
+        if invoice_pk:
+            initial['invoice'] = invoice_pk
+        return initial
+
+
+class CommitmentDetailView(LoginRequiredMixin, DetailView):
+    """Visualiza detalhes de um empenho."""
+    model = Commitment
+    template_name = 'fiscal/commitment/detail.html'
+    context_object_name = 'commitment'
+    login_url = 'authenticate:login'
+
+
+class CommitmentUpdateView(LoginRequiredMixin, UpdateView):
+    """Atualiza um empenho."""
+    model = Commitment
+    form_class = CommitmentForm
+    template_name = 'fiscal/commitment/create.html'
+    login_url = 'authenticate:login'
+    
+    def get_success_url(self):
+        messages.success(self.request, f'Empenho {self.object.number} atualizado com sucesso!')
+        return reverse('fiscal:commitment_detail', kwargs={'pk': self.object.pk})
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_update'] = True
+        return context

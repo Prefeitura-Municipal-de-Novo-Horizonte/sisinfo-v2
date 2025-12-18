@@ -220,15 +220,6 @@ class MaterialBidding(models.Model):
         default=Decimal("0.00"),
         help_text="Percentual de reajuste aplicado"
     )
-    # price_snapshot mantido por compatibilidade temporária, será removido futuramente
-    price_snapshot = models.DecimalField(
-        "preço no momento da inclusão",
-        max_digits=8,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text="Snapshot do preço do material quando foi adicionado à licitação"
-    )
     
     # Controle de limite de compras da licitação
     quantity_purchased = models.PositiveIntegerField(
@@ -239,6 +230,10 @@ class MaterialBidding(models.Model):
     
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+    
+    def __str__(self):
+        return f"{self.material.name} - {self.bidding.name} (R$ {self.price})"
+
     
     @property
     def available_for_purchase(self):
@@ -308,7 +303,4 @@ class MaterialBidding(models.Model):
         """
         Sobrescreve o método save para capturar o snapshot do preço.
         """
-        # Captura price_snapshot automaticamente se não fornecido
-        if not self.price_snapshot:
-            self.price_snapshot = self.total_price()
         return super().save(*args, **kwargs)

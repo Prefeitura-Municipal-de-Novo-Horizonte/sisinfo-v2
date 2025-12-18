@@ -93,49 +93,28 @@ InvoiceItemFormSet = inlineformset_factory(
 )
 
 
+
+
+
+
+
 ################################
 ## Empenhos ####################
 ################################
 class CommitmentForm(forms.ModelForm):
-    """Formulário para cadastro de Empenho."""
+    """
+    Formulário para cadastro/edição de Empenho.
+    Usado inline na visualização da Nota Fiscal.
+    """
     
     class Meta:
         model = Commitment
-        fields = ['number', 'report', 'invoice', 'commitment_date', 'notes']
+        fields = ['number']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        for field_name, field in self.fields.items():
-            if field_name == 'notes':
-                field.widget.attrs['class'] = TEXTAREA_CLASS
-                field.widget.attrs['rows'] = '3'
-            elif field_name == 'commitment_date':
-                field.widget = forms.DateInput(attrs={
-                    'class': STANDARD_INPUT_CLASS,
-                    'type': 'date',
-                })
-            else:
-                field.widget.attrs['class'] = STANDARD_INPUT_CLASS
-        
+        self.fields['number'].widget.attrs['class'] = STANDARD_INPUT_CLASS
         self.fields['number'].widget.attrs['placeholder'] = 'Ex: 2024/00123'
-        
-        # Filtrar apenas laudos ABERTOS (status='1')
-        self.fields['report'].queryset = Report.objects.filter(
-            status='1'
-        ).order_by('-created_at')
-        
-        # Filtrar apenas notas fiscais não vinculadas a outros empenhos
-        # Exceto a nota atual se estiver editando
-        used_invoice_ids = Commitment.objects.values_list('invoice_id', flat=True)
-        if self.instance.pk and self.instance.invoice_id:
-            # Se está editando, permitir a nota atual
-            used_invoice_ids = used_invoice_ids.exclude(pk=self.instance.pk)
-        
-        self.fields['invoice'].queryset = Invoice.objects.exclude(
-            id__in=used_invoice_ids
-        ).select_related('supplier').order_by('-issue_date')
-
 
 
 ################################
@@ -146,7 +125,7 @@ class DeliveryNoteForm(forms.ModelForm):
     
     class Meta:
         model = DeliveryNote
-        fields = ['invoice', 'commitment', 'sector', 'received_by', 'received_at', 'observations']
+        fields = ['invoice', 'sector', 'received_by', 'received_at', 'observations']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

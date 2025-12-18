@@ -7,6 +7,9 @@ from fiscal.views import (
     InvoiceDeleteView,
     invoice_add_items,
     invoice_mark_delivered,
+    invoice_set_commitment,
+    invoice_link_report,
+    invoice_unlink_report,
     invoice_upload,
     invoice_process,
     CommitmentListView,
@@ -33,6 +36,9 @@ urlpatterns = [
     path('notas/<int:pk>/excluir/', InvoiceDeleteView.as_view(), name='invoice_delete'),
     path('notas/<int:pk>/itens/', invoice_add_items, name='invoice_items'),
     path('notas/<int:pk>/entregar/', invoice_mark_delivered, name='invoice_deliver'),
+    path('notas/<int:pk>/empenho/', invoice_set_commitment, name='invoice_set_commitment'),
+    path('notas/<int:pk>/vincular-laudo/<int:report_pk>/', invoice_link_report, name='invoice_link_report'),
+    path('notas/<int:pk>/desvincular-laudo/', invoice_unlink_report, name='invoice_unlink_report'),
     
     # Empenhos
     path('empenhos/', CommitmentListView.as_view(), name='commitments'),
