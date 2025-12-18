@@ -126,14 +126,14 @@
         </div>
 
         <div class="space-y-6">
-            {% if invoice.photo %}
+            {% if invoice.photo_url %}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Foto da Nota</h2>
                 </div>
                 <div class="p-4">
-                    <a href="{{ invoice.photo.url }}" target="_blank">
-                        <img src="{{ invoice.photo.url }}" alt="Nota Fiscal"
+                    <a href="{{ invoice.photo_url }}" target="_blank">
+                        <img src="{{ invoice.photo_url }}" alt="Nota Fiscal"
                             class="w-full rounded-lg hover:opacity-90 transition-opacity">
                     </a>
                 </div>

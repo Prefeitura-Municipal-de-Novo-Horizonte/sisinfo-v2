@@ -96,6 +96,30 @@ class Invoice(models.Model):
         total = sum(item.total_price for item in self.items.all())
         return Decimal(total).quantize(Decimal("0.00"))
     
+    @property
+    def photo_url(self):
+        """
+        Retorna a URL da foto correta para o ambiente.
+        - Cloudinary: retorna URL do Cloudinary
+        - Local: retorna URL do media/
+        """
+        if not self.photo:
+            return None
+        
+        photo_str = str(self.photo)
+        
+        # Se começa com 'local/', é arquivo local
+        if photo_str.startswith('local/'):
+            from django.conf import settings
+            filename = photo_str.replace('local/', '')
+            return f"{settings.MEDIA_URL}invoices/{filename}"
+        
+        # Caso contrário, usa URL do Cloudinary
+        try:
+            return self.photo.url
+        except Exception:
+            return None
+    
     def mark_as_delivered_to_purchases(self):
         """Marca a nota como entregue ao setor de compras."""
         self.delivered_to_purchases = True
