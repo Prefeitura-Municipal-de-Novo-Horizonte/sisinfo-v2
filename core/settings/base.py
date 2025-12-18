@@ -31,6 +31,7 @@ MY_APPS = [
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
+    "fiscal.apps.FiscalConfig",
     "organizational_structure.apps.OrganizationalStructureConfig",
     "bidding_procurement.apps.BiddingProcurementConfig",
     "audit.apps.AuditConfig",  # Sistema de auditoria

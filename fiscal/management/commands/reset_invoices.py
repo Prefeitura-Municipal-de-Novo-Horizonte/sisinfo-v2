@@ -1,5 +1,4 @@
-from django.core.management.base import BaseCommand
-from reports.models import Invoice, InvoiceItem
+from fiscal.models import Invoice, InvoiceItem
 
 class Command(BaseCommand):
     help = 'Remove todas as notas fiscais e seus itens (Reset para testes)'

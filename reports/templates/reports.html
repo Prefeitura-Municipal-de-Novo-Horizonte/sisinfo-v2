@@ -195,7 +195,24 @@
                 {% for report in page_obj %}
                 <tr
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700/50">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <th scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white flex items-center gap-3">
+                        {% if report.status == '3' %}
+                        <span title="Finalizado"
+                            class="text-green-500 bg-green-100 dark:bg-green-900/30 p-1.5 rounded-full">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </span>
+                        {% else %}
+                        <span title="Aberto" class="text-blue-500 bg-blue-100 dark:bg-blue-900/30 p-1.5 rounded-full">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </span>
+                        {% endif %}
                         <a href="{{ report.get_absolute_url }}"
                             class="hover:text-brand-600 dark:hover:text-brand-400 hover:underline">
                             {{ report.number_report }}

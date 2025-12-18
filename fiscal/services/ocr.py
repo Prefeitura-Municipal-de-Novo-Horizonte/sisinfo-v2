@@ -90,9 +90,7 @@ class InvoiceOCRService:
         """Inicializa o cliente com a chave atual."""
         try:
             current_key = self.api_keys[self.current_key_index]
-            # Mostrar apenas os primeiros e últimos caracteres da chave por segurança
-            masked_key = f"{current_key[:10]}...{current_key[-4:]}" if len(current_key) > 14 else "***"
-            print(f"OCR: Tentando chave {self.current_key_index + 1}/{len(self.api_keys)}: {masked_key}")
+            print(f"OCR: Usando chave {self.current_key_index + 1}/{len(self.api_keys)}")
             self.client = genai.Client(api_key=current_key)
         except Exception as e:
             raise ValueError(f"Erro ao inicializar cliente Gemini: {str(e)}")

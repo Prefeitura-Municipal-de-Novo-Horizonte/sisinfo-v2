@@ -7,7 +7,7 @@
 <div class="container mx-auto max-w-4xl">
     <!-- Header -->
     <div class="mb-6">
-        <a href="{% url 'reports:invoice_detail' pk=invoice.pk %}"
+        <a href="{% url 'fiscal:invoice_detail' pk=invoice.pk %}"
             class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -95,7 +95,7 @@
 
         <!-- Botões -->
         <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <a href="{% url 'reports:invoice_detail' pk=invoice.pk %}"
+            <a href="{% url 'fiscal:invoice_detail' pk=invoice.pk %}"
                 class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
                 Cancelar
             </a>

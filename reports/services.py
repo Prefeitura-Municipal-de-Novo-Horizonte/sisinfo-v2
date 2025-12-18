@@ -95,7 +95,7 @@ class ReportService:
         materiais_report = MaterialReport.objects.filter(report=report).exclude(
             material_bidding__material__name__icontains='Perdido'
         )
-        total_price = sum(material.total_price() for material in materiais_report)
+        total_price = sum(material.total_price for material in materiais_report)
         
         return {
             'report': report,

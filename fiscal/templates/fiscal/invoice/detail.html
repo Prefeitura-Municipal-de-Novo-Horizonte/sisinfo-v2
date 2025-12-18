@@ -7,7 +7,7 @@
 <div class="container mx-auto max-w-5xl">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-            <a href="{% url 'reports:invoices' %}"
+            <a href="{% url 'fiscal:invoices' %}"
                 class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -18,14 +18,14 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">{{ invoice.supplier }}</p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{% url 'reports:invoice_items' pk=invoice.pk %}"
+            <a href="{% url 'fiscal:invoice_items' pk=invoice.pk %}"
                 class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors text-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
                 Adicionar Itens
             </a>
-            <a href="{% url 'reports:invoice_update' pk=invoice.pk %}"
+            <a href="{% url 'fiscal:invoice_update' pk=invoice.pk %}"
                 class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-colors text-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -113,7 +113,7 @@
                             <tr>
                                 <td colspan="4" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                                     <p>Nenhum item adicionado</p>
-                                    <a href="{% url 'reports:invoice_items' pk=invoice.pk %}"
+                                    <a href="{% url 'fiscal:invoice_items' pk=invoice.pk %}"
                                         class="text-brand-600 hover:text-brand-700 text-sm mt-2 inline-block">+
                                         Adicionar itens</a>
                                 </td>
@@ -154,7 +154,7 @@
 
             {% if invoice.status != 'E' %}
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-                <a href="{% url 'reports:invoice_deliver' pk=invoice.pk %}"
+                <a href="{% url 'fiscal:invoice_deliver' pk=invoice.pk %}"
                     class="w-full inline-flex justify-center items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors text-sm"
                     onclick="return confirm('Marcar esta nota como entregue ao setor de Compras?')">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

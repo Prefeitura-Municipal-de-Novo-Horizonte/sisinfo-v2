@@ -1,5 +1,6 @@
 """
 Views para o sistema de Notas Fiscais e Empenhos.
+Refatorado do app reports para fiscal.
 """
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -11,15 +12,21 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, DeleteView
 from django.db.models import Sum
 
-from reports.models import Invoice, InvoiceItem, Commitment
-from reports.forms import InvoiceForm, InvoiceItemForm, InvoiceItemFormSet, CommitmentForm
+# Imports do app Fiscal
+from fiscal.models import Invoice, InvoiceItem, Commitment
+from fiscal.forms import InvoiceForm, InvoiceItemForm, InvoiceItemFormSet, CommitmentForm
+
+# Imports de outros apps
 from bidding_procurement.models import MaterialBidding
 
+# =====================
+# NOTAS FISCAIS
+# =====================
 
 class InvoiceListView(LoginRequiredMixin, ListView):
     """Lista todas as notas fiscais."""
     model = Invoice
-    template_name = 'reports/invoice/list.html'
+    template_name = 'fiscal/invoice/list.html'
     context_object_name = 'invoices'
     paginate_by = 20
     login_url = 'authenticate:login'
@@ -66,15 +73,15 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
     """Cria uma nova nota fiscal."""
     model = Invoice
     form_class = InvoiceForm
-    template_name = 'reports/invoice/create.html'
+    template_name = 'fiscal/invoice/create.html'
     login_url = 'authenticate:login'
     
     def get_success_url(self):
         messages.success(self.request, f'Nota Fiscal {self.object.number} cadastrada com sucesso!')
         # Se salvou itens automaticamente, vai para detalhes
         if self.object.items.exists():
-            return reverse('reports:invoice_detail', kwargs={'pk': self.object.pk})
-        return reverse('reports:invoice_items', kwargs={'pk': self.object.pk})
+            return reverse('fiscal:invoice_detail', kwargs={'pk': self.object.pk})
+        return reverse('fiscal:invoice_items', kwargs={'pk': self.object.pk})
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -123,7 +130,7 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
 class InvoiceDetailView(LoginRequiredMixin, DetailView):
     """Visualiza detalhes de uma nota fiscal."""
     model = Invoice
-    template_name = 'reports/invoice/detail.html'
+    template_name = 'fiscal/invoice/detail.html'
     context_object_name = 'invoice'
     login_url = 'authenticate:login'
     
@@ -141,12 +148,12 @@ class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
     """Atualiza uma nota fiscal."""
     model = Invoice
     form_class = InvoiceForm
-    template_name = 'reports/invoice/create.html'
+    template_name = 'fiscal/invoice/create.html'
     login_url = 'authenticate:login'
     
     def get_success_url(self):
         messages.success(self.request, f'Nota Fiscal {self.object.number} atualizada com sucesso!')
-        return reverse('reports:invoice_detail', kwargs={'pk': self.object.pk})
+        return reverse('fiscal:invoice_detail', kwargs={'pk': self.object.pk})
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,8 +164,8 @@ class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
 class InvoiceDeleteView(LoginRequiredMixin, DeleteView):
     """Exclui uma nota fiscal."""
     model = Invoice
-    template_name = 'reports/invoice/confirm_delete.html'
-    success_url = reverse_lazy('reports:invoices')
+    template_name = 'fiscal/invoice/confirm_delete.html'
+    success_url = reverse_lazy('fiscal:invoices')
     login_url = 'authenticate:login'
     
     def form_valid(self, form):
@@ -176,7 +183,7 @@ def invoice_add_items(request, pk):
         if formset.is_valid():
             formset.save()
             messages.success(request, 'Itens adicionados com sucesso!')
-            return redirect(reverse('reports:invoice_detail', kwargs={'pk': pk}))
+            return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
         else:
             messages.error(request, 'Erro ao adicionar itens. Verifique os dados.')
     else:
@@ -192,7 +199,7 @@ def invoice_add_items(request, pk):
         'invoice': invoice,
         'formset': formset,
     }
-    return render(request, 'reports/invoice/add_items.html', context)
+    return render(request, 'fiscal/invoice/add_items.html', context)
 
 
 @login_required(login_url='authenticate:login')
@@ -201,7 +208,7 @@ def invoice_mark_delivered(request, pk):
     invoice = get_object_or_404(Invoice, pk=pk)
     invoice.mark_as_delivered_to_purchases()
     messages.success(request, f'Nota {invoice.number} marcada como entregue ao compras.')
-    return redirect(reverse('reports:invoice_detail', kwargs={'pk': pk}))
+    return redirect(reverse('fiscal:invoice_detail', kwargs={'pk': pk}))
 
 
 # =====================
@@ -211,7 +218,7 @@ def invoice_mark_delivered(request, pk):
 class CommitmentListView(LoginRequiredMixin, ListView):
     """Lista todos os empenhos com paginação."""
     model = Commitment
-    template_name = 'reports/commitment/list.html'
+    template_name = 'fiscal/commitment/list.html'
     context_object_name = 'commitments'
     paginate_by = 20
     login_url = 'authenticate:login'
@@ -226,12 +233,12 @@ class CommitmentCreateView(LoginRequiredMixin, CreateView):
     """Cria um novo empenho."""
     model = Commitment
     form_class = CommitmentForm
-    template_name = 'reports/commitment/create.html'
+    template_name = 'fiscal/commitment/create.html'
     login_url = 'authenticate:login'
     
     def get_success_url(self):
         messages.success(self.request, f'Empenho {self.object.number} cadastrado com sucesso!')
-        return reverse('reports:commitments')
+        return reverse('fiscal:commitments')
     
     def get_initial(self):
         initial = super().get_initial()
@@ -249,7 +256,7 @@ class CommitmentCreateView(LoginRequiredMixin, CreateView):
 class CommitmentDetailView(LoginRequiredMixin, DetailView):
     """Visualiza detalhes de um empenho."""
     model = Commitment
-    template_name = 'reports/commitment/detail.html'
+    template_name = 'fiscal/commitment/detail.html'
     context_object_name = 'commitment'
     login_url = 'authenticate:login'
 
@@ -258,12 +265,12 @@ class CommitmentUpdateView(LoginRequiredMixin, UpdateView):
     """Atualiza um empenho."""
     model = Commitment
     form_class = CommitmentForm
-    template_name = 'reports/commitment/create.html'
+    template_name = 'fiscal/commitment/create.html'
     login_url = 'authenticate:login'
     
     def get_success_url(self):
         messages.success(self.request, f'Empenho {self.object.number} atualizado com sucesso!')
-        return reverse('reports:commitment_detail', kwargs={'pk': self.object.pk})
+        return reverse('fiscal:commitment_detail', kwargs={'pk': self.object.pk})
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -309,7 +316,7 @@ def api_materials_by_supplier(request):
 @login_required(login_url='authenticate:login')
 def invoice_upload(request):
     """Página de upload de nota fiscal."""
-    return render(request, 'reports/invoice/upload.html')
+    return render(request, 'fiscal/invoice/upload.html')
 
 
 @login_required(login_url='authenticate:login')
@@ -326,9 +333,9 @@ def invoice_process(request):
     from PIL import Image
     from django.core.files.uploadedfile import InMemoryUploadedFile
     import cloudinary.uploader
-    from reports.ocr_service import InvoiceOCRService, find_supplier_by_cnpj, find_similar_materials
+    from fiscal.services.ocr import InvoiceOCRService, find_supplier_by_cnpj, find_similar_materials
     from bidding_supplier.models import Supplier
-    from reports.models import Invoice # Import Invoice here for the duplication check
+    from fiscal.models import Invoice # Import Invoice here for the duplication check
 
     if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
@@ -363,9 +370,6 @@ def invoice_process(request):
             # Resetar ponteiro para uso do Django Upload
             output.seek(0)
             
-            # Substituir arquivo original na memória (necessário para upload Cloudinary via biblioteca padrão se usado via form)
-            # Mas aqui usamos cloudinary.uploader.upload direto com o arquivo ou bytes.
-            
         except Exception as e:
             # Fallback se falhar otimização
             photo.seek(0)
@@ -399,7 +403,6 @@ def invoice_process(request):
             return JsonResponse({'error': f'Erro ao ler nota: {extracted.error}'}, status=400)
         
         # 2. Verificar duplicidade ANTES do upload
-        # ... (Mantém lógica existente, mas ajustada para não deletar do cloudinary pois ainda não subiu)
         existing = Invoice.objects.filter(
             number=extracted.number,
             supplier__cnpj__icontains=extracted.supplier_cnpj[:8] if extracted.supplier_cnpj else ''

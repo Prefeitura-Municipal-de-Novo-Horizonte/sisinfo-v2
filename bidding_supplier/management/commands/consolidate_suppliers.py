@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from bidding_supplier.models import Supplier, Contact
 from bidding_procurement.models import MaterialBidding
-from reports.models import Invoice
+from fiscal.models import Invoice
 from bidding_supplier.utils.name_normalizer import normalize_supplier_name
 
 

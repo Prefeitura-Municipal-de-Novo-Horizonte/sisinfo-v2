@@ -9,7 +9,7 @@
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Empenhos</h1>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Gerenciar empenhos vinculados aos laudos</p>
         </div>
-        <a href="{% url 'reports:commitment_create' %}"
+        <a href="{% url 'fiscal:commitment_create' %}"
             class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -69,7 +69,7 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             {% if commitment.invoice %}
-                            <a href="{% url 'reports:invoice_detail' pk=commitment.invoice.pk %}"
+                            <a href="{% url 'fiscal:invoice_detail' pk=commitment.invoice.pk %}"
                                 class="text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400">
                                 {{ commitment.invoice.number }}
                             </a>
@@ -89,9 +89,9 @@
                                 commitment.commitment_date|date:"d/m/Y" }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right space-x-2">
-                            <a href="{% url 'reports:commitment_detail' pk=commitment.pk %}"
+                            <a href="{% url 'fiscal:commitment_detail' pk=commitment.pk %}"
                                 class="text-brand-600 hover:text-brand-800 dark:text-brand-400 text-sm font-medium">Ver</a>
-                            <a href="{% url 'reports:commitment_update' pk=commitment.pk %}"
+                            <a href="{% url 'fiscal:commitment_update' pk=commitment.pk %}"
                                 class="text-gray-600 hover:text-gray-800 dark:text-gray-400 text-sm">Editar</a>
                         </td>
                     </tr>

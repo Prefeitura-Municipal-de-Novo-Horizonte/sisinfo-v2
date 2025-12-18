@@ -6,7 +6,7 @@
 <div class="container mx-auto max-w-3xl">
     <div class="flex justify-between items-start mb-6">
         <div>
-            <a href="{% url 'reports:commitments' %}"
+            <a href="{% url 'fiscal:commitments' %}"
                 class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 mb-2">
                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -17,7 +17,7 @@
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Data: {{ commitment.commitment_date|date:"d/m/Y" }}
             </p>
         </div>
-        <a href="{% url 'reports:commitment_update' pk=commitment.pk %}"
+        <a href="{% url 'fiscal:commitment_update' pk=commitment.pk %}"
             class="px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 rounded-lg text-sm">
             Editar
         </a>
@@ -39,7 +39,7 @@
         {% if commitment.invoice %}
         <div>
             <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Nota Fiscal</p>
-            <a href="{% url 'reports:invoice_detail' pk=commitment.invoice.pk %}"
+            <a href="{% url 'fiscal:invoice_detail' pk=commitment.invoice.pk %}"
                 class="text-lg font-semibold text-brand-600 hover:text-brand-700">
                 {{ commitment.invoice.number }}
             </a>

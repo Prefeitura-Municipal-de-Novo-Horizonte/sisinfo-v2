@@ -40,9 +40,9 @@
                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ delivery.delivered_by.fullname }}
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{% url 'reports:delivery_detail' pk=delivery.pk %}"
+                        <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
                             class="text-brand-600 hover:text-brand-800 text-sm">Ver</a>
-                        <a href="{% url 'reports:delivery_pdf' pk=delivery.pk %}" target="_blank"
+                        <a href="{% url 'fiscal:delivery_pdf' pk=delivery.pk %}" target="_blank"
                             class="text-gray-600 hover:text-gray-800 text-sm">PDF</a>
                     </td>
                 </tr>

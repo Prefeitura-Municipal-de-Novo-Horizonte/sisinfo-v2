@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container mx-auto max-w-4xl" x-data="invoiceForm()">
   <div class="mb-6">
-    <a href="{% url 'reports:invoices' %}"
+    <a href="{% url 'fiscal:invoices' %}"
       class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
@@ -183,7 +183,7 @@
 
         <!-- Botões -->
         <div class="flex justify-end gap-3">
-          <a href="{% url 'reports:invoices' %}"
+          <a href="{% url 'fiscal:invoices' %}"
             class="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600 font-medium text-gray-700 dark:text-white">Cancelar</a>
           <button type="submit"
             class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg shadow-md font-bold transition-colors">
@@ -229,9 +229,11 @@
 <script src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js" defer></script>
 <script>
   function invoiceForm() {
-    // Tentar ler dados da URL
+    // Tentar ler dados da sessionStorage primeiro (mais robusto)
+    const ocrData = sessionStorage.getItem('ocrData');
     const urlParams = new URLSearchParams(window.location.search);
     const dataParam = urlParams.get('data');
+    const fromOcr = urlParams.get('from_ocr');
 
     // Estado inicial
     let extractedData = {
@@ -249,36 +251,66 @@
       confidence: 0
     };
 
-    if (dataParam) {
+    let dataToLoad = null;
+
+    if (fromOcr && ocrData) {
       try {
-        const parsed = JSON.parse(decodeURIComponent(dataParam));
-
-        extractedData = { ...extractedData, ...parsed };
-
-        // Preencher campos do form (usando requestAnimationFrame para garantir render)
-        const fillFields = () => {
-          // 1. Campo Número
-          const numberInput = document.getElementById('id_number');
-          if (numberInput && extractedData.number) {
-            numberInput.value = extractedData.number;
-          }
-
-          // 2. Campo Observações
-          const obsInput = document.getElementById('id_observations');
-          if (obsInput && extractedData.observations) {
-            obsInput.value = extractedData.observations;
-          }
-        };
-
-        setTimeout(fillFields, 100);
-        setTimeout(fillFields, 800);
-
+        dataToLoad = JSON.parse(ocrData);
+        // Limpar sessionStorage para não reutilizar em recargas acidentais
+        sessionStorage.removeItem('ocrData');
       } catch (e) {
-        console.error('Erro ao parsear dados da URL:', e);
+        console.error('Erro ao ler sessionStorage:', e);
       }
-    } else {
-      // Se não tem dados na URL (ex: erro ou acesso direto), tentar pegar do contexto Django se possível
-      // Mas por enquanto, foca só no fluxo via URL do OCR
+    } else if (dataParam) {
+      try {
+        dataToLoad = JSON.parse(decodeURIComponent(dataParam));
+      } catch (e) {
+        console.error('Erro ao ler URL param:', e);
+      }
+    }
+
+    if (dataToLoad) {
+      extractedData = { ...extractedData, ...dataToLoad };
+
+      // Preencher campos do form (usando requestAnimationFrame para garantir render)
+      const fillFields = () => {
+        // 1. Campo Número
+        const numberInput = document.getElementById('id_number');
+        if (numberInput && extractedData.number) {
+          numberInput.value = extractedData.number;
+        }
+
+        // 2. Campo Observações
+        const obsInput = document.getElementById('id_observations');
+        if (obsInput && extractedData.observations) {
+          obsInput.value = extractedData.observations;
+        }
+
+        // 3. Forçar outros campos cruciais (caso x-model falhe)
+        const dateInput = document.querySelector('input[name="issue_date"]');
+        if (dateInput && extractedData.issue_date) {
+          dateInput.value = extractedData.issue_date;
+          // Disparar evento de input para Alpine capturar se necessário
+          dateInput.dispatchEvent(new Event('input'));
+        }
+
+        const seriesInput = document.querySelector('input[name="series"]');
+        if (seriesInput && extractedData.series) {
+          seriesInput.value = extractedData.series;
+          seriesInput.dispatchEvent(new Event('input'));
+        }
+
+        const keyInput = document.querySelector('input[name="access_key"]');
+        if (keyInput && extractedData.access_key) {
+          keyInput.value = extractedData.access_key;
+          keyInput.dispatchEvent(new Event('input'));
+        }
+      };
+
+      // Múltiplos timeouts para garantir preenchimento após renderização do DOM/Alpine
+      setTimeout(fillFields, 100);
+      setTimeout(fillFields, 500);
+      setTimeout(fillFields, 1000);
     }
 
     // Auto-selecionar materiais se houver sugestões únicas ou confiáveis
