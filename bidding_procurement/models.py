@@ -172,6 +172,62 @@ class Material(AbsBiddingMaterial):
             
         super().save(*args, **kwargs)
 
+    def get_bidding_info(self):
+        """
+        Retorna informações sobre licitações que contêm este material.
+        
+        Returns:
+            dict: {
+                'count': int,
+                'biddings': QuerySet[Bidding],
+                'total_quantity': int
+            }
+        """
+        from django.db.models import Sum
+        
+        associations = self.bidding_associations.select_related('bidding').all()
+        total_qty = associations.aggregate(total=Sum('quantity'))['total'] or 0
+        
+        return {
+            'count': associations.count(),
+            'biddings': [assoc.bidding for assoc in associations[:5]],  # Limita a 5
+            'total_quantity': total_qty
+        }
+    
+    def get_report_usage(self):
+        """
+        Retorna informações sobre laudos que usaram este material.
+        
+        Returns:
+            dict: {
+                'count': int,
+                'total_used': int,
+                'recent_reports': list,
+                'has_more': bool
+            }
+        """
+        from reports.models import MaterialReport
+        from django.db.models import Sum
+        
+        # Busca todos os MaterialReport que usam este material
+        material_reports = MaterialReport.objects.filter(
+            material_bidding__material=self
+        ).select_related('report')
+        
+        total_used = material_reports.aggregate(total=Sum('quantity'))['total'] or 0
+        total_count = material_reports.values('report').distinct().count()
+        
+        # Report usa 'number_report' como identificador, não 'name'
+        # Limita a 4 itens
+        recent_reports = material_reports[:4].values_list('report__number_report', flat=True)
+        
+        return {
+            'count': total_count,
+            'total_used': total_used,
+            'recent_reports': list(recent_reports),
+            'has_more': total_count > 4
+        }
+
 
 
 
