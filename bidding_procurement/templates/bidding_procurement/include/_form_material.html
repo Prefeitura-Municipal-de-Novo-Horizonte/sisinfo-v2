@@ -1,9 +1,12 @@
 {% include "include/_form_field_standard.html" with field=form.material %}
-<div class="grid md:grid-cols-2 md:gap-6">
+<div class="grid md:grid-cols-1 gap-6">
     {% include "include/_form_field_standard.html" with field=form.supplier %}
-    {% include "include/_form_field_standard.html" with field=form.status %}
+</div>
+<div class="grid md:grid-cols-2 md:gap-6">
+    {% include "include/_form_field_standard.html" with field=form.quantity %}
+    {% include "include/_form_field_standard.html" with field=form.readjustment %}
 </div>
 <div class="grid md:grid-cols-2 md:gap-6">
     {% include "include/_form_field_standard.html" with field=form.price %}
-    {% include "include/_form_field_standard.html" with field=form.readjustment %}
+    {% include "include/_form_field_standard.html" with field=form.status %}
 </div>

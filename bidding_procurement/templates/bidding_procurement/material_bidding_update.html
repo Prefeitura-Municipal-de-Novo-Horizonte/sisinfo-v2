@@ -1,0 +1,48 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Editar Item{% endblock title %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl">
+    <!-- Breadcrumbs -->
+    <div class="mb-6 flex flex-wrap gap-2 items-center">
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'dashboard:index' %}">Início</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'bidding_procurement:licitacoes' %}">Processos</a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+            href="{% url 'bidding_procurement:licitacao' slug=material_bidding.bidding.slug %}">
+            {{ material_bidding.bidding.name }}
+        </a>
+        <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Editar Material</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ titulo }}</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Alterar quantidade, preço e fornecedor deste item na
+            licitação.</p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <form action="" method="post">{% csrf_token %}
+            {% include "bidding_procurement/include/_form_material.html" %}
+            <div class="flex justify-end gap-3 mt-6">
+                <a href="{% url 'bidding_procurement:licitacao' slug=material_bidding.bidding.slug %}"
+                    class="text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit"
+                    class="text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800 transition-colors">
+                    {{ btn }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

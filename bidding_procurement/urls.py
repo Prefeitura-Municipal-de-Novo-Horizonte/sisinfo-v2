@@ -14,7 +14,9 @@ from bidding_procurement.views import (
     MaterialDetailView,
     MaterialUpdateView,
     MaterialDeleteView,
+    MaterialDeleteView,
     MaterialToggleStatusView,
+    MaterialBiddingUpdateView,
 )
 
 app_name = "bidding_procurement"
@@ -35,4 +37,7 @@ urlpatterns = [
     path("material/<slug:slug>/update/", MaterialUpdateView.as_view(), name="update_material"),
     path("material/<int:id>/toggle-status/", MaterialToggleStatusView.as_view(), name="toggle_status_material"),
     path("material/<slug:slug>/delete/", MaterialDeleteView.as_view(), name="delete_material"),
+    
+    # Material Bidding (Edição de Item)
+    path("item-licitacao/<int:pk>/update/", MaterialBiddingUpdateView.as_view(), name="update_material_bidding"),
 ]

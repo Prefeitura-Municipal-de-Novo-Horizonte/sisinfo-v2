@@ -84,7 +84,9 @@ Materiais
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 {% if editing %}Editar Material{% else %}Novo Material{% endif %}
             </h3>
-            <form action="" method="post">{% csrf_token %}
+            <form
+                action="{% if editing %}{% url 'bidding_procurement:update_material' material.slug %}{% else %}{% url 'bidding_procurement:criar_material' %}{% endif %}"
+                method="post">{% csrf_token %}
                 {% include "bidding_procurement/include/_form_material_generic.html" %}
                 <div class="flex justify-end gap-3 mt-8">
                     {% if editing %}

@@ -158,6 +158,20 @@ class Material(AbsBiddingMaterial):
         """Retorna a URL absoluta para os detalhes do material."""
         return r("bidding_procurement:material", kwargs={"slug": self.slug})
 
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.upper()
+        if self.brand:
+            self.brand = self.brand.upper()
+        # Unit usually doesn't need to be upper (e.g. 'kg', 'm'), keeps standard if needed? 
+        # User said "materiails e fornecedores", implies names. 
+        # But for consistency let's uppercase unit if it's text like 'UN', 'CX'. 
+        # Let's uppercase unit too as it's common in legacy systems.
+        if self.unit:
+            self.unit = self.unit.upper()
+            
+        super().save(*args, **kwargs)
+
 
 
 

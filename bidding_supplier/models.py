@@ -36,11 +36,16 @@ class Supplier(models.Model):
         Sobrescreve o método save para gerar o slug automaticamente
         se não fornecido, usando o nome fantasia ou razão social.
         """
+        if self.company:
+            self.company = self.company.upper()
+        if self.trade:
+            self.trade = self.trade.upper()
+            
         if not self.slug:
             if not self.trade:
                 self.trade = self.company
             self.slug = slugify(self.trade)
-        return super().save()
+        return super().save(*args, **kwargs)
     
     def get_active_biddings(self):
         """
