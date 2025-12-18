@@ -1,0 +1,100 @@
+{% extends "_base.html" %}
+
+{% block title %}Empenhos{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Empenhos</h1>
+            <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Gerenciar empenhos cadastrados</p>
+        </div>
+        <a href="{% url 'fiscal:commitment_create' %}"
+            class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Novo Empenho
+        </a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Número</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Nota
+                        Fiscal</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Setor
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Fornecedor</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Ações</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for commitment in commitments %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">
+                        {{ commitment.number }}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {% if commitment.invoice %}
+                        <a href="{% url 'fiscal:invoice_detail' pk=commitment.invoice.pk %}"
+                            class="text-brand-600 hover:underline">
+                            {{ commitment.invoice.number }}
+                        </a>
+                        {% else %}
+                        <span class="text-gray-400">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {{ commitment.invoice.report_link.report.sector.name|default:"-" }}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {{ commitment.invoice.supplier.trade }}
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <a href="{% url 'fiscal:commitment_detail' pk=commitment.pk %}"
+                            class="text-brand-600 hover:text-brand-800 text-sm">Ver</a>
+                        <a href="{% url 'fiscal:commitment_update' pk=commitment.pk %}"
+                            class="text-gray-600 hover:text-gray-800 text-sm">Editar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Nenhum empenho cadastrado.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+    <div class="mt-4 flex justify-between items-center">
+        <span class="text-sm text-gray-500 dark:text-gray-400">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+        </span>
+        <div class="space-x-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}"
+                class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm hover:bg-gray-50 dark:hover:bg-gray-600">
+                Anterior
+            </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}"
+                class="px-3 py-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-sm hover:bg-gray-50 dark:hover:bg-gray-600">
+                Próxima
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -4,7 +4,7 @@
 {% block title %}{{ report.number_report }}{% endblock %}
 
 {% block content %}
-<div class="mx-auto max-w-4xl">
+<div class="mx-auto max-w-7xl">
     <!-- Breadcrumbs -->
     <div class="mb-6 flex flex-wrap gap-2 items-center">
         <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
@@ -13,8 +13,9 @@
         <a class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
             href="{% url 'reports:reports' %}">Laudos</a>
         <span class="text-sm font-medium leading-normal text-gray-500 dark:text-gray-400">/</span>
-        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">Laudo Técnico {{
-            report.number_report }}</span>
+        <span class="text-sm font-medium leading-normal text-gray-900 dark:text-white">
+            Laudo Técnico {{ report.number_report }}
+        </span>
     </div>
 
     <div
@@ -75,13 +76,14 @@
             </div>
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Data de Emissão</p>
-                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{
-                    report.created_at|date:"d/m/Y" }}</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">
+                    {{ report.created_at|date:"d/m/Y" }}</p>
             </div>
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Responsável Técnico</p>
-                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">{{ report.professional
-                    }}</p>
+                <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">
+                    {{ report.professional}}
+                </p>
             </div>
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Solicitante</p>
@@ -96,6 +98,44 @@
             <p class="text-base leading-relaxed text-gray-600 dark:text-gray-300">
                 {{ report.justification|linebreaksbr }}
             </p>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-gray-700 p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Notas Fiscais Vinculadas</h3>
+
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {% for link in report.invoice_links.all %}
+                <div
+                    class="flex items-start p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">
+                            NF {{ link.invoice.number }}
+                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                            {{ link.invoice.supplier.trade|default:link.invoice.supplier.company }}
+                        </p>
+                        <p class="text-xs text-gray-400 mt-1">
+                            Vinculado em: {{ link.linked_at|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                    {% if link.invoice.photo_url %}
+                    <a href="{{ link.invoice.photo_url }}" target="_blank"
+                        class="ml-2 text-brand-600 hover:text-brand-700">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </a>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-sm text-gray-500 dark:text-gray-400 get-col-span-3 italic">
+                    Nenhuma nota fiscal vinculada a este laudo.
+                </p>
+                {% endfor %}
+            </div>
         </div>
 
         <!-- Materials Table -->
@@ -124,13 +164,16 @@
                         <tr>
                             <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
                                 {{ material.material_bidding.material.name }}
-                                <span class="block text-xs font-normal text-gray-500 dark:text-gray-400">{{
-                                    material.material_bidding.bidding.name }}</span>
+                                <span class="block text-xs font-normal text-gray-500 dark:text-gray-400">
+                                    {{ material.material_bidding.bidding.name }}
+                                </span>
                             </td>
-                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">{{
-                                material.quantity }}</td>
-                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">R$ {{
-                                material.unitary_price }}</td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                                {{ material.quantity }}
+                            </td>
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                                R$ {{ material.unitary_price }}
+                            </td>
                             <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">R$
                                 {{ material.total_price }}</td>
                         </tr>

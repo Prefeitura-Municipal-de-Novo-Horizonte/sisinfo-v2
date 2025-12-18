@@ -338,3 +338,35 @@ class MaterialDeleteView(LoginRequiredMixin, View):
             f"O suprimento {name} foi excluído com sucesso!"
         )
         return redirect("bidding_procurement:materiais")
+
+
+class MaterialBiddingUpdateView(LoginRequiredMixin, MessageMixin, UpdateView):
+    """
+    View para atualizar um item (material) de uma licitação específica.
+    Permite editar quantidade, preço, fornecedor, reajuste.
+    """
+    model = MaterialBidding
+    form_class = MaterialBiddingForm
+    template_name = "bidding_procurement/materials.html" # Reusa template de form ou cria um específico se necessário
+    # Para edição de item, podemos reusar o form de modal ou criar uma pagina.
+    # Vamos criar uma página simples baseada no form padrão por enquanto.
+    template_name = "bidding_procurement/material_bidding_update.html"
+    context_object_name = "material_bidding"
+    
+    def get_success_url(self):
+        return reverse_lazy("bidding_procurement:licitacao", kwargs={'slug': self.object.bidding.slug})
+    
+    def form_valid(self, form):
+        success, msg = BiddingService.update_material_bidding(self.object, form)
+        if success:
+            messages.add_message(self.request, constants.SUCCESS, msg)
+            return redirect(self.get_success_url())
+        else:
+            messages.add_message(self.request, constants.ERROR, msg)
+            return self.form_invalid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['titulo'] = f"Editar Item: {self.object.material.name}"
+        context['btn'] = "Salvar Alterações"
+        return context

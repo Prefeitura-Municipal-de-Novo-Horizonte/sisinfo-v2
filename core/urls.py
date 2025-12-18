@@ -11,6 +11,7 @@ urlpatterns = [
     path("reports/", include("reports.urls")),
     path("structure/", include("organizational_structure.urls")),
     path("procurement/", include("bidding_procurement.urls")),
+    path("fiscal/", include("fiscal.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

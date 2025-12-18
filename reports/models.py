@@ -1,24 +1,35 @@
+"""
+Modelos do app Reports - Laudos, Notas Fiscais, Empenhos e Entregas.
+"""
 from datetime import date, datetime
 from decimal import Decimal
 
 from django.db import models
 from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
+from django.utils import timezone
+
+from cloudinary.models import CloudinaryField
 
 from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
-from bidding_procurement.models import Material
+from bidding_procurement.models import Material, MaterialBidding
 from organizational_structure.models import Sector
 from reports.managers import KindInterestRequestMaterialQuerySet
-from bidding_procurement.models import MaterialBidding
 
 
-# Create your models here.
 class Report(models.Model):
     """
     Representa um laudo técnico.
+    
+    O status do laudo é controlado manualmente pelo usuário.
+    O fechamento automático pode ser implementado futuramente
+    baseado em critérios específicos (ex: todos materiais comprados).
     """
-    KINDS = (('1', 'Aberto'), ('2', 'Aguardando'), ('3', 'Finalizado'))
+    STATUS_CHOICES = (
+        ('1', 'Aberto'),
+        ('3', 'Finalizado')
+    )
 
     number_report = models.CharField(
         'identificação do laudo', max_length=20, unique=True, blank=True, null=True)
@@ -26,12 +37,15 @@ class Report(models.Model):
     sector = models.ForeignKey(
         Sector, verbose_name='setor', on_delete=models.SET_NULL, blank=True, null=True)
     employee = models.CharField('funcionario', max_length=200, blank=True)
-    status = models.CharField('status', max_length=1, default=1, choices=KINDS)
+    status = models.CharField('status', max_length=1, default='1', choices=STATUS_CHOICES)
     justification = models.TextField('justificativa')
     professional = models.ForeignKey(
-        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional', related_name='profissional')
+        ProfessionalUser, on_delete=models.DO_NOTHING, 
+        verbose_name='profissional', related_name='laudos_criados')
     pro_accountable = models.ForeignKey(
-        ProfessionalUser, on_delete=models.DO_NOTHING, verbose_name='profissional responsável', related_name='responsável')
+        ProfessionalUser, on_delete=models.DO_NOTHING, 
+        verbose_name='profissional responsável', related_name='laudos_responsavel')
+    
     created_at = models.DateTimeField('criado em', auto_now_add=True)
     updated_at = models.DateTimeField('atualizado em', auto_now=True)
 
@@ -41,7 +55,7 @@ class Report(models.Model):
         verbose_name_plural = 'laudos'
 
     def __str__(self):
-        return self.number_report
+        return self.number_report or f"Laudo #{self.pk}"
 
     def get_absolute_url(self):
         """Retorna a URL absoluta para visualização do laudo."""
@@ -53,52 +67,69 @@ class MaterialReport(models.Model):
     Representa um material incluído em um laudo.
     """
     report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.CASCADE, related_name='materiais')
+        Report, verbose_name='laudo', blank=True, null=True, 
+        on_delete=models.CASCADE, related_name='materiais')
     material_bidding = models.ForeignKey(
-        MaterialBidding, verbose_name='material da licitação', blank=True, null=True, on_delete=models.SET_NULL, related_name='materiais_laudos')
-    quantity = models.IntegerField(
-        'quantidade', blank=True, null=True, default=1)
+        MaterialBidding, verbose_name='material da licitação', 
+        blank=True, null=True, on_delete=models.SET_NULL, 
+        related_name='materiais_laudos')
+    quantity = models.PositiveIntegerField('quantidade', default=1)
     unitary_price = models.DecimalField(
-        "valor", max_digits=8, decimal_places=2, blank=True, null=True)
+        "valor", max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
-        verbose_name = 'materiais do laudo'
+        verbose_name = 'material do laudo'
         verbose_name_plural = 'materiais do laudo'
 
+    def __str__(self):
+        if self.material_bidding:
+            return f"{self.material_bidding.material.name} ({self.quantity}x)"
+        return f"Material #{self.pk}"
+
+    @property
     def total_price(self):
         """Calcula o preço total (quantidade * preço unitário)."""
         if not self.quantity or not self.unitary_price:
             return Decimal("0.00")
-        self.total_price_val = float(self.quantity) * float(self.unitary_price)
-        return Decimal(self.total_price_val).quantize(Decimal("00000000.00"))
+        return Decimal(self.quantity * self.unitary_price).quantize(Decimal("0.00"))
 
 
-class Invoice(models.Model):
+
+
+
+class ReportDocument(models.Model):
     """
-    Representa uma Nota Fiscal.
+    Representa um documento anexado ao laudo (foto escaneada, etc).
     """
-    note_number = models.CharField('numero da Nota', max_length=10)
-    supplier = models.ForeignKey(Supplier, verbose_name='fornecedor',
-                                 related_name='fornecedor', on_delete=models.SET_NULL, blank=True, null=True)
-    access_key = models.CharField(
-        'chave de acesso', max_length=50, blank=True, null=True)
-    note_issuance_date = models.DateField('data da emissão da nota')
-    file = models.FileField(
-        'arquivo da nota', upload_to='invoices/%Y/%m/', blank=True, null=True)
-    xml_content = models.TextField('conteúdo XML', blank=True, null=True)
+    FILE_TYPES = (
+        ('L', 'Laudo Escaneado'),
+        ('O', 'Outro'),
+    )
+    
+    report = models.ForeignKey(
+        Report, on_delete=models.CASCADE,
+        related_name='documents', verbose_name='laudo')
+    file = CloudinaryField('arquivo', folder='sisinfo/reports')
+    file_type = models.CharField(
+        'tipo', max_length=1, choices=FILE_TYPES, default='L')
+    description = models.CharField('descrição', max_length=200, blank=True)
+    uploaded_at = models.DateTimeField('enviado em', auto_now_add=True)
 
     class Meta:
-        ordering = ('note_issuance_date', 'supplier', 'note_number')
-        verbose_name = 'nota fiscal'
-        verbose_name_plural = 'notas fiscais'
+        ordering = ['-uploaded_at']
+        verbose_name = 'documento do laudo'
+        verbose_name_plural = 'documentos do laudo'
 
     def __str__(self):
-        return self.note_number
+        return f"Doc #{self.pk} - {self.report}"
 
 
+# Modelo legado mantido para compatibilidade
 class InterestRequestMaterial(models.Model):
     """
-    Representa uma Solicitação ou Empenho de material.
+    Representa uma Solicitação ou Empenho de material (legado).
+    
+    DEPRECATED: Use o modelo Commitment para novos empenhos.
     """
     REQUEST = 'S'
     INTEREST = 'E'
@@ -112,13 +143,13 @@ class InterestRequestMaterial(models.Model):
     report = models.ForeignKey(
         Report, verbose_name='laudo', blank=True, null=True, on_delete=models.SET_NULL)
     invoice = models.ForeignKey(
-        Invoice, verbose_name='nota fiscal', null=True, on_delete=models.SET_NULL)
+        'fiscal.Invoice', verbose_name='nota fiscal', null=True, on_delete=models.SET_NULL)
 
     objects = KindInterestRequestMaterialQuerySet.as_manager()
 
     class Meta:
-        verbose_name = 'solicitação ou empenho'
-        verbose_name_plural = 'solicitações ou empenhos'
+        verbose_name = 'solicitação ou empenho (legado)'
+        verbose_name_plural = 'solicitações ou empenhos (legado)'
 
     def __str__(self):
         return self.value

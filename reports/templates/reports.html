@@ -186,6 +186,7 @@
                     <th scope="col" class="px-6 py-3">Número</th>
                     <th scope="col" class="px-6 py-3">Setor</th>
                     <th scope="col" class="px-6 py-3">Funcionário</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
                     <th scope="col" class="px-6 py-3">Criado em</th>
                     <th scope="col" class="px-6 py-3">Profissional</th>
                     <th scope="col" class="px-6 py-3 text-center">Ações</th>
@@ -203,6 +204,15 @@
                     </th>
                     <td class="px-6 py-4">{{ report.sector }}</td>
                     <td class="px-6 py-4">{{ report.employee }}</td>
+                    <td class="px-6 py-4">
+                        {% if report.status == '3' %}
+                        <span
+                            class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600 dark:bg-gray-600 dark:text-gray-300">Finalizado</span>
+                        {% else %}
+                        <span
+                            class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Aberto</span>
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4">{{ report.created_at|date:'d/m/Y' }}</td>
                     <td class="px-6 py-4">{{ report.professional }}</td>
                     <td class="px-6 py-4 text-center">
@@ -230,7 +240,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                         Nenhum laudo encontrado.
                     </td>
                 </tr>

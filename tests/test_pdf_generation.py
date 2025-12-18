@@ -1,6 +1,6 @@
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
-from reports.models import Report, InterestRequestMaterial, Invoice
+from fiscal.models import Invoice
 from bidding_supplier.models import Supplier
 from organizational_structure.models import Sector, Direction
 from authenticate.models import ProfessionalUser

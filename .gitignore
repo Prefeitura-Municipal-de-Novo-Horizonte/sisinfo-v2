@@ -323,5 +323,8 @@ pyrightconfig.json
 *backup.json*
 backups/
 
+# Media files (uploads locais em dev)
+media/
 
-.~lock.*
+.~lock.*backup/
+data/

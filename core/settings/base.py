@@ -22,6 +22,8 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     "django_extensions",
     "django_filters",
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 MY_APPS = [
@@ -29,6 +31,7 @@ MY_APPS = [
     "authenticate.apps.AuthenticateConfig",
     "bidding_supplier.apps.BiddingSupplierConfig",
     "reports.apps.ReportsConfig",
+    "fiscal.apps.FiscalConfig",
     "organizational_structure.apps.OrganizationalStructureConfig",
     "bidding_procurement.apps.BiddingProcurementConfig",
     "audit.apps.AuditConfig",  # Sistema de auditoria
@@ -160,3 +163,42 @@ MESSAGE_TAGS = {
     constants.WARNING: "flex items-center p-4 mb-4 text-sm text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800 gap-4 w-full",
     constants.INFO: "flex items-center p-4 mb-4 text-sm text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800 gap-4 w-full",
 }
+
+# Cloudinary - Configuração para upload de fotos de notas fiscais
+from decouple import config
+import cloudinary
+import os
+
+# Flag para controlar uso do Cloudinary (False em dev para economizar créditos)
+USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
+
+# Media files (para upload local em dev)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+CLOUDINARY_STORAGE = {
+    # Configurações adicionais do storage se necessário
+}
+
+cloudinary_url = config('CLOUDINARY_URL', default=None)
+
+if cloudinary_url and USE_CLOUDINARY:
+    # Se CLOUDINARY_URL estiver definida e USE_CLOUDINARY=True, configura SDK
+    os.environ['CLOUDINARY_URL'] = cloudinary_url.strip()
+elif USE_CLOUDINARY:
+    # Fallback para chaves individuais (se USE_CLOUDINARY=True)
+    CLOUDINARY_STORAGE.update({
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='').strip(),
+        'API_KEY': config('CLOUDINARY_API_KEY', default='').strip(),
+        'API_SECRET': config('CLOUDINARY_API_SECRET', default='').strip(),
+    })
+
+    # Configurar SDK globalmente para uso direto nas views
+    cloudinary.config(
+        cloud_name=CLOUDINARY_STORAGE.get('CLOUD_NAME'),
+        api_key=CLOUDINARY_STORAGE.get('API_KEY'),
+        api_secret=CLOUDINARY_STORAGE.get('API_SECRET')
+    )
+
+# Em dev (USE_CLOUDINARY=False): uploads salvos em media/invoices/
+# Em prod (USE_CLOUDINARY=True): uploads vão para Cloudinary

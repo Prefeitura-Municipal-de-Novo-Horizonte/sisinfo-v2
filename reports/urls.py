@@ -10,9 +10,12 @@ from reports.views import (
     report_update,
 )
 
+
+
 app_name = 'reports'
 
 urlpatterns = [
+    # Laudos
     path('', ReportListView.as_view(), name='reports'),
     path('new_register_report/', report_register, name='register_report'),
     path('report/<slug:slug>', ReportDetailView.as_view(), name='report_view'),
@@ -21,4 +24,6 @@ urlpatterns = [
          material_report_delete, name="material_report_delete"),
     path('report/<slug:slug>/download-pdf', generate_pdf_report, name='generate_pdf'),
     path('api/create-sector/', create_sector_api, name='create_sector_api'),
+    
 ]
+

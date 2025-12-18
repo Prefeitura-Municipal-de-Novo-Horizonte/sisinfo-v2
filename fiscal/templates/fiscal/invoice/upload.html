@@ -1,0 +1,240 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Upload de Nota Fiscal{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-2xl" x-data="invoiceUpload()">
+    <div class="mb-6">
+        <a href="{% url 'fiscal:invoices' %}"
+            class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Nova Nota Fiscal</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Faça upload da foto da nota para preenchimento
+            automático</p>
+    </div>
+
+    <!-- Área de Upload -->
+    <div x-show="!processing && !error" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
+        <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center transition-colors"
+            :class="{'border-brand-500 bg-brand-50 dark:bg-brand-900/20': dragover}" @dragover.prevent="dragover = true"
+            @dragleave.prevent="dragover = false" @drop.prevent="handleDrop($event)">
+            <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p class="mt-4 text-lg font-medium text-gray-900 dark:text-white">Arraste a foto da nota fiscal aqui</p>
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">ou</p>
+            <label
+                class="mt-4 inline-flex items-center px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg cursor-pointer transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Selecionar arquivo
+                <input type="file" class="hidden" accept="image/*" @change="handleFileSelect($event)">
+            </label>
+            <p class="mt-4 text-xs text-gray-400">PNG, JPG ou JPEG até 10MB</p>
+        </div>
+    </div>
+
+    <!-- Tela de Processamento -->
+    <div x-show="processing" x-cloak class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
+        <div class="text-center">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-100 dark:bg-brand-900/30 mb-6">
+                <svg class="w-8 h-8 text-brand-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Processando nota fiscal...</h2>
+
+            <div class="space-y-4 max-w-sm mx-auto text-left">
+                <div class="flex items-center gap-3" :class="steps.upload ? 'text-green-600' : 'text-gray-400'">
+                    <template x-if="steps.upload">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </template>
+                    <template x-if="!steps.upload">
+                        <div class="w-5 h-5 border-2 border-current rounded-full animate-pulse"></div>
+                    </template>
+                    <span>Enviando imagem...</span>
+                </div>
+
+                <div class="flex items-center gap-3"
+                    :class="steps.reading ? 'text-green-600' : (steps.upload ? 'text-gray-600' : 'text-gray-400')">
+                    <template x-if="steps.reading">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </template>
+                    <template x-if="!steps.reading">
+                        <div class="w-5 h-5 border-2 border-current rounded-full"
+                            :class="steps.upload ? 'animate-pulse' : ''"></div>
+                    </template>
+                    <span>Lendo nota fiscal...</span>
+                </div>
+
+                <div class="flex items-center gap-3"
+                    :class="steps.extracting ? 'text-green-600' : (steps.reading ? 'text-gray-600' : 'text-gray-400')">
+                    <template x-if="steps.extracting">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </template>
+                    <template x-if="!steps.extracting">
+                        <div class="w-5 h-5 border-2 border-current rounded-full"
+                            :class="steps.reading ? 'animate-pulse' : ''"></div>
+                    </template>
+                    <span>Extraindo dados...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem de Erro -->
+    <div x-show="error" x-cloak class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
+        <div class="text-center">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 mb-6">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Erro ao processar nota</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6" x-text="errorMessage"></p>
+            <div class="flex gap-3 justify-center">
+                <template x-if="quotaExceeded">
+                    <a :href="manualEntryUrl"
+                        class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium">
+                        Cadastrar Manualmente
+                    </a>
+                </template>
+                <button @click="reset()"
+                    class="px-6 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white rounded-lg font-medium">
+                    <span x-text="quotaExceeded ? 'Voltar' : 'Tentar novamente'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+    function invoiceUpload() {
+        return {
+            dragover: false,
+            processing: false,
+            error: false,
+            errorMessage: '',
+            quotaExceeded: false,
+            manualEntryUrl: '',
+            steps: {
+                upload: false,
+                reading: false,
+                extracting: false
+            },
+
+            handleDrop(e) {
+                this.dragover = false;
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    this.processFile(file);
+                }
+            },
+
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.processFile(file);
+                }
+            },
+
+            async processFile(file) {
+                this.processing = true;
+                this.error = false;
+                this.steps = { upload: false, reading: false, extracting: false };
+
+                try {
+                    // Simular etapa de upload
+                    await this.delay(500);
+                    this.steps.upload = true;
+
+                    // Criar FormData
+                    const formData = new FormData();
+                    formData.append('photo', file);
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                    // Simular etapa de leitura
+                    await this.delay(500);
+                    this.steps.reading = true;
+
+                    // Enviar para o servidor
+                    const response = await fetch('{% url "fiscal:invoice_process" %}', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    // Tratamento especial para quota exceeded ou todas as chaves falharam
+                    if (response.status === 429 || data.error_type === 'quota_exceeded' || data.error_type === 'all_keys_failed') {
+                        this.processing = false;
+                        this.error = true;
+                        this.errorMessage = data.message || 'Não foi possível processar a nota fiscal automaticamente. Tente novamente ou cadastre manualmente.';
+                        this.quotaExceeded = true;
+                        this.manualEntryUrl = data.manual_entry_url || '{% url "fiscal:invoice_create" %}';
+                        return;
+                    }
+
+                    if (!response.ok || data.error) {
+                        throw new Error(data.error || 'Erro ao processar nota');
+                    }
+
+                    this.steps.extracting = true;
+                    await this.delay(500);
+
+                    // Armazenar dados na sessionStorage para evitar limites de URL
+                    sessionStorage.setItem('ocrData', JSON.stringify(data));
+
+                    // Redirecionar para formulário (sem dados na URL para ficar mais limpo/seguro)
+                    window.location.href = '{% url "fiscal:invoice_create" %}?from_ocr=true';
+
+                } catch (err) {
+                    this.processing = false;
+                    this.error = true;
+                    this.errorMessage = err.message || 'Erro desconhecido';
+                    this.quotaExceeded = false;
+                }
+            },
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            },
+
+            reset() {
+                this.processing = false;
+                this.error = false;
+                this.errorMessage = '';
+                this.steps = { upload: false, reading: false, extracting: false };
+            }
+        }
+    }
+</script>
+{% endblock script %}

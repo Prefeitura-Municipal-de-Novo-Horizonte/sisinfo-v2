@@ -66,9 +66,10 @@ class MaterialForm(CapitalizeFieldMixin, forms.ModelForm):
 class MaterialBiddingForm(forms.ModelForm):
     class Meta:
         model = MaterialBidding
-        fields = ["material", "supplier", "price", "readjustment", "status"]
+        fields = ["material", "quantity", "supplier", "price", "readjustment", "status"]
         labels = {
             'material': 'Material',
+            'quantity': 'Quantidade',
             'supplier': 'Fornecedor',
             'price': 'Preço',
             'readjustment': 'Reajuste (%)',

@@ -3,7 +3,7 @@ from django.forms import inlineformset_factory
 
 from authenticate.models import ProfessionalUser
 from bidding_procurement.models import MaterialBidding
-from reports.models import InterestRequestMaterial, Invoice, MaterialReport, Report
+from reports.models import InterestRequestMaterial, MaterialReport, Report
 
 
 # Classes CSS padrão para inputs
@@ -123,3 +123,7 @@ MaterialReportFormset = inlineformset_factory(
     min_num=1,
     validate_min=True
 )
+
+
+
+

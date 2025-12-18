@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de Entrega #{{ delivery.pk }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #333;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            flex: 1 1 45%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .info-item label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #666;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .info-item span {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        td {
+            font-size: 11px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .signature-section {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature-box {
+            width: 45%;
+            text-align: center;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            margin-top: 50px;
+        }
+
+        .signature-box p {
+            font-size: 10px;
+            color: #666;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+        }
+
+        .observations {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+
+        .observations label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>FICHA DE ENTREGA DE MATERIAIS</h1>
+        <p>Prefeitura Municipal de Novo Horizonte - Diretoria de Tecnologia</p>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-item">
+            <label>Setor Destinatário</label>
+            <span>{{ delivery.sector.name }}</span>
+        </div>
+        <div class="info-item">
+            <label>Data/Hora da Entrega</label>
+            <span>{{ delivery.received_at|date:"d/m/Y H:i" }}</span>
+        </div>
+        <div class="info-item">
+            <label>Nota Fiscal</label>
+            <span>{{ delivery.invoice.number }} - {{
+                delivery.invoice.supplier.trade|default:delivery.invoice.supplier.company }}</span>
+        </div>
+        {% if delivery.commitment %}
+        <div class="info-item">
+            <label>Empenho</label>
+            <span>{{ delivery.commitment.number }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 70%;">Material</th>
+                <th class="text-center" style="width: 30%;">Quantidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.invoice_item.material_bidding.material.name }}</td>
+                <td class="text-center">{{ item.quantity_delivered }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if delivery.observations %}
+    <div class="observations">
+        <label>Observações</label>
+        <p>{{ delivery.observations }}</p>
+    </div>
+    {% endif %}
+
+    <div class="signature-section">
+        <div class="signature-box">
+            <div class="signature-line">
+                <strong>{{ delivery.delivered_by.fullname }}</strong>
+                <p>Entregue por (TI)</p>
+            </div>
+        </div>
+        <div class="signature-box">
+            <div class="signature-line">
+                <strong>{{ delivery.received_by }}</strong>
+                <p>Recebido por ({{ delivery.sector.name }})</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Documento gerado em {{ "now"|date:"d/m/Y H:i" }} - SISInfo v2</p>
+    </div>
+</body>
+
+</html>

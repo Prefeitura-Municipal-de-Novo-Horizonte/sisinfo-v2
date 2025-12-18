@@ -96,6 +96,19 @@ class BiddingService:
         return False, "Erro ao vincular material. Verifique os dados."
 
     @staticmethod
+    def update_material_bidding(material_bidding: MaterialBidding, form: MaterialBiddingForm) -> Tuple[bool, str]:
+        """
+        Atualiza os dados de vínculo de um material (preço, quantidade, etc).
+        """
+        if form.is_valid():
+            try:
+                form.save()
+                return True, "Material atualizado com sucesso!"
+            except Exception as e:
+                return False, f"Erro ao atualizar material: {str(e)}"
+        return False, "Erro na validação do formulário."
+
+    @staticmethod
     def toggle_material_status(material_bidding_id: int) -> Tuple[MaterialBidding, str]:
         """
         Alterna o status de um material dentro de uma licitação.

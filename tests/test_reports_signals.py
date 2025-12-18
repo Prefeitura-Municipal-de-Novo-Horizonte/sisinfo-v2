@@ -1,5 +1,5 @@
 from django.test import TestCase
-from reports.models import Report, InterestRequestMaterial, Invoice, MaterialReport
+from fiscal.models import Invoice
 from bidding_supplier.models import Supplier
 from bidding_procurement.models import Material, Bidding, MaterialBidding
 from organizational_structure.models import Sector, Direction

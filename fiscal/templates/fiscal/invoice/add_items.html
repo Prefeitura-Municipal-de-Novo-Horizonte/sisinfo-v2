@@ -1,0 +1,154 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Adicionar Itens - NF {{ invoice.number }}{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto max-w-4xl">
+    <!-- Header -->
+    <div class="mb-6">
+        <a href="{% url 'fiscal:invoice_detail' pk=invoice.pk %}"
+            class="inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 mb-2">
+            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar para Nota Fiscal
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Adicionar Itens</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Nota Fiscal {{ invoice.number }} - {{ invoice.supplier.trade|default:invoice.supplier.company }}
+        </p>
+    </div>
+
+    <!-- Formulário de Itens -->
+    <form method="post" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th
+                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-2/5">
+                            Material</th>
+                        <th
+                            class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-1/5">
+                            Quantidade</th>
+                        <th
+                            class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-1/5">
+                            Preço Unit.</th>
+                        <th
+                            class="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase w-1/5">
+                            Excluir</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700" id="formset-body">
+                    {% for form in formset %}
+                    <tr class="formset-row">
+                        <td class="px-4 py-3">
+                            {{ form.id }}
+                            {{ form.material_bidding }}
+                            {% if form.material_bidding.errors %}
+                            <p class="text-xs text-red-600 mt-1">{{ form.material_bidding.errors.0 }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            {{ form.quantity }}
+                            {% if form.quantity.errors %}
+                            <p class="text-xs text-red-600 mt-1">{{ form.quantity.errors.0 }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            {{ form.unit_price }}
+                            {% if form.unit_price.errors %}
+                            <p class="text-xs text-red-600 mt-1">{{ form.unit_price.errors.0 }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            {% if form.instance.pk %}
+                            {{ form.DELETE }}
+                            {% else %}
+                            <button type="button" class="text-red-600 hover:text-red-800 remove-row">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4">
+            <button type="button" id="add-row"
+                class="inline-flex items-center px-4 py-2 text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar mais um item
+            </button>
+        </div>
+
+        <!-- Botões -->
+        <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{% url 'fiscal:invoice_detail' pk=invoice.pk %}"
+                class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors">
+                Salvar Itens
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formsetBody = document.getElementById('formset-body');
+        const addRowBtn = document.getElementById('add-row');
+        const totalForms = document.getElementById('id_items-TOTAL_FORMS');
+
+        // Clone template from first empty row
+        const templateRow = formsetBody.querySelector('.formset-row').cloneNode(true);
+
+        addRowBtn.addEventListener('click', function () {
+            const formCount = parseInt(totalForms.value);
+            const newRow = templateRow.cloneNode(true);
+
+            // Update form indices
+            newRow.innerHTML = newRow.innerHTML.replace(/-\d+-/g, `-${formCount}-`);
+            newRow.innerHTML = newRow.innerHTML.replace(/_\d+_/g, `_${formCount}_`);
+
+            // Clear values
+            newRow.querySelectorAll('input, select').forEach(input => {
+                if (input.type !== 'hidden') {
+                    input.value = '';
+                }
+            });
+
+            formsetBody.appendChild(newRow);
+            totalForms.value = formCount + 1;
+        });
+
+        // Remove row functionality
+        formsetBody.addEventListener('click', function (e) {
+            if (e.target.closest('.remove-row')) {
+                const row = e.target.closest('.formset-row');
+                const rows = formsetBody.querySelectorAll('.formset-row');
+                if (rows.length > 1) {
+                    row.remove();
+                    totalForms.value = parseInt(totalForms.value) - 1;
+                }
+            }
+        });
+    });
+</script>
+{% endblock script %}

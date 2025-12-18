@@ -1,0 +1,204 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Notas Fiscais{% endblock title %}
+
+{% block content %}
+<div class="container mx-auto">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Notas Fiscais</h1>
+      <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Gerenciar notas fiscais recebidas</p>
+    </div>
+    <a href="{% url 'fiscal:invoice_upload' %}"
+      class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Nova Nota
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+    <form method="get" class="flex flex-wrap gap-4 items-end">
+      <!-- Busca por Número -->
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número</label>
+        <input type="text" name="q" value="{{ current_q }}" placeholder="Ex: 123"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+      </div>
+
+      <!-- Fornecedor -->
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fornecedor</label>
+        <input type="text" name="supplier" value="{{ current_supplier }}" placeholder="Nome..."
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+      </div>
+
+      <!-- Data Inicial -->
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Inicial</label>
+        <input type="date" name="date_min" value="{{ current_date_min }}"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+      </div>
+
+      <!-- Data Final -->
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Final</label>
+        <input type="date" name="date_max" value="{{ current_date_max }}"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+      </div>
+
+      <div class="flex-1 min-w-[150px]">
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+        <select name="status" id="filterStatus"
+          class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+          <option value="">Todos</option>
+          <option value="P">Pendente</option>
+          <option value="R">Recebida</option>
+          <option value="E">Entregue</option>
+        </select>
+      </div>
+      <button type="submit"
+        class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm mb-[1px]">
+        Filtrar
+      </button>
+      <a href="{% url 'fiscal:invoices' %}"
+        class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm mb-[1px]">
+        Limpar
+      </a>
+    </form>
+  </div>
+
+  <script>
+    // Script simples para restaurar filtros
+    document.addEventListener('DOMContentLoaded', function () {
+      // Status
+      const currentStatus = "{{ current_status|default:'' }}";
+      if (currentStatus) {
+        document.getElementById('filterStatus').value = currentStatus;
+      }
+    });
+  </script>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead class="bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Número</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Fornecedor</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Emissão</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Empenho</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Status</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Valor</th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              Ações</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          {% for invoice in invoices %}
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm font-medium text-gray-900 dark:text-white">{{ invoice.number }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm text-gray-700 dark:text-gray-300">{{ invoice.supplier }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ invoice.issue_date|date:"d/m/Y" }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {% if invoice.commitment %}
+              <span class="text-sm font-medium text-gray-900 dark:text-white">{{ invoice.commitment.number }}</span>
+              {% else %}
+              <span class="text-xs text-gray-400 italic">—</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {% if invoice.status == 'P' %}
+              <span
+                class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">Pendente</span>
+              {% elif invoice.status == 'R' %}
+              <span
+                class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">Recebida</span>
+              {% else %}
+              <span
+                class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Entregue</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="text-sm font-medium text-gray-900 dark:text-white">R$ {{ invoice.total_value }}</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right">
+              <div class="flex justify-end gap-2">
+                <a href="{% url 'fiscal:invoice_detail' pk=invoice.pk %}" class="text-gray-500 hover:text-brand-600"
+                  title="Ver">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </a>
+                <a href="{% url 'fiscal:invoice_update' pk=invoice.pk %}" class="text-gray-500 hover:text-blue-600"
+                  title="Editar">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </a>
+                <a href="{% url 'fiscal:invoice_delete' pk=invoice.pk %}" class="text-gray-500 hover:text-red-600"
+                  title="Excluir">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+              <p class="text-lg font-medium">Nenhuma nota fiscal encontrada</p>
+              <p class="mt-1 text-sm">Cadastre sua primeira nota fiscal clicando no botão acima.</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+      <nav class="flex items-center justify-between">
+        <p class="text-sm text-gray-700 dark:text-gray-300">Página {{ page_obj.number }} de {{
+          page_obj.paginator.num_pages }}</p>
+        <div class="flex gap-2">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded text-sm">Anterior</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded text-sm">Próxima</a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

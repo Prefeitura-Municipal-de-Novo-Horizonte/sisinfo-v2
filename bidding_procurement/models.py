@@ -158,6 +158,20 @@ class Material(AbsBiddingMaterial):
         """Retorna a URL absoluta para os detalhes do material."""
         return r("bidding_procurement:material", kwargs={"slug": self.slug})
 
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.upper()
+        if self.brand:
+            self.brand = self.brand.upper()
+        # Unit usually doesn't need to be upper (e.g. 'kg', 'm'), keeps standard if needed? 
+        # User said "materiails e fornecedores", implies names. 
+        # But for consistency let's uppercase unit if it's text like 'UN', 'CX'. 
+        # Let's uppercase unit too as it's common in legacy systems.
+        if self.unit:
+            self.unit = self.unit.upper()
+            
+        super().save(*args, **kwargs)
+
 
 
 
@@ -220,17 +234,42 @@ class MaterialBidding(models.Model):
         default=Decimal("0.00"),
         help_text="Percentual de reajuste aplicado"
     )
-    # price_snapshot mantido por compatibilidade temporária, será removido futuramente
-    price_snapshot = models.DecimalField(
-        "preço no momento da inclusão",
-        max_digits=8,
-        decimal_places=2,
-        blank=True,
-        null=True,
-        help_text="Snapshot do preço do material quando foi adicionado à licitação"
+    
+    # Controle de limite de compras da licitação
+    quantity_purchased = models.PositiveIntegerField(
+        "quantidade comprada",
+        default=0,
+        help_text="Quantidade já comprada via notas fiscais (não pode ultrapassar o limite licitado)"
     )
+    
     created_at = models.DateTimeField("incluído em", auto_now_add=True)
     updated_at = models.DateTimeField("atualizado em", auto_now=True)
+    
+    def __str__(self):
+        return f"{self.material.name} - {self.bidding.name} (R$ {self.price})"
+
+    
+    @property
+    def available_for_purchase(self):
+        """Quantidade ainda disponível para compra (limite - comprado)."""
+        return max(0, (self.quantity or 0) - (self.quantity_purchased or 0))
+    
+    @property
+    def usage_percentage(self):
+        """Percentual do limite de compra já utilizado."""
+        if not self.quantity or self.quantity == 0:
+            return 0
+        return round((self.quantity_purchased / self.quantity) * 100, 1)
+    
+    @property
+    def is_near_limit(self):
+        """Verifica se está próximo do limite (>= 80% usado)."""
+        return self.usage_percentage >= 80
+    
+    @property
+    def is_at_limit(self):
+        """Verifica se atingiu o limite de compras."""
+        return self.quantity_purchased >= self.quantity
 
     def get_available_quantity(self):
         """
@@ -278,7 +317,4 @@ class MaterialBidding(models.Model):
         """
         Sobrescreve o método save para capturar o snapshot do preço.
         """
-        # Captura price_snapshot automaticamente se não fornecido
-        if not self.price_snapshot:
-            self.price_snapshot = self.total_price()
         return super().save(*args, **kwargs)
