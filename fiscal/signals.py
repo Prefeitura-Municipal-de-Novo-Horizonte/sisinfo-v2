@@ -1,18 +1,34 @@
 import cloudinary.uploader
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
+from django.conf import settings
+from pathlib import Path
 from fiscal.models import Invoice, InvoiceItem, DeliveryNoteItem, StockItem
 
 @receiver(post_delete, sender=Invoice)
-def delete_cloudinary_image_on_invoice_delete(sender, instance, **kwargs):
+def delete_image_on_invoice_delete(sender, instance, **kwargs):
     """
-    Deleta a imagem do Cloudinary quando a Nota Fiscal é deletada.
+    Deleta a imagem quando a Nota Fiscal é deletada.
+    - Em prod (USE_CLOUDINARY=True): deleta do Cloudinary
+    - Em dev (USE_CLOUDINARY=False): deleta arquivo local
     """
-    if instance.photo:
-        try:
+    if not instance.photo:
+        return
+    
+    try:
+        public_id = str(instance.photo)
+        
+        if settings.USE_CLOUDINARY and not public_id.startswith('local/'):
+            # Produção: deletar do Cloudinary
             cloudinary.uploader.destroy(instance.photo.public_id)
-        except Exception as e:
-            print(f"Erro ao deletar imagem do Cloudinary para NF {instance.number}: {e}")
+        elif public_id.startswith('local/'):
+            # Dev: deletar arquivo local
+            filename = public_id.replace('local/', '')
+            file_path = settings.MEDIA_ROOT / 'invoices' / filename
+            if file_path.exists():
+                file_path.unlink()
+    except Exception as e:
+        print(f"Erro ao deletar imagem para NF {instance.number}: {e}")
 
 @receiver(post_delete, sender=InvoiceItem)
 def restore_material_balance_on_item_delete(sender, instance, **kwargs):

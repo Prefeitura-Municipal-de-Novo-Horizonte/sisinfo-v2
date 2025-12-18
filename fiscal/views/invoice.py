@@ -413,18 +413,42 @@ def invoice_process(request):
                 'error': f'Nota {extracted.number} já cadastrada para este fornecedor'
             }, status=400)
 
-        # 3. Upload para Cloudinary (Só agora)
+        # 3. Upload condicional (Local em dev, Cloudinary em prod)
+        from django.conf import settings
+        import uuid
+        
         try:
-            # Upload usando os bytes otimizados
-            upload_result = cloudinary.uploader.upload(
-                image_bytes,
-                folder='sisinfo/invoices',
-                resource_type='image'
-            )
-            
-            photo_url = upload_result.get('secure_url')
-            public_id = upload_result.get('public_id')
-            
+            if settings.USE_CLOUDINARY:
+                # PRODUÇÃO: Upload para Cloudinary
+                import cloudinary.uploader
+                upload_result = cloudinary.uploader.upload(
+                    image_bytes,
+                    folder='sisinfo/invoices',
+                    resource_type='image'
+                )
+                photo_url = upload_result.get('secure_url')
+                public_id = upload_result.get('public_id')
+            else:
+                # DESENVOLVIMENTO: Salvar localmente em media/invoices/
+                from pathlib import Path
+                
+                # Criar diretório se não existir
+                upload_dir = settings.MEDIA_ROOT / 'invoices'
+                upload_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Nome único para o arquivo
+                file_ext = '.jpg'  # Já convertemos para JPEG na otimização
+                filename = f"{uuid.uuid4()}{file_ext}"
+                file_path = upload_dir / filename
+                
+                # Salvar arquivo
+                with open(file_path, 'wb') as f:
+                    f.write(image_bytes)
+                
+                # URL relativa para acesso
+                photo_url = f"{settings.MEDIA_URL}invoices/{filename}"
+                public_id = f"local/{filename}"  # Marcador para identificar como local
+                
         except Exception as e:
             return JsonResponse({'error': f'Erro no upload da imagem: {str(e)}'}, status=500)
 

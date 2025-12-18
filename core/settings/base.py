@@ -169,18 +169,24 @@ from decouple import config
 import cloudinary
 import os
 
+# Flag para controlar uso do Cloudinary (False em dev para economizar créditos)
+USE_CLOUDINARY = config('USE_CLOUDINARY', default=False, cast=bool)
+
+# Media files (para upload local em dev)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 CLOUDINARY_STORAGE = {
     # Configurações adicionais do storage se necessário
 }
 
 cloudinary_url = config('CLOUDINARY_URL', default=None)
 
-if cloudinary_url:
-    # Se CLOUDINARY_URL estiver definida, usa ela para configurar SDK e Storage
-    # O .strip() remove espaços acidentais
+if cloudinary_url and USE_CLOUDINARY:
+    # Se CLOUDINARY_URL estiver definida e USE_CLOUDINARY=True, configura SDK
     os.environ['CLOUDINARY_URL'] = cloudinary_url.strip()
-else:
-    # Fallback para chaves individuais
+elif USE_CLOUDINARY:
+    # Fallback para chaves individuais (se USE_CLOUDINARY=True)
     CLOUDINARY_STORAGE.update({
         'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='').strip(),
         'API_KEY': config('CLOUDINARY_API_KEY', default='').strip(),
@@ -194,6 +200,5 @@ else:
         api_secret=CLOUDINARY_STORAGE.get('API_SECRET')
     )
 
-# Usar Cloudinary apenas para uploads específicos (não como DEFAULT_FILE_STORAGE)
-# Os uploads de notas fiscais usarão CloudinaryField explicitamente
-
+# Em dev (USE_CLOUDINARY=False): uploads salvos em media/invoices/
+# Em prod (USE_CLOUDINARY=True): uploads vão para Cloudinary
