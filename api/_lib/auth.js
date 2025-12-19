@@ -10,6 +10,17 @@ const API_SECRET = process.env.INTERNAL_API_SECRET;
  * @returns {{ valid: boolean, error?: string }}
  */
 function validateRequest(req) {
+  // Debug logging para produção
+  console.log('AUTH DEBUG:', {
+    hasSecret: !!API_SECRET,
+    secretLength: API_SECRET ? API_SECRET.length : 0,
+    secretPreview: API_SECRET ? `${API_SECRET.substring(0, 4)}...` : 'null',
+    hasToken: !!req.headers['x-api-key'],
+    tokenLength: req.headers['x-api-key'] ? req.headers['x-api-key'].length : 0,
+    tokenPreview: req.headers['x-api-key'] ? `${req.headers['x-api-key'].substring(0, 4)}...` : 'null',
+    match: req.headers['x-api-key'] === API_SECRET
+  });
+
   // Verificar se secret está configurado
   if (!API_SECRET) {
     console.error('INTERNAL_API_SECRET não configurada');
