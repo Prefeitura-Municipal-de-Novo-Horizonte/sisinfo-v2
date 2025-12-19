@@ -25,18 +25,22 @@ python3 manage.py migrate --noinput
 echo "=== VERIFICANDO SUPERUSUÁRIO ==="
 if [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
     echo "📧 Criando/atualizando superusuário..."
-    python3 manage.py shell << EOF
+    python3 manage.py shell << 'EOF'
 from authenticate.models import ProfessionalUser
-email = "$DJANGO_SUPERUSER_EMAIL"
-password = "$DJANGO_SUPERUSER_PASSWORD"
-name = "${DJANGO_SUPERUSER_NAME:-Administrador}"
+import os
+
+email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
+password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+first_name = os.environ.get("DJANGO_SUPERUSER_FIRST_NAME", "Admin")
+last_name = os.environ.get("DJANGO_SUPERUSER_LAST_NAME", "Sistema")
 
 user, created = ProfessionalUser.objects.get_or_create(
     email=email,
     defaults={
-        'name': name,
-        'is_staff': True,
-        'is_superuser': True,
+        'first_name': first_name,
+        'last_name': last_name,
+        'is_tech': True,
+        'is_admin': True,
         'is_active': True,
     }
 )
