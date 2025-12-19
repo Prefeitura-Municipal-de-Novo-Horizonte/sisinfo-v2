@@ -1,7 +1,9 @@
 import json
+import requests
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from decouple import config
 
 from dashboard.services import DashboardService
 
@@ -85,3 +87,61 @@ def top_materials_chart(request):
         'material_series': series,
     }
     return render(request, "dashboard/partials/materials_chart.html", context)
+
+
+@login_required
+def api_status(request):
+    """
+    Verifica status da API Node.js OCR.
+    Retorna JSON com status de todas as APIs.
+    """
+    vercel_url = config('VERCEL_URL', default='http://localhost:3000')
+    
+    # Construir URL da API health
+    if vercel_url.startswith('http'):
+        health_url = f"{vercel_url}/api/health"
+    else:
+        health_url = f"https://{vercel_url}/api/health"
+    
+    result = {
+        'nodejs_api': {
+            'url': health_url,
+            'status': 'unknown',
+            'message': '',
+            'response_time_ms': None
+        },
+        'environment': {
+            'vercel_url': vercel_url,
+            'use_nodejs_ocr': config('USE_NODEJS_OCR', default='false'),
+            'gemini_configured': bool(config('GEMINI_API_KEY', default=None)),
+            'internal_secret_configured': bool(config('INTERNAL_API_SECRET', default=None))
+        }
+    }
+    
+    try:
+        import time
+        start = time.time()
+        response = requests.get(health_url, timeout=5)
+        elapsed = int((time.time() - start) * 1000)
+        
+        result['nodejs_api']['response_time_ms'] = elapsed
+        
+        if response.status_code == 200:
+            data = response.json()
+            result['nodejs_api']['status'] = data.get('status', 'ok')
+            result['nodejs_api']['message'] = 'API respondendo normalmente'
+            result['nodejs_api']['details'] = data.get('checks', {})
+        else:
+            result['nodejs_api']['status'] = 'error'
+            result['nodejs_api']['message'] = f'Status code: {response.status_code}'
+    except requests.Timeout:
+        result['nodejs_api']['status'] = 'timeout'
+        result['nodejs_api']['message'] = 'API não respondeu em 5s'
+    except requests.RequestException as e:
+        result['nodejs_api']['status'] = 'error'
+        result['nodejs_api']['message'] = str(e)
+    except Exception as e:
+        result['nodejs_api']['status'] = 'error'
+        result['nodejs_api']['message'] = f'Erro: {str(e)}'
+    
+    return JsonResponse(result)

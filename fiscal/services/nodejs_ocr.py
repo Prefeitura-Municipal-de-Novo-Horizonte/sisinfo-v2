@@ -28,11 +28,15 @@ def call_nodejs_ocr(image_bytes: bytes, mime_type: str = 'image/jpeg') -> dict:
     base64_image = base64.b64encode(image_bytes).decode('utf-8')
     
     # Determinar URL da API
-    # Em produção, usa VERCEL_URL; em desenvolvimento, usa localhost
+    # VERCEL_URL da Vercel NÃO inclui protocolo (ex: "myapp.vercel.app")
     if vercel_url.startswith('http'):
         api_url = f"{vercel_url}/api/ocr"
     else:
         api_url = f"https://{vercel_url}/api/ocr"
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info(f"OCR API URL: {api_url}")
     
     try:
         response = requests.post(
@@ -47,6 +51,14 @@ def call_nodejs_ocr(image_bytes: bytes, mime_type: str = 'image/jpeg') -> dict:
             },
             timeout=15  # 15 segundos de timeout
         )
+        
+        # Log da resposta para debug
+        logger.info(f"OCR API Response: status={response.status_code}, content_type={response.headers.get('Content-Type', 'unknown')}")
+        
+        # Verificar se resposta é JSON
+        content_type = response.headers.get('Content-Type', '')
+        if 'application/json' not in content_type:
+            return {'success': False, 'error': f'API retornou tipo inválido: {content_type}. Body: {response.text[:200]}'}
         
         data = response.json()
         

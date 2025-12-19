@@ -5,7 +5,11 @@
     ],
     "builds": [
         {
-            "src": "api/**/*.js",
+            "src": "api/ocr.js",
+            "use": "@vercel/node"
+        },
+        {
+            "src": "api/health.js",
             "use": "@vercel/node"
         },
         {
