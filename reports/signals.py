@@ -26,9 +26,17 @@ def set_material_report_price(sender, instance, **kwargs):
     """
     Define o preço unitário do MaterialReport baseado no MaterialBidding associado.
     """
-    if not instance.unitary_price and instance.material_bidding:
-        # Usa o preço total (com reajuste) do MaterialBidding
-        instance.unitary_price = instance.material_bidding.total_price()
+    # Skip se está carregando dados via loaddata (raw=True)
+    if kwargs.get('raw', False):
+        return
+    
+    try:
+        if not instance.unitary_price and instance.material_bidding:
+            # Usa o preço total (com reajuste) do MaterialBidding
+            instance.unitary_price = instance.material_bidding.total_price()
+    except Exception:
+        # Ignora erro durante loaddata quando objetos relacionados não existem ainda
+        pass
 
 
 @receiver(post_save, sender=InterestRequestMaterial)
