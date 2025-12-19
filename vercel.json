@@ -5,6 +5,13 @@
     ],
     "builds": [
         {
+            "src": "api/**/*.js",
+            "use": "@vercel/node",
+            "config": {
+                "maxDuration": 30
+            }
+        },
+        {
             "src": "core/wsgi.py",
             "use": "@vercel/python",
             "config": {
@@ -28,6 +35,10 @@
                 "cache-control": "s-maxage=604800"
             },
             "dest": "/static/$1"
+        },
+        {
+            "src": "/api/(.*)",
+            "dest": "/api/$1"
         },
         {
             "src": "/(.*)",
