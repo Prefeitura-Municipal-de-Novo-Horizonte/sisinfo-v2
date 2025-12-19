@@ -328,3 +328,4 @@ media/
 
 .~lock.*backup/
 data/
+.vercel

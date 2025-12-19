@@ -88,7 +88,7 @@ async function extractInvoiceData(base64Image, mimeType) {
   }
 
   const genAI = new GoogleGenerativeAI(availableKey.key);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
 
   const prompt = `
 EXTRAIA OS DADOS DA NOTA FISCAL.
