@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('bidding_supplier', '0002_alter_contact_value_alter_supplier_cnpj_and_more'),
+        # Dashboard migrations must run first to create the shared tables (dashboard_bidding, etc)
+        ('dashboard', '0023_delete_material_delete_materialbidding'),
     ]
 
     operations = [
