@@ -9,6 +9,10 @@
             "use": "@vercel/node"
         },
         {
+            "src": "api/health.js",
+            "use": "@vercel/node"
+        },
+        {
             "src": "core/wsgi.py",
             "use": "@vercel/python",
             "config": {
