@@ -27,11 +27,23 @@ python3 manage.py check_procedure "initial_data_load_v1" > /dev/null 2>&1
 if [ $? -eq 1 ]; then
     echo "📥 Carregando dados iniciais (migração para Supabase)..."
     if [ -f "core/fixtures/initial_data.json" ]; then
-        python3 manage.py loaddata core/fixtures/initial_data.json && \
-        python3 manage.py mark_procedure "initial_data_load_v1" --notes "Dados migrados do Aiven para Supabase" || \
-        python3 manage.py mark_procedure "initial_data_load_v1" --failed --notes "Falha no carregamento inicial"
+        # Desabilitar set -e temporariamente para capturar erro de loaddata
+        set +e
+        python3 manage.py loaddata core/fixtures/initial_data.json --verbosity 2
+        LOADDATA_RESULT=$?
+        set -e
+        
+        if [ $LOADDATA_RESULT -eq 0 ]; then
+            python3 manage.py mark_procedure "initial_data_load_v1" --notes "Dados migrados do Aiven para Supabase"
+            echo "✅ Dados carregados com sucesso!"
+        else
+            echo "⚠️  Falha no loaddata (código: $LOADDATA_RESULT)"
+            echo "⚠️  Continuando sem dados iniciais - aplicação iniciará vazia"
+            python3 manage.py mark_procedure "initial_data_load_v1" --failed --notes "Falha no carregamento - banco vazio"
+        fi
     else
         echo "⚠️  Arquivo initial_data.json não encontrado, pulando..."
+        python3 manage.py mark_procedure "initial_data_load_v1" --notes "Arquivo não encontrado - banco vazio"
     fi
 else
     echo "✅ Dados iniciais já carregados (pulando...)"
