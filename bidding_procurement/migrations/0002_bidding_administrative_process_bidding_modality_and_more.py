@@ -10,8 +10,8 @@ class Migration(migrations.Migration):
     dependencies = [
         ('bidding_procurement', '0001_initial'),
         ('bidding_supplier', '0002_alter_contact_value_alter_supplier_cnpj_and_more'),
-        # Dashboard 0008 creates MaterialBidding table which this migration alters
-        ('dashboard', '0008_add_materialbidding_table'),
+        # Dashboard 0018 adds price/readjustment fields to MaterialBidding
+        ('dashboard', '0018_add_fields_to_material_bidding'),
     ]
 
     operations = [
