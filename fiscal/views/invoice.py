@@ -421,13 +421,13 @@ def invoice_process(request):
             if img.mode != 'RGB':
                 img = img.convert('RGB')
             
-            # Redimensionar se maior que 1600px
-            max_size = 1600
+            # Redimensionar se maior que 1200px (otimizado para velocidade)
+            max_size = 1200
             if img.width > max_size or img.height > max_size:
                 img.thumbnail((max_size, max_size))
                 
             output = BytesIO()
-            img.save(output, format='JPEG', quality=85)
+            img.save(output, format='JPEG', quality=70)  # 70% para reduzir tamanho
             output.seek(0)
             
             # Ler bytes para OCR e Upload
