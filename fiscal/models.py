@@ -14,6 +14,52 @@ from organizational_structure.models import Sector
 from reports.models import Report
 
 
+class APIKeyStatus(models.Model):
+    """
+    Rastreia o status de quota das chaves API do Gemini.
+    Usado para evitar tentativas em chaves já esgotadas no dia.
+    """
+    key_index = models.IntegerField('índice da chave', unique=True)
+    exhausted_at = models.DateTimeField('esgotada em', null=True, blank=True)
+    
+    class Meta:
+        verbose_name = 'status de chave API'
+        verbose_name_plural = 'status de chaves API'
+    
+    def __str__(self):
+        status = "esgotada" if self.is_exhausted_today() else "disponível"
+        return f"Chave {self.key_index + 1}: {status}"
+    
+    def is_exhausted_today(self):
+        """Verifica se a chave está esgotada hoje."""
+        if not self.exhausted_at:
+            return False
+        return self.exhausted_at.date() == timezone.now().date()
+    
+    def mark_exhausted(self):
+        """Marca a chave como esgotada agora."""
+        self.exhausted_at = timezone.now()
+        self.save(update_fields=['exhausted_at'])
+    
+    @classmethod
+    def get_available_key_index(cls, total_keys: int) -> int | None:
+        """
+        Retorna o índice da primeira chave não esgotada hoje.
+        Retorna None se todas estiverem esgotadas.
+        """
+        for i in range(total_keys):
+            status, _ = cls.objects.get_or_create(key_index=i)
+            if not status.is_exhausted_today():
+                return i
+        return None
+    
+    @classmethod
+    def mark_key_exhausted(cls, key_index: int):
+        """Marca uma chave específica como esgotada."""
+        status, _ = cls.objects.get_or_create(key_index=key_index)
+        status.mark_exhausted()
+
+
 class StockItem(models.Model):
     """
     Representa o estoque FÍSICO de um item licitado.

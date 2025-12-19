@@ -28,9 +28,6 @@ class ReportListView(LoginRequiredMixin, ListView):
     """
     model = Report
     template_name = 'reports.html'
-    context_object_name = 'page_obj'
-    paginate_by = 15
-    context_object_name = 'page_obj'
     paginate_by = 15
     login_url = 'authenticate:login'
 
