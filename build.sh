@@ -55,6 +55,25 @@ else
     echo "⚠️  DJANGO_SUPERUSER_EMAIL/PASSWORD não definidos, pulando..."
 fi
 
+# Carregar dados iniciais se arquivo existir
+echo "=== CARREGANDO DADOS INICIAIS ==="
+if [ -f "core/fixtures/initial_data.json" ]; then
+    echo "📥 Carregando dados do backup..."
+    set +e  # Desabilitar exit on error temporariamente
+    python3 manage.py loaddata core/fixtures/initial_data.json --verbosity 1
+    LOADDATA_RESULT=$?
+    set -e
+    
+    if [ $LOADDATA_RESULT -eq 0 ]; then
+        echo "✅ Dados carregados com sucesso!"
+    else
+        echo "⚠️  Falha no loaddata (código: $LOADDATA_RESULT)"
+        echo "⚠️  Continuando sem dados - você pode importar manualmente depois"
+    fi
+else
+    echo "ℹ️  Arquivo initial_data.json não encontrado, pulando..."
+fi
+
 # Collect static files
 echo "📁 Coletando arquivos estáticos..."
 python3 manage.py collectstatic --noinput --clear
