@@ -10,6 +10,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('bidding_supplier', '0002_alter_contact_value_alter_supplier_cnpj_and_more'),
+        # Dashboard 0006 creates the tables (Bidding, Material) that we reference
+        ('dashboard', '0006_bidding_material'),
     ]
 
     operations = [
