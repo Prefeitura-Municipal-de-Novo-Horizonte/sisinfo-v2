@@ -199,6 +199,12 @@ class InvoiceOCRService:
         - Use ponto (.) como separador decimal para números, ou mantenha original com vírgula se preferir (será tratado).
         """
         
+        # Verificar se cliente está inicializado
+        if self.client is None:
+            return ExtractedInvoiceData(
+                error="Todas as chaves API estão esgotadas hoje. Tente novamente amanhã."
+            )
+        
         try:
             # Criar conteúdo com imagem
             image_part = types.Part.from_bytes(
@@ -212,11 +218,25 @@ class InvoiceOCRService:
                 temperature=0.0  # Zero para máxima precisão e consistência
             )
 
-            response = self.client.models.generate_content(
-                model="gemini-flash-latest",
-                contents=[prompt, image_part],
-                config=generate_config
-            )
+            # Executar com timeout de 8 segundos (Vercel limita a 10s)
+            import concurrent.futures
+            
+            def call_gemini():
+                return self.client.models.generate_content(
+                    model="gemini-flash-latest",
+                    contents=[prompt, image_part],
+                    config=generate_config
+                )
+            
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(call_gemini)
+                try:
+                    response = future.result(timeout=8)
+                except concurrent.futures.TimeoutError:
+                    print("OCR: Timeout de 8s atingido")
+                    return ExtractedInvoiceData(
+                        error="Timeout: O processamento demorou muito. Tente novamente ou cadastre manualmente."
+                    )
             
             # Parsear resposta
             return self._parse_response(response.text)

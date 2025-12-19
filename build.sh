@@ -1,85 +1,91 @@
 #!/bin/bash
+set -e  # Exit on error
+
+echo "=== SISInfo V2 - Build Script ==="
+echo "Iniciando build para Vercel..."
 
 # Create a virtual environment
-echo "Creating a virtual environment..."
+echo "📦 Criando ambiente virtual..."
 python3 -m venv venv
-echo "Acessing a virtual environment..."
 source venv/bin/activate
 
 # Garantir diretório de logs para o Django
-echo "Garantindo diretório logs para logging..."
 mkdir -p logs
 
-# Install the latest version of pip
-echo "Installing the latest version of pip..."
-python3 -m pip install --upgrade pip 
-echo "Upgrading the latest version of setuptools and wheel ..."
-python3 -m pip install --upgrade setuptools wheel
+# Install dependencies with cache optimization
+echo "📦 Instalando dependências..."
+pip install --upgrade pip setuptools wheel -q
+pip install -r requirements.txt -q
 
-# Build the project
-echo "Building the project..."
-python3 -m pip install -r requirements.txt
-
-# Apply migrations (migrations should be created locally, not in build)
-echo "Applying migrations..."
+# Apply migrations
+echo "🔄 Aplicando migrações..."
 python3 manage.py migrate --noinput
 
-# Executar comandos de recuperação apenas uma vez (usando banco de dados)
-echo "=== VERIFICANDO PROCEDIMENTOS DE RECUPERAÇÃO ==="
-
-# Recuperação de dados (legacy) removida em Clean-up
-# (Código de restore_material_reports_from_json e fix_orphan removidos)
-
+# Verificar se precisa carregar dados iniciais (migração Supabase)
+echo "=== VERIFICANDO DADOS INICIAIS ==="
+python3 manage.py check_procedure "initial_data_load_v1" > /dev/null 2>&1
+if [ $? -eq 1 ]; then
+    echo "📥 Carregando dados iniciais (migração para Supabase)..."
+    if [ -f "core/fixtures/initial_data.json" ]; then
+        python3 manage.py loaddata core/fixtures/initial_data.json && \
+        python3 manage.py mark_procedure "initial_data_load_v1" --notes "Dados migrados do Aiven para Supabase" || \
+        python3 manage.py mark_procedure "initial_data_load_v1" --failed --notes "Falha no carregamento inicial"
+    else
+        echo "⚠️  Arquivo initial_data.json não encontrado, pulando..."
+    fi
+else
+    echo "✅ Dados iniciais já carregados (pulando...)"
+fi
 
 # Executar procedimentos de manutenção (apenas uma vez cada)
-echo "=== VERIFICANDO PROCEDIMENTOS DE MANUTENÇÃO ==="
+echo "=== PROCEDIMENTOS DE MANUTENÇÃO ==="
 
 # Consolidar duplicatas (v1)
 python3 manage.py check_procedure "consolidate_duplicates_v1" > /dev/null 2>&1
 if [ $? -eq 1 ]; then
-    echo "Consolidando fornecedores e materiais duplicados..."
+    echo "🔧 Consolidando duplicatas..."
     python3 manage.py consolidate_duplicates --auto --threshold 0.98 && \
-    python3 manage.py mark_procedure "consolidate_duplicates_v1" --notes "Consolidação automática de duplicatas" || \
-    python3 manage.py mark_procedure "consolidate_duplicates_v1" --failed --notes "Falha na consolidação"
+    python3 manage.py mark_procedure "consolidate_duplicates_v1" --notes "Consolidação automática" || \
+    python3 manage.py mark_procedure "consolidate_duplicates_v1" --failed --notes "Falha"
 else
-    echo "Consolidação de duplicatas já executada (pulando...)"
+    echo "✅ Consolidação já executada"
 fi
 
 # Limpar licitações duplicadas (v1)
 python3 manage.py check_procedure "clean_duplicate_biddings_v1" > /dev/null 2>&1
 if [ $? -eq 1 ]; then
-    echo "Limpando licitações duplicadas..."
+    echo "🔧 Limpando licitações duplicadas..."
     python3 manage.py clean_duplicate_biddings && \
-    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --notes "Limpeza de licitações duplicadas" || \
-    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --failed --notes "Falha na limpeza"
+    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --notes "Limpeza executada" || \
+    python3 manage.py mark_procedure "clean_duplicate_biddings_v1" --failed --notes "Falha"
 else
-    echo "Limpeza de licitações duplicadas já executada (pulando...)"
+    echo "✅ Limpeza de licitações já executada"
 fi
 
-# Corrigir laudos abertos com licitações fechadas (v1)
+# Corrigir laudos com licitações fechadas (v1)
 python3 manage.py check_procedure "close_stale_reports_v1" > /dev/null 2>&1
 if [ $? -eq 1 ]; then
-    echo "Fechando laudos com licitações inativas..."
-    python3 manage.py close_stale_reports --dry-run && \
+    echo "🔧 Fechando laudos inativos..."
     python3 manage.py close_stale_reports && \
-    python3 manage.py mark_procedure "close_stale_reports_v1" --notes "Fechamento automático de laudos" || \
-    python3 manage.py mark_procedure "close_stale_reports_v1" --failed --notes "Falha no fechamento de laudos"
+    python3 manage.py mark_procedure "close_stale_reports_v1" --notes "Fechamento automático" || \
+    python3 manage.py mark_procedure "close_stale_reports_v1" --failed --notes "Falha"
 else
-    echo "Fechamento de laudos já executado (pulando...)"
+    echo "✅ Fechamento de laudos já executado"
 fi
 
 # Corrigir MaterialReports órfãos (v1)
 python3 manage.py check_procedure "fix_orphan_material_reports_v1" > /dev/null 2>&1
 if [ $? -eq 1 ]; then
-    echo "Corrigindo MaterialReports órfãos..."
-    python3 manage.py fix_orphan_material_reports --dry-run && \
+    echo "🔧 Corrigindo dados órfãos..."
     python3 manage.py fix_orphan_material_reports && \
-    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --notes "Correção de dados órfãos" || \
-    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --failed --notes "Falha na correção"
+    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --notes "Correção executada" || \
+    python3 manage.py mark_procedure "fix_orphan_material_reports_v1" --failed --notes "Falha"
 else
-    echo "Correção de dados órfãos já executada (pulando...)"
+    echo "✅ Correção de órfãos já executada"
 fi
 
 # Collect static files
-echo "Collecting static files..."
+echo "📁 Coletando arquivos estáticos..."
 python3 manage.py collectstatic --noinput --clear
+
+echo "=== ✅ Build concluído com sucesso! ==="

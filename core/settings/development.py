@@ -11,8 +11,13 @@ SECRET_KEY = config("SECRET_KEY")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# Supabase NON_POOLING para dev (porta 5432), fallback para POSTGRES_URL ou DATABASE_URL
+DATABASE_URL = config(
+    "POSTGRES_URL_NON_POOLING",
+    default=config("POSTGRES_URL", default=config("DATABASE_URL", default=""))
+)
 DATABASES = {
-    "default": dburl(config("DATABASE_URL"))
+    "default": dburl(DATABASE_URL)
 }
 
 # Browserless.io API Key for PDF generation
