@@ -53,7 +53,8 @@ class InvoiceOCRService:
         1. Lista JSON: GEMINI_API_KEY=["chave1", "chave2", "chave3"]
         2. Separado por vírgula: GEMINI_API_KEY=chave1,chave2,chave3
         
-        O sistema tentará cada chave em sequência até encontrar uma que funcione.
+        O sistema verifica no banco quais chaves já esgotaram quota hoje
+        e começa pela primeira disponível.
         """
         import json
         
@@ -81,10 +82,33 @@ class InvoiceOCRService:
         if not self.api_keys:
             raise ValueError("Nenhuma chave API válida encontrada em GEMINI_API_KEY")
         
-        # Inicializar com a primeira chave
-        self.current_key_index = 0
+        # Buscar primeira chave disponível no banco
+        self.current_key_index = self._get_available_key_index()
         self.client = None
-        self._initialize_client()
+        
+        if self.current_key_index is not None:
+            self._initialize_client()
+        else:
+            print(f"OCR: Todas as {len(self.api_keys)} chaves estão esgotadas hoje")
+    
+    def _get_available_key_index(self) -> int | None:
+        """Retorna o índice da primeira chave não esgotada hoje."""
+        try:
+            from fiscal.models import APIKeyStatus
+            return APIKeyStatus.get_available_key_index(len(self.api_keys))
+        except Exception as e:
+            # Se falhar (ex: tabela não existe), usar primeira chave
+            print(f"OCR: Erro ao verificar status das chaves: {e}")
+            return 0
+    
+    def _mark_current_key_exhausted(self):
+        """Marca a chave atual como esgotada no banco."""
+        try:
+            from fiscal.models import APIKeyStatus
+            APIKeyStatus.mark_key_exhausted(self.current_key_index)
+            print(f"OCR: Chave {self.current_key_index + 1} marcada como esgotada")
+        except Exception as e:
+            print(f"OCR: Erro ao marcar chave como esgotada: {e}")
     
     def _initialize_client(self):
         """Inicializa o cliente com a chave atual."""
@@ -208,19 +232,24 @@ class InvoiceOCRService:
                 error_type = "quota esgotada" if is_quota_error else "chave inválida"
                 print(f"OCR: Chave {self.current_key_index + 1} falhou ({error_type})")
                 
-                # Tentar próxima chave se houver
-                if self.current_key_index < len(self.api_keys) - 1:
-                    self.current_key_index += 1
-                    print(f"OCR: Tentando próxima chave ({self.current_key_index + 1}/{len(self.api_keys)})...")
+                # Marcar chave atual como esgotada no banco
+                self._mark_current_key_exhausted()
+                
+                # Buscar próxima chave disponível no banco
+                next_available = self._get_available_key_index()
+                
+                if next_available is not None and next_available != self.current_key_index:
+                    self.current_key_index = next_available
+                    print(f"OCR: Tentando chave {self.current_key_index + 1}/{len(self.api_keys)}...")
                     self._initialize_client()
                     # Retry com a nova chave
                     return self._process_image(image_bytes, mime_type)
                 else:
-                    # Todas as chaves esgotadas ou inválidas
-                    print(f"OCR: Todas as {len(self.api_keys)} chaves falharam")
+                    # Todas as chaves esgotadas
+                    print(f"OCR: Todas as {len(self.api_keys)} chaves estão esgotadas hoje")
                     return ExtractedInvoiceData(
-                        error=f"Todas as {len(self.api_keys)} chaves API falharam. "
-                              f"Verifique se as chaves estão corretas ou aguarde o reset diário."
+                        error=f"Todas as {len(self.api_keys)} chaves API estão esgotadas hoje. "
+                              f"Tente novamente amanhã ou cadastre manualmente."
                     )
             
             # Outros erros
