@@ -421,13 +421,13 @@ def invoice_process(request):
             if img.mode != 'RGB':
                 img = img.convert('RGB')
             
-            # Redimensionar se maior que 1200px (otimizado para velocidade)
-            max_size = 1200
+            # Redimensionar para max 800px (otimizado para Vercel 10s timeout)
+            max_size = 800
             if img.width > max_size or img.height > max_size:
                 img.thumbnail((max_size, max_size))
                 
             output = BytesIO()
-            img.save(output, format='JPEG', quality=70)  # 70% para reduzir tamanho
+            img.save(output, format='JPEG', quality=50)  # 50% para OCR mais rápido
             output.seek(0)
             
             # Ler bytes para OCR e Upload
