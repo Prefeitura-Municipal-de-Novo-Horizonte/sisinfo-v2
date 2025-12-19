@@ -1,10 +1,27 @@
 """
 Configurações específicas para produção.
 """
+import re
 from decouple import Csv, config
 from dj_database_url import parse as dburl
 
 from core.settings.base import *
+
+
+def clean_supabase_url(url: str) -> str:
+    """
+    Remove parâmetros inválidos da URL do Supabase.
+    A integração Vercel+Supabase adiciona 'supa=base-pooler.x' que o psycopg2 não reconhece.
+    """
+    if not url:
+        return url
+    # Remove &supa=... ou ?supa=...
+    url = re.sub(r'[&?]supa=[^&]*', '', url)
+    # Se ficou com ? no final sem parâmetros, adiciona sslmode
+    if url.endswith('?'):
+        url = url[:-1]
+    return url
+
 
 DEBUG = False
 SECRET_KEY = config("SECRET_KEY")
@@ -18,7 +35,10 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 # Supabase usa POSTGRES_URL, fallback para DATABASE_URL (Aiven/legacy)
-DATABASE_URL = config("POSTGRES_URL", default=config("DATABASE_URL", default=""))
+# Limpa parâmetros inválidos adicionados pela integração Vercel
+DATABASE_URL = clean_supabase_url(
+    config("POSTGRES_URL", default=config("DATABASE_URL", default=""))
+)
 DATABASES = {
     "default": dburl(DATABASE_URL)
 }
