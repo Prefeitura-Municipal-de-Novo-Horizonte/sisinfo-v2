@@ -1,18 +1,35 @@
 from django.db import migrations
 
+
 def migrate_data(apps, schema_editor):
-    MaterialBidding = apps.get_model('dashboard', 'MaterialBidding')
-    Material = apps.get_model('dashboard', 'Material')
+    """
+    Migra dados de Material para MaterialBidding.
+    Usa SQL raw para evitar problemas de schema quando colunas ainda não existem.
+    """
+    # Em banco novo, não há dados para migrar
+    # Esta migração era para bancos existentes antes da reestruturação
+    cursor = schema_editor.connection.cursor()
     
-    for mb in MaterialBidding.objects.all():
-        # Copy data from related Material
-        # Note: We access the material via the foreign key
-        # Since we haven't removed the fields from Material yet, they are accessible
-        material = mb.material
-        mb.supplier = material.supplier
-        mb.price = material.price
-        mb.readjustment = material.readjustment
-        mb.save()
+    # Verificar se há dados para migrar
+    cursor.execute("SELECT COUNT(*) FROM dashboard_materialbidding")
+    count = cursor.fetchone()[0]
+    
+    if count == 0:
+        print("  Nenhum dado para migrar (banco novo)")
+        return
+    
+    # Migrar usando SQL raw (somente colunas que existem nesta fase)
+    cursor.execute("""
+        UPDATE dashboard_materialbidding mb
+        SET supplier_id = m.supplier_id,
+            price = m.price,
+            readjustment = m.readjustment
+        FROM dashboard_material m
+        WHERE mb.material_id = m.id
+          AND (mb.supplier_id IS NULL OR mb.price IS NULL)
+    """)
+    print(f"  Dados migrados: {cursor.rowcount} registros")
+
 
 class Migration(migrations.Migration):
 
@@ -21,5 +38,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_data),
+        migrations.RunPython(migrate_data, migrations.RunPython.noop),
     ]
+
