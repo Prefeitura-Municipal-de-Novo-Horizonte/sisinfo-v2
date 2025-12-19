@@ -95,13 +95,14 @@ def api_status(request):
     Verifica status da API Node.js OCR.
     Retorna JSON com status de todas as APIs.
     """
-    vercel_url = config('VERCEL_URL', default='http://localhost:3000')
+    # Usar NODEJS_API_URL para evitar conflito com VERCEL_URL automático
+    nodejs_api_url = config('NODEJS_API_URL', default='http://localhost:3001')
     
     # Construir URL da API health
-    if vercel_url.startswith('http'):
-        health_url = f"{vercel_url}/api/health"
+    if nodejs_api_url.startswith('http'):
+        health_url = f"{nodejs_api_url}/api/health"
     else:
-        health_url = f"https://{vercel_url}/api/health"
+        health_url = f"https://{nodejs_api_url}/api/health"
     
     result = {
         'nodejs_api': {
@@ -111,7 +112,7 @@ def api_status(request):
             'response_time_ms': None
         },
         'environment': {
-            'vercel_url': vercel_url,
+            'nodejs_api_url': nodejs_api_url,
             'use_nodejs_ocr': config('USE_NODEJS_OCR', default='false'),
             'gemini_configured': bool(config('GEMINI_API_KEY', default=None)),
             'internal_secret_configured': bool(config('INTERNAL_API_SECRET', default=None))

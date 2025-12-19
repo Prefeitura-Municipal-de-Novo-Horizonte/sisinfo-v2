@@ -19,7 +19,8 @@ def call_nodejs_ocr(image_bytes: bytes, mime_type: str = 'image/jpeg') -> dict:
     """
     # Configurações
     api_secret = config('INTERNAL_API_SECRET', default=None)
-    vercel_url = config('VERCEL_URL', default='http://localhost:3000')
+    # Usar NODEJS_API_URL para evitar conflito com VERCEL_URL automático
+    nodejs_api_url = config('NODEJS_API_URL', default='http://localhost:3001')
     
     if not api_secret:
         return {'success': False, 'error': 'INTERNAL_API_SECRET não configurada'}
@@ -28,11 +29,10 @@ def call_nodejs_ocr(image_bytes: bytes, mime_type: str = 'image/jpeg') -> dict:
     base64_image = base64.b64encode(image_bytes).decode('utf-8')
     
     # Determinar URL da API
-    # VERCEL_URL da Vercel NÃO inclui protocolo (ex: "myapp.vercel.app")
-    if vercel_url.startswith('http'):
-        api_url = f"{vercel_url}/api/ocr"
+    if nodejs_api_url.startswith('http'):
+        api_url = f"{nodejs_api_url}/api/ocr"
     else:
-        api_url = f"https://{vercel_url}/api/ocr"
+        api_url = f"https://{nodejs_api_url}/api/ocr"
     
     import logging
     logger = logging.getLogger(__name__)
