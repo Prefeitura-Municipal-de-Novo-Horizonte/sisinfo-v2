@@ -21,6 +21,36 @@ pip install -r requirements.txt -q
 echo "🔄 Aplicando migrações..."
 python3 manage.py migrate --noinput
 
+# Criar superusuário se variáveis estiverem definidas
+echo "=== VERIFICANDO SUPERUSUÁRIO ==="
+if [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
+    echo "📧 Criando/atualizando superusuário..."
+    python3 manage.py shell << EOF
+from authenticate.models import ProfessionalUser
+email = "$DJANGO_SUPERUSER_EMAIL"
+password = "$DJANGO_SUPERUSER_PASSWORD"
+name = "${DJANGO_SUPERUSER_NAME:-Administrador}"
+
+user, created = ProfessionalUser.objects.get_or_create(
+    email=email,
+    defaults={
+        'name': name,
+        'is_staff': True,
+        'is_superuser': True,
+        'is_active': True,
+    }
+)
+if created:
+    user.set_password(password)
+    user.save()
+    print(f"✅ Superusuário criado: {email}")
+else:
+    print(f"ℹ️  Superusuário já existe: {email}")
+EOF
+else
+    echo "⚠️  DJANGO_SUPERUSER_EMAIL/PASSWORD não definidos, pulando..."
+fi
+
 # Collect static files
 echo "📁 Coletando arquivos estáticos..."
 python3 manage.py collectstatic --noinput --clear
