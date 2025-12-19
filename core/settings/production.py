@@ -16,8 +16,11 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+
+# Supabase usa POSTGRES_URL, fallback para DATABASE_URL (Aiven/legacy)
+DATABASE_URL = config("POSTGRES_URL", default=config("DATABASE_URL", default=""))
 DATABASES = {
-    "default": dburl(config("DATABASE_URL"))
+    "default": dburl(DATABASE_URL)
 }
 # Configurações de segurança recomendadas
 SECURE_SSL_REDIRECT = True
