@@ -59,6 +59,10 @@ def capture_old_values(sender, instance, **kwargs):
     Captura valores antigos antes de salvar para comparação.
     Executado antes de post_save.
     """
+    # Skip durante loaddata
+    if kwargs.get('raw', False):
+        return
+    
     if sender.__name__ not in AUDITED_MODELS:
         return
     
@@ -79,6 +83,10 @@ def log_create_update(sender, instance, created, **kwargs):
     """
     Registra criação ou atualização de registros.
     """
+    # Skip durante loaddata
+    if kwargs.get('raw', False):
+        return
+    
     if sender.__name__ not in AUDITED_MODELS:
         return
     
