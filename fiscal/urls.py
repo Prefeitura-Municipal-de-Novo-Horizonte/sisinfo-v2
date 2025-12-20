@@ -11,7 +11,6 @@ from fiscal.views import (
     invoice_link_report,
     invoice_unlink_report,
     invoice_upload,
-    invoice_process,
     CommitmentListView,
     CommitmentCreateView,
     CommitmentDetailView,
@@ -33,7 +32,6 @@ urlpatterns = [
     # Notas Fiscais
     path('notas/', InvoiceListView.as_view(), name='invoices'),
     path('notas/upload/', invoice_upload, name='invoice_upload'),
-    path('notas/processar/', invoice_process, name='invoice_process'),
     path('notas/nova/', InvoiceCreateView.as_view(), name='invoice_create'),
     path('notas/<int:pk>/', InvoiceDetailView.as_view(), name='invoice_detail'),
     path('notas/<int:pk>/editar/', InvoiceUpdateView.as_view(), name='invoice_update'),
