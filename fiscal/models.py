@@ -6,7 +6,6 @@ from decimal import Decimal
 from django.db import models
 from django.shortcuts import resolve_url as r
 from django.utils import timezone
-from cloudinary.models import CloudinaryField
 
 from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
