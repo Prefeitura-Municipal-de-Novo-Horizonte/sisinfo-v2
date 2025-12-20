@@ -235,12 +235,26 @@ def _invoke_edge_function(job_id: str, image_path: str):
     Invoca a Edge Function process-ocr de forma assíncrona (fire-and-forget).
     Não espera a resposta, pois o processamento pode demorar.
     Envia TODAS as chaves Gemini para permitir rotação na Edge Function.
+    Envia callback_url para a Edge Function enviar o resultado de volta.
     """
     conf = _get_supabase_config()
     gemini_keys = config('GEMINI_API_KEY', default='')
     
-    # Enviar todas as chaves (a Edge Function faz a rotação)
-    # Não precisa processar aqui, a Edge Function aceita qualquer formato
+    # Construir callback URL
+    # Em produção, usa VERCEL_URL ou similar
+    # Em dev, usa localhost
+    from django.urls import reverse
+    
+    # Tentar obter URL base de produção
+    base_url = config('VERCEL_URL', default='')
+    if base_url and not base_url.startswith('http'):
+        base_url = f"https://{base_url}"
+    
+    if not base_url:
+        base_url = config('SITE_URL', default='http://127.0.0.1:8000')
+    
+    callback_path = f"/fiscal/ocr/callback/{job_id}/"
+    callback_url = f"{base_url}{callback_path}"
     
     try:
         url = f"{conf['url']}/functions/v1/process-ocr"
@@ -256,6 +270,8 @@ def _invoke_edge_function(job_id: str, image_path: str):
                 'job_id': job_id,
                 'image_path': image_path,
                 'gemini_keys': gemini_keys,  # Todas as chaves
+                'callback_url': callback_url,  # URL para callback
+                'callback_secret': conf['service_key'],  # Para autenticação
             },
             timeout=2  # Timeout curto - não esperamos a resposta
         )
@@ -576,3 +592,69 @@ def ocr_cancel(request, job_id):
             'success': False,
             'error': str(e)
         }, status=500)
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+
+@csrf_exempt
+def ocr_callback(request, job_id):
+    """
+    Callback para receber resultado da Edge Function.
+    Chamado pela Edge Function após processar o OCR.
+    
+    POST /fiscal/ocr/callback/<job_id>/
+    
+    Body: {
+        "status": "completed" | "failed",
+        "result": {...} | null,
+        "error_message": "..." | null,
+        "secret": "SUPABASE_SERVICE_ROLE_KEY"  # Para autenticação
+    }
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+    
+    # Verificar autenticação via service key
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    
+    # Verificar token (usa o service_role_key como secret)
+    expected_secret = config('SUPABASE_SERVICE_ROLE_KEY', default='')
+    provided_secret = data.get('secret', '')
+    
+    if not expected_secret or provided_secret != expected_secret:
+        print(f"OCR Callback: Autenticação falhou para job {job_id}")
+        return JsonResponse({'error': 'Não autorizado'}, status=401)
+    
+    try:
+        job = OCRJob.objects.get(id=job_id)
+        
+        status = data.get('status', 'failed')
+        result = data.get('result')
+        error_message = data.get('error_message')
+        
+        from django.utils import timezone
+        
+        if status == 'completed' and result:
+            job.status = 'completed'
+            job.result = result
+            job.completed_at = timezone.now()
+            job.save(update_fields=['status', 'result', 'completed_at'])
+            print(f"OCR Callback: Job {job_id} marcado como completed")
+        else:
+            job.status = 'failed'
+            job.error_message = error_message or 'Erro desconhecido'
+            job.completed_at = timezone.now()
+            job.save(update_fields=['status', 'error_message', 'completed_at'])
+            print(f"OCR Callback: Job {job_id} marcado como failed: {error_message}")
+        
+        return JsonResponse({'success': True})
+        
+    except OCRJob.DoesNotExist:
+        return JsonResponse({'error': 'Job não encontrado'}, status=404)
+    except Exception as e:
+        print(f"OCR Callback Error: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
