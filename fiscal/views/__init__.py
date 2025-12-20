@@ -24,3 +24,8 @@ from .delivery import (
     delivery_create,
     delivery_generate_pdf,
 )
+
+from .ocr import (
+    ocr_submit,
+    ocr_status,
+)

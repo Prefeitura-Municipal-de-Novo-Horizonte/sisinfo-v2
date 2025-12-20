@@ -39,6 +39,13 @@
                 <input type="file" class="hidden" accept="image/*" @change="handleFileSelect($event)">
             </label>
             <p class="mt-4 text-xs text-gray-400">PNG, JPG ou JPEG até 10MB</p>
+            <p class="mt-3 text-xs text-gray-400">
+                Prefere cadastrar sem foto? 
+                <a href="{% url 'fiscal:invoice_create' %}" 
+                   class="text-brand-600 dark:text-brand-400 hover:underline font-medium">
+                    Cadastrar manualmente
+                </a>
+            </p>
         </div>
     </div>
 
@@ -117,17 +124,27 @@
                 </svg>
             </div>
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Erro ao processar nota</h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-6" x-text="errorMessage"></p>
-            <div class="flex gap-3 justify-center">
-                <template x-if="quotaExceeded">
-                    <a :href="manualEntryUrl"
-                        class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium">
-                        Cadastrar Manualmente
-                    </a>
-                </template>
+            <p class="text-gray-600 dark:text-gray-400 mb-4" x-text="errorMessage"></p>
+            
+            <!-- Dica adicional para timeout -->
+            <template x-if="errorMessage.toLowerCase().includes('timeout')">
+                <p class="text-sm text-amber-600 dark:text-amber-400 mb-4">
+                    💡 Dica: Em caso de lentidão, você pode cadastrar a nota manualmente.
+                </p>
+            </template>
+            
+            <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                <!-- Botão de cadastro manual SEMPRE visível em caso de erro -->
+                <a href="{% url 'fiscal:invoice_create' %}"
+                   class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-medium inline-flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Cadastrar Manualmente
+                </a>
                 <button @click="reset()"
                     class="px-6 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white rounded-lg font-medium">
-                    <span x-text="quotaExceeded ? 'Voltar' : 'Tentar novamente'"></span>
+                    Tentar novamente
                 </button>
             </div>
         </div>
@@ -143,8 +160,10 @@
             processing: false,
             error: false,
             errorMessage: '',
-            quotaExceeded: false,
-            manualEntryUrl: '',
+            jobId: null,
+            pollInterval: null,
+            pollCount: 0,
+            maxPolls: 60, // 60 polls x 2s = 2 minutos máximo
             steps: {
                 upload: false,
                 reading: false,
@@ -169,59 +188,112 @@
             async processFile(file) {
                 this.processing = true;
                 this.error = false;
+                this.pollCount = 0;
                 this.steps = { upload: false, reading: false, extracting: false };
 
                 try {
-                    // Simular etapa de upload
-                    await this.delay(500);
-                    this.steps.upload = true;
-
-                    // Criar FormData
+                    // 1. Enviar imagem para ocr_submit (rápido, ~2s)
                     const formData = new FormData();
                     formData.append('photo', file);
                     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
-                    // Simular etapa de leitura
-                    await this.delay(500);
-                    this.steps.reading = true;
-
-                    // Enviar para o servidor
-                    const response = await fetch('{% url "fiscal:invoice_process" %}', {
+                    const submitResponse = await fetch('{% url "fiscal:ocr_submit" %}', {
                         method: 'POST',
                         body: formData,
                     });
 
-                    const data = await response.json();
+                    const submitData = await submitResponse.json();
 
-                    // Tratamento especial para quota exceeded ou todas as chaves falharam
-                    if (response.status === 429 || data.error_type === 'quota_exceeded' || data.error_type === 'all_keys_failed') {
-                        this.processing = false;
-                        this.error = true;
-                        this.errorMessage = data.message || 'Não foi possível processar a nota fiscal automaticamente. Tente novamente ou cadastre manualmente.';
-                        this.quotaExceeded = true;
-                        this.manualEntryUrl = data.manual_entry_url || '{% url "fiscal:invoice_create" %}';
-                        return;
+                    if (!submitResponse.ok || submitData.error) {
+                        throw new Error(submitData.error || 'Erro ao enviar imagem');
                     }
 
-                    if (!response.ok || data.error) {
-                        throw new Error(data.error || 'Erro ao processar nota');
-                    }
+                    this.steps.upload = true;
+                    this.jobId = submitData.job_id;
 
-                    this.steps.extracting = true;
-                    await this.delay(500);
-
-                    // Armazenar dados na sessionStorage para evitar limites de URL
-                    sessionStorage.setItem('ocrData', JSON.stringify(data));
-
-                    // Redirecionar para formulário (sem dados na URL para ficar mais limpo/seguro)
-                    window.location.href = '{% url "fiscal:invoice_create" %}?from_ocr=true';
+                    // 2. Iniciar polling para verificar status
+                    this.startPolling();
 
                 } catch (err) {
-                    this.processing = false;
-                    this.error = true;
-                    this.errorMessage = err.message || 'Erro desconhecido';
-                    this.quotaExceeded = false;
+                    this.handleError(err.message || 'Erro desconhecido');
                 }
+            },
+
+            startPolling() {
+                this.steps.reading = true;
+                
+                // Primeira verificação imediata
+                this.checkStatus();
+                
+                // Continuar verificando a cada 2 segundos
+                this.pollInterval = setInterval(() => {
+                    this.checkStatus();
+                }, 2000);
+            },
+
+            async checkStatus() {
+                this.pollCount++;
+
+                // Timeout de segurança (2 minutos)
+                if (this.pollCount > this.maxPolls) {
+                    this.stopPolling();
+                    this.handleError('Tempo limite atingido. Por favor, cadastre a nota manualmente.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/fiscal/ocr/status/${this.jobId}/`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'completed') {
+                        this.stopPolling();
+                        this.steps.extracting = true;
+                        
+                        // Armazenar dados na sessionStorage
+                        sessionStorage.setItem('ocrData', JSON.stringify(data.data));
+                        
+                        // Pequeno delay para o usuário ver o check mark
+                        await this.delay(500);
+                        
+                        // Redirecionar para formulário
+                        window.location.href = '{% url "fiscal:invoice_create" %}?from_ocr=true';
+                        
+                    } else if (data.status === 'failed') {
+                        this.stopPolling();
+                        this.handleError(data.error || 'Erro ao processar nota fiscal');
+                        
+                    } else if (data.status === 'processing') {
+                        // Ainda processando, continua polling
+                        // Atualiza UI para mostrar progresso
+                        if (this.pollCount > 3) {
+                            this.steps.reading = true;
+                        }
+                    }
+
+                } catch (err) {
+                    // Erro de rede, continua tentando
+                    console.warn('Polling error:', err);
+                }
+            },
+
+            stopPolling() {
+                if (this.pollInterval) {
+                    clearInterval(this.pollInterval);
+                    this.pollInterval = null;
+                }
+            },
+
+            handleError(message) {
+                this.processing = false;
+                this.error = true;
+                this.errorMessage = message;
+                this.stopPolling();
             },
 
             delay(ms) {
@@ -232,7 +304,10 @@
                 this.processing = false;
                 this.error = false;
                 this.errorMessage = '';
+                this.jobId = null;
+                this.pollCount = 0;
                 this.steps = { upload: false, reading: false, extracting: false };
+                this.stopPolling();
             }
         }
     }

@@ -21,6 +21,8 @@ from fiscal.views import (
     DeliveryNoteDetailView,
     delivery_create,
     delivery_generate_pdf,
+    ocr_submit,
+    ocr_status,
 )
 
 app_name = 'fiscal'
@@ -40,6 +42,10 @@ urlpatterns = [
     path('notas/<int:pk>/vincular-laudo/<int:report_pk>/', invoice_link_report, name='invoice_link_report'),
     path('notas/<int:pk>/desvincular-laudo/', invoice_unlink_report, name='invoice_unlink_report'),
     
+    # OCR Assíncrono (polling)
+    path('ocr/submit/', ocr_submit, name='ocr_submit'),
+    path('ocr/status/<uuid:job_id>/', ocr_status, name='ocr_status'),
+    
     # Empenhos
     path('empenhos/', CommitmentListView.as_view(), name='commitments'),
     path('empenhos/novo/', CommitmentCreateView.as_view(), name='commitment_create'),
@@ -55,3 +61,4 @@ urlpatterns = [
     # APIs
     path('api/materials-by-supplier/', api_materials_by_supplier, name='api_materials_by_supplier'),
 ]
+

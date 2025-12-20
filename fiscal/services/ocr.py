@@ -218,25 +218,12 @@ class InvoiceOCRService:
                 temperature=0.0  # Zero para máxima precisão e consistência
             )
 
-            # Executar com timeout de 8 segundos (Vercel limita a 10s)
-            import concurrent.futures
-            
-            def call_gemini():
-                return self.client.models.generate_content(
-                    model="gemini-flash-latest",
-                    contents=[prompt, image_part],
-                    config=generate_config
-                )
-            
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(call_gemini)
-                try:
-                    response = future.result(timeout=8)
-                except concurrent.futures.TimeoutError:
-                    print("OCR: Timeout de 8s atingido")
-                    return ExtractedInvoiceData(
-                        error="Timeout: O processamento demorou muito. Tente novamente ou cadastre manualmente."
-                    )
+            # Chamar API Gemini diretamente (sem timeout)
+            response = self.client.models.generate_content(
+                model="gemini-flash-latest",
+                contents=[prompt, image_part],
+                config=generate_config
+            )
             
             # Parsear resposta
             return self._parse_response(response.text)
