@@ -104,19 +104,15 @@ class FiscalSignalsTestCase(TestCase):
         stock_item = StockItem.objects.get(material_bidding=self.material_bidding)
         self.assertEqual(stock_item.quantity, 7)
 
-    @patch('cloudinary.uploader.destroy')
-    def test_invoice_deletion_removes_cloudinary_image(self, mock_destroy):
-        """Testa se excluir a nota deleta a imagem do Cloudinary."""
-        # Simula uma imagem do Cloudinary
-        mock_photo = MagicMock()
-        mock_photo.public_id = "sisinfo/invoices/test_image"
-        
-        self.invoice.photo = mock_photo
+    @patch('fiscal.services.storage.delete_image_from_storage')
+    def test_invoice_deletion_removes_supabase_image(self, mock_delete):
+        """Testa se excluir a nota deleta a imagem do Supabase Storage."""
+        # Simula uma imagem do Supabase Storage (UUID.jpg)
+        self.invoice.photo = "a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg"
         self.invoice.save()
         
         # Deleta a nota
         self.invoice.delete()
         
-        # Verifica se o método destroy foi chamado com o public_id correto
-        mock_destroy.assert_called_once_with("sisinfo/invoices/test_image")
-
+        # Verifica se o método delete foi chamado com o path correto
+        mock_delete.assert_called_once_with("a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg")
