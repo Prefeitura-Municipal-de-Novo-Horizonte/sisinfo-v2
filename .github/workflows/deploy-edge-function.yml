@@ -10,6 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     
     steps:
       - name: Checkout código
@@ -31,7 +32,6 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
       - name: Configurar Secrets da Function
-        run: |
-          echo "${{ secrets.GEMINI_API_KEY }}" | supabase secrets set GEMINI_API_KEY
+        run: supabase secrets set GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}"
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
