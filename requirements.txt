@@ -12,6 +12,5 @@ validate-docbr==1.11.1
 whitenoise==6.11.0
 playwright==1.48.0
 certifi==2024.2.2
-cloudinary==1.44.1
-django-cloudinary-storage==0.3.0
+# cloudinary removido - usando Supabase Storage exclusivamente
 google-genai>=1.0.0

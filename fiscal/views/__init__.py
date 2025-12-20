@@ -10,7 +10,6 @@ from .invoice import (
     invoice_link_report,
     invoice_unlink_report,
     invoice_upload,
-    invoice_process,
     CommitmentListView,
     CommitmentCreateView,
     CommitmentDetailView,

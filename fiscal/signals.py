@@ -1,34 +1,42 @@
-import cloudinary.uploader
+"""
+Signals para o app Fiscal.
+Gerencia atualização de estoques, balanços e limpeza de imagens.
+"""
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.conf import settings
 from pathlib import Path
 from fiscal.models import Invoice, InvoiceItem, DeliveryNoteItem, StockItem
 
+
 @receiver(post_delete, sender=Invoice)
 def delete_image_on_invoice_delete(sender, instance, **kwargs):
     """
-    Deleta a imagem quando a Nota Fiscal é deletada.
-    - Em prod (USE_CLOUDINARY=True): deleta do Cloudinary
-    - Em dev (USE_CLOUDINARY=False): deleta arquivo local
+    Deleta a imagem do Supabase Storage quando a Nota Fiscal é deletada.
     """
     if not instance.photo:
         return
     
     try:
-        public_id = str(instance.photo)
+        photo_str = str(instance.photo).strip()
         
-        if settings.USE_CLOUDINARY and not public_id.startswith('local/'):
-            # Produção: deletar do Cloudinary
-            cloudinary.uploader.destroy(instance.photo.public_id)
-        elif public_id.startswith('local/'):
-            # Dev: deletar arquivo local
-            filename = public_id.replace('local/', '')
+        # Se começa com 'local/', é arquivo local
+        if photo_str.startswith('local/'):
+            filename = photo_str.replace('local/', '')
             file_path = settings.MEDIA_ROOT / 'invoices' / filename
             if file_path.exists():
                 file_path.unlink()
+                print(f"Arquivo local deletado: {file_path}")
+            return
+        
+        # Caso contrário, é Supabase Storage (UUID.jpg)
+        from fiscal.services.storage import delete_image_from_storage
+        if delete_image_from_storage(photo_str):
+            print(f"Supabase Storage: Imagem {photo_str} deletada ao excluir NF {instance.number}")
+        
     except Exception as e:
         print(f"Erro ao deletar imagem para NF {instance.number}: {e}")
+
 
 @receiver(post_delete, sender=InvoiceItem)
 def restore_material_balance_on_item_delete(sender, instance, **kwargs):
@@ -56,6 +64,7 @@ def restore_material_balance_on_item_delete(sender, instance, **kwargs):
     except Exception:
         pass  # Ignora erros durante loaddata
 
+
 @receiver(post_save, sender=InvoiceItem)
 def update_stock_on_invoice_item_save(sender, instance, created, **kwargs):
     """
@@ -73,6 +82,7 @@ def update_stock_on_invoice_item_save(sender, instance, created, **kwargs):
             stock_item.save(update_fields=['quantity'])
     except Exception:
         pass  # Ignora erros durante loaddata
+
 
 @receiver(post_save, sender=DeliveryNoteItem)
 def decrease_stock_on_delivery(sender, instance, created, **kwargs):
@@ -92,6 +102,7 @@ def decrease_stock_on_delivery(sender, instance, created, **kwargs):
                 stock_item.save(update_fields=['quantity'])
     except Exception:
         pass  # Ignora erros durante loaddata
+
 
 @receiver(post_delete, sender=DeliveryNoteItem)
 def restore_stock_on_delivery_delete(sender, instance, **kwargs):
