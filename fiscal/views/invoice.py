@@ -87,14 +87,18 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         
-        # 1. Vincular imagem Cloudinary (se houver)
+        # 1. Vincular imagem (Supabase ou Cloudinary)
         photo_public_id = self.request.POST.get('photo_public_id')
+        print(f"DEBUG InvoiceCreateView: photo_public_id recebido = '{photo_public_id}'")
+        print(f"DEBUG InvoiceCreateView: self.object.photo atual = '{self.object.photo}'")
+        
         if photo_public_id and not self.object.photo:
             try:
                 self.object.photo = photo_public_id
                 self.object.save(update_fields=['photo'])
-            except Exception:
-                pass
+                print(f"DEBUG InvoiceCreateView: foto salva com sucesso = '{photo_public_id}'")
+            except Exception as e:
+                print(f"DEBUG InvoiceCreateView: erro ao salvar foto = {e}")
         
         # 2. Processar itens vinculados via OCR
         items_saved = 0
