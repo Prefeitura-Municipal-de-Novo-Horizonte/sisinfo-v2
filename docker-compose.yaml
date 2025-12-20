@@ -1,16 +1,16 @@
 services:
-  db:
-    image: postgres:17-alpine
-    container_name: sisinfo_postgres
-    restart: always
-    environment:
-      POSTGRES_DB: sisinfo
-      POSTGRES_USER: sisinfo
-      POSTGRES_PASSWORD: sisinfo
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:17-alpine
+  #   container_name: sisinfo_postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: sisinfo
+  #     POSTGRES_USER: sisinfo
+  #     POSTGRES_PASSWORD: sisinfo
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
 
   mongodb:
     image: mongo:7.0-jammy

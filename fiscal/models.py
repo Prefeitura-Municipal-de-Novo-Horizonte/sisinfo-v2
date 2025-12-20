@@ -33,6 +33,9 @@ class OCRJob(models.Model):
     # Imagem (caminho local em media/ ou public_id do Cloudinary)
     image_path = models.CharField('caminho da imagem', max_length=500)
     
+    # Hash da imagem para detecção de duplicatas (MD5)
+    image_hash = models.CharField('hash da imagem', max_length=32, blank=True, db_index=True)
+    
     # Resultado do OCR (JSON) - estrutura completa retornada pelo Gemini
     result = models.JSONField('resultado', null=True, blank=True)
     error_message = models.TextField('mensagem de erro', blank=True)
@@ -69,6 +72,7 @@ class OCRJob(models.Model):
         self.error_message = error
         self.completed_at = timezone.now()
         self.save(update_fields=['status', 'error_message', 'completed_at'])
+
 
 
 class APIKeyStatus(models.Model):
@@ -210,6 +214,7 @@ class Invoice(models.Model):
     def photo_url(self):
         """
         Retorna a URL da foto correta para o ambiente.
+        - Supabase Storage: retorna URL assinada
         - Cloudinary: retorna URL do Cloudinary
         - Local: retorna URL do media/
         """
@@ -218,16 +223,27 @@ class Invoice(models.Model):
         
         photo_str = str(self.photo)
         
+        # Se é um path do Supabase Storage (UUID.jpg)
+        import re
+        uuid_pattern = r'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\.jpg$'
+        if re.match(uuid_pattern, photo_str, re.IGNORECASE):
+            from decouple import config
+            supabase_url = config('SUPABASE_URL', default='')
+            if supabase_url:
+                # URL pública para buckets públicos ou URL assinada para privados
+                return f"{supabase_url}/storage/v1/object/public/ocr-images/{photo_str}"
+            return None
+        
         # Se começa com 'local/', é arquivo local
         if photo_str.startswith('local/'):
             from django.conf import settings
             filename = photo_str.replace('local/', '')
-            # Adiciona extensão .jpg se não tiver (CloudinaryResource pode remover a extensão do str)
+            # Adiciona extensão .jpg se não tiver
             if not filename.lower().endswith('.jpg'):
                 filename = f"{filename}.jpg"
             return f"{settings.MEDIA_URL}invoices/{filename}"
         
-        # Se não tem prefixo 'local/' mas não é Cloudinary (ex: ImageField padrão), 
+        # Se não tem prefixo 'local/' mas não é Cloudinary, 
         # tenta retornar a URL se possível ou assume local
         if not hasattr(self.photo, 'public_id'): 
              try:

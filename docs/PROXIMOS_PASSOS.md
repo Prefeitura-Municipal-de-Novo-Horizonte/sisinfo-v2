@@ -2,11 +2,19 @@
 
 Documento de planejamento para futuras implementações e melhorias do sistema.
 
-**Última atualização:** 2024-12-11
+**Última atualização:** 2024-12-20
 
 ---
 
 ## ✅ Concluído Recentemente
+
+### Sistema de OCR com Supabase Edge Functions
+- [x] Migração de Node.js API para Supabase Edge Functions
+- [x] Processamento assíncrono com polling
+- [x] Detecção de imagem duplicada (hash MD5)
+- [x] Limpeza automática de jobs órfãos
+- [x] Suporte a múltiplas chaves Gemini com rotação
+- [x] Documentação completa (`docs/OCR.md`, `docs/DEPLOY_OCR.md`)
 
 ### Sistema de Auditoria com MongoDB
 - [x] App `audit` criado e configurado
