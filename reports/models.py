@@ -9,7 +9,6 @@ from django.shortcuts import resolve_url as r
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-from cloudinary.models import CloudinaryField
 
 from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
@@ -109,7 +108,9 @@ class ReportDocument(models.Model):
     report = models.ForeignKey(
         Report, on_delete=models.CASCADE,
         related_name='documents', verbose_name='laudo')
-    file = CloudinaryField('arquivo', folder='sisinfo/reports')
+    file = models.CharField(
+        'arquivo', max_length=255, blank=True, null=True,
+        help_text='Path do arquivo no Supabase Storage ou URL')
     file_type = models.CharField(
         'tipo', max_length=1, choices=FILE_TYPES, default='L')
     description = models.CharField('descrição', max_length=200, blank=True)
