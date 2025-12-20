@@ -40,7 +40,13 @@ DATABASE_URL = clean_supabase_url(
     config("POSTGRES_URL", default=config("DATABASE_URL", default=""))
 )
 DATABASES = {
-    "default": dburl(DATABASE_URL)
+    "default": {
+        **dburl(DATABASE_URL),
+        # IMPORTANTE: Em ambiente serverless (Vercel) com Supabase Pooler,
+        # CONN_MAX_AGE deve ser 0 para evitar erro "cursor does not exist"
+        "CONN_MAX_AGE": 0,
+        "CONN_HEALTH_CHECKS": True,
+    }
 }
 # Configurações de segurança recomendadas
 SECURE_SSL_REDIRECT = True
