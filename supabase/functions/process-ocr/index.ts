@@ -12,6 +12,7 @@ interface OCRRequest {
   job_id: string
   image_path: string
   gemini_keys: string  // Múltiplas chaves separadas por vírgula
+  gemini_model: string  // Modelo a usar (ex: gemini-flash-latest)
   callback_url: string  // URL para callback ao Django
   callback_secret: string  // Secret para autenticação
 }
@@ -120,7 +121,8 @@ function isQuotaError(error: Error): boolean {
 async function processWithKey(
   keys: string[],
   keyIndex: number,
-  base64Image: string
+  base64Image: string,
+  modelName: string = "gemini-flash-latest"
 ): Promise<ProcessResult> {
   if (keyIndex < 0 || keyIndex >= keys.length) {
     return { success: false, error: "Todas as chaves API esgotadas hoje" }
@@ -130,7 +132,7 @@ async function processWithKey(
   
   try {
     const genAI = new GoogleGenerativeAI(key)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" })
+    const model = genAI.getGenerativeModel({ model: modelName })
 
     const prompt = `Analise esta imagem de uma Nota Fiscal brasileira e extraia as seguintes informações em formato JSON:
 
@@ -273,7 +275,10 @@ Deno.serve(async (req) => {
 
   try {
     const body: OCRRequest = await req.json()
-    const { job_id, image_path, gemini_keys, callback_url, callback_secret } = body
+    const { job_id, image_path, gemini_keys, gemini_model, callback_url, callback_secret } = body
+    
+    // Modelo padrão se não fornecido
+    const modelToUse = gemini_model || "gemini-flash-latest"
 
     if (!job_id || !image_path || !gemini_keys) {
       return new Response(
@@ -326,7 +331,7 @@ Deno.serve(async (req) => {
     
     // Processar OCR com rotação de chaves
     console.log("OCR Function: Chamando Gemini Vision API")
-    const ocrResult = await processWithKey(keys, keyIndex, base64Image)
+    const ocrResult = await processWithKey(keys, keyIndex, base64Image, modelToUse)
     
     if (!ocrResult.success) {
       await sendCallback(callback_url, callback_secret, "failed", null, ocrResult.error || "Erro no OCR")

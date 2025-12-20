@@ -258,6 +258,7 @@ def _invoke_edge_function(job_id: str, image_path: str):
     
     try:
         url = f"{conf['url']}/functions/v1/process-ocr"
+        gemini_model = config('GEMINI_MODEL', default='gemini-flash-latest')
         
         # Fire-and-forget: timeout muito curto, ignora resposta
         requests.post(
@@ -270,6 +271,7 @@ def _invoke_edge_function(job_id: str, image_path: str):
                 'job_id': job_id,
                 'image_path': image_path,
                 'gemini_keys': gemini_keys,  # Todas as chaves
+                'gemini_model': gemini_model,  # Modelo a usar
                 'callback_url': callback_url,  # URL para callback
                 'callback_secret': conf['service_key'],  # Para autenticação
             },
