@@ -92,57 +92,57 @@ def top_materials_chart(request):
 @login_required
 def api_status(request):
     """
-    Verifica status da API Node.js OCR.
-    Retorna JSON com status de todas as APIs.
+    Verifica status dos serviços externos.
+    Retorna JSON com status do Supabase Edge Functions.
     """
-    # Usar NODEJS_API_URL para evitar conflito com VERCEL_URL automático
-    nodejs_api_url = config('NODEJS_API_URL', default='http://localhost:3001')
-    
-    # Construir URL da API health
-    if nodejs_api_url.startswith('http'):
-        health_url = f"{nodejs_api_url}/api/health"
-    else:
-        health_url = f"https://{nodejs_api_url}/api/health"
+    supabase_url = config('SUPABASE_URL', default='')
     
     result = {
-        'nodejs_api': {
-            'url': health_url,
+        'supabase': {
+            'url': supabase_url,
             'status': 'unknown',
             'message': '',
             'response_time_ms': None
         },
         'environment': {
-            'nodejs_api_url': nodejs_api_url,
-            'use_nodejs_ocr': config('USE_NODEJS_OCR', default='false'),
+            'supabase_configured': bool(supabase_url),
             'gemini_configured': bool(config('GEMINI_API_KEY', default=None)),
-            'internal_secret_configured': bool(config('INTERNAL_API_SECRET', default=None))
         }
     }
+    
+    if not supabase_url:
+        result['supabase']['status'] = 'not_configured'
+        result['supabase']['message'] = 'Supabase não configurado'
+        return JsonResponse(result)
     
     try:
         import time
         start = time.time()
-        response = requests.get(health_url, timeout=5)
+        # Verificar se Supabase está acessível
+        health_url = f"{supabase_url}/rest/v1/"
+        response = requests.get(
+            health_url, 
+            headers={'apikey': config('SUPABASE_ANON_KEY', default='')},
+            timeout=5
+        )
         elapsed = int((time.time() - start) * 1000)
         
-        result['nodejs_api']['response_time_ms'] = elapsed
+        result['supabase']['response_time_ms'] = elapsed
         
-        if response.status_code == 200:
-            data = response.json()
-            result['nodejs_api']['status'] = data.get('status', 'ok')
-            result['nodejs_api']['message'] = 'API respondendo normalmente'
-            result['nodejs_api']['details'] = data.get('checks', {})
+        if response.status_code in [200, 401]:  # 401 é ok, significa que está respondendo
+            result['supabase']['status'] = 'ok'
+            result['supabase']['message'] = 'Supabase respondendo normalmente'
         else:
-            result['nodejs_api']['status'] = 'error'
-            result['nodejs_api']['message'] = f'Status code: {response.status_code}'
+            result['supabase']['status'] = 'error'
+            result['supabase']['message'] = f'Status code: {response.status_code}'
     except requests.Timeout:
-        result['nodejs_api']['status'] = 'timeout'
-        result['nodejs_api']['message'] = 'API não respondeu em 5s'
+        result['supabase']['status'] = 'timeout'
+        result['supabase']['message'] = 'Supabase não respondeu em 5s'
     except requests.RequestException as e:
-        result['nodejs_api']['status'] = 'error'
-        result['nodejs_api']['message'] = str(e)
+        result['supabase']['status'] = 'error'
+        result['supabase']['message'] = str(e)
     except Exception as e:
-        result['nodejs_api']['status'] = 'error'
-        result['nodejs_api']['message'] = f'Erro: {str(e)}'
+        result['supabase']['status'] = 'error'
+        result['supabase']['message'] = f'Erro: {str(e)}'
     
     return JsonResponse(result)

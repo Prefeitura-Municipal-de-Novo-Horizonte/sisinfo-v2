@@ -181,6 +181,18 @@ class InvoiceDeleteView(LoginRequiredMixin, DeleteView):
     login_url = 'authenticate:login'
     
     def form_valid(self, form):
+        # Tentar deletar imagem antes de excluir a nota
+        if self.object.photo:
+            try:
+                # Se for Cloudinary
+                photo_id = str(self.object.photo)
+                if photo_id:
+                    import cloudinary.uploader
+                    cloudinary.uploader.destroy(photo_id)
+                    print(f"Cloudinary: Imagem {photo_id} deletada")
+            except Exception as e:
+                print(f"Erro ao deletar imagem do Cloudinary: {e}")
+        
         messages.success(self.request, f'Nota fiscal {self.object.number} excluída com sucesso!')
         return super().form_valid(form)
 
@@ -442,97 +454,34 @@ def invoice_process(request):
             image_bytes = photo.read()
             photo.seek(0)
 
-        # 1. Extrair dados via OCR
-        # Tenta Node.js API primeiro (mais rápido), fallback para Python
-        from django.conf import settings
-        from decouple import config
+        # 1. Extrair dados via OCR (fallback síncrono - usa Python OCR)
+        # NOTA: O processo principal agora é assíncrono via Supabase Edge Functions
+        # Este fallback é apenas para compatibilidade legacy
+        from fiscal.services.ocr import InvoiceOCRService
+        ocr_service = InvoiceOCRService()
+        extracted = ocr_service.extract_from_bytes(image_bytes, mime_type='image/jpeg')
         
-        use_nodejs_ocr = config('USE_NODEJS_OCR', default='true', cast=str).lower() == 'true'
-        
-        if use_nodejs_ocr:
-            # PRODUÇÃO: Usar API Node.js (mais rápida no Vercel)
-            from fiscal.services.nodejs_ocr import call_nodejs_ocr, parse_nodejs_ocr_response
+        if extracted.error:
+            # Verificar se é erro de quota (429)
+            if '429' in extracted.error or 'RESOURCE_EXHAUSTED' in extracted.error or 'quota' in extracted.error.lower():
+                return JsonResponse({
+                    'error': 'Limite diário de OCR atingido',
+                    'error_type': 'quota_exceeded',
+                    'message': 'O limite gratuito de leituras por dia foi atingido. Você pode cadastrar a nota manualmente ou aguardar até amanhã para usar o OCR novamente.',
+                    'manual_entry_url': '/reports/notas/nova/'
+                }, status=429)
             
-            ocr_result = call_nodejs_ocr(image_bytes, mime_type='image/jpeg')
+            # Verificar se todas as chaves falharam (quota ou inválidas)
+            if 'chaves API falharam' in extracted.error or 'chaves falharam' in extracted.error:
+                return JsonResponse({
+                    'error': 'Todas as chaves API falharam',
+                    'error_type': 'all_keys_failed',
+                    'message': extracted.error,
+                    'manual_entry_url': '/reports/notas/nova/'
+                }, status=400)
             
-            if not ocr_result.get('success'):
-                error_msg = ocr_result.get('error', 'Erro desconhecido')
-                
-                # Verificar se é erro de quota
-                if 'esgotadas' in error_msg.lower() or 'quota' in error_msg.lower():
-                    return JsonResponse({
-                        'error': 'Limite diário de OCR atingido',
-                        'error_type': 'quota_exceeded',
-                        'message': error_msg,
-                        'manual_entry_url': '/reports/notas/nova/'
-                    }, status=429)
-                
-                # Verificar se é timeout
-                if 'timeout' in error_msg.lower():
-                    return JsonResponse({
-                        'error': 'Timeout no processamento',
-                        'error_type': 'timeout',
-                        'message': error_msg,
-                        'manual_entry_url': '/reports/notas/nova/'
-                    }, status=408)
-                
-                return JsonResponse({'error': f'Erro ao ler nota: {error_msg}'}, status=400)
-            
-            # Converter resposta para formato esperado
-            extracted_data = parse_nodejs_ocr_response(ocr_result.get('data', {}))
-            
-            # Criar objeto compatível para o resto do código
-            class ExtractedData:
-                def __init__(self, data):
-                    self.number = data.get('number', '')
-                    self.series = data.get('series', '')
-                    self.access_key = data.get('access_key', '')
-                    self.issue_date = data.get('issue_date', '')
-                    self.supplier_name = data.get('supplier_name', '')
-                    self.supplier_cnpj = data.get('supplier_cnpj', '')
-                    self.total_value = data.get('total_value', 0)
-                    self.observations = data.get('observations', '')
-                    self.confidence = 1.0
-                    self.products = []
-                    for p in data.get('products', []):
-                        class Product:
-                            def __init__(self, product_data):
-                                self.code = product_data.get('code', '')
-                                self.description = product_data.get('description', '')
-                                self.quantity = product_data.get('quantity', 0)
-                                self.unit = product_data.get('unit', 'UN')
-                                self.unit_price = product_data.get('unit_price', 0)
-                                self.total_price = product_data.get('total_price', 0)
-                        self.products.append(Product(p))
-            
-            extracted = ExtractedData(extracted_data)
-        else:
-            # DESENVOLVIMENTO/FALLBACK: Usar Python OCR
-            from fiscal.services.ocr import InvoiceOCRService
-            ocr_service = InvoiceOCRService()
-            extracted = ocr_service.extract_from_bytes(image_bytes, mime_type='image/jpeg')
-            
-            if extracted.error:
-                # Verificar se é erro de quota (429)
-                if '429' in extracted.error or 'RESOURCE_EXHAUSTED' in extracted.error or 'quota' in extracted.error.lower():
-                    return JsonResponse({
-                        'error': 'Limite diário de OCR atingido',
-                        'error_type': 'quota_exceeded',
-                        'message': 'O limite gratuito de leituras por dia foi atingido. Você pode cadastrar a nota manualmente ou aguardar até amanhã para usar o OCR novamente.',
-                        'manual_entry_url': '/reports/notas/nova/'
-                    }, status=429)
-                
-                # Verificar se todas as chaves falharam (quota ou inválidas)
-                if 'chaves API falharam' in extracted.error or 'chaves falharam' in extracted.error:
-                    return JsonResponse({
-                        'error': 'Todas as chaves API falharam',
-                        'error_type': 'all_keys_failed',
-                        'message': extracted.error,
-                        'manual_entry_url': '/reports/notas/nova/'
-                    }, status=400)
-                
-                # Outros erros do OCR
-                return JsonResponse({'error': f'Erro ao ler nota: {extracted.error}'}, status=400)
+            # Outros erros do OCR
+            return JsonResponse({'error': f'Erro ao ler nota: {extracted.error}'}, status=400)
         
         # 2. Verificar duplicidade ANTES do upload
         existing = Invoice.objects.filter(

@@ -23,6 +23,7 @@ from fiscal.views import (
     delivery_generate_pdf,
     ocr_submit,
     ocr_status,
+    ocr_cancel,
 )
 
 app_name = 'fiscal'
@@ -45,6 +46,7 @@ urlpatterns = [
     # OCR Assíncrono (polling)
     path('ocr/submit/', ocr_submit, name='ocr_submit'),
     path('ocr/status/<uuid:job_id>/', ocr_status, name='ocr_status'),
+    path('ocr/cancel/<uuid:job_id>/', ocr_cancel, name='ocr_cancel'),
     
     # Empenhos
     path('empenhos/', CommitmentListView.as_view(), name='commitments'),

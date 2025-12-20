@@ -248,10 +248,12 @@
       supplier_name_detected: '',
       supplier_cnpj_detected: '',
       materials: [],
-      confidence: 0
+      confidence: 0,
+      job_id: null  // Para cleanup
     };
 
     let dataToLoad = null;
+    let formSubmitted = false;
 
     if (fromOcr && ocrData) {
       try {
@@ -323,6 +325,27 @@
         }
       });
     }
+
+    // Marcar formulário como submetido para não cancelar OCRJob
+    document.querySelector('form').addEventListener('submit', () => {
+      formSubmitted = true;
+    });
+
+    // Cleanup: Cancelar OCRJob se sair da página sem salvar
+    window.addEventListener('beforeunload', (e) => {
+      if (!formSubmitted && extractedData.job_id) {
+        // Usar navigator.sendBeacon para garantir que a requisição seja enviada
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (csrfToken) {
+          const formData = new FormData();
+          formData.append('csrfmiddlewaretoken', csrfToken);
+          navigator.sendBeacon(
+            `/fiscal/ocr/cancel/${extractedData.job_id}/`,
+            formData
+          );
+        }
+      }
+    });
 
     return {
       extractedData

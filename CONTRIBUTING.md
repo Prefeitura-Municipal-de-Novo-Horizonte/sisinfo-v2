@@ -46,7 +46,7 @@ Recomendamos que você trabalhe em um **Fork** do repositório oficial.
 ### Pré-requisitos
 *   Python 3.12+ (3.11 compatível)
 *   Node.js 20+
-*   PostgreSQL (Docker recomendado)
+*   Docker Desktop (para PostgreSQL e Supabase local)
 *   MongoDB Atlas (Free Tier) - Para sistema de auditoria
 
 ### Configuração Rápida
@@ -62,17 +62,30 @@ Recomendamos que você trabalhe em um **Fork** do repositório oficial.
 2.  **Variáveis de Ambiente:**
     *   Copie `contrib/.env-sample` para `.env`.
     *   Configure as variáveis essenciais:
-        - `DATABASE_URL`: PostgreSQL
+        - `POSTGRES_URL_NON_POOLING`: PostgreSQL (Supabase local ou Docker)
         - `DATABASE_MONGODB_LOGS`: MongoDB Atlas (auditoria)
         - `SECRET_KEY`: Chave secreta Django
         - `DEBUG=True`: Para desenvolvimento
+        - `GEMINI_API_KEY`: Chaves da API Gemini (separadas por vírgula)
 3.  **Banco de Dados:**
     ```bash
     python manage.py migrate
     ```
-4.  **Execução:**
+4.  **Iniciar Supabase Local (para OCR):**
+    ```bash
+    # Inicia PostgreSQL, Storage e Edge Functions localmente
+    npx supabase start
+    
+    # Em outro terminal, serve a Edge Function de OCR
+    npx supabase functions serve process-ocr --no-verify-jwt
+    ```
+    > ⚠️ **Nota:** O OCR funciona sem Supabase definindo `USE_SUPABASE_STORAGE=False` no `.env`,
+    > mas o processamento será síncrono (pode dar timeout em produção).
+    
+5.  **Execução:**
     *   Terminal 1 (CSS): `npm run dev`
     *   Terminal 2 (Django): `python manage.py runserver`
+    *   Terminal 3 (Supabase - opcional): `npx supabase functions serve process-ocr`
 
 ---
 
@@ -198,9 +211,10 @@ O sistema usa **Playwright** e **Browserless.io**.
 ## 📚 Recursos Úteis
 
 ### Documentação Interna
+*   [OCR.md](docs/OCR.md) - Sistema de OCR com Supabase Edge Functions
+*   [DEPLOY_OCR.md](docs/DEPLOY_OCR.md) - Checklist de deploy do OCR
 *   [GEMINI.md](docs/GEMINI.md) - Guia para colaboração com IA
 *   [PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md) - Roadmap do projeto
-*   [POS_DEPLOY_COMMANDS.md](docs/POS_DEPLOY_COMMANDS.md) - Comandos pós-deploy
 
 ### Ferramentas
 *   **Linting**: `djlint` (templates), `prettier` (JS/CSS)

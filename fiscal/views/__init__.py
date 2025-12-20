@@ -28,4 +28,5 @@ from .delivery import (
 from .ocr import (
     ocr_submit,
     ocr_status,
+    ocr_cancel,
 )

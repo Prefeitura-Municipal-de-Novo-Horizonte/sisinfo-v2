@@ -45,11 +45,14 @@ O projeto segue uma arquitetura **Service Layer** sobre o padrão MVT do Django,
 | `Django` | `5.2.6` | Framework Web |
 | `PostgreSQL` | `Latest` | Banco de Dados Principal |
 | `MongoDB` | `Atlas Free` | Logs de Auditoria |
+| `Supabase` | `Latest` | Storage e Edge Functions (OCR) |
+| `Gemini API` | `2.0 Flash` | OCR de Notas Fiscais |
 | `TailwindCSS` | `3.4.x` | Estilização |
 | `Alpine.js` | `3.13.3` | Reatividade Frontend |
 | `HTMX` | `1.9.10` | Interações AJAX |
 | `ApexCharts` | `Latest` | Gráficos e Dashboards |
 | `Docker` | `Latest` | Containerização (Opcional) |
+
 
 ## 🛠️ Setup Local
 
@@ -140,6 +143,8 @@ python manage.py test --nomigrations
 
 ## 📚 Documentação
 
+- **[OCR.md](docs/OCR.md)**: Sistema de OCR com Supabase Edge Functions
+- **[DEPLOY_OCR.md](docs/DEPLOY_OCR.md)**: Checklist de deploy do OCR em produção
 - **[GEMINI.md](docs/GEMINI.md)**: Guia completo para colaboração com IA
 - **[PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md)**: Roadmap e próximos passos
 - **[CONTRIBUTING.md](CONTRIBUTING.md)**: Guia de contribuição

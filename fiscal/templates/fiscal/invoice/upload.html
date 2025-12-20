@@ -164,6 +164,9 @@
             pollInterval: null,
             pollCount: 0,
             maxPolls: 60, // 60 polls x 2s = 2 minutos máximo
+            lastStatus: null,
+            sameStatusCount: 0,
+            maxSameStatus: 20, // Se status não mudar em 20 polls (40s), considerar erro
             steps: {
                 upload: false,
                 reading: false,
@@ -204,12 +207,33 @@
 
                     const submitData = await submitResponse.json();
 
+                    // Verificar se é uma nota duplicada já cadastrada
+                    if (submitData.duplicate) {
+                        this.handleError(submitData.error);
+                        // Opcional: redirecionar para a nota existente
+                        if (submitData.invoice_id) {
+                            setTimeout(() => {
+                                if (confirm('Deseja abrir a nota fiscal já cadastrada?')) {
+                                    window.location.href = `/fiscal/notas/${submitData.invoice_id}/`;
+                                }
+                            }, 100);
+                        }
+                        return;
+                    }
+
                     if (!submitResponse.ok || submitData.error) {
                         throw new Error(submitData.error || 'Erro ao enviar imagem');
                     }
 
                     this.steps.upload = true;
                     this.jobId = submitData.job_id;
+
+                    // Se dados foram reutilizados (imagem já processada), ir direto para completed
+                    if (submitData.reused) {
+                        this.steps.reading = true;
+                        this.steps.extracting = true;
+                        // Já vai direto consultar o status que retornará completed
+                    }
 
                     // 2. Iniciar polling para verificar status
                     this.startPolling();
@@ -251,6 +275,19 @@
 
                     const data = await response.json();
 
+                    // Detectar job travado (mesmo status por muito tempo)
+                    if (data.status === this.lastStatus) {
+                        this.sameStatusCount++;
+                        if (this.sameStatusCount >= this.maxSameStatus) {
+                            this.stopPolling();
+                            this.handleError('Processamento demorou demais. Tente novamente ou cadastre manualmente.');
+                            return;
+                        }
+                    } else {
+                        this.lastStatus = data.status;
+                        this.sameStatusCount = 0;
+                    }
+
                     if (data.status === 'completed') {
                         this.stopPolling();
                         this.steps.extracting = true;
@@ -268,7 +305,7 @@
                         this.stopPolling();
                         this.handleError(data.error || 'Erro ao processar nota fiscal');
                         
-                    } else if (data.status === 'processing') {
+                    } else if (data.status === 'processing' || data.status === 'pending') {
                         // Ainda processando, continua polling
                         // Atualiza UI para mostrar progresso
                         if (this.pollCount > 3) {
@@ -306,6 +343,8 @@
                 this.errorMessage = '';
                 this.jobId = null;
                 this.pollCount = 0;
+                this.lastStatus = null;
+                this.sameStatusCount = 0;
                 this.steps = { upload: false, reading: false, extracting: false };
                 this.stopPolling();
             }
