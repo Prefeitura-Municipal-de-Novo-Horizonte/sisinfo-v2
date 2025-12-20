@@ -24,6 +24,7 @@ from fiscal.views import (
     ocr_submit,
     ocr_status,
     ocr_cancel,
+    ocr_callback,
 )
 
 app_name = 'fiscal'
@@ -47,6 +48,7 @@ urlpatterns = [
     path('ocr/submit/', ocr_submit, name='ocr_submit'),
     path('ocr/status/<uuid:job_id>/', ocr_status, name='ocr_status'),
     path('ocr/cancel/<uuid:job_id>/', ocr_cancel, name='ocr_cancel'),
+    path('ocr/callback/<uuid:job_id>/', ocr_callback, name='ocr_callback'),
     
     # Empenhos
     path('empenhos/', CommitmentListView.as_view(), name='commitments'),

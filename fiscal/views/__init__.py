@@ -29,4 +29,5 @@ from .ocr import (
     ocr_submit,
     ocr_status,
     ocr_cancel,
+    ocr_callback,
 )
