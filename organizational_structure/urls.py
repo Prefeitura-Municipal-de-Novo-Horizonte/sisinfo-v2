@@ -1,6 +1,7 @@
 from django.urls import path
 
 from organizational_structure.views import (
+    StructureView,
     DirectionListView,
     DirectionCreateView,
     DirectionDetailView,
@@ -16,6 +17,9 @@ from organizational_structure.views import (
 app_name = "organizational_structure"
 
 urlpatterns = [
+    # Página Unificada
+    path("", StructureView.as_view(), name="estrutura"),
+    
     # Diretorias
     path("diretorias/", DirectionListView.as_view(), name="diretorias"),
     path("diretoria/create/", DirectionCreateView.as_view(), name="create_diretoria"),
