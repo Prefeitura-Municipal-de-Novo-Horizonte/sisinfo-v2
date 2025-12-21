@@ -22,18 +22,7 @@ pip install -r requirements.txt -q
 echo "🔄 Aplicando migrações..."
 python3 manage.py migrate --noinput
 
-# -----------------------------------------------------------
-# PRODUCTION DATA FIXES & SYNC
-# -----------------------------------------------------------
-if [ "$RUN_PRODUCTION_SYNC" = "true" ]; then
-    echo "🛠️ Executando correções de dados e sincronização (RUN_PRODUCTION_SYNC=true)..."
-    python3 manage.py fix_material_names
-    python3 manage.py update_supplier_cnpjs
-    python3 manage.py sync_bidding_materials
-else
-    echo "⏩ Pulando sincronização de dados (RUN_PRODUCTION_SYNC não definido ou false)."
-fi
-# -----------------------------------------------------------
+
 
 
 # Criar superusuário se variáveis estiverem definidas
