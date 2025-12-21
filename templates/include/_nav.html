@@ -23,7 +23,7 @@
       
       <!-- Dashboard -->
       <a href="{% url 'dashboard:index' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.app_name == 'dashboard' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -41,7 +41,7 @@
 
       <!-- Estrutura (Setores + Diretorias) -->
       <a href="{% url 'organizational_structure:estrutura' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.app_name == 'organizational_structure' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -58,7 +58,7 @@
 
       <!-- Laudos -->
       <a href="{% url 'reports:reports' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.app_name == 'reports' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -75,7 +75,7 @@
 
       <!-- Fiscal (Notas + Empenhos + Entregas) -->
       <a href="{% url 'fiscal:invoices' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.app_name == 'fiscal' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -91,12 +91,12 @@
       </a>
 
       <!-- Separador -->
-      <div class="pt-4 mt-4 border-t border-slate-800/50 dark:border-gray-200"></div>
+      <!-- separador removido -->
 
       {% if request.user.is_tech %}
       <!-- Licitações -->
       <a href="{% url 'bidding_procurement:licitacoes' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.url_name == 'licitacoes' or request.resolver_match.url_name == 'licitacao_detalhe' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -114,7 +114,7 @@
 
       <!-- Fornecedores -->
       <a href="{% url 'suppliers:fornecedores' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.app_name == 'suppliers' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -131,7 +131,7 @@
 
       <!-- Materiais -->
       <a href="{% url 'bidding_procurement:materiais' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.url_name == 'materiais' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
@@ -148,11 +148,11 @@
 
       {% if request.user.is_admin %}
       <!-- Separador -->
-      <div class="pt-4 mt-4 border-t border-slate-800/50 dark:border-gray-200"></div>
+      <!-- separador removido -->
 
       <!-- Usuários -->
       <a href="{% url 'authenticate:show_users' %}"
-        class="flex items-center p-2 rounded-lg transition-colors group
+        class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
           {% if request.resolver_match.url_name == 'show_users' or request.resolver_match.url_name == 'register_user' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
