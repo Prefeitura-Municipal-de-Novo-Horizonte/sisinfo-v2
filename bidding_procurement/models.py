@@ -271,6 +271,12 @@ class MaterialBidding(models.Model):
         verbose_name='fornecedor vencedor',
         help_text="Fornecedor que venceu este item na licitação"
     )
+    brand = models.CharField(
+        "marca",
+        max_length=200,
+        blank=True,
+        help_text="Marca do material nesta licitação (ex: TSA AD-09, DEKO 764-J)"
+    )
     quantity = models.IntegerField(
         "quantidade licitada",
         default=0,

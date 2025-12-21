@@ -241,20 +241,25 @@ def _invoke_edge_function(job_id: str, image_path: str):
     gemini_keys = config('GEMINI_API_KEY', default='')
     
     # Construir callback URL
-    # Em produção, usa VERCEL_URL ou similar
-    # Em dev, usa localhost
+    # CALLBACK_BASE_URL: override para dev local (ex: http://host.docker.internal:8000)
+    # Se não definida, usa a lógica padrão de produção
     from django.urls import reverse
     
-    # Tentar obter URL base de produção
-    base_url = config('VERCEL_URL', default='')
-    if base_url and not base_url.startswith('http'):
-        base_url = f"https://{base_url}"
+    callback_base_url = config('CALLBACK_BASE_URL', default=None)
     
-    if not base_url:
-        base_url = config('SITE_URL', default='http://127.0.0.1:8000')
-    
-    callback_path = f"/fiscal/ocr/callback/{job_id}/"
-    callback_url = f"{base_url}{callback_path}"
+    if callback_base_url:
+        # Dev local: usa override (para Docker acessar host)
+        callback_url = f"{callback_base_url}/fiscal/ocr/callback/{job_id}/"
+    else:
+        # Produção: usa VERCEL_URL ou SITE_URL
+        base_url = config('VERCEL_URL', default='')
+        if base_url and not base_url.startswith('http'):
+            base_url = f"https://{base_url}"
+        
+        if not base_url:
+            base_url = config('SITE_URL', default='http://127.0.0.1:8000')
+        
+        callback_url = f"{base_url}/fiscal/ocr/callback/{job_id}/"
     
     try:
         url = f"{conf['url']}/functions/v1/process-ocr"

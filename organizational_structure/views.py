@@ -1,10 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages import constants
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, TemplateView
 
 from authenticate.mixins import TechOnlyMixin
 from organizational_structure.filters import DirectionFilter, SectorFilter
@@ -12,6 +12,38 @@ from organizational_structure.forms import DirectionForm, SectorForm
 from organizational_structure.models import Direction, Sector
 from organizational_structure.services import StructureService
 from reports.models import Report
+
+
+##############################################
+# PÁGINA UNIFICADA (ESTRUTURA)
+##############################################
+
+class StructureView(LoginRequiredMixin, TemplateView):
+    """View para página unificada de Estrutura (Setores + Diretorias)."""
+    template_name = "organizational_structure/estrutura.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Aba ativa (setores ou diretorias)
+        tab = self.request.GET.get('tab', 'setores')
+        context['active_tab'] = tab
+        
+        # Setores
+        setores = StructureService.get_all_sectors()
+        setores_filter = SectorFilter(self.request.GET, queryset=setores)
+        context['setores'] = setores_filter.qs[:20]  # Limitar para performance
+        context['setores_filter'] = setores_filter
+        context['total_setores'] = setores.count()
+        
+        # Diretorias
+        diretorias = StructureService.get_all_directions()
+        diretorias_filter = DirectionFilter(self.request.GET, queryset=diretorias)
+        context['diretorias'] = diretorias_filter.qs[:20]
+        context['diretorias_filter'] = diretorias_filter
+        context['total_diretorias'] = diretorias.count()
+        
+        return context
 
 
 ##############################################

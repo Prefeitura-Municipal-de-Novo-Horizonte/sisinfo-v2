@@ -1,0 +1,190 @@
+{% extends "_base.html" %}
+{% load ui_tags %}
+
+{% block title %}Estrutura Organizacional{% endblock title %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Estrutura Organizacional</h1>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Gerencie setores e diretorias da organização.</p>
+    </div>
+    <div class="flex gap-2">
+        <a href="{% url 'organizational_structure:create_setor' %}"
+            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 focus:ring-4 focus:ring-brand-300 dark:focus:ring-brand-900 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Novo Setor
+        </a>
+        <a href="{% url 'organizational_structure:create_diretoria' %}"
+            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-brand-600 bg-brand-50 dark:bg-brand-900/20 dark:text-brand-400 rounded-lg hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Nova Diretoria
+        </a>
+    </div>
+</div>
+
+<!-- Tabs Navigation -->
+<div x-data="{ activeTab: '{{ active_tab }}' }" class="mb-6">
+    <div class="border-b border-gray-200 dark:border-gray-700">
+        <nav class="-mb-px flex gap-4" aria-label="Tabs">
+            <button @click="activeTab = 'setores'; window.history.pushState({}, '', '?tab=setores')"
+                :class="activeTab === 'setores' 
+                    ? 'border-brand-500 text-brand-600 dark:text-brand-400' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+                Setores
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium px-2 py-0.5 rounded-full">
+                    {{ total_setores }}
+                </span>
+            </button>
+            <button @click="activeTab = 'diretorias'; window.history.pushState({}, '', '?tab=diretorias')"
+                :class="activeTab === 'diretorias' 
+                    ? 'border-brand-500 text-brand-600 dark:text-brand-400' 
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'"
+                class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Diretorias
+                <span class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs font-medium px-2 py-0.5 rounded-full">
+                    {{ total_diretorias }}
+                </span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Tab Content: Setores -->
+    <div x-show="activeTab === 'setores'" x-transition class="mt-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Nome</th>
+                            <th scope="col" class="px-6 py-3">Diretoria</th>
+                            <th scope="col" class="px-6 py-3">Responsável</th>
+                            <th scope="col" class="px-6 py-3 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for setor in setores %}
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                <a href="{% url 'organizational_structure:setor' setor.slug %}" class="hover:text-brand-600 dark:hover:text-brand-400">
+                                    {{ setor.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if setor.direction %}
+                                    <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded">
+                                        {{ setor.direction.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-gray-400">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">{{ setor.accountable|default:"-" }}</td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{% url 'organizational_structure:update_setor' setor.slug %}" 
+                                    class="text-brand-600 dark:text-brand-400 hover:underline">Editar</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <p class="mt-2 font-medium">Nenhum setor cadastrado</p>
+                                <p class="mt-1 text-sm">Comece criando um novo setor.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if setores %}
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                <a href="{% url 'organizational_structure:setores' %}" 
+                    class="text-sm text-brand-600 dark:text-brand-400 hover:underline">
+                    Ver todos os setores →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tab Content: Diretorias -->
+    <div x-show="activeTab === 'diretorias'" x-transition class="mt-6" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Nome</th>
+                            <th scope="col" class="px-6 py-3">Sigla</th>
+                            <th scope="col" class="px-6 py-3">Qtd. Setores</th>
+                            <th scope="col" class="px-6 py-3 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for diretoria in diretorias %}
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                            <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                                <a href="{% url 'organizational_structure:diretoria' diretoria.slug %}" class="hover:text-brand-600 dark:hover:text-brand-400">
+                                    {{ diretoria.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded">
+                                    {{ diretoria.slug|upper }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded-full">
+                                    {{ diretoria.setores.count }} setores
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{% url 'organizational_structure:update_diretoria' diretoria.slug %}" 
+                                    class="text-brand-600 dark:text-brand-400 hover:underline">Editar</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                                <p class="mt-2 font-medium">Nenhuma diretoria cadastrada</p>
+                                <p class="mt-1 text-sm">Comece criando uma nova diretoria.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if diretorias %}
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
+                <a href="{% url 'organizational_structure:diretorias' %}" 
+                    class="text-sm text-brand-600 dark:text-brand-400 hover:underline">
+                    Ver todas as diretorias →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

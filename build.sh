@@ -17,9 +17,13 @@ echo "📦 Instalando dependências..."
 pip install --upgrade pip setuptools wheel -q
 pip install -r requirements.txt -q
 
+
 # Apply migrations
 echo "🔄 Aplicando migrações..."
 python3 manage.py migrate --noinput
+
+
+
 
 # Criar superusuário se variáveis estiverem definidas
 echo "=== VERIFICANDO SUPERUSUÁRIO ==="
