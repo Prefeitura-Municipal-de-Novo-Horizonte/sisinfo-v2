@@ -1,0 +1,478 @@
+{
+  "numero_licitacao": "000223/25",
+  "modalidade": "PREGÃO ELETRÔNICO",
+  "objeto": "REGISTRO DE PREÇOS para eventual aquisição de MATERIAIS DE INFORMÁTICA, para utilização de todas as Secretarias, Diretorias e Divisões Municipais de Novo Horizonte/SP, por um período de 12 (doze) meses, conforme especificações técnicas e quantidades descritas no Termo de Registro de Preços (Inicial).",
+  "orgao": "Prefeitura Municipal de Novo Horizonte",
+  "data_homologacao": null,
+  "itens": [
+    {
+      "item": 1,
+      "descricao": "ALICATE DE CRIMPAGEM P/ CABEAMENTO DE REDE RJ45",
+      "unidade": "UN",
+      "quantidade": 3,
+      "valor_unitario": 52.0,
+      "marca": "SECCON HT 568R",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 2,
+      "descricao": "BATERIA PARA NOBREAK 12V-7AH - SELADA: EXCETO MANUTENÇÃO",
+      "unidade": "UN",
+      "quantidade": 120,
+      "valor_unitario": 129.0,
+      "marca": "SECPOWER SP12-7",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 3,
+      "descricao": "BATERIA PARA NOBREAK ACBA 120800 12V 18AH REGULADA",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 348.0,
+      "marca": "SECPOWER SP12-18",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 4,
+      "descricao": "BATERIA PARA PLACA MAE",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 4.0,
+      "marca": "MAXPRINT CR2032",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 5,
+      "descricao": "CABO EXTENSOR USB",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 13.0,
+      "marca": "VINIK UAMAF 18",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 6,
+      "descricao": "CABO HDMI PARA HDMI",
+      "unidade": "UN",
+      "quantidade": 25,
+      "valor_unitario": 16.0,
+      "marca": "VINIK H20-2",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 7,
+      "descricao": "CABO USB 2.0 PARA IMPRESSORA",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 11.0,
+      "marca": "VINIK UAMBM-18",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 8,
+      "descricao": "CABO VGA PARA MONITOR",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 18.0,
+      "marca": "VINIK VGA2",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 9,
+      "descricao": "DESINGRIPANTE",
+      "unidade": "L",
+      "quantidade": 10,
+      "valor_unitario": 17.0,
+      "marca": "IMPLASTEC 300ML",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 10,
+      "descricao": "DVD-R",
+      "unidade": "UN",
+      "quantidade": 850,
+      "valor_unitario": 1.7,
+      "marca": "MULTILASER DV061",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 11,
+      "descricao": "FONTE UNIVERSAL P/ NOTEBOOK",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 55.0,
+      "marca": "XWAY 120",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 12,
+      "descricao": "KIT LOCALIZADOR DE CABOS DE REDE TESTADOR ZUMBI",
+      "unidade": "UN",
+      "quantidade": 3,
+      "valor_unitario": 179.0,
+      "marca": "BOMDER 6405",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 13,
+      "descricao": "LEITOR DE CÓDIGO DE BARRAS COM PEDESTAL",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 145.0,
+      "marca": "C3TECH LB-50BK",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 14,
+      "descricao": "PARAFUSO COM PORCA GAIOLA",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 1.1,
+      "marca": "INTELBRAS",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 15,
+      "descricao": "PASTA TÉRMICA PARA PROCESSADOR",
+      "unidade": "UN",
+      "quantidade": 3,
+      "valor_unitario": 19.0,
+      "marca": "IMPLASTEC 300ML",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 16,
+      "descricao": "PLACA DE VIDEO PCI EXPRESS 1 GB DDR3",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 181.0,
+      "marca": "PCYES",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 17,
+      "descricao": "SPRAY LIMPA CONTATO - 300 ML",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 20.0,
+      "marca": "IMPLASTEC 350ML",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 24,
+      "descricao": "CABO DE FORCA PARA PC",
+      "unidade": "UN",
+      "quantidade": 90,
+      "valor_unitario": 8.0,
+      "marca": "CABO GV",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 25,
+      "descricao": "FONTE ATX 450 NOMINAL COM 220 W REAL",
+      "unidade": "UN",
+      "quantidade": 130,
+      "valor_unitario": 65.0,
+      "marca": "BLUECASE BLV 230",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 26,
+      "descricao": "GABINETE TORRE ATX PARA COMPUTADOR COM 1 BAIA",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 113.0,
+      "marca": "FORTREK SC501BK",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 27,
+      "descricao": "HD SSD 480 GB",
+      "unidade": "UN",
+      "quantidade": 80,
+      "valor_unitario": 299.0,
+      "marca": "KINGSTON 480GB",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 28,
+      "descricao": "MEMÓRIA RAM 8GB DDR4 2666 MHZ",
+      "unidade": "UN",
+      "quantidade": 120,
+      "valor_unitario": 151.0,
+      "marca": "MACROVIP 8GB 2666MHZ",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 29,
+      "descricao": "MOUSE OPTICO USB",
+      "unidade": "UN",
+      "quantidade": 130,
+      "valor_unitario": 14.5,
+      "marca": "FORTREK OML 101",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 30,
+      "descricao": "MOUSE PAD",
+      "unidade": "UN",
+      "quantidade": 65,
+      "valor_unitario": 8.0,
+      "marca": "FORTREK BAP 102BK",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 31,
+      "descricao": "PAR DE CAIXAS DE SOM PARA COMPUTADOR",
+      "unidade": "PA",
+      "quantidade": 60,
+      "valor_unitario": 34.0,
+      "marca": "HAYOM KM 2501",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 32,
+      "descricao": "PEN DRIVE 64GB",
+      "unidade": "UN",
+      "quantidade": 30,
+      "valor_unitario": 49.8,
+      "marca": "SANDISK 64GB",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 33,
+      "descricao": "PLACA MÃE GIGABYTE H610M H DDR4 INTEL SOQUETE",
+      "unidade": "UN",
+      "quantidade": 60,
+      "valor_unitario": 705.0,
+      "marca": "GIGABYTE H610M H",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 34,
+      "descricao": "PROCESSADOR INTEL CORE I5-12400 2.5GHZ LGA 1700",
+      "unidade": "UN",
+      "quantidade": 60,
+      "valor_unitario": 1196.0,
+      "marca": "INTEL I5 12400",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 35,
+      "descricao": "SSD 960 GB",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 461.0,
+      "marca": "KINGSTON 960GB",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 36,
+      "descricao": "SSD EXTERNO 1TB PORTATIL",
+      "unidade": "UN",
+      "quantidade": 15,
+      "valor_unitario": 580.0,
+      "marca": "SANDISK 1TB",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 37,
+      "descricao": "TECLADO USB",
+      "unidade": "UN",
+      "quantidade": 130,
+      "valor_unitario": 40.0,
+      "marca": "FORTREK USB",
+      "fornecedor": {
+        "razao_social": "T. GUIMARAES - INFORMATICA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 38,
+      "descricao": "FONTE ATX 500 W REAL",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 289.0,
+      "marca": "FORTREK BLACK HAWK 500W",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 39,
+      "descricao": "GABINETE MID TOWER COM 3 VENTILADORES E DIMENSIONAMENTO",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 500.0,
+      "marca": "AEROCOOL DRYFT",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 40,
+      "descricao": "PLACA DE VÍDEO, 12GB GDDR6; 02 (DUAS) VENTOINHAS",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 2575.0,
+      "marca": "INNO3D RTX 3060 12GB",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 41,
+      "descricao": "CABO ADAPTADOR COM PLUG, 2XP2",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 23.0,
+      "marca": "VINIK P2MP2F",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 42,
+      "descricao": "HEADSET - 20 HZ",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 241.0,
+      "marca": "PCYES PHB500",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 43,
+      "descricao": "MICROFONE",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 128.0,
+      "marca": "PCYES SH01U",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 44,
+      "descricao": "WEBCAM",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 199.0,
+      "marca": "BRAZIL PC V5",
+      "fornecedor": {
+        "razao_social": "PROSUN INFORMATICA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 45,
+      "descricao": "NOTEBOOK INTEL CORE I5 8GB SSD 512 TELA 15,6 POLEGADAS",
+      "unidade": "UN",
+      "quantidade": 30,
+      "valor_unitario": 3113.0,
+      "marca": "ASUS VIVOBOOK+ RJ45",
+      "fornecedor": {
+        "razao_social": "MAC COPIADORA E COMERCIO DE EQUIPAMENTOS",
+        "cnpj": null
+      }
+    }
+  ],
+  "valor_total_licitacao": 368610.0
+}

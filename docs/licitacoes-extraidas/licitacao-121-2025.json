@@ -1,0 +1,310 @@
+{
+  "numero_licitacao": "000121/25",
+  "modalidade": "PREGÃO ELETRÔNICO",
+  "objeto": "REGISTRO DE PREÇOS para eventual aquisição de MATERIAIS DE INFORMÁTICA, para utilização de todas as Diretorias Municipais de Novo Horizonte/SP, por um período de 12 (doze) meses, conforme especificações técnicas e quantidades descritas no Termo de Referência – ANEXO I.",
+  "orgao": "Prefeitura Municipal de Novo Horizonte",
+  "data_homologacao": null,
+  "itens": [
+    {
+      "item": 24,
+      "descricao": "CABO ADAPTADOR DE REDE USB 3.0 PARA RJ45 F3",
+      "unidade": "UN",
+      "quantidade": 20,
+      "valor_unitario": 41.0,
+      "marca": "TSA AD-09",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 25,
+      "descricao": "CABO DE REDE UTP CAT6E",
+      "unidade": "M",
+      "quantidade": 500,
+      "valor_unitario": 2.0,
+      "marca": "DEKO 764-J CAT6",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 26,
+      "descricao": "CABO DE REDE PRETO CAT6 UTP CAIXA COM 305 METROS",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 574.0,
+      "marca": "DEKO 764-J CAT6",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 27,
+      "descricao": "CABO DE REDE UTP CAT5E - 305 METROS",
+      "unidade": "M",
+      "quantidade": 30,
+      "valor_unitario": 770.0,
+      "marca": "FURUKAWA - 23200099",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 28,
+      "descricao": "CABO DE REDE UTP",
+      "unidade": "M",
+      "quantidade": 600,
+      "valor_unitario": 2.7,
+      "marca": "FURUKAWA - 23200099",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 29,
+      "descricao": "CONECTOR MODULAR PLUG RJ45 CAT6",
+      "unidade": "UN",
+      "quantidade": 200,
+      "valor_unitario": 0.9,
+      "marca": "EXBOM - CAT6",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 30,
+      "descricao": "EMENDA RJ-45",
+      "unidade": "UN",
+      "quantidade": 60,
+      "valor_unitario": 2.75,
+      "marca": "LINK+EMENDA RJ45",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 31,
+      "descricao": "JACK RJ 45 KEYSTONE CAT5E FEMEA",
+      "unidade": "UN",
+      "quantidade": 200,
+      "valor_unitario": 8.0,
+      "marca": "LINK",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 32,
+      "descricao": "PLACA DE REDE PCI-E 10/100/1000 MBPS",
+      "unidade": "UN",
+      "quantidade": 15,
+      "valor_unitario": 45.0,
+      "marca": "DUEX DP-02",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 33,
+      "descricao": "PLUG RJ45 CAT5E",
+      "unidade": "UN",
+      "quantidade": 1300,
+      "valor_unitario": 1.0,
+      "marca": "LINK",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 34,
+      "descricao": "MONITOR LED 21,5 POLEGADAS COM 01 (UM) CONECTOR",
+      "unidade": "UN",
+      "quantidade": 90,
+      "valor_unitario": 339.78,
+      "marca": "PC FORT",
+      "fornecedor": {
+        "razao_social": "LLX DISTRIBUIDORA LTDA",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 35,
+      "descricao": "ESTABILIZADOR 2000 VA",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 771.0,
+      "marca": "CR ENERGY KEE 3.0 BL",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 36,
+      "descricao": "ESTABILIZADOR 500VA",
+      "unidade": "UN",
+      "quantidade": 4,
+      "valor_unitario": 231.75,
+      "marca": "CR ENERGY KEE 2.5 BL",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 37,
+      "descricao": "NOBREAK BIVOLT 600 VA",
+      "unidade": "UN",
+      "quantidade": 55,
+      "valor_unitario": 457.0,
+      "marca": "CR ENERGY KSB 600BS",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 38,
+      "descricao": "NOBREAK 800 VA BIVOLT AUTOMATICO",
+      "unidade": "UN",
+      "quantidade": 30,
+      "valor_unitario": 519.0,
+      "marca": "CR EENRGY KSB 800BS",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 53,
+      "descricao": "SWITCH 10/100/1000 - 16 PORTAS",
+      "unidade": "UN",
+      "quantidade": 15,
+      "valor_unitario": 420.0,
+      "marca": "TPLINK TL-SG1016",
+      "fornecedor": {
+        "razao_social": "EXATA COMERCIO DE EQUIPAMENTOS E ELETRON",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 54,
+      "descricao": "SWITCH 10/100/1000 - 8 PORTAS",
+      "unidade": "UN",
+      "quantidade": 40,
+      "valor_unitario": 129.0,
+      "marca": "TPLINK LS1008G",
+      "fornecedor": {
+        "razao_social": "EXATA COMERCIO DE EQUIPAMENTOS E ELETRON",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 55,
+      "descricao": "SWITCH 28 PORTAS 10/100/1000",
+      "unidade": "UN",
+      "quantidade": 8,
+      "valor_unitario": 1130.0,
+      "marca": "TPLINK TLSG3428",
+      "fornecedor": {
+        "razao_social": "EXATA COMERCIO DE EQUIPAMENTOS E ELETRON",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 56,
+      "descricao": "ANTENA/RÁDIO UNIFI AP PRO",
+      "unidade": "UN",
+      "quantidade": 12,
+      "valor_unitario": 1190.0,
+      "marca": "UBIQUITI UNIFI UAPAC-PRO-BR",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 57,
+      "descricao": "ANTENA-RÁDIO UBIQUITI NBE-5AC-GEN2 NANOBEAM M5 AIRMAX",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 877.0,
+      "marca": "UBIQUITI NBE-5AC-GEN2",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 58,
+      "descricao": "FONTE POE 48 V 0.5 AMP PARA UNIFI",
+      "unidade": "UN",
+      "quantidade": 12,
+      "valor_unitario": 134.0,
+      "marca": null,
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 59,
+      "descricao": "FONTE POE PARA RÁDIO NANOSTATION GIGABIT",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 109.8,
+      "marca": "UBIQUITI - POE-24-12W-G-BR",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 60,
+      "descricao": "FONTE POE PARA RÁDIO NANOSTATION M5",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 106.0,
+      "marca": "UBIQUITI - POE-24-12W-G-BR",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 61,
+      "descricao": "ROUTERBOARD MIKROTIK HAP LITE - RB941-2ND-TC",
+      "unidade": "UN",
+      "quantidade": 12,
+      "valor_unitario": 207.0,
+      "marca": "MIKROTIK RB941-2ND-TC",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    },
+    {
+      "item": 69,
+      "descricao": "RACK DE PAREDE 08U/19P/570MM",
+      "unidade": "UN",
+      "quantidade": 10,
+      "valor_unitario": 590.0,
+      "marca": "PROTECM - COMPACTLITE 8U 570MM",
+      "fornecedor": {
+        "razao_social": "CENTER COPY INFORMÁTICA LTDA ME",
+        "cnpj": null
+      }
+    }
+  ],
+  "valor_total_licitacao": 170280.2
+}
