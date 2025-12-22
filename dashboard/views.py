@@ -288,7 +288,7 @@ def backup_start(request):
         return JsonResponse({
             'success': True,
             'job_id': str(job.id),
-            'message': 'Job de backup criado. Use /admin/backup/status/<job_id>/ para verificar.'
+            'message': 'Job de backup criado. Use /manutencao/backup/status/<job_id>/ para verificar.'
         })
     
     except Exception as e:

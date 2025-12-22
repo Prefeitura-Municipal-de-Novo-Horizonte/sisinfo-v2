@@ -1,296 +1,286 @@
 {% extends "_base.html" %}
 {% load static %}
 
-{% block title %}Administração{% endblock %}
+{% block title %}Manutenção{% endblock %}
 
 {% block content %}
-<div class="p-4 sm:p-6 max-w-6xl mx-auto">
-    <!-- Header -->
-    <div class="mb-6">
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                <li><a href="{% url 'dashboard:index' %}"
-                        class="text-gray-400 hover:text-white dark:hover:text-brand-600">Início</a></li>
-                <li class="flex items-center"><span class="mx-2 text-gray-500">/</span><span
-                        class="text-gray-200 dark:text-gray-700">Administração</span></li>
-            </ol>
-        </nav>
-        <h1 class="text-2xl font-bold text-white dark:text-gray-900">Ferramentas de Administração</h1>
-        <p class="text-gray-400 dark:text-gray-600 mt-1">Operações de manutenção do sistema</p>
+<!-- Page Header -->
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Manutenção</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Ferramentas de administração do sistema</p>
+  </div>
+</div>
+
+<!-- Grid de Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+  <!-- Card: Limpar OCRJobs -->
+  <div
+    class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+    x-data="{ 
+            running: false, 
+            finished: false,
+            success: false,
+            logs: [],
+            
+            addLog(msg, type='info') {
+                const time = new Date().toLocaleTimeString('pt-BR');
+                this.logs.push({ time, msg, type });
+                this.$nextTick(() => {
+                    const terminal = this.$refs.terminalOcr;
+                    if (terminal) terminal.scrollTop = terminal.scrollHeight;
+                });
+            },
+            
+            async execute() {
+                this.running = true;
+                this.finished = false;
+                this.logs = [];
+                
+                this.addLog('Iniciando limpeza de OCRJobs...', 'info');
+                this.addLog('Conectando ao banco de dados...', 'info');
+                
+                try {
+                    await new Promise(r => setTimeout(r, 500));
+                    this.addLog('Buscando jobs para remover...', 'info');
+                    
+                    const response = await fetch('{% url 'dashboard:clean_ocr_jobs' %}', {
+                        method: 'POST',
+                        headers: {'X-CSRFToken': '{{ csrf_token }}'}
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.addLog(`Encontrados ${data.deleted} jobs`, 'info');
+                        this.addLog('Removendo jobs do banco de dados...', 'info');
+                        await new Promise(r => setTimeout(r, 300));
+                        this.addLog(`✓ ${data.deleted} jobs removidos com sucesso!`, 'success');
+                        this.success = true;
+                    } else {
+                        this.addLog(`✗ Erro: ${data.error}`, 'error');
+                        this.success = false;
+                    }
+                } catch (e) {
+                    this.addLog(`✗ Erro de conexão: ${e.message}`, 'error');
+                    this.success = false;
+                }
+                
+                this.addLog('Operação finalizada.', 'info');
+                this.running = false;
+                this.finished = true;
+            },
+            
+            reset() {
+                this.running = false;
+                this.finished = false;
+                this.logs = [];
+            }
+        }">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <div class="p-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Limpar OCRJobs</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Remove todos os jobs de OCR do sistema</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Grid de Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-        <!-- Card: Limpar OCRJobs -->
-        <div class="bg-slate-800 dark:bg-white rounded-xl shadow-lg border border-slate-700 dark:border-gray-200 overflow-hidden"
-            x-data="{ 
-        running: false, 
-        finished: false,
-        success: false,
-        logs: [],
-        
-        addLog(msg, type='info') {
-          const time = new Date().toLocaleTimeString('pt-BR');
-          this.logs.push({ time, msg, type });
-          this.$nextTick(() => {
-            const terminal = this.$refs.terminalOcr;
-            if (terminal) terminal.scrollTop = terminal.scrollHeight;
-          });
-        },
-        
-        async execute() {
-          this.running = true;
-          this.finished = false;
-          this.logs = [];
-          
-          this.addLog('Iniciando limpeza de OCRJobs...', 'info');
-          this.addLog('Conectando ao banco de dados...', 'info');
-          
-          try {
-            await new Promise(r => setTimeout(r, 500));
-            this.addLog('Buscando jobs para remover...', 'info');
-            
-            const response = await fetch('{% url 'dashboard:clean_ocr_jobs' %}', {
-              method: 'POST',
-              headers: {'X-CSRFToken': '{{ csrf_token }}'}
-            });
-            const data = await response.json();
-            
-            if (data.success) {
-              this.addLog(`Encontrados ${data.deleted} jobs`, 'info');
-              this.addLog('Removendo jobs do banco de dados...', 'info');
-              await new Promise(r => setTimeout(r, 300));
-              this.addLog(`✓ ${data.deleted} jobs removidos com sucesso!`, 'success');
-              this.success = true;
-            } else {
-              this.addLog(`✗ Erro: ${data.error}`, 'error');
-              this.success = false;
-            }
-          } catch (e) {
-            this.addLog(`✗ Erro de conexão: ${e.message}`, 'error');
-            this.success = false;
-          }
-          
-          this.addLog('Operação finalizada.', 'info');
-          this.running = false;
-          this.finished = true;
-        },
-        
-        reset() {
-          this.running = false;
-          this.finished = false;
-          this.logs = [];
-        }
-      }">
-            <div class="p-4 border-b border-slate-700 dark:border-gray-200">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-red-500/20 rounded-lg">
-                        <svg class="w-6 h-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white dark:text-gray-900">Limpar OCRJobs</h3>
-                        <p class="text-sm text-gray-400 dark:text-gray-600">Remove todos os jobs de OCR do sistema</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Terminal -->
-            <div class="bg-gray-900 dark:bg-gray-100 p-4 font-mono text-sm h-48 overflow-y-auto" x-ref="terminalOcr">
-                <template x-if="logs.length === 0 && !running">
-                    <div class="text-gray-500 dark:text-gray-400">
-                        <p>$ sisinfo-admin --clean-ocr-jobs</p>
-                        <p class="mt-2">Aguardando comando...</p>
-                    </div>
-                </template>
-                <template x-for="log in logs" :key="log.time + log.msg">
-                    <div class="flex gap-2">
-                        <span class="text-gray-500" x-text="`[${log.time}]`"></span>
-                        <span :class="{
-              'text-gray-300 dark:text-gray-700': log.type === 'info',
-              'text-green-400 dark:text-green-600': log.type === 'success',
-              'text-red-400 dark:text-red-600': log.type === 'error'
-            }" x-text="log.msg"></span>
-                    </div>
-                </template>
-                <template x-if="running">
-                    <div class="flex items-center gap-2 text-yellow-400 dark:text-yellow-600 mt-1">
-                        <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        <span>Processando...</span>
-                    </div>
-                </template>
-            </div>
-
-            <!-- Botões -->
-            <div class="p-4 border-t border-slate-700 dark:border-gray-200 flex justify-end gap-3">
-                <button @click="reset()" x-show="finished"
-                    class="px-4 py-2 text-sm font-medium text-gray-300 dark:text-gray-700 hover:text-white dark:hover:text-gray-900">
-                    Limpar
-                </button>
-                <button @click="execute()" :disabled="running"
-                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span x-show="!running">Executar Limpeza</span>
-                    <span x-show="running">Executando...</span>
-                </button>
-            </div>
+    <!-- Terminal -->
+    <div class="bg-gray-900 p-4 font-mono text-sm h-48 overflow-y-auto" x-ref="terminalOcr">
+      <template x-if="logs.length === 0 && !running">
+        <div class="text-gray-500">
+          <p>$ sisinfo-admin --clean-ocr-jobs</p>
+          <p class="mt-2">Aguardando comando...</p>
         </div>
-
-        <!-- Card: Backup -->
-        <div class="bg-slate-800 dark:bg-white rounded-xl shadow-lg border border-slate-700 dark:border-gray-200 overflow-hidden"
-            x-data="{ 
-        running: false, 
-        finished: false,
-        success: false,
-        jobId: null,
-        logs: [],
-        baseUrl: '{% url 'dashboard:backup_start' %}'.replace('/start/', ''),
-        
-        addLog(msg, type='info') {
-          const time = new Date().toLocaleTimeString('pt-BR');
-          this.logs.push({ time, msg, type });
-          this.$nextTick(() => {
-            const terminal = this.$refs.terminalBackup;
-            if (terminal) terminal.scrollTop = terminal.scrollHeight;
-          });
-        },
-        
-        async execute() {
-          this.running = true;
-          this.finished = false;
-          this.logs = [];
-          this.jobId = null;
-          
-          this.addLog('Iniciando backup do banco de dados...', 'info');
-          this.addLog('Criando job de backup...', 'info');
-          
-          try {
-            // Criar job
-            const startResp = await fetch('{% url 'dashboard:backup_start' %}', {
-              method: 'POST',
-              headers: {'X-CSRFToken': '{{ csrf_token }}'}
-            });
-            const startData = await startResp.json();
-            
-            if (!startData.success) {
-              this.addLog(`✗ Erro: ${startData.error}`, 'error');
-              this.running = false;
-              this.finished = true;
-              return;
-            }
-            
-            this.jobId = startData.job_id;
-            this.addLog(`Job criado: ${this.jobId.substring(0, 8)}...`, 'info');
-            this.addLog('Executando dumpdata...', 'info');
-            
-            // Processar
-            const processResp = await fetch(`${this.baseUrl}/process/${this.jobId}/`);
-            const processData = await processResp.json();
-            
-            if (processData.status === 'completed') {
-              this.addLog('Serializando modelos...', 'info');
-              await new Promise(r => setTimeout(r, 300));
-              this.addLog('✓ Backup gerado com sucesso!', 'success');
-              this.addLog('Pronto para download.', 'info');
-              this.success = true;
-            } else {
-              this.addLog(`✗ Erro: ${processData.error || 'Falha no processamento'}`, 'error');
-              this.success = false;
-            }
-          } catch (e) {
-            this.addLog(`✗ Erro de conexão: ${e.message}`, 'error');
-            this.success = false;
-          }
-          
-          this.addLog('Operação finalizada.', 'info');
-          this.running = false;
-          this.finished = true;
-        },
-        
-        download() {
-          if (this.jobId) {
-            window.location.href = `${this.baseUrl}/download/${this.jobId}/`;
-          }
-        },
-        
-        reset() {
-          this.running = false;
-          this.finished = false;
-          this.jobId = null;
-          this.logs = [];
-        }
-      }">
-            <div class="p-4 border-b border-slate-700 dark:border-gray-200">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-brand-500/20 rounded-lg">
-                        <svg class="w-6 h-6 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-white dark:text-gray-900">Backup do Sistema</h3>
-                        <p class="text-sm text-gray-400 dark:text-gray-600">Gera backup completo em JSON (dumpdata)</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Terminal -->
-            <div class="bg-gray-900 dark:bg-gray-100 p-4 font-mono text-sm h-48 overflow-y-auto" x-ref="terminalBackup">
-                <template x-if="logs.length === 0 && !running">
-                    <div class="text-gray-500 dark:text-gray-400">
-                        <p>$ sisinfo-admin --backup</p>
-                        <p class="mt-2">Aguardando comando...</p>
-                    </div>
-                </template>
-                <template x-for="log in logs" :key="log.time + log.msg">
-                    <div class="flex gap-2">
-                        <span class="text-gray-500" x-text="`[${log.time}]`"></span>
-                        <span :class="{
-              'text-gray-300 dark:text-gray-700': log.type === 'info',
-              'text-green-400 dark:text-green-600': log.type === 'success',
-              'text-red-400 dark:text-red-600': log.type === 'error'
-            }" x-text="log.msg"></span>
-                    </div>
-                </template>
-                <template x-if="running">
-                    <div class="flex items-center gap-2 text-yellow-400 dark:text-yellow-600 mt-1">
-                        <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                        </svg>
-                        <span>Processando...</span>
-                    </div>
-                </template>
-            </div>
-
-            <!-- Botões -->
-            <div class="p-4 border-t border-slate-700 dark:border-gray-200 flex justify-end gap-3">
-                <button @click="reset()" x-show="finished"
-                    class="px-4 py-2 text-sm font-medium text-gray-300 dark:text-gray-700 hover:text-white dark:hover:text-gray-900">
-                    Limpar
-                </button>
-                <button @click="download()" x-show="finished && success"
-                    class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
-                    Download Backup
-                </button>
-                <button @click="execute()" :disabled="running" x-show="!finished || !success"
-                    class="px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span x-show="!running">Iniciar Backup</span>
-                    <span x-show="running">Executando...</span>
-                </button>
-            </div>
+      </template>
+      <template x-for="log in logs" :key="log.time + log.msg">
+        <div class="flex gap-2">
+          <span class="text-gray-500" x-text="`[${log.time}]`"></span>
+          <span :class="{
+                        'text-gray-300': log.type === 'info',
+                        'text-green-400': log.type === 'success',
+                        'text-red-400': log.type === 'error'
+                    }" x-text="log.msg"></span>
         </div>
-
+      </template>
+      <template x-if="running">
+        <div class="flex items-center gap-2 text-yellow-400 mt-1">
+          <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span>Processando...</span>
+        </div>
+      </template>
     </div>
+
+    <!-- Botões -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+      <button @click="reset()" x-show="finished"
+        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
+        Limpar
+      </button>
+      <button @click="execute()" :disabled="running"
+        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span x-show="!running">Executar Limpeza</span>
+        <span x-show="running">Executando...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Card: Backup -->
+  <div
+    class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+    x-data="{ 
+            running: false, 
+            finished: false,
+            success: false,
+            jobId: null,
+            logs: [],
+            baseUrl: '{% url 'dashboard:backup_start' %}'.replace('/start/', ''),
+            
+            addLog(msg, type='info') {
+                const time = new Date().toLocaleTimeString('pt-BR');
+                this.logs.push({ time, msg, type });
+                this.$nextTick(() => {
+                    const terminal = this.$refs.terminalBackup;
+                    if (terminal) terminal.scrollTop = terminal.scrollHeight;
+                });
+            },
+            
+            async execute() {
+                this.running = true;
+                this.finished = false;
+                this.logs = [];
+                this.jobId = null;
+                
+                this.addLog('Iniciando backup do banco de dados...', 'info');
+                this.addLog('Criando job de backup...', 'info');
+                
+                try {
+                    // Criar job
+                    const startResp = await fetch('{% url 'dashboard:backup_start' %}', {
+                        method: 'POST',
+                        headers: {'X-CSRFToken': '{{ csrf_token }}'}
+                    });
+                    const startData = await startResp.json();
+                    
+                    if (!startData.success) {
+                        this.addLog(`✗ Erro: ${startData.error}`, 'error');
+                        this.running = false;
+                        this.finished = true;
+                        return;
+                    }
+                    
+                    this.jobId = startData.job_id;
+                    this.addLog(`Job criado: ${this.jobId.substring(0, 8)}...`, 'info');
+                    this.addLog('Executando dumpdata...', 'info');
+                    
+                    // Processar
+                    const processResp = await fetch(`${this.baseUrl}/process/${this.jobId}/`);
+                    const processData = await processResp.json();
+                    
+                    if (processData.status === 'completed') {
+                        this.addLog('Serializando modelos...', 'info');
+                        await new Promise(r => setTimeout(r, 300));
+                        this.addLog('✓ Backup gerado com sucesso!', 'success');
+                        this.addLog('Pronto para download.', 'info');
+                        this.success = true;
+                    } else {
+                        this.addLog(`✗ Erro: ${processData.error || 'Falha no processamento'}`, 'error');
+                        this.success = false;
+                    }
+                } catch (e) {
+                    this.addLog(`✗ Erro de conexão: ${e.message}`, 'error');
+                    this.success = false;
+                }
+                
+                this.addLog('Operação finalizada.', 'info');
+                this.running = false;
+                this.finished = true;
+            },
+            
+            download() {
+                if (this.jobId) {
+                    window.location.href = `${this.baseUrl}/download/${this.jobId}/`;
+                }
+            },
+            
+            reset() {
+                this.running = false;
+                this.finished = false;
+                this.jobId = null;
+                this.logs = [];
+            }
+        }">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div class="flex items-center gap-3">
+        <div class="p-3 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400">
+          <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Backup do Sistema</h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Gera backup completo em JSON (dumpdata)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="bg-gray-900 p-4 font-mono text-sm h-48 overflow-y-auto" x-ref="terminalBackup">
+      <template x-if="logs.length === 0 && !running">
+        <div class="text-gray-500">
+          <p>$ sisinfo-admin --backup</p>
+          <p class="mt-2">Aguardando comando...</p>
+        </div>
+      </template>
+      <template x-for="log in logs" :key="log.time + log.msg">
+        <div class="flex gap-2">
+          <span class="text-gray-500" x-text="`[${log.time}]`"></span>
+          <span :class="{
+                        'text-gray-300': log.type === 'info',
+                        'text-green-400': log.type === 'success',
+                        'text-red-400': log.type === 'error'
+                    }" x-text="log.msg"></span>
+        </div>
+      </template>
+      <template x-if="running">
+        <div class="flex items-center gap-2 text-yellow-400 mt-1">
+          <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          <span>Processando...</span>
+        </div>
+      </template>
+    </div>
+
+    <!-- Botões -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+      <button @click="reset()" x-show="finished"
+        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
+        Limpar
+      </button>
+      <button @click="download()" x-show="finished && success"
+        class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
+        Download Backup
+      </button>
+      <button @click="execute()" :disabled="running" x-show="!finished || !success"
+        class="px-4 py-2 text-sm font-medium text-white bg-brand-600 rounded-lg hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span x-show="!running">Iniciar Backup</span>
+        <span x-show="running">Executando...</span>
+      </button>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
