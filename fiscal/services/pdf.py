@@ -28,10 +28,12 @@ class DeliveryNotePDFGenerator:
         try:
             api_key = settings.BROWSERLESS_API_KEY
             
-            if api_key.startswith('ws://'):
+            # Detecta se já é uma URL completa (ws:// ou wss://) ou apenas o token
+            if api_key.startswith('ws://') or api_key.startswith('wss://'):
+                # URL completa fornecida (dev local ou produção com URL completa)
                 browserless_url = api_key
             else:
-                # Produção (Browserless.io) - região configurável
+                # Apenas o token foi fornecido - construir URL
                 browserless_url = f"wss://production-{BROWSERLESS_REGION}.browserless.io?token={api_key}"
             
             # Renderizar template HTML
