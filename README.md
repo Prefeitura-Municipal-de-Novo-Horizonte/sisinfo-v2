@@ -1,7 +1,9 @@
-# Sistema de Gerenciamento de TI - SISInfo V2 💻⚙️
+# SISInfo V2 💻
 
 <div align="center">
 <img src="https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/capa.png" width="350" />
+
+<p><strong>Sistema Integrado de Gestão da Diretoria de TI</strong></p>
 
 <div data-badges>
     <img src="https://img.shields.io/github/stars/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2?style=for-the-badge" alt="GitHub stars" />
@@ -16,176 +18,208 @@
     <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
     <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
     <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres" />
-    <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-    <img src="https://img.shields.io/badge/htmx-3D72D7?style=for-the-badge&logo=htmx&logoColor=white" alt="HTMX" />
-    <img src="https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=black" alt="Alpine.js" />
 </div>
 </div>
 
-<h3>🖥️ SISInfo: Sistema de Gerenciamento da Diretoria de TI 🖥️</h3>
-O SISInfo V2 é uma plataforma robusta e modular desenvolvida para a Diretoria de Tecnologia da Informação da Prefeitura de Novo Horizonte. O sistema centraliza a gestão de ativos, licitações, fornecedores, estrutura organizacional e relatórios, promovendo eficiência e transparência.
+---
 
-### 📋 Funcionalidades Principais
-- **Autenticação e Controle de Acesso**: Gestão de usuários com perfis diferenciados (Admin, Técnico) e sistema de onboarding.
-- **Sistema de Auditoria**: Rastreamento completo de operações com MongoDB Atlas para compliance.
-- **Gestão de Licitações e Fornecedores**: Controle completo de processos licitatórios e base de fornecedores.
-- **Estrutura Organizacional**: Mapeamento de diretorias e setores da prefeitura.
-- **Relatórios e Laudos**: Geração e gerenciamento de laudos técnicos e relatórios de materiais.
-- **Dashboard**: Visão geral com indicadores chave de desempenho.
+## � Sobre o Projeto
 
-### 🏗️ Arquitetura
-O projeto segue uma arquitetura **Service Layer** sobre o padrão MVT do Django, garantindo:
-- **Separação de Responsabilidades**: Lógica de negócios encapsulada em serviços (`services.py`), mantendo as views leves.
-- **Testabilidade**: Facilidade na criação de testes unitários e de integração.
-- **Manutenibilidade**: Código organizado e documentado com docstrings e type hints.
-- **Auditoria Automática**: Sistema de logs via signals para rastreamento de todas as operações.
+O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de Tecnologia da Informação** da Prefeitura de Novo Horizonte/SP. O sistema centraliza a gestão de processos internos, proporcionando eficiência e transparência nas operações diárias.
+
+### ✨ Principais Funcionalidades
+
+| Módulo | Descrição |
+|--------|-----------|
+| **📊 Dashboard** | Visão geral com indicadores de desempenho e gráficos interativos |
+| **📄 Laudos Técnicos** | Criação, gerenciamento e geração de PDFs de laudos de equipamentos |
+| **🧾 Notas Fiscais** | Controle de notas fiscais com OCR automático via Gemini AI |
+| **📦 Licitações** | Gestão completa de processos licitatórios e materiais |
+| **🏢 Fornecedores** | Base de dados de fornecedores com consolidação automática |
+| **�️ Estrutura Organizacional** | Mapeamento de diretorias e setores da prefeitura |
+| **👥 Autenticação** | Sistema de usuários com perfis diferenciados e onboarding |
+| **📝 Auditoria** | Rastreamento completo de operações (MongoDB) |
+
+---
 
 ## 🚀 Tecnologias
-| Tecnologia | Versão | Descrição |
-| :---------- | :--------- | :---------------------------------- |
-| `Python` | `3.12.x` | Linguagem principal |
-| `Django` | `5.2.6` | Framework Web |
-| `PostgreSQL` | `Latest` | Banco de Dados Principal |
-| `MongoDB` | `Atlas Free` | Logs de Auditoria |
-| `Supabase` | `Latest` | Storage e Edge Functions (OCR) |
-| `Gemini API` | `2.0 Flash` | OCR de Notas Fiscais |
-| `TailwindCSS` | `3.4.x` | Estilização |
-| `Alpine.js` | `3.13.3` | Reatividade Frontend |
-| `HTMX` | `1.9.10` | Interações AJAX |
-| `ApexCharts` | `Latest` | Gráficos e Dashboards |
-| `Docker` | `Latest` | Containerização (Opcional) |
 
+### Backend
+- **Python 3.12** + **Django 5.2** - Framework principal
+- **PostgreSQL** (Supabase) - Banco de dados relacional
+- **MongoDB Atlas** - Logs de auditoria
 
-## 🛠️ Setup Local
+### Frontend
+- **TailwindCSS 3.4** - Estilização
+- **Alpine.js 3.13** - Reatividade
+- **HTMX 1.9** - Interações AJAX sem JavaScript
+- **ApexCharts** - Gráficos e dashboards
 
-### 1. Clonar o repositório
+### Serviços
+- **Supabase** - Storage e Edge Functions
+- **Gemini API 2.0** - OCR de notas fiscais
+- **Browserless.io** - Geração de PDFs
+- **Vercel** - Deploy e hosting
+
+---
+
+## 🛠️ Instalação
+
+### Pré-requisitos
+- Python 3.11+
+- Node.js 20+
+- Docker (opcional, para Supabase local)
+
+### 1. Clone o repositório
 ```bash
 git clone https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2.git
 cd sisinfo-v2
 ```
 
-### 2. Configurar Ambiente
+### 2. Configure o ambiente Python
 ```bash
 python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# Linux/Mac
-source .venv/bin/activate
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+
+pip install -r requirements.txt
 ```
 
-### 3. Instalar Dependências
+### 3. Configure o ambiente Node.js
 ```bash
-pip install -r requirements.txt
 npm install
 ```
 
-### 4. Configurar Variáveis de Ambiente
-Copie o arquivo de exemplo e configure suas variáveis:
+### 4. Configure as variáveis de ambiente
 ```bash
 cp contrib/.env-sample .env
+# Edite o .env com suas configurações
 ```
 
-**Variáveis importantes:**
-- `DATABASE_URL`: Conexão PostgreSQL
-- `DATABASE_MONGODB_LOGS`: Conexão MongoDB Atlas (para auditoria)
-- `SECRET_KEY`: Chave secreta Django
-- `DEBUG`: True para desenvolvimento
-
-### 5. Banco de Dados e Migrações
+### 5. Execute as migrações
 ```bash
 python manage.py migrate
 ```
 
-### 6. Executar o Projeto
-Em terminais separados:
+### 6. Inicie o servidor
 ```bash
-# Compilar CSS (Tailwind)
+# Terminal 1: Tailwind CSS
 npm run dev
 
-# Rodar Servidor Django
+# Terminal 2: Django
 python manage.py runserver
 ```
-Acesse: `http://127.0.0.1:8000`
 
-## 🔐 Sistema de Auditoria
+Acesse: **http://127.0.0.1:8000**
 
-O projeto inclui um sistema completo de auditoria com MongoDB:
+---
 
-### Comandos Disponíveis
+## ⚙️ Configuração
+
+### Variáveis de Ambiente Essenciais
+
+| Variável | Descrição |
+|----------|-----------|
+| `SECRET_KEY` | Chave secreta do Django |
+| `DEBUG` | `True` para desenvolvimento |
+| `POSTGRES_URL_NON_POOLING` | URL de conexão PostgreSQL |
+| `SUPABASE_URL` | URL do projeto Supabase |
+| `SUPABASE_ANON_KEY` | Chave pública do Supabase |
+| `SUPABASE_SERVICE_ROLE_KEY` | Chave de serviço (admin) |
+| `DATABASE_MONGODB_LOGS` | String de conexão MongoDB |
+| `GEMINI_API_KEY` | Chave(s) da API Gemini |
+| `BROWSERLESS_API_KEY` | Token do Browserless.io |
+
+### Supabase Local (Opcional)
+
+Para desenvolvimento com Supabase local:
 ```bash
-# Backup de logs
-python manage.py backup_audit_logs
-python manage.py backup_audit_logs --days 30 --compress
-
-# Limpeza de logs antigos
-python manage.py clean_audit_logs --days 90 --dry-run
-python manage.py clean_audit_logs --days 90 --backup-first
+npx supabase start
 ```
 
-### Configuração MongoDB
-1. Crie uma conta no [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Configure a string de conexão no `.env`:
-   ```
-   DATABASE_MONGODB_LOGS=mongodb+srv://user:password@cluster.mongodb.net/sisinfo_audit
-   ```
-3. Crie os índices recomendados (veja `docs/PROXIMOS_PASSOS.md`)
+Configure no `.env`:
+```env
+SUPABASE_URL=http://127.0.0.1:54321
+CALLBACK_BASE_URL=http://host.docker.internal:8000
+```
+
+---
 
 ## 🧪 Testes
-Para executar a suíte de testes:
+
 ```bash
 # Todos os testes
 python manage.py test
 
 # App específico
-python manage.py test authenticate
+python manage.py test reports
 
 # Sem migrações (mais rápido)
 python manage.py test --nomigrations
 ```
 
+---
+
 ## 📚 Documentação
 
-- **[OCR.md](docs/OCR.md)**: Sistema de OCR com Supabase Edge Functions
-- **[DEPLOY_OCR.md](docs/DEPLOY_OCR.md)**: Checklist de deploy do OCR em produção
-- **[GEMINI.md](docs/GEMINI.md)**: Guia completo para colaboração com IA
-- **[PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md)**: Roadmap e próximos passos
-- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Guia de contribuição
-
-## 🤝 Como Contribuir
-Quer contribuir? Ótimo! Leia nosso [Guia de Contribuição](CONTRIBUTING.md) para detalhes sobre nosso código de conduta e o processo de envio de pull requests.
-
-## 🔧 Comandos Úteis
-
-### Manutenção de Dados
-```bash
-# Diagnóstico completo
-python manage.py diagnose_data
-
-# Limpeza de duplicatas
-python manage.py clean_duplicate_biddings
-python manage.py clean_duplicate_materials
-python manage.py consolidate_suppliers
-
-# Relatórios
-python manage.py report_all_materials
-```
-
-### Importação de Licitações
-```bash
-# Método preferencial (XLSX)
-python manage.py import_bidding_from_xlsx arquivo.xlsx
-
-# Sincronização com PDF
-python manage.py sync_bidding_with_pdf arquivo.pdf
-
-# Fallback (PDF direto)
-python manage.py import_bidding_pdf arquivo.pdf
-```
-
-## 📸 Screenshots
-![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/2.jpg)
-![](https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/3.jpg)
+| Documento | Descrição |
+|-----------|-----------|
+| [OCR.md](docs/OCR.md) | Sistema de OCR com Supabase Edge Functions |
+| [DEPLOY_OCR.md](docs/DEPLOY_OCR.md) | Checklist de deploy do OCR |
+| [DOCKER.md](docs/DOCKER.md) | Configuração com Docker |
+| [GEMINI.md](docs/GEMINI.md) | Guia para colaboração com IA |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Guia de contribuição |
 
 ---
 
-**Desenvolvido com ❤️ pela Diretoria de TI - Prefeitura de Novo Horizonte/SP**
+## 🏗️ Arquitetura
+
+```
+sisinfo-v2/
+├── authenticate/      # Autenticação e usuários
+├── audit/             # Sistema de auditoria (MongoDB)
+├── bidding_procurement/ # Licitações e materiais
+├── bidding_supplier/  # Fornecedores
+├── core/              # Configurações Django
+├── dashboard/         # Painel principal
+├── fiscal/            # Notas fiscais e entregas
+├── organizational_structure/ # Diretorias e setores
+├── reports/           # Laudos técnicos
+├── supabase/          # Edge Functions
+│   └── functions/
+│       └── process-ocr/  # OCR via Gemini
+├── static/            # CSS, JS, imagens
+├── templates/         # Templates HTML base
+└── docs/              # Documentação
+```
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+<img src="https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/2.jpg" width="45%" />
+<img src="https://github.com/Prefeitura-Municipal-de-Novo-Horizonte/sisinfo-v2/raw/main/.gitassets/3.jpg" width="45%" />
+</div>
+
+---
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas! Leia o [Guia de Contribuição](CONTRIBUTING.md) para detalhes sobre nosso código de conduta e processo de pull requests.
+
+---
+
+## 📄 Licença
+
+Este projeto é de uso interno da Prefeitura Municipal de Novo Horizonte.
+
+---
+
+<div align="center">
+
+**Desenvolvido com ❤️ pela Diretoria de TI**
+
+Prefeitura Municipal de Novo Horizonte/SP
+
+</div>
