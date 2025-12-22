@@ -146,3 +146,297 @@ def api_status(request):
         result['supabase']['message'] = f'Erro: {str(e)}'
     
     return JsonResponse(result)
+
+
+@login_required
+def clean_ocr_jobs(request):
+    """
+    Limpa TODOS os OCRJobs.
+    Restrito a administradores.
+    Retorna JSON com resultado da limpeza.
+    """
+    from fiscal.models import OCRJob
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método não permitido'
+        }, status=405)
+    
+    try:
+        # Contar e deletar TODOS os jobs
+        total_jobs = OCRJob.objects.count()
+        OCRJob.objects.all().delete()
+        
+        return JsonResponse({
+            'success': True,
+            'deleted': total_jobs,
+            'message': f'{total_jobs} jobs removidos com sucesso!'
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+def backup_database(request):
+    """
+    Gera backup do banco de dados usando dumpdata do Django.
+    Retorna arquivo JSON para download.
+    Restrito a administradores.
+    """
+    from io import StringIO
+    from django.core.management import call_command
+    from django.utils import timezone
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    try:
+        # Criar buffer para capturar o output
+        output = StringIO()
+        
+        # Apps para fazer backup (exclui apps do Django e de terceiros)
+        apps_to_backup = [
+            'authenticate',
+            'organizational_structure',
+            'bidding_procurement',
+            'bidding_supplier',
+            'reports',
+            'fiscal',
+        ]
+        
+        # Executar dumpdata
+        call_command(
+            'dumpdata',
+            *apps_to_backup,
+            indent=2,
+            stdout=output,
+            exclude=['contenttypes', 'auth.permission', 'sessions'],
+        )
+        
+        # Preparar resposta para download
+        backup_content = output.getvalue()
+        timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'sisinfo_backup_{timestamp}.json'
+        
+        response = HttpResponse(backup_content, content_type='application/json')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Length'] = len(backup_content.encode('utf-8'))
+        
+        return response
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+def backup_start(request):
+    """
+    Inicia um job de backup assíncrono.
+    Retorna o ID do job para polling.
+    """
+    from dashboard.models import BackupJob
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método não permitido'
+        }, status=405)
+    
+    try:
+        # Criar job pendente
+        job = BackupJob.objects.create(status='pending')
+        
+        return JsonResponse({
+            'success': True,
+            'job_id': str(job.id),
+            'message': 'Job de backup criado. Use /admin/backup/status/<job_id>/ para verificar.'
+        })
+    
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+def backup_process(request, job_id):
+    """
+    Processa um job de backup pendente.
+    Chamado via polling pelo frontend.
+    """
+    from io import StringIO
+    from django.core.management import call_command
+    from dashboard.models import BackupJob
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    try:
+        job = BackupJob.objects.get(id=job_id)
+    except BackupJob.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Job não encontrado'
+        }, status=404)
+    
+    # Se já foi processado, retornar status atual
+    if job.status in ['completed', 'failed']:
+        return JsonResponse({
+            'success': True,
+            'status': job.status,
+            'message': 'Job já processado'
+        })
+    
+    # Se está pending, processar agora
+    if job.status == 'pending':
+        job.mark_processing()
+        
+        try:
+            output = StringIO()
+            
+            apps_to_backup = [
+                'authenticate',
+                'organizational_structure',
+                'bidding_procurement',
+                'bidding_supplier',
+                'reports',
+                'fiscal',
+            ]
+            
+            call_command(
+                'dumpdata',
+                *apps_to_backup,
+                indent=2,
+                stdout=output,
+                exclude=['contenttypes', 'auth.permission', 'sessions'],
+            )
+            
+            job.mark_completed(output.getvalue())
+            
+            return JsonResponse({
+                'success': True,
+                'status': 'completed',
+                'message': 'Backup concluído com sucesso!'
+            })
+        
+        except Exception as e:
+            job.mark_failed(str(e))
+            return JsonResponse({
+                'success': False,
+                'status': 'failed',
+                'error': str(e)
+            })
+    
+    return JsonResponse({
+        'success': True,
+        'status': job.status
+    })
+
+
+@login_required
+def backup_status(request, job_id):
+    """
+    Verifica o status de um job de backup.
+    """
+    from dashboard.models import BackupJob
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    try:
+        job = BackupJob.objects.get(id=job_id)
+        return JsonResponse({
+            'success': True,
+            'status': job.status,
+            'created_at': job.created_at.isoformat() if job.created_at else None,
+            'completed_at': job.completed_at.isoformat() if job.completed_at else None,
+            'has_result': bool(job.result),
+            'error': job.error_message if job.status == 'failed' else None
+        })
+    except BackupJob.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Job não encontrado'
+        }, status=404)
+
+
+@login_required
+def backup_download(request, job_id):
+    """
+    Faz download do backup de um job concluído.
+    """
+    from dashboard.models import BackupJob
+    from django.utils import timezone
+    
+    # Verificar se é admin
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    try:
+        job = BackupJob.objects.get(id=job_id)
+        
+        if job.status != 'completed':
+            return JsonResponse({
+                'success': False,
+                'error': f'Job ainda não concluído. Status: {job.status}'
+            }, status=400)
+        
+        if not job.result:
+            return JsonResponse({
+                'success': False,
+                'error': 'Backup vazio ou não disponível'
+            }, status=400)
+        
+        timestamp = job.completed_at.strftime('%Y%m%d_%H%M%S') if job.completed_at else timezone.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'sisinfo_backup_{timestamp}.json'
+        
+        response = HttpResponse(job.result, content_type='application/json')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Length'] = len(job.result.encode('utf-8'))
+        
+        return response
+    
+    except BackupJob.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'Job não encontrado'
+        }, status=404)
+

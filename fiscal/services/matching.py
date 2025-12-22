@@ -14,7 +14,9 @@ def suggest_reports_for_invoice(invoice: Invoice, limit: int = 5) -> list:
     1. Laudo ABERTO (status='1')
     2. Que tenha materiais em comum com a nota (mesmo material_bidding)
     3. Ordena por quantidade de itens coincidentes (maior primeiro)
-    4. Exclui laudos já vinculados a outras notas
+    
+    Nota: Laudos que já têm notas vinculadas TAMBÉM aparecem, pois um laudo
+    pode ter várias notas (a regra 1 nota = 1 laudo é garantida pelo modelo).
     
     Retorna lista de dicts com:
     - report: o objeto Report
@@ -30,18 +32,11 @@ def suggest_reports_for_invoice(invoice: Invoice, limit: int = 5) -> list:
     if not invoice_material_ids:
         return []
     
-    # IDs de laudos já vinculados a alguma nota
-    linked_report_ids = set(
-        Invoice.objects.filter(
-            report_link__isnull=False
-        ).values_list('report_link__report_id', flat=True)
-    )
-    
     # Laudos abertos com materiais em comum
+    # Nota: Não excluímos laudos que já têm notas vinculadas, pois um laudo
+    # pode ter várias notas (a regra 1 nota = 1 laudo é garantida pelo modelo)
     open_reports = Report.objects.filter(
         status='1'  # Aberto
-    ).exclude(
-        id__in=linked_report_ids  # Excluir já vinculados
     ).prefetch_related(
         'materiais', 'sector'
     ).distinct()
