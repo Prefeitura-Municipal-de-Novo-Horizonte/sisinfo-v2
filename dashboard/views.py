@@ -9,6 +9,19 @@ from dashboard.services import DashboardService
 
 
 @login_required
+def admin_panel(request):
+    """
+    Página de administração com ferramentas de manutenção.
+    Restrito a administradores.
+    """
+    if not request.user.is_admin:
+        from django.shortcuts import redirect
+        return redirect('dashboard:index')
+    
+    return render(request, "dashboard/admin.html")
+
+
+@login_required
 def index(request):
     """
     View principal do Dashboard.
