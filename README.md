@@ -106,8 +106,11 @@ python manage.py migrate
 # Terminal 1: Tailwind CSS
 npm run dev
 
-# Terminal 2: Django
-python manage.py runserver
+# Terminal 2: Supabase Edge Functions (para OCR)
+npx supabase functions serve process-ocr --env-file .env
+
+# Terminal 3: Django
+python manage.py runserver 0.0.0.0:8000
 ```
 
 Acesse: **http://127.0.0.1:8000**
@@ -130,11 +133,16 @@ Acesse: **http://127.0.0.1:8000**
 | `GEMINI_API_KEY` | Chave(s) da API Gemini |
 | `BROWSERLESS_API_KEY` | Token do Browserless.io |
 
-### Supabase Local (Opcional)
+### Supabase Local (Desenvolvimento)
 
 Para desenvolvimento com Supabase local:
+
 ```bash
+# 1. Inicie o Supabase (banco, storage, etc)
 npx supabase start
+
+# 2. Inicie as Edge Functions (OCR)
+npx supabase functions serve --env-file .env
 ```
 
 Configure no `.env`:
