@@ -7,9 +7,13 @@ usando o serviço Browserless.io para renderização de HTML/CSS.
 from playwright.sync_api import sync_playwright
 from django.template.loader import render_to_string
 from django.conf import settings
+from decouple import config
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Região do Browserless (sfo, lon, ams)
+BROWSERLESS_REGION = config('BROWSERLESS_REGION', default='sfo')
 
 
 class PDFGenerator:
@@ -43,8 +47,8 @@ class PDFGenerator:
                 # Desenvolvimento local (Docker)
                 browserless_url = api_key
             else:
-                # Produção (Browserless.io)
-                browserless_url = f"wss://production-sfo.browserless.io?token={api_key}"
+                # Produção (Browserless.io) - região configurável
+                browserless_url = f"wss://production-{BROWSERLESS_REGION}.browserless.io?token={api_key}"
             
             # Renderizar template HTML com CSS inline
             html_content = render_to_string('pdf_download_template.html', {'report': report})
@@ -52,12 +56,12 @@ class PDFGenerator:
             logger.info(f"Gerando PDF para laudo {report.number_report}")
             
             with sync_playwright() as p:
-                # Conectar ao Browserless via WebSocket
-                browser = p.chromium.connect_over_cdp(browserless_url)
+                # Conectar ao Browserless via WebSocket com timeout
+                browser = p.chromium.connect_over_cdp(browserless_url, timeout=8000)
                 page = browser.new_page()
                 
-                # Carregar conteúdo HTML
-                page.set_content(html_content, wait_until='networkidle')
+                # Carregar conteúdo HTML (load é mais rápido que networkidle)
+                page.set_content(html_content, wait_until='load', timeout=5000)
                 
                 # Gerar PDF com configurações A4
                 # Gerar PDF com configurações A4
