@@ -82,7 +82,10 @@
             <div class="flex flex-col gap-1">
                 <p class="text-sm font-normal leading-normal text-gray-500 dark:text-gray-400">Responsável Técnico</p>
                 <p class="text-base font-medium leading-normal text-gray-800 dark:text-gray-200">
-                    {{ report.professional}}
+                    {{ report.pro_accountable }}
+                    {% if report.professional != report.pro_accountable %}
+                    <span class="text-sm text-gray-500 dark:text-gray-400">({{ report.professional }})</span>
+                    {% endif %}
                 </p>
             </div>
             <div class="flex flex-col gap-1">
