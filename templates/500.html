@@ -1,20 +1,78 @@
-{% extends "_base.html" %}
-{% block title %}
-    500. Erro interno inesperado
-{% endblock title %}
+{% extends "_base_error.html" %}
+
+{% block title %}500 - Erro Interno{% endblock %}
+
 {% block content %}
-    <section>
-        <div>
-            <h1>500</h1>
-            <h2>Erro interno inesperado</h2>
-            <div>
-                <p>Desculpe. Ocorreu um erro inesperado.</p>
-                <p>
-                    Nossa equipe já foi notificada do problema.
-                    <br />
-                    Caso necessário entre em contato com <a href="mailto:ti@novohorizonte.sp.gov.br?subject=500 Erro interno inesperado">ti@novohorizonte.sp.gov.br</a>
+<div class="text-center">
+    <!-- Icon -->
+    <div class="float-animation mb-8">
+        <svg class="mx-auto h-32 w-32 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+    </div>
+
+    <!-- Error Code -->
+    <h1 class="text-8xl font-bold text-slate-200 dark:text-slate-700">500</h1>
+
+    <!-- Title -->
+    <h2 class="mt-4 text-2xl font-semibold text-slate-800 dark:text-white">
+        Erro Interno do Servidor
+    </h2>
+
+    <!-- Description -->
+    <p class="mt-4 text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto">
+        Algo deu errado do nosso lado. Nossa equipe já foi notificada e está trabalhando para resolver o problema.
+    </p>
+
+    <!-- Info Box -->
+    <div
+        class="mt-8 bg-blue-50 dark:bg-slate-700/50 rounded-lg p-4 max-w-md mx-auto border border-blue-100 dark:border-slate-600">
+        <div class="flex items-start">
+            <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="ml-3 text-left">
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                    Tente recarregar a página ou voltar ao início. Se o problema persistir, entre em contato com a
+                    equipe de TI.
                 </p>
             </div>
         </div>
-    </section>
-{% endblock content %}
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/25">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Voltar ao Início
+        </a>
+        <button onclick="location.reload()"
+            class="inline-flex items-center justify-center px-6 py-3 rounded-lg border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Tentar Novamente
+        </button>
+    </div>
+
+    <!-- Contact -->
+    <div class="mt-8">
+        <a href="mailto:ti@novohorizonte.sp.gov.br?subject=Erro 500 - Erro Interno"
+            class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            ti@novohorizonte.sp.gov.br
+        </a>
+    </div>
+</div>
+{% endblock %}
