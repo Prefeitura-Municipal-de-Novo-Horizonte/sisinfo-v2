@@ -46,6 +46,8 @@ DATABASES = {
         # CONN_MAX_AGE deve ser 0 para evitar erro "cursor does not exist"
         "CONN_MAX_AGE": 0,
         "CONN_HEALTH_CHECKS": True,
+        # Desabilita server-side cursors - necessário para PgBouncer Transaction Mode
+        "DISABLE_SERVER_SIDE_CURSORS": True,
     }
 }
 # Configurações de segurança recomendadas
