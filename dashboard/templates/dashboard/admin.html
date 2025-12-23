@@ -55,7 +55,16 @@
                         this.addLog(`Encontrados ${data.deleted} jobs`, 'info');
                         this.addLog('Removendo jobs do banco de dados...', 'info');
                         await new Promise(r => setTimeout(r, 300));
-                        this.addLog(`✓ ${data.deleted} jobs removidos com sucesso!`, 'success');
+                        this.addLog(`✓ ${data.deleted} jobs removidos!`, 'success');
+                        
+                        // Mostrar limpeza de imagens órfãs
+                        this.addLog('Verificando imagens órfãs no Storage...', 'info');
+                        await new Promise(r => setTimeout(r, 200));
+                        if (data.orphan_images_deleted > 0) {
+                            this.addLog(`✓ ${data.orphan_images_deleted} imagens órfãs deletadas!`, 'success');
+                        } else {
+                            this.addLog('Nenhuma imagem órfã encontrada.', 'info');
+                        }
                         this.success = true;
                     } else {
                         this.addLog(`✗ Erro: ${data.error}`, 'error');
@@ -86,8 +95,8 @@
           </svg>
         </div>
         <div>
-          <h3 class="text-lg font-semibold text-white">Limpar OCRJobs</h3>
-          <p class="text-sm text-slate-400">Remove todos os jobs de OCR do sistema</p>
+          <h3 class="text-lg font-semibold text-white">Limpar OCRJobs e Storage</h3>
+          <p class="text-sm text-slate-400">Remove jobs de OCR e imagens órfãs do Storage</p>
         </div>
       </div>
     </div>
