@@ -14,8 +14,9 @@
 
         <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Excluir Nota Fiscal?</h2>
         <p class="text-gray-600 dark:text-gray-300 mb-6">
-            Você tem certeza que deseja excluir a nota fiscal <strong>{{ object.number }}</strong> de <strong>{{
-                object.supplier|default:"Fornecedor desconhecido" }}</strong>?
+            Você tem certeza que deseja excluir a nota fiscal <strong>{{ object.number }}</strong> de <strong>
+                {{object.supplier|default:"Fornecedor desconhecido" }}
+            </strong>?
             <br><span class="text-sm">Esta ação não poderá ser desfeita.</span>
         </p>
 
