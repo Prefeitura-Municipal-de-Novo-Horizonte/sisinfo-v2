@@ -46,7 +46,6 @@ AUDITED_MODELS = [
     # Relatórios
     'Report',
     'Invoice',
-    'InterestRequestMaterial',
     'MaterialReport',
     
     # Adicionar novos modelos aqui conforme necessário

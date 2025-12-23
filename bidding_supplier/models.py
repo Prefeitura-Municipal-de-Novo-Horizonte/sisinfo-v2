@@ -21,6 +21,7 @@ class Supplier(models.Model):
     update_at = models.DateTimeField('atualizado em', auto_now=True)
 
     class Meta:
+        ordering = ['trade', 'company']
         verbose_name = 'fornecedor'
         verbose_name_plural = 'fornecedores'
 

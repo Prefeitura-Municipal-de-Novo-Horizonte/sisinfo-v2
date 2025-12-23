@@ -392,17 +392,117 @@ def find_similar_materials(product_description: str, supplier_id: int, limit: in
     ).select_related('material', 'bidding').distinct()[:limit]
 
 
-def find_supplier_by_cnpj(cnpj: str):
-    """Busca fornecedor pelo CNPJ."""
+def _validate_cnpj(cnpj: str) -> bool:
+    """
+    Valida CNPJ pelos dígitos verificadores.
+    Usa a biblioteca validate_docbr (mesma usada no cadastro de fornecedores).
+    """
+    from validate_docbr import CNPJ
+    
+    cnpj_validator = CNPJ()
+    return cnpj_validator.validate(cnpj)
+
+
+def _count_different_digits(cnpj1: str, cnpj2: str) -> int:
+    """
+    Conta quantos dígitos são diferentes entre dois CNPJs.
+    Usa distância de Hamming (comparação caractere a caractere).
+    """
+    if len(cnpj1) != len(cnpj2):
+        return 99  # Tamanhos diferentes = muito diferentes
+    
+    return sum(1 for a, b in zip(cnpj1, cnpj2) if a != b)
+
+
+def find_supplier_by_cnpj(cnpj: str, supplier_name: str = None, max_digit_diff: int = 2):
+    """
+    Busca fornecedor pelo CNPJ ou pelo nome.
+    
+    Estratégia de busca:
+    1. Busca exata por CNPJ completo
+    2. Se CNPJ inválido ou não encontrado, busca CNPJ similar (até max_digit_diff dígitos diferentes)
+    3. Busca pelo nome do fornecedor (razão social ou nome fantasia)
+    
+    Args:
+        cnpj: CNPJ detectado pelo OCR
+        supplier_name: Nome do fornecedor detectado pelo OCR
+        max_digit_diff: Máximo de dígitos diferentes para considerar match (padrão: 2)
+    """
     from django.db.models import Q
     from bidding_supplier.models import Supplier
     
-    cnpj_clean = re.sub(r'\D', '', cnpj)
+    cnpj_clean = re.sub(r'\D', '', cnpj) if cnpj else ''
     
-    if len(cnpj_clean) != 14:
-        return None
+    # 1. Busca exata por CNPJ completo
+    if len(cnpj_clean) == 14:
+        supplier = Supplier.objects.filter(cnpj=cnpj_clean).first()
+        
+        if supplier:
+            return supplier
+        
+        # 2. Busca por CNPJ similar (até max_digit_diff dígitos diferentes)
+        # Especialmente útil quando OCR lê dígitos errados
+        is_valid = _validate_cnpj(cnpj_clean)
+        
+        # Buscar todos os fornecedores e comparar
+        # Otimização: filtrar pela raiz aproximada (primeiros 4 dígitos)
+        prefix = cnpj_clean[:4]
+        candidates = Supplier.objects.filter(
+            Q(cnpj__startswith=prefix) |
+            Q(cnpj__startswith=cnpj_clean[:2])  # Fallback ainda mais amplo
+        )
+        
+        best_match = None
+        best_diff = max_digit_diff + 1  # Iniciar acima do limite
+        
+        for candidate in candidates:
+            if len(candidate.cnpj) == 14:
+                diff = _count_different_digits(cnpj_clean, candidate.cnpj)
+                
+                # Se CNPJ detectado é inválido, dar preferência a CNPJs válidos do banco
+                if diff <= max_digit_diff and diff < best_diff:
+                    # Se CNPJ detectado é inválido E o candidato é válido, é provavelmente o correto
+                    if not is_valid and _validate_cnpj(candidate.cnpj):
+                        return candidate  # Match imediato!
+                    
+                    best_match = candidate
+                    best_diff = diff
+        
+        if best_match:
+            return best_match
     
-    return Supplier.objects.filter(
-        Q(cnpj=cnpj_clean) | 
-        Q(cnpj__contains=cnpj_clean)
-    ).first()
+    # 3. Busca pelo nome do fornecedor (fallback)
+    if supplier_name:
+        # Limpar e normalizar nome
+        name_clean = supplier_name.upper().strip()
+        
+        # Remover sufixos comuns de tipo de empresa
+        for suffix in [' - ME', ' - EPP', ' - EIRELI', ' LTDA', ' S/A', ' S.A.']:
+            name_clean = name_clean.replace(suffix, '')
+        
+        name_clean = name_clean.strip()
+        
+        if name_clean:
+            # Buscar por razão social ou nome fantasia
+            supplier = Supplier.objects.filter(
+                Q(company__icontains=name_clean) |
+                Q(trade__icontains=name_clean)
+            ).first()
+            
+            if supplier:
+                return supplier
+            
+            # Tentar com as primeiras palavras significativas do nome
+            words = [w for w in name_clean.split() if len(w) > 2]
+            if words:
+                first_word = words[0]
+                supplier = Supplier.objects.filter(
+                    Q(company__icontains=first_word) |
+                    Q(trade__icontains=first_word)
+                ).first()
+                
+                if supplier:
+                    return supplier
+    
+    return None
+

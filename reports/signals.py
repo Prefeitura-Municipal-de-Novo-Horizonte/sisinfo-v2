@@ -3,7 +3,7 @@ from django.db.models.signals import pre_save, post_save, pre_delete
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.core.exceptions import PermissionDenied
-from reports.models import Report, MaterialReport, InterestRequestMaterial
+from reports.models import Report, MaterialReport
 
 
 @receiver(pre_save, sender=Report)
@@ -37,25 +37,6 @@ def set_material_report_price(sender, instance, **kwargs):
     except Exception:
         # Ignora erro durante loaddata quando objetos relacionados não existem ainda
         pass
-
-
-@receiver(post_save, sender=InterestRequestMaterial)
-def update_report_status_on_interest_request(sender, instance, created, **kwargs):
-    """
-    Atualiza o status do Report para 'Aguardando' quando um InterestRequestMaterial é criado.
-    
-    Signal disparado após salvar um InterestRequestMaterial. Se for uma nova instância
-    (created=True) e houver um Report associado, atualiza o status do Report para '2' (Aguardando).
-    
-    Args:
-        sender: O modelo que enviou o signal (InterestRequestMaterial)
-        instance: A instância do InterestRequestMaterial que foi salva
-        created: Boolean indicando se é uma nova instância
-        **kwargs: Argumentos adicionais do signal
-    """
-    if created and instance.report and instance.report.status == '1':
-        instance.report.status = '2'  # Aguardando
-        instance.report.save(update_fields=['status'])
 
 
 @receiver(pre_delete, sender='bidding_procurement.MaterialBidding')

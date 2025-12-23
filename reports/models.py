@@ -14,7 +14,6 @@ from authenticate.models import ProfessionalUser
 from bidding_supplier.models import Supplier
 from bidding_procurement.models import Material, MaterialBidding
 from organizational_structure.models import Sector
-from reports.managers import KindInterestRequestMaterialQuerySet
 
 
 class Report(models.Model):
@@ -93,9 +92,6 @@ class MaterialReport(models.Model):
         return Decimal(self.quantity * self.unitary_price).quantize(Decimal("0.00"))
 
 
-
-
-
 class ReportDocument(models.Model):
     """
     Representa um documento anexado ao laudo (foto escaneada, etc).
@@ -124,33 +120,3 @@ class ReportDocument(models.Model):
     def __str__(self):
         return f"Doc #{self.pk} - {self.report}"
 
-
-# Modelo legado mantido para compatibilidade
-class InterestRequestMaterial(models.Model):
-    """
-    Representa uma Solicitação ou Empenho de material (legado).
-    
-    DEPRECATED: Use o modelo Commitment para novos empenhos.
-    """
-    REQUEST = 'S'
-    INTEREST = 'E'
-    KINDS = (
-        (REQUEST, 'Solicitação'),
-        (INTEREST, 'Empenho'),
-    )
-    value = models.CharField('valor', max_length=20)
-    kind = models.CharField('kind', max_length=1,
-                            blank=True, null=True, choices=KINDS)
-    report = models.ForeignKey(
-        Report, verbose_name='laudo', blank=True, null=True, on_delete=models.SET_NULL)
-    invoice = models.ForeignKey(
-        'fiscal.Invoice', verbose_name='nota fiscal', null=True, on_delete=models.SET_NULL)
-
-    objects = KindInterestRequestMaterialQuerySet.as_manager()
-
-    class Meta:
-        verbose_name = 'solicitação ou empenho (legado)'
-        verbose_name_plural = 'solicitações ou empenhos (legado)'
-
-    def __str__(self):
-        return self.value
