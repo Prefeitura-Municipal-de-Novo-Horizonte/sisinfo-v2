@@ -211,17 +211,3 @@ Fornecedores
     {% include "include/_pagination.html" %}
 </div>
 {% endblock content %}
-{% block script %}
-<script src="{% static 'js/jquery.formset.js' %}"></script>
-<script type="text/javascript">
-    $(function () {
-        $('#inline_form table tbody tr').formset({
-            prefix: '{{ form_contact.prefix }}',
-            addText: 'Adicionar Contato',
-            deleteText: 'Remover',
-            addCssClass: 'inline-flex items-center px-3 py-2 text-sm font-medium text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 dark:text-brand-400 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors mt-2',
-            deleteCssClass: 'text-red-600 hover:text-red-800 text-sm font-medium',
-        });
-    })
-</script>
-{% endblock script %}
