@@ -266,6 +266,23 @@ class Invoice(models.Model):
         self.delivered_to_purchases_at = timezone.now()
         self.status = 'E'
         self.save(update_fields=['delivered_to_purchases', 'delivered_to_purchases_at', 'status'])
+    
+    @property
+    def has_stock_items(self):
+        """Verifica se os materiais desta nota estão em estoque (StockItem com qty > 0)."""
+        for item in self.items.all():
+            try:
+                stock = StockItem.objects.get(material_bidding=item.material_bidding)
+                if stock.quantity > 0:
+                    return True
+            except StockItem.DoesNotExist:
+                pass
+        return False
+    
+    @property
+    def has_deliveries(self):
+        """Verifica se há entregas (DeliveryNote) vinculadas a esta nota."""
+        return self.deliveries.exists()
 
 
 class InvoiceItem(models.Model):
