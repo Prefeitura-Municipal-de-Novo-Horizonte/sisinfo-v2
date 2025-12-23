@@ -16,7 +16,7 @@ class ReportService:
         """Retorna todos os laudos cadastrados com otimização."""
         return Report.objects.select_related(
             'sector', 'professional', 'pro_accountable'
-        ).prefetch_related('invoices').all()
+        ).prefetch_related('invoice_links').all()
 
     @staticmethod
     def get_report_by_slug(slug: str) -> Report:
