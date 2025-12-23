@@ -102,6 +102,22 @@
         <span x-show="!sidebarCollapsed" class="ml-2 text-sm">Estoque</span>
       </a>
 
+      <!-- Entregas -->
+      <a href="{% url 'fiscal:deliveries' %}" class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
+          {% if request.resolver_match.url_name == 'deliveries' or request.resolver_match.url_name == 'delivery_detail' or request.resolver_match.url_name == 'register_receipt' %}
+            bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
+          {% else %}
+            text-gray-400 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600
+          {% endif %}" :class="sidebarCollapsed ? 'justify-center' : ''">
+        <svg
+          class="w-4 h-4 {% if request.resolver_match.url_name == 'deliveries' or request.resolver_match.url_name == 'delivery_detail' %}text-brand-400 dark:text-brand-600{% else %}text-gray-500 group-hover:text-white dark:group-hover:text-brand-600{% endif %}"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+        </svg>
+        <span x-show="!sidebarCollapsed" class="ml-2 text-sm">Entregas</span>
+      </a>
+
       <!-- Separador -->
       <!-- separador removido -->
 
