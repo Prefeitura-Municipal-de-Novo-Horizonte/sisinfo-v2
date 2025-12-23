@@ -164,11 +164,13 @@ def api_status(request):
 @login_required
 def clean_ocr_jobs(request):
     """
-    Limpa TODOS os OCRJobs.
+    Limpa TODOS os OCRJobs e imagens órfãs do Storage.
     Restrito a administradores.
     Retorna JSON com resultado da limpeza.
     """
-    from fiscal.models import OCRJob
+    from fiscal.models import OCRJob, Invoice
+    from fiscal.services.storage import delete_image_from_storage, _get_supabase_config
+    import requests
     
     # Verificar se é admin
     if not request.user.is_admin:
@@ -184,14 +186,54 @@ def clean_ocr_jobs(request):
         }, status=405)
     
     try:
-        # Contar e deletar TODOS os jobs
+        # 1. Limpar todos os OCRJobs
         total_jobs = OCRJob.objects.count()
         OCRJob.objects.all().delete()
+        
+        # 2. Limpar imagens órfãs do Storage
+        orphan_deleted = 0
+        conf = _get_supabase_config()
+        
+        if conf['url'] and conf['service_key']:
+            # Listar imagens no bucket
+            try:
+                url = f"{conf['url']}/storage/v1/object/list/ocr-images"
+                response = requests.post(
+                    url,
+                    headers={
+                        'Authorization': f"Bearer {conf['service_key']}",
+                        'Content-Type': 'application/json',
+                    },
+                    json={'prefix': '', 'limit': 10000},
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    storage_images = {item['name'] for item in response.json() if item.get('name')}
+                    
+                    # Imagens referenciadas no banco
+                    invoice_photos = set(
+                        Invoice.objects.exclude(photo__isnull=True)
+                        .exclude(photo='')
+                        .exclude(photo__startswith='local/')
+                        .values_list('photo', flat=True)
+                    )
+                    
+                    # Identificar órfãs
+                    orphan_images = storage_images - invoice_photos
+                    
+                    # Deletar órfãs
+                    for img in orphan_images:
+                        if delete_image_from_storage(img):
+                            orphan_deleted += 1
+            except Exception as e:
+                print(f"Erro ao limpar imagens órfãs: {e}")
         
         return JsonResponse({
             'success': True,
             'deleted': total_jobs,
-            'message': f'{total_jobs} jobs removidos com sucesso!'
+            'orphan_images_deleted': orphan_deleted,
+            'message': f'{total_jobs} jobs removidos e {orphan_deleted} imagens órfãs deletadas!'
         })
     
     except Exception as e:
