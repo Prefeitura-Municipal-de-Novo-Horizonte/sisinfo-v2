@@ -116,12 +116,7 @@
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ diretoria.name }}</h3>
             <p class="text-sm text-gray-500 dark:text-gray-400">Resp: {{ diretoria.accountable }}</p>
         </div>
-        <div
-            class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 rounded-b-lg">
-            <div class="flex items-center justify-between text-sm">
-                <span class="text-gray-500 dark:text-gray-400">Tipo: {{ diretoria.get_kind_display }}</span>
-            </div>
-        </div>
+
     </div>
     {% empty %}
     <div
