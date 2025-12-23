@@ -22,6 +22,7 @@ from .delivery import (
     DeliveryNoteDetailView,
     delivery_create,
     delivery_generate_pdf,
+    register_receipt,
 )
 
 from .ocr import (

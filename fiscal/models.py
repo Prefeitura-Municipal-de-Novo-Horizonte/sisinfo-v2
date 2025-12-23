@@ -389,7 +389,17 @@ class InvoiceReportLink(models.Model):
 class DeliveryNote(models.Model):
     """
     Representa uma Ficha de Entrega de Material.
+    
+    Fluxo:
+    1. Criar entrega (status='P') → gerar PDF para assinatura
+    2. Registrar recebimento → preencher received_by, received_at, upload signed_document
+    3. Status muda para 'C' (Concluída)
     """
+    STATUS_CHOICES = (
+        ('P', 'Pendente'),
+        ('C', 'Concluída'),
+    )
+    
     invoice = models.ForeignKey(
         Invoice, on_delete=models.PROTECT,
         related_name='deliveries', verbose_name='nota fiscal')
@@ -397,20 +407,31 @@ class DeliveryNote(models.Model):
         Sector, on_delete=models.PROTECT,
         verbose_name='setor destinatário')
     
+    # Status da entrega
+    status = models.CharField(
+        'status', max_length=1, choices=STATUS_CHOICES, default='P')
+    
     # Quem entregou (funcionário do TI)
     delivered_by = models.ForeignKey(
         ProfessionalUser, on_delete=models.PROTECT,
         verbose_name='entregue por', related_name='entregas_realizadas')
     
-    # Quem recebeu (campo texto - pessoa do setor)
-    received_by = models.CharField('recebido por', max_length=200)
-    received_at = models.DateTimeField('data/hora do recebimento')
+    # Quem recebeu (preenchido depois da entrega física)
+    received_by = models.CharField(
+        'recebido por', max_length=200, blank=True)
+    received_at = models.DateTimeField(
+        'data/hora do recebimento', null=True, blank=True)
+    
+    # Documento assinado (upload para Supabase)
+    signed_document = models.CharField(
+        'documento assinado', max_length=255, blank=True,
+        help_text='Path da imagem no Supabase (delivery-documents/)')
     
     observations = models.TextField('observações', blank=True)
     created_at = models.DateTimeField('criado em', auto_now_add=True)
 
     class Meta:
-        ordering = ['-received_at', '-created_at']
+        ordering = ['-created_at']
         verbose_name = 'ficha de entrega'
         verbose_name_plural = 'fichas de entrega'
 
@@ -419,6 +440,27 @@ class DeliveryNote(models.Model):
     
     def get_absolute_url(self):
         return r('fiscal:delivery_detail', pk=self.pk)
+    
+    @property
+    def is_pending(self):
+        """Verifica se a entrega está pendente de assinatura."""
+        return self.status == 'P'
+    
+    @property
+    def is_completed(self):
+        """Verifica se a entrega foi concluída."""
+        return self.status == 'C'
+    
+    @property
+    def signed_document_url(self):
+        """Retorna a URL do documento assinado no Supabase."""
+        if not self.signed_document:
+            return None
+        from decouple import config
+        supabase_url = config('SUPABASE_URL', default='')
+        if supabase_url:
+            return f"{supabase_url}/storage/v1/object/public/delivery-documents/{self.signed_document}"
+        return None
 
 
 class DeliveryNoteItem(models.Model):

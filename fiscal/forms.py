@@ -118,11 +118,11 @@ class CommitmentForm(forms.ModelForm):
 ## Fichas de Entrega ###########
 ################################
 class DeliveryNoteForm(forms.ModelForm):
-    """Formulário para criar Ficha de Entrega."""
+    """Formulário para criar Ficha de Entrega (passo 1 - só setor)."""
     
     class Meta:
         model = DeliveryNote
-        fields = ['invoice', 'sector', 'received_by', 'received_at', 'observations']
+        fields = ['sector', 'observations']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -131,19 +131,44 @@ class DeliveryNoteForm(forms.ModelForm):
             if field_name == 'observations':
                 field.widget.attrs['class'] = TEXTAREA_CLASS
                 field.widget.attrs['rows'] = '3'
-            elif field_name == 'received_at':
-                field.widget = forms.DateTimeInput(attrs={
-                    'class': STANDARD_INPUT_CLASS,
-                    'type': 'datetime-local',
-                })
+                field.widget.attrs['placeholder'] = 'Observações (opcional)'
             else:
                 field.widget.attrs['class'] = STANDARD_INPUT_CLASS
         
         self.fields['sector'].queryset = Sector.objects.all().order_by('name')
-        self.fields['received_by'].widget.attrs['placeholder'] = 'Nome de quem está recebendo'
+
+
+class RegisterReceiptForm(forms.ModelForm):
+    """Formulário para registrar recebimento (passo 2 - após entrega física)."""
+    
+    signed_document_file = forms.ImageField(
+        label='Documento assinado',
+        required=True,
+        help_text='Foto ou scan do documento de entrega assinado'
+    )
+    
+    class Meta:
+        model = DeliveryNote
+        fields = ['received_by', 'received_at']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['received_by'].widget.attrs['class'] = STANDARD_INPUT_CLASS
+        self.fields['received_by'].widget.attrs['placeholder'] = 'Nome de quem recebeu'
+        self.fields['received_by'].required = True
+        
+        self.fields['received_at'].widget = forms.DateTimeInput(attrs={
+            'class': STANDARD_INPUT_CLASS,
+            'type': 'datetime-local',
+        })
+        self.fields['received_at'].required = True
+        
+        self.fields['signed_document_file'].widget.attrs['class'] = STANDARD_INPUT_CLASS
+        self.fields['signed_document_file'].widget.attrs['accept'] = 'image/*'
         
         # Define data/hora atual como padrão
-        if not self.instance.pk:
+        if not self.instance.received_at:
             self.initial['received_at'] = timezone.now().strftime('%Y-%m-%dT%H:%M')
 
 

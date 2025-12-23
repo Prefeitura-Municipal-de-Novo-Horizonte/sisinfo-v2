@@ -15,16 +15,16 @@
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Setor
-                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Criada em</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Setor</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        NF</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Status</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                         Recebido por</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Nota
-                        Fiscal</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                        Entregue por</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                         Ações</th>
                 </tr>
@@ -33,28 +33,52 @@
                 {% for delivery in deliveries %}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                        {{ delivery.received_at|date:"d/m/Y H:i" }}
+                        {{ delivery.created_at|date:"d/m/Y H:i" }}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.sector.name }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.received_by }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.invoice.number }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ delivery.delivered_by.fullname }}
+                    <td class="px-6 py-4 text-center">
+                        {% if delivery.is_pending %}
+                        <span
+                            class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                            Pendente
+                        </span>
+                        {% else %}
+                        <span
+                            class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Concluída
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {% if delivery.received_by %}
+                        {{ delivery.received_by }}
+                        {% else %}
+                        <span class="text-gray-400 italic">—</span>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 text-right space-x-2">
                         <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
                             class="text-brand-600 hover:text-brand-800 text-sm">Ver</a>
                         <a href="{% url 'fiscal:delivery_pdf' pk=delivery.pk %}" target="_blank"
                             class="text-gray-600 hover:text-gray-800 text-sm">PDF</a>
+                        {% if delivery.is_pending %}
+                        <a href="{% url 'fiscal:register_receipt' pk=delivery.pk %}"
+                            class="text-green-600 hover:text-green-800 text-sm">Registrar</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Nenhuma entrega
-                        realizada</td>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        Nenhuma entrega registrada
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    {% include "include/_pagination.html" %}
 </div>
 {% endblock content %}
