@@ -373,9 +373,10 @@ def _enrich_ocr_result(job: OCRJob) -> dict:
     
     result = job.result or {}
     
-    # Buscar fornecedor pelo CNPJ
+    # Buscar fornecedor pelo CNPJ (com fallback por nome)
     supplier_cnpj = result.get('supplier_cnpj', '')
-    supplier = find_supplier_by_cnpj(supplier_cnpj) if supplier_cnpj else None
+    supplier_name_detected = result.get('supplier_name', '')
+    supplier = find_supplier_by_cnpj(supplier_cnpj, supplier_name_detected) if (supplier_cnpj or supplier_name_detected) else None
     
     supplier_data = None
     if supplier:
