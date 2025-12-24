@@ -27,9 +27,42 @@ class DeliveryNoteListView(LoginRequiredMixin, ListView):
     login_url = 'authenticate:login'
     
     def get_queryset(self):
-        return DeliveryNote.objects.select_related(
+        queryset = DeliveryNote.objects.select_related(
             'invoice__supplier', 'sector', 'delivered_by'
-        ).prefetch_related('items').all()
+        ).prefetch_related('items').order_by('-created_at')
+        
+        # Filtros
+        q = self.request.GET.get('q')
+        status = self.request.GET.get('status')
+        date_min = self.request.GET.get('date_min')
+        date_max = self.request.GET.get('date_max')
+        
+        if q:
+            from django.db.models import Q
+            queryset = queryset.filter(
+                Q(sector__name__icontains=q) |
+                Q(invoice__number__icontains=q)
+            )
+        
+        if status:
+            queryset = queryset.filter(status=status)
+            
+        if date_min:
+            queryset = queryset.filter(created_at__date__gte=date_min)
+            
+        if date_max:
+            queryset = queryset.filter(created_at__date__lte=date_max)
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Passar filtros atuais para o template
+        context['current_q'] = self.request.GET.get('q', '')
+        context['current_status'] = self.request.GET.get('status', '')
+        context['current_date_min'] = self.request.GET.get('date_min', '')
+        context['current_date_max'] = self.request.GET.get('date_max', '')
+        return context
 
 
 class DeliveryNoteDetailView(LoginRequiredMixin, DetailView):
@@ -175,6 +208,11 @@ def delivery_generate_pdf(request, pk):
     )
     
     try:
+        # Se o status for pendente, atualiza para "A Caminho" ao gerar a ficha
+        if delivery.status == 'P':
+            delivery.status = 'A'
+            delivery.save(update_fields=['status'])
+        
         pdf_bytes = DeliveryNotePDFGenerator.generate_delivery_pdf(delivery)
         
         response = HttpResponse(pdf_bytes, content_type='application/pdf')

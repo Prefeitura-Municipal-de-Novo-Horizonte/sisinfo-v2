@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 {% load static %}
 
 {% block title %}Nota Fiscal {{ invoice.number }}{% endblock title %}
@@ -213,11 +214,8 @@
                                 Setor: {{ linked_report.sector.name|default:"—" }}
                             </p>
                         </div>
-                        <a href="{% url 'fiscal:invoice_unlink_report' pk=invoice.pk %}"
-                            class="text-red-500 hover:text-red-700 text-sm"
-                            onclick="return confirm('Remover vínculo com este laudo?')">
-                            Desvincular
-                        </a>
+                        {% url 'fiscal:invoice_unlink_report' pk=invoice.pk as unlink_url %}
+                        {% action_button url=unlink_url type='delete' text='Desvincular' confirm_message='Remover vínculo com este laudo?' %}
                     </div>
                     {% elif report_suggestions %}
                     <!-- Sugestões de laudos -->

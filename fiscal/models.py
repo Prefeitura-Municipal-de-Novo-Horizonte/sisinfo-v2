@@ -283,6 +283,25 @@ class Invoice(models.Model):
     def has_deliveries(self):
         """Verifica se há entregas (DeliveryNote) vinculadas a esta nota."""
         return self.deliveries.exists()
+    
+    @property
+    def delivery_process_status(self):
+        """
+        Retorna o status do processo de entrega para exibição na lista.
+        - 'preparing': Nenhuma entrega criada.
+        - 'on_way': Alguma entrega 'Pendente' ou 'A Caminho'.
+        - 'delivered': Tem entregas e todas estão 'Concluída'.
+        """
+        deliveries = self.deliveries.all()
+        if not deliveries.exists():
+            return 'preparing'
+        
+        # Se houver alguma pendente ou a caminho
+        if any(d.status in ['P', 'A'] for d in deliveries):
+            return 'on_way'
+            
+        # Se tem entregas e não caiu no if acima, todas estão concluídas (ou não tem, mas o check de exists pegou)
+        return 'delivered'
 
 
 class InvoiceItem(models.Model):
@@ -397,6 +416,7 @@ class DeliveryNote(models.Model):
     """
     STATUS_CHOICES = (
         ('P', 'Pendente'),
+        ('A', 'A Caminho'),
         ('C', 'Concluída'),
     )
     
@@ -444,7 +464,7 @@ class DeliveryNote(models.Model):
     @property
     def is_pending(self):
         """Verifica se a entrega está pendente de assinatura."""
-        return self.status == 'P'
+        return self.status == 'P' or self.status == 'A'
     
     @property
     def is_completed(self):

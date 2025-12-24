@@ -33,25 +33,13 @@
                     </h1>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{% url 'organizational_structure:update_setor' setor.slug %}"
-                        class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 text-sm font-bold text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                        <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                            </path>
-                        </svg>
-                        <span>Editar</span>
-                    </a>
-                    <a href="{% url 'organizational_structure:delete_setor' setor.slug %}"
-                        class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 text-sm font-bold text-red-600 dark:text-red-500 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                            </path>
-                        </svg>
-                        <span>Excluir</span>
-                    </a>
+                <div class="flex flex-wrap gap-3">
+                    {% url 'organizational_structure:update_setor' setor.slug as edit_url %}
+                    {% action_button url=edit_url type='edit' text='Editar' %}
+                    
+                    {% url 'organizational_structure:delete_setor' setor.slug as delete_url %}
+                    {% action_button url=delete_url type='delete' text='Excluir' %}
+                </div>
                 </div>
             </div>
         </div>
@@ -139,22 +127,13 @@
                                 {{ report.employee }}
                             </td>
                             <td class="px-6 py-4">
-                                <span
-                                    class="px-2 py-1 text-xs font-medium rounded-full 
-                                    {% if report.status == '1' %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300
-                                    {% elif report.status == '2' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300
-                                    {% else %}bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}">
-                                    {{ report.get_status_display }}
-                                </span>
+                                {% status_badge status=report.get_status_display %}
                             </td>
                             <td class="px-6 py-4">
                                 {{ report.created_at|date:"d/m/Y" }}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ report.get_absolute_url }}"
-                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                    Ver Detalhes
-                                </a>
+                                {% action_button url=report.get_absolute_url type='view' text='Ver Detalhes' %}
                             </td>
                         </tr>
                         {% empty %}

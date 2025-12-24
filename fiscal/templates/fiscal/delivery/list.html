@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 
 {% block title %}Fichas de Entrega{% endblock title %}
 
@@ -17,6 +18,63 @@
             Nova Entrega
         </a>
     </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+        <form method="get" class="flex flex-wrap gap-4 items-end">
+            <!-- Busca por Setor/NF -->
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar</label>
+                <input type="text" name="q" value="{{ current_q }}" placeholder="Setor ou Nº da NF..."
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Data Inicial -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Inicial</label>
+                <input type="date" name="date_min" value="{{ current_date_min }}"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Data Final -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Final</label>
+                <input type="date" name="date_max" value="{{ current_date_max }}"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Status -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                <select name="status" id="filterStatus"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+                    <option value="">Todos</option>
+                    <option value="P">Pendente</option>
+                    <option value="A">A Caminho</option>
+                    <option value="C">Concluída</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                    Filtrar
+                </button>
+                <a href="{% url 'fiscal:deliveries' %}"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm">
+                    Limpar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentStatus = "{{ current_status|default:'' }}";
+            if (currentStatus) {
+                document.getElementById('filterStatus').value = currentStatus;
+            }
+        });
+    </script>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -38,23 +96,19 @@
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 {% for delivery in deliveries %}
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                         {{ delivery.created_at|date:"d/m/Y H:i" }}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.sector.name }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.invoice.number }}</td>
                     <td class="px-6 py-4 text-center">
-                        {% if delivery.is_pending %}
-                        <span
-                            class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-                            Pendente
-                        </span>
+                        {% if delivery.status == 'P' %}
+                            {% status_badge status='Pendente' type='warning' %}
+                        {% elif delivery.status == 'A' %}
+                            {% status_badge status='A Caminho' type='info' %}
                         {% else %}
-                        <span
-                            class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                            Concluída
-                        </span>
+                            {% status_badge status='Concluída' type='success' %}
                         {% endif %}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
@@ -64,16 +118,20 @@
                         <span class="text-gray-400 italic">—</span>
                         {% endif %}
                     </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
-                            class="text-brand-600 hover:text-brand-800 text-sm">Ver</a>
-                        <a href="{% url 'fiscal:delivery_pdf' pk=delivery.pk %}" target="_blank"
-                            class="text-gray-600 hover:text-gray-800 text-sm">PDF</a>
-                        {% if delivery.is_pending %}
-                        <a href="{% url 'fiscal:register_receipt' pk=delivery.pk %}"
-                            class="text-green-600 hover:text-green-800 text-sm">Registrar</a>
-                        {% endif %}
-                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+              <div class="flex justify-end gap-2">
+                {% url 'fiscal:delivery_detail' pk=delivery.pk as detail_url %}
+                {% action_button url=detail_url type='view' title='Ver Detalhes' %}
+
+                {% url 'fiscal:delivery_pdf' pk=delivery.pk as pdf_url %}
+                {% action_button url=pdf_url type='pdf' title='Baixar PDF' %}
+
+                {% if delivery.is_pending %}
+                {% url 'fiscal:register_receipt' pk=delivery.pk as register_url %}
+                {% action_button url=register_url type='check' title='Registrar Recebimento' %}
+                {% endif %}
+              </div>
+            </td>
                 </tr>
                 {% empty %}
                 <tr>

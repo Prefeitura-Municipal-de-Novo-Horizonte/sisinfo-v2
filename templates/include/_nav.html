@@ -72,7 +72,7 @@
 
       <!-- Fiscal (Notas + Empenhos + Entregas) -->
       <a href="{% url 'fiscal:invoices' %}" class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
-          {% if request.resolver_match.app_name == 'fiscal' and request.resolver_match.url_name != 'stock_overview' %}
+          {% if request.resolver_match.app_name == 'fiscal' and request.resolver_match.url_name != 'stock_overview' and 'discover' not in request.resolver_match.url_name and 'deliveries' not in request.resolver_match.url_name and 'delivery' not in request.resolver_match.url_name and 'register_receipt' not in request.resolver_match.url_name %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
             text-gray-400 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600
@@ -104,7 +104,7 @@
 
       <!-- Entregas -->
       <a href="{% url 'fiscal:deliveries' %}" class="flex items-center p-2 rounded-l-lg -mr-3 pr-5 transition-colors group
-          {% if request.resolver_match.url_name == 'deliveries' or request.resolver_match.url_name == 'delivery_detail' or request.resolver_match.url_name == 'register_receipt' %}
+          {% if request.resolver_match.url_name == 'deliveries' or 'delivery' in request.resolver_match.url_name or request.resolver_match.url_name == 'register_receipt' %}
             bg-brand-600/20 text-white dark:bg-brand-100 dark:text-brand-700 border-l-4 border-brand-500
           {% else %}
             text-gray-400 dark:text-gray-600 hover:bg-slate-800 dark:hover:bg-gray-100 hover:text-white dark:hover:text-brand-600

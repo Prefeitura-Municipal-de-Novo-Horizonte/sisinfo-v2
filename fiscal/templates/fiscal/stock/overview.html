@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 {% load static %}
 
 {% block title %}Estoque e Saldo{% endblock %}
@@ -198,20 +199,17 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     {% if mb.is_at_limit %}
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-                                        0
-                                    </span>
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Crítico' type='danger' text='Crítico ('|add:val|add:')' %}
+                                        {% endwith %}
                                     {% elif mb.is_near_limit %}
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
-                                        {{ mb.available_for_purchase }}
-                                    </span>
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Alerta' type='warning' text='Alerta ('|add:val|add:')' %}
+                                        {% endwith %}
                                     {% else %}
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                                        {{ mb.available_for_purchase }}
-                                    </span>
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Normal' type='success' text='Normal ('|add:val|add:')' %}
+                                        {% endwith %}
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4 text-center">

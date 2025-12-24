@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 {% block title %}Usuários{% endblock title %}
 
 {% block content %}
@@ -99,35 +100,15 @@
                         <td class="px-3 py-2 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <!-- Ver Perfil -->
-                                <a href="{{ user.get_absolute_url }}"
-                                    class="text-blue-600 dark:text-blue-500 hover:underline" title="Ver Perfil">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                        </path>
-                                    </svg>
-                                </a>
+                                {% action_button url=user.get_absolute_url type='view' title='Ver Perfil' %}
 
                                 <!-- Toggle Ativo/Inativo -->
                                 {% if user.is_active %}
-                                <a href="{% url 'authenticate:disabled_user' user.slug %}"
-                                    class="text-red-600 dark:text-red-500 hover:underline" title="Desativar">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6">
-                                        </path>
-                                    </svg>
-                                </a>
+                                    {% url 'authenticate:disabled_user' user.slug as disable_url %}
+                                    {% action_button url=disable_url type='x' title='Desativar' %}
                                 {% else %}
-                                <a href="{% url 'authenticate:enabled_user' user.slug %}"
-                                    class="text-green-600 dark:text-green-500 hover:underline" title="Ativar">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 18">
-                                        <path
-                                            d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
-                                    </svg>
-                                </a>
+                                    {% url 'authenticate:enabled_user' user.slug as enable_url %}
+                                    {% action_button url=enable_url type='check' title='Ativar' %}
                                 {% endif %}
 
                                 <!-- Toggle Técnico -->
