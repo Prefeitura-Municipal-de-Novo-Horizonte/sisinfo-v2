@@ -1,0 +1,29 @@
+📦 NOTIFICAÇÃO DE ENTREGA DE MATERIAIS
+======================================
+
+Prezado setor de Patrimônio,
+
+Informamos que foi realizada uma entrega de materiais de TI com os seguintes dados:
+
+DADOS DA ENTREGA
+----------------
+Setor de Destino: {{ delivery.sector }}
+Nota Fiscal: NF {{ delivery.invoice.number }} - {{ delivery.invoice.supplier }}
+Recebido por: {{ delivery.received_by }}
+Data/Hora: {{ delivery.received_at|date:"d/m/Y H:i" }}{% if delivery.delivery_address %}
+Endereço/Local: {{ delivery.delivery_address }}{% endif %}
+
+MATERIAIS ENTREGUES
+-------------------
+{% for item in items %}
+• {{ item.invoice_item.material_bidding.material.name }} - Quantidade: {{ item.quantity_delivered }}
+{% endfor %}
+{% if delivery.observations %}
+OBSERVAÇÕES
+-----------
+{{ delivery.observations }}
+{% endif %}
+
+---
+Esta é uma mensagem automática enviada pelo sistema SISInfo V2.
+Prefeitura Municipal de Novo Horizonte - Diretoria de TI

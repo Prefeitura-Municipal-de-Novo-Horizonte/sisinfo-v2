@@ -18,7 +18,27 @@ def admin_panel(request):
         from django.shortcuts import redirect
         return redirect('dashboard:index')
     
-    return render(request, "dashboard/admin.html")
+    from reports.models import Report
+    from fiscal.models import DeliveryNote
+    
+    # Laudos em aberto (status='1')
+    open_reports = Report.objects.filter(status='1').select_related(
+        'sector', 'professional'
+    ).order_by('-created_at')
+    
+    # Fichas de entrega pendentes (status='P' ou 'A')
+    pending_deliveries = DeliveryNote.objects.filter(
+        status__in=['P', 'A']
+    ).select_related(
+        'sector', 'invoice', 'delivered_by'
+    ).order_by('-created_at')
+    
+    context = {
+        'open_reports': open_reports,
+        'pending_deliveries': pending_deliveries,
+    }
+    
+    return render(request, "dashboard/admin.html", context)
 
 
 @login_required
@@ -495,3 +515,121 @@ def backup_download(request, job_id):
             'error': 'Job não encontrado'
         }, status=404)
 
+
+@login_required
+def bulk_close_reports(request):
+    """
+    Fecha laudos em massa.
+    Recebe lista de IDs via POST JSON e altera status para 'Finalizado'.
+    Restrito a administradores.
+    """
+    from reports.models import Report
+    
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método não permitido'
+        }, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        report_ids = data.get('ids', [])
+        
+        if not report_ids:
+            return JsonResponse({
+                'success': False,
+                'error': 'Nenhum laudo selecionado'
+            }, status=400)
+        
+        # Atualizar status para Finalizado ('3')
+        updated = Report.objects.filter(
+            id__in=report_ids, status='1'
+        ).update(status='3')
+        
+        return JsonResponse({
+            'success': True,
+            'updated': updated,
+            'message': f'{updated} laudo(s) finalizado(s) com sucesso!'
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'JSON inválido'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@login_required
+def bulk_complete_deliveries(request):
+    """
+    Conclui fichas de entrega em massa.
+    Recebe lista de IDs via POST JSON e altera status para 'Concluída'.
+    Restrito a administradores.
+    """
+    from django.utils import timezone
+    from fiscal.models import DeliveryNote
+    
+    if not request.user.is_admin:
+        return JsonResponse({
+            'success': False,
+            'error': 'Apenas administradores podem executar esta ação'
+        }, status=403)
+    
+    if request.method != 'POST':
+        return JsonResponse({
+            'success': False,
+            'error': 'Método não permitido'
+        }, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        delivery_ids = data.get('ids', [])
+        
+        if not delivery_ids:
+            return JsonResponse({
+                'success': False,
+                'error': 'Nenhuma ficha selecionada'
+            }, status=400)
+        
+        # Atualizar status para Concluída ('C') e registrar data
+        # Usamos um loop com .save() em vez de .update() para disparar os signals de estoque
+        now = timezone.now()
+        deliveries = DeliveryNote.objects.filter(
+            id__in=delivery_ids, status__in=['P', 'A']
+        )
+        
+        updated = 0
+        for delivery in deliveries:
+            delivery.status = 'C'
+            delivery.received_at = now
+            delivery.received_by = f'Fechado em massa por {request.user.fullname}'
+            delivery.save()
+            updated += 1
+        
+        return JsonResponse({
+            'success': True,
+            'updated': updated,
+            'message': f'{updated} ficha(s) de entrega concluída(s) com sucesso!'
+        })
+    
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'JSON inválido'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)

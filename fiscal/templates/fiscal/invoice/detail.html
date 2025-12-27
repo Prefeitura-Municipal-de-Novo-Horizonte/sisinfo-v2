@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 {% load static %}
 
 {% block title %}Nota Fiscal {{ invoice.number }}{% endblock title %}
@@ -213,11 +214,8 @@
                                 Setor: {{ linked_report.sector.name|default:"—" }}
                             </p>
                         </div>
-                        <a href="{% url 'fiscal:invoice_unlink_report' pk=invoice.pk %}"
-                            class="text-red-500 hover:text-red-700 text-sm"
-                            onclick="return confirm('Remover vínculo com este laudo?')">
-                            Desvincular
-                        </a>
+                        {% url 'fiscal:invoice_unlink_report' pk=invoice.pk as unlink_url %}
+                        {% action_button url=unlink_url type='delete' text='Desvincular' confirm_message='Remover vínculo com este laudo?' %}
                     </div>
                     {% elif report_suggestions %}
                     <!-- Sugestões de laudos -->
@@ -268,6 +266,62 @@
                 </a>
             </div>
             {% endif %}
+
+            <!-- Entregas de Materiais -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Entregas</h2>
+                    {% if invoice.items.exists %}
+                    <a href="{% url 'fiscal:delivery_create' invoice_pk=invoice.pk %}"
+                        class="inline-flex items-center px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg transition-colors">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Nova Entrega
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    {% if invoice.deliveries.exists %}
+                    <ul class="space-y-2">
+                        {% for delivery in invoice.deliveries.all %}
+                        <li class="flex items-center justify-between p-3 rounded bg-gray-50 dark:bg-gray-700">
+                            <div>
+                                <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
+                                    class="font-medium text-gray-900 dark:text-white hover:text-brand-600">
+                                    Entrega #{{ delivery.pk }} - {{ delivery.sector.name }}
+                                </a>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    {{ delivery.created_at|date:"d/m/Y H:i" }}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                {% if delivery.is_pending %}
+                                <span
+                                    class="px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                    Pendente
+                                </span>
+                                {% else %}
+                                <span
+                                    class="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                                    Concluída
+                                </span>
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-sm text-gray-400 italic text-center py-2">
+                        {% if invoice.items.exists %}
+                        Nenhuma entrega registrada. Clique em "Nova Entrega" para criar.
+                        {% else %}
+                        Adicione itens à nota para poder criar entregas.
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

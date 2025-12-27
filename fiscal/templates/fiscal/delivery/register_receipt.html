@@ -1,0 +1,162 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block title %}Registrar Recebimento{% endblock %}
+
+{% block content %}
+<div class="container mx-auto max-w-2xl">
+    <!-- Header -->
+    <div class="mb-6">
+        <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
+            class="text-brand-600 hover:text-brand-700 text-sm flex items-center gap-1 mb-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar para detalhes
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Registrar Recebimento</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            Entrega #{{ delivery.pk }} - {{ delivery.sector }}
+        </p>
+    </div>
+
+    <!-- Info Card -->
+    <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+        <div class="flex gap-3">
+            <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="text-sm text-blue-800 dark:text-blue-300">
+                <p class="font-medium mb-1">Materiais entregues:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    {% for item in delivery.items.all %}
+                    <li>{{ item.invoice_item.material_bidding.material.name }} ({{ item.quantity_delivered }}x)</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="id_received_by" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Nome de quem recebeu *
+                </label>
+                {{ form.received_by }}
+                {% if form.received_by.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.received_by.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_received_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Data/hora do recebimento *
+                </label>
+                {{ form.received_at }}
+                {% if form.received_at.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.received_at.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_delivery_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Endereço/Local de entrega
+                </label>
+                {{ form.delivery_address }}
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Local, sala ou referência da entrega (opcional)
+                </p>
+                {% if form.delivery_address.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.delivery_address.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_signed_document_file"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Documento assinado *
+                </label>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    Tire uma foto, faça um scan ou anexe o PDF do documento de entrega assinado.
+                </p>
+                <input type="file" name="signed_document_file" id="id_signed_document_file" 
+                    accept="image/*,.pdf,application/pdf"
+                    capture="environment" required
+                    class="block w-full text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                {% if form.signed_document_file.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.signed_document_file.errors.0 }}</p>
+                {% endif %}
+
+                <!-- Preview da imagem ou ícone de PDF -->
+                <div id="preview-container" class="mt-4 hidden">
+                    <img id="preview-image" src="" alt="Preview"
+                        class="max-w-full max-h-64 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div id="pdf-preview" class="hidden flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <svg class="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.92,12.31C10.68,11.54 10.15,9.08 11.55,9.04C12.95,9 12.03,12.16 12.03,12.16C12.42,13.65 14.05,14.72 14.05,14.72C14.55,14.57 17.4,14.24 17.4,15.72C17.4,17.2 13.84,16.3 13.84,16.3C12.04,16.4 10.92,15.9 10.92,15.9C9.15,16.65 6.5,16.95 6.5,15.05C6.5,13.15 9.07,13.23 9.07,13.23C10.01,13.45 10.92,12.31 10.92,12.31Z"/>
+                        </svg>
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white" id="pdf-filename">documento.pdf</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Arquivo PDF selecionado (será convertido para imagem)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit"
+                    class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Confirmar Recebimento
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('id_signed_document_file').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const pdfFilename = document.getElementById('pdf-filename');
+        
+        if (file) {
+            previewContainer.classList.remove('hidden');
+            
+            // Verificar se é PDF
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                // Mostrar ícone de PDF
+                previewImage.classList.add('hidden');
+                pdfPreview.classList.remove('hidden');
+                pdfFilename.textContent = file.name;
+            } else {
+                // Mostrar preview da imagem
+                pdfPreview.classList.add('hidden');
+                previewImage.classList.remove('hidden');
+                
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        } else {
+            previewContainer.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}

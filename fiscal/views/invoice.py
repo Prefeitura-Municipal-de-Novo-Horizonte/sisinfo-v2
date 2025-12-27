@@ -33,7 +33,9 @@ class InvoiceListView(LoginRequiredMixin, ListView):
     login_url = 'authenticate:login'
     
     def get_queryset(self):
-        queryset = Invoice.objects.select_related('supplier').all().order_by('-issue_date', '-created_at')
+        queryset = Invoice.objects.select_related(
+            'supplier', 'commitment', 'report_link__report'
+        ).prefetch_related('items', 'deliveries').all().order_by('-issue_date', '-created_at')
         
         # Filtros
         q = self.request.GET.get('q') # Busca por número

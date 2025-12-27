@@ -97,12 +97,15 @@ class DashboardService:
     @staticmethod
     def get_top_materials_by_period(period_days: int = 30, limit: int = 10) -> List[Dict[str, Any]]:
         """
-        Retorna os materiais mais utilizados nos laudos em um período específico.
+        Retorna os materiais mais adquiridos (via Notas Fiscais) com licitação ativa.
         """
+        from fiscal.models import InvoiceItem
+        
         start_date = timezone.now() - timedelta(days=period_days)
         
-        stats = MaterialReport.objects.filter(
-            report__created_at__gte=start_date
+        stats = InvoiceItem.objects.filter(
+            invoice__created_at__gte=start_date,
+            material_bidding__status='1'  # Licitação ativa
         ).exclude(
             material_bidding__material__name__icontains='Perdido'
         ).values(

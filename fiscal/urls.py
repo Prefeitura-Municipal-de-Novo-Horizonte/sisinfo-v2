@@ -20,11 +20,14 @@ from fiscal.views import (
     DeliveryNoteDetailView,
     delivery_create,
     delivery_generate_pdf,
+    register_receipt,
+    resend_delivery_email,
     ocr_submit,
     ocr_status,
     ocr_cancel,
     ocr_callback,
 )
+from fiscal.views.stock import StockOverviewView
 
 app_name = 'fiscal'
 
@@ -59,8 +62,12 @@ urlpatterns = [
     path('entregas/nova/<int:invoice_pk>/', delivery_create, name='delivery_create'),
     path('entregas/<int:pk>/', DeliveryNoteDetailView.as_view(), name='delivery_detail'),
     path('entregas/<int:pk>/pdf/', delivery_generate_pdf, name='delivery_pdf'),
+    path('entregas/<int:pk>/registrar-recebimento/', register_receipt, name='register_receipt'),
+    path('entregas/<int:pk>/reenviar-email/', resend_delivery_email, name='resend_delivery_email'),
+    
+    # Estoque
+    path('estoque/', StockOverviewView.as_view(), name='stock_overview'),
     
     # APIs
     path('api/materials-by-supplier/', api_materials_by_supplier, name='api_materials_by_supplier'),
 ]
-

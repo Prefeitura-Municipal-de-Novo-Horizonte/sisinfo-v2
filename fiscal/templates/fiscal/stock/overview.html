@@ -1,0 +1,241 @@
+{% extends "_base.html" %}
+{% load ui_tags %}
+{% load static %}
+
+{% block title %}Estoque e Saldo{% endblock %}
+
+{% block content %}
+<div class="container mx-auto">
+    <!-- Page Header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Estoque e Saldo</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Visualize o estoque físico e saldo de materiais por
+            licitação</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                    <svg class="w-6 h-6 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_stock_items }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Itens em Estoque</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_materials }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Materiais Ativos</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_near_limit }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Próx. ao Limite</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
+                    <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_at_limit }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">No Limite</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div x-data="{ activeTab: 'estoque' }" class="mb-6">
+        <div class="border-b border-gray-200 dark:border-gray-700">
+            <nav class="flex gap-4" aria-label="Tabs">
+                <button @click="activeTab = 'estoque'"
+                    :class="activeTab === 'estoque' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                    class="py-3 px-1 border-b-2 font-medium text-sm transition-colors">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                        </svg>
+                        Estoque Físico
+                    </span>
+                </button>
+                <button @click="activeTab = 'saldo'"
+                    :class="activeTab === 'saldo' ? 'border-brand-500 text-brand-600 dark:text-brand-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'"
+                    class="py-3 px-1 border-b-2 font-medium text-sm transition-colors">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        Saldo Licitações
+                    </span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Content: Estoque Físico -->
+        <div x-show="activeTab === 'estoque'" class="mt-6">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Material</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Qtd. Estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            {% for item in stock_items %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ item.material_bidding.material.name }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                        {{ item.quantity }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <p class="text-lg font-medium">Nenhum item em estoque</p>
+                                    <p class="mt-1 text-sm">O estoque será atualizado automaticamente com o recebimento
+                                        de notas fiscais.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Saldo Licitações -->
+        <div x-show="activeTab === 'saldo'" class="mt-6" style="display: none;">
+            <div
+                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Material</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Licitado</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Comprado</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Disponível</th>
+                                <th
+                                    class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Uso</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            {% for mb in materials_balance %}
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <td class="px-6 py-4">
+                                    <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ mb.material.name }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                                        {{ mb.quantity }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                                        {{ mb.quantity_purchased }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    {% if mb.is_at_limit %}
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Crítico' type='danger' text='Crítico ('|add:val|add:')' %}
+                                        {% endwith %}
+                                    {% elif mb.is_near_limit %}
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Alerta' type='warning' text='Alerta ('|add:val|add:')' %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% with val=mb.available_for_purchase|stringformat:"s" %}
+                                            {% status_badge status='Normal' type='success' text='Normal ('|add:val|add:')' %}
+                                        {% endwith %}
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-600 rounded-full h-2 mr-2">
+                                            <div class="h-2 rounded-full {% if mb.is_at_limit %}bg-red-500{% elif mb.is_near_limit %}bg-yellow-500{% else %}bg-green-500{% endif %}"
+                                                style="width: {{ mb.usage_percentage }}%"></div>
+                                        </div>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400">
+                                            {{ mb.usage_percentage }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                                    <p class="text-lg font-medium">Nenhum material encontrado</p>
+                                    <p class="mt-1 text-sm">Não há materiais ativos cadastrados.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

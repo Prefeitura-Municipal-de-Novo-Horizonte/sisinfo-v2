@@ -292,4 +292,338 @@
   </div>
 
 </div>
+
+<!-- Seção: Laudos em Aberto -->
+<div class="mt-8 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
+  x-data="{ 
+    selectedReports: [],
+    loading: false,
+    message: '',
+    messageType: '',
+    
+    get allSelected() {
+      const checkboxes = document.querySelectorAll('.report-checkbox');
+      return checkboxes.length > 0 && this.selectedReports.length === checkboxes.length;
+    },
+    
+    toggleAll() {
+      const checkboxes = document.querySelectorAll('.report-checkbox');
+      if (this.allSelected) {
+        this.selectedReports = [];
+      } else {
+        this.selectedReports = Array.from(checkboxes).map(cb => parseInt(cb.value));
+      }
+    },
+    
+    async closeSelected() {
+      if (this.selectedReports.length === 0) {
+        this.message = 'Selecione pelo menos um laudo';
+        this.messageType = 'error';
+        return;
+      }
+      
+      this.loading = true;
+      this.message = '';
+      
+      try {
+        const response = await fetch('{% url 'dashboard:bulk_close_reports' %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ ids: this.selectedReports })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          this.message = data.message;
+          this.messageType = 'success';
+          // Remove linhas fechadas da tabela
+          this.selectedReports.forEach(id => {
+            const row = document.getElementById('report-row-' + id);
+            if (row) row.remove();
+          });
+          this.selectedReports = [];
+        } else {
+          this.message = data.error || 'Erro ao finalizar laudos';
+          this.messageType = 'error';
+        }
+      } catch (e) {
+        this.message = 'Erro de conexão: ' + e.message;
+        this.messageType = 'error';
+      }
+      
+      this.loading = false;
+    }
+  }">
+  <div class="p-4 border-b border-slate-700 dark:border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="p-3 rounded-full bg-amber-500/20 text-amber-400">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos em Aberto</h3>
+        <p class="text-sm text-gray-500 dark:text-slate-400">Selecione laudos para finalizar em massa</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <!-- Mensagem de feedback -->
+    <template x-if="message">
+      <div :class="{
+        'bg-green-500/20 text-green-400 border-green-500/30': messageType === 'success',
+        'bg-red-500/20 text-red-400 border-red-500/30': messageType === 'error'
+      }" class="mb-4 p-3 rounded-lg border text-sm">
+        <span x-text="message"></span>
+      </div>
+    </template>
+
+    {% if open_reports %}
+    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-700">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs uppercase bg-gray-100 dark:bg-slate-900/80 text-gray-700 dark:text-slate-400">
+          <tr>
+            <th scope="col" class="px-4 py-3 w-12">
+              <input type="checkbox" @click="toggleAll()" :checked="allSelected"
+                class="w-4 h-4 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-brand-500 focus:ring-brand-500">
+            </th>
+            <th scope="col" class="px-4 py-3">Laudo</th>
+            <th scope="col" class="px-4 py-3">Setor</th>
+            <th scope="col" class="px-4 py-3">Profissional</th>
+            <th scope="col" class="px-4 py-3">Data</th>
+            <th scope="col" class="px-4 py-3 text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
+          {% for report in open_reports %}
+          <tr id="report-row-{{ report.id }}" class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+            <td class="px-4 py-3">
+              <input type="checkbox" value="{{ report.id }}" x-model.number="selectedReports"
+                class="report-checkbox w-4 h-4 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-brand-500 focus:ring-brand-500">
+            </td>
+            <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-900">
+              {{ report.number_report|default:"Sem número" }}
+            </td>
+            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ report.sector.name|default:"-" }}</td>
+            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ report.professional.first_name|default:"-" }}</td>
+            <td class="px-4 py-3 text-gray-500 dark:text-slate-400">{{ report.created_at|date:"d/m/Y" }}</td>
+            <td class="px-4 py-3 text-center">
+              <a href="{{ report.get_absolute_url }}" target="_blank"
+                class="inline-flex items-center justify-center gap-1 rounded-md h-8 px-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40 focus:ring-blue-500"
+                title="Ver laudo">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mt-4 flex justify-between items-center">
+      <span class="text-sm text-gray-500 dark:text-slate-400" x-text="selectedReports.length + ' selecionado(s)'"></span>
+      <button @click="closeSelected()" :disabled="loading || selectedReports.length === 0"
+        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-amber-600 rounded-lg shadow-md hover:bg-amber-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
+        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <svg x-show="loading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span x-text="loading ? 'Finalizando...' : 'Finalizar Selecionados'"></span>
+      </button>
+    </div>
+    {% else %}
+    <div class="text-center py-8 text-gray-500 dark:text-slate-400">
+      <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>Nenhum laudo em aberto</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Seção: Fichas de Entrega Pendentes -->
+<div class="mt-6 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
+  x-data="{ 
+    selectedDeliveries: [],
+    loading: false,
+    message: '',
+    messageType: '',
+    
+    get allSelected() {
+      const checkboxes = document.querySelectorAll('.delivery-checkbox');
+      return checkboxes.length > 0 && this.selectedDeliveries.length === checkboxes.length;
+    },
+    
+    toggleAll() {
+      const checkboxes = document.querySelectorAll('.delivery-checkbox');
+      if (this.allSelected) {
+        this.selectedDeliveries = [];
+      } else {
+        this.selectedDeliveries = Array.from(checkboxes).map(cb => parseInt(cb.value));
+      }
+    },
+    
+    async completeSelected() {
+      if (this.selectedDeliveries.length === 0) {
+        this.message = 'Selecione pelo menos uma ficha';
+        this.messageType = 'error';
+        return;
+      }
+      
+      this.loading = true;
+      this.message = '';
+      
+      try {
+        const response = await fetch('{% url 'dashboard:bulk_complete_deliveries' %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({ ids: this.selectedDeliveries })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          this.message = data.message;
+          this.messageType = 'success';
+          // Remove linhas concluídas da tabela
+          this.selectedDeliveries.forEach(id => {
+            const row = document.getElementById('delivery-row-' + id);
+            if (row) row.remove();
+          });
+          this.selectedDeliveries = [];
+        } else {
+          this.message = data.error || 'Erro ao concluir fichas';
+          this.messageType = 'error';
+        }
+      } catch (e) {
+        this.message = 'Erro de conexão: ' + e.message;
+        this.messageType = 'error';
+      }
+      
+      this.loading = false;
+    }
+  }">
+  <div class="p-4 border-b border-slate-700 dark:border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="p-3 rounded-full bg-emerald-500/20 text-emerald-400">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Fichas de Entrega Pendentes</h3>
+        <p class="text-sm text-gray-500 dark:text-slate-400">Selecione fichas para concluir em massa (com ou sem PDF)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <!-- Mensagem de feedback -->
+    <template x-if="message">
+      <div :class="{
+        'bg-green-500/20 text-green-400 border-green-500/30': messageType === 'success',
+        'bg-red-500/20 text-red-400 border-red-500/30': messageType === 'error'
+      }" class="mb-4 p-3 rounded-lg border text-sm">
+        <span x-text="message"></span>
+      </div>
+    </template>
+
+    {% if pending_deliveries %}
+    <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-slate-700">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs uppercase bg-gray-100 dark:bg-slate-900/80 text-gray-700 dark:text-slate-400">
+          <tr>
+            <th scope="col" class="px-4 py-3 w-12">
+              <input type="checkbox" @click="toggleAll()" :checked="allSelected"
+                class="w-4 h-4 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-brand-500 focus:ring-brand-500">
+            </th>
+            <th scope="col" class="px-4 py-3">#</th>
+            <th scope="col" class="px-4 py-3">Setor</th>
+            <th scope="col" class="px-4 py-3">Nota Fiscal</th>
+            <th scope="col" class="px-4 py-3">Status</th>
+            <th scope="col" class="px-4 py-3">PDF</th>
+            <th scope="col" class="px-4 py-3">Data</th>
+            <th scope="col" class="px-4 py-3 text-center">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
+          {% for delivery in pending_deliveries %}
+          <tr id="delivery-row-{{ delivery.id }}" class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+            <td class="px-4 py-3">
+              <input type="checkbox" value="{{ delivery.id }}" x-model.number="selectedDeliveries"
+                class="delivery-checkbox w-4 h-4 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-brand-500 focus:ring-brand-500">
+            </td>
+            <td class="px-4 py-3 font-semibold text-gray-900 dark:text-gray-900">
+              {{ delivery.pk }}
+            </td>
+            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ delivery.sector.name }}</td>
+            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">NF {{ delivery.invoice.number }}</td>
+            <td class="px-4 py-3">
+              {% if delivery.status == 'P' %}
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400">Pendente</span>
+              {% else %}
+              <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400">A Caminho</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3">
+              {% if delivery.signed_document %}
+              <span class="inline-flex items-center text-green-600 dark:text-green-400">
+                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                Sim
+              </span>
+              {% else %}
+              <span class="text-gray-400 dark:text-slate-500">Não</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-gray-500 dark:text-slate-400">{{ delivery.created_at|date:"d/m/Y" }}</td>
+            <td class="px-4 py-3 text-center">
+              <a href="{{ delivery.get_absolute_url }}" target="_blank"
+                class="inline-flex items-center justify-center gap-1 rounded-md h-8 px-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40 focus:ring-blue-500"
+                title="Ver ficha">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="mt-4 flex justify-between items-center">
+      <span class="text-sm text-gray-500 dark:text-slate-400" x-text="selectedDeliveries.length + ' selecionada(s)'"></span>
+      <button @click="completeSelected()" :disabled="loading || selectedDeliveries.length === 0"
+        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-lg shadow-md hover:bg-emerald-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
+        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <svg x-show="loading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <span x-text="loading ? 'Concluindo...' : 'Concluir Selecionadas'"></span>
+      </button>
+    </div>
+    {% else %}
+    <div class="text-center py-8 text-gray-500 dark:text-slate-400">
+      <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>Nenhuma ficha de entrega pendente</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
 {% endblock %}

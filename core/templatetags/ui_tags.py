@@ -92,3 +92,31 @@ def style_input(value, extra_classes=""):
     if extra_classes:
         base_classes = f"{base_classes} {extra_classes}"
     return value.as_widget(attrs={'class': base_classes})
+
+@register.inclusion_tag('ui/action_button.html')
+def action_button(url, type='view', title=None, text=None, extra_classes='', target=None, confirm_message=None):
+    return {
+        'url': url,
+        'type': type,
+        'title': title,
+        'text': text,
+        'extra_classes': extra_classes,
+        'target': target,
+        'confirm_message': confirm_message
+    }
+
+@register.inclusion_tag('ui/status_badge.html')
+def status_badge(status, type=None, text=None, extra_classes=''):
+    """
+    Renders a status badge with consistent styling and icons.
+    Args:
+        status: The status value (code or text) used for logic.
+        type: Optional explicit type ('success', 'warning', 'danger', 'info').
+        text: Optional text to display instead of the status value.
+    """
+    return {
+        'status': status,
+        'type': type,
+        'text': text,
+        'extra_classes': extra_classes
+    }

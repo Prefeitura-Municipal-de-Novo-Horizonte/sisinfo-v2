@@ -14,3 +14,4 @@ playwright==1.48.0
 certifi==2024.2.2
 # cloudinary removido - usando Supabase Storage exclusivamente
 google-genai>=1.0.0
+pypdfium2==4.29.0

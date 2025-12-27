@@ -4,6 +4,7 @@ from fiscal.models import Invoice
 from bidding_supplier.models import Supplier
 from organizational_structure.models import Sector, Direction
 from authenticate.models import ProfessionalUser
+from reports.models import Report
 from reports.views import generate_pdf_report
 from unittest.mock import patch, MagicMock
 

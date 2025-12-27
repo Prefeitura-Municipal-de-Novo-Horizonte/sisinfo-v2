@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load ui_tags %}
 
 {% block title %}Fichas de Entrega{% endblock title %}
 
@@ -9,52 +10,142 @@
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Fichas de Entrega</h1>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">Registros de entregas de materiais aos setores</p>
         </div>
+        <a href="{% url 'fiscal:invoices' %}"
+            class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg transition-colors text-sm">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Nova Entrega
+        </a>
     </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 mb-6">
+        <form method="get" class="flex flex-wrap gap-4 items-end">
+            <!-- Busca por Setor/NF -->
+            <div class="flex-1 min-w-[200px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Buscar</label>
+                <input type="text" name="q" value="{{ current_q }}" placeholder="Setor ou Nº da NF..."
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Data Inicial -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Inicial</label>
+                <input type="date" name="date_min" value="{{ current_date_min }}"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Data Final -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Data Final</label>
+                <input type="date" name="date_max" value="{{ current_date_max }}"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+            </div>
+
+            <!-- Status -->
+            <div class="flex-1 min-w-[150px]">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+                <select name="status" id="filterStatus"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white px-3 py-2 text-sm">
+                    <option value="">Todos</option>
+                    <option value="P">Pendente</option>
+                    <option value="A">A Caminho</option>
+                    <option value="C">Concluída</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                    Filtrar
+                </button>
+                <a href="{% url 'fiscal:deliveries' %}"
+                    class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm">
+                    Limpar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentStatus = "{{ current_status|default:'' }}";
+            if (currentStatus) {
+                document.getElementById('filterStatus').value = currentStatus;
+            }
+        });
+    </script>
 
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Data
-                    </th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Setor
-                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Criada em</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Setor</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        NF</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
+                        Status</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                         Recebido por</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Nota
-                        Fiscal</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                        Entregue por</th>
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
                         Ações</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 {% for delivery in deliveries %}
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                        {{ delivery.received_at|date:"d/m/Y H:i" }}
+                        {{ delivery.created_at|date:"d/m/Y H:i" }}
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.sector.name }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.received_by }}</td>
                     <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">{{ delivery.invoice.number }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">{{ delivery.delivered_by.fullname }}
+                    <td class="px-6 py-4 text-center">
+                        {% if delivery.status == 'P' %}
+                            {% status_badge status='Pendente' type='warning' %}
+                        {% elif delivery.status == 'A' %}
+                            {% status_badge status='A Caminho' type='info' %}
+                        {% else %}
+                            {% status_badge status='Concluída' type='success' %}
+                        {% endif %}
                     </td>
-                    <td class="px-6 py-4 text-right space-x-2">
-                        <a href="{% url 'fiscal:delivery_detail' pk=delivery.pk %}"
-                            class="text-brand-600 hover:text-brand-800 text-sm">Ver</a>
-                        <a href="{% url 'fiscal:delivery_pdf' pk=delivery.pk %}" target="_blank"
-                            class="text-gray-600 hover:text-gray-800 text-sm">PDF</a>
+                    <td class="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
+                        {% if delivery.received_by %}
+                        {{ delivery.received_by }}
+                        {% else %}
+                        <span class="text-gray-400 italic">—</span>
+                        {% endif %}
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right">
+              <div class="flex justify-end gap-2">
+                {% url 'fiscal:delivery_detail' pk=delivery.pk as detail_url %}
+                {% action_button url=detail_url type='view' title='Ver Detalhes' %}
+
+                {% if not delivery.is_completed %}
+                {% url 'fiscal:delivery_pdf' pk=delivery.pk as pdf_url %}
+                {% action_button url=pdf_url type='pdf' title='Baixar PDF' target='_blank' %}
+                {% endif %}
+
+                {% if delivery.is_pending %}
+                {% url 'fiscal:register_receipt' pk=delivery.pk as register_url %}
+                {% action_button url=register_url type='check' title='Registrar Recebimento' %}
+                {% endif %}
+              </div>
+            </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">Nenhuma entrega
-                        realizada</td>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        Nenhuma entrega registrada
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    {% include "include/_pagination.html" %}
 </div>
 {% endblock content %}

@@ -87,7 +87,7 @@ class FiscalSignalsTestCase(TestCase):
             sector=Sector.objects.create(name="Setor X"), # Mock setor se precisar
             received_by="João",
             received_at=timezone.now(),
-            delivered_by=ProfessionalUser.objects.create_user(email="t-user", password="p")
+            delivered_by=ProfessionalUser.objects.create_user(email="t-user", password="p", first_name="Test", last_name="User")
         )
         
         del_item = DeliveryNoteItem.objects.create(
