@@ -127,6 +127,7 @@ def register_receipt(request, pk):
     """
     Registra o recebimento de uma entrega (passo 2).
     Preenche nome/data do recebedor e faz upload do documento assinado.
+    Envia email de notificação para Patrimônio e TI.
     """
     delivery = get_object_or_404(DeliveryNote, pk=pk)
     
@@ -148,7 +149,16 @@ def register_receipt(request, pk):
             delivery.status = 'C'  # Concluída
             delivery.save()
             
-            messages.success(request, 'Recebimento registrado com sucesso!')
+            # Enviar email de notificação para Patrimônio e TI
+            from fiscal.services.email import send_delivery_notification
+            email_sent, email_msg = send_delivery_notification(delivery)
+            
+            if email_sent:
+                messages.success(request, f'Recebimento registrado! {email_msg}')
+            else:
+                messages.success(request, 'Recebimento registrado com sucesso!')
+                messages.warning(request, f'Não foi possível enviar email: {email_msg}')
+            
             return redirect(reverse('fiscal:delivery_detail', kwargs={'pk': pk}))
     else:
         form = RegisterReceiptForm(instance=delivery)
@@ -163,9 +173,11 @@ def register_receipt(request, pk):
 def upload_signed_document(file, delivery_pk):
     """
     Faz upload do documento assinado para Supabase Storage.
+    Se o arquivo for um PDF, converte a primeira página para imagem JPEG.
     Retorna o path do arquivo ou None em caso de erro.
     """
     import requests
+    from io import BytesIO
     
     supabase_url = config('SUPABASE_URL', default='')
     service_role_key = config('SUPABASE_SERVICE_ROLE_KEY', default='')
@@ -173,27 +185,68 @@ def upload_signed_document(file, delivery_pk):
     if not supabase_url or not service_role_key:
         return None
     
-    # Gerar nome único para o arquivo
-    file_ext = file.name.split('.')[-1] if '.' in file.name else 'jpg'
-    file_name = f"{delivery_pk}_{uuid.uuid4().hex[:8]}.{file_ext}"
-    
     try:
+        # Verificar se é PDF para converter para imagem
+        content_type = file.content_type or ''
+        is_pdf = content_type == 'application/pdf' or file.name.lower().endswith('.pdf')
+        
+        if is_pdf:
+            # Converter PDF para imagem usando pypdfium2 (sem dependência de poppler)
+            import pypdfium2 as pdfium
+            
+            pdf_bytes = file.read()
+            pdf = pdfium.PdfDocument(pdf_bytes)
+            
+            if len(pdf) == 0:
+                print("ERROR: PDF vazio ou inválido")
+                return None
+            
+            # Renderizar primeira página (escala 2 para boa qualidade)
+            page = pdf[0]
+            bitmap = page.render(scale=2)
+            pil_image = bitmap.to_pil()
+            
+            # Salvar como JPEG
+            img_buffer = BytesIO()
+            pil_image.save(img_buffer, format='JPEG', quality=85)
+            img_buffer.seek(0)
+            
+            file_data = img_buffer.read()
+            file_ext = 'jpg'
+            content_type = 'image/jpeg'
+            
+            # Fechar PDF
+            pdf.close()
+        else:
+            # É uma imagem, usar diretamente
+            file_data = file.read()
+            file_ext = file.name.split('.')[-1] if '.' in file.name else 'jpg'
+        
+        # Gerar nome único para o arquivo
+        file_name = f"{delivery_pk}_{uuid.uuid4().hex[:8]}.{file_ext}"
+        
+        # Nome do bucket parametrizado
+        bucket_name = config('SUPABASE_DELIVERY_BUCKET', default='delivery-documents')
+        
         # Upload para Supabase Storage
-        upload_url = f"{supabase_url}/storage/v1/object/delivery-documents/{file_name}"
+        upload_url = f"{supabase_url}/storage/v1/object/{bucket_name}/{file_name}"
         
         headers = {
             'Authorization': f'Bearer {service_role_key}',
-            'Content-Type': file.content_type or 'image/jpeg',
+            'Content-Type': content_type,
         }
         
-        response = requests.post(upload_url, headers=headers, data=file.read())
+        response = requests.post(upload_url, headers=headers, data=file_data)
         
         if response.status_code in [200, 201]:
+            print(f"DEBUG: Upload de ficha de entrega OK: {file_name}")
             return file_name
         else:
+            print(f"ERROR: Falha no upload para Supabase ({response.status_code}): {response.text}")
             return None
             
-    except Exception:
+    except Exception as e:
+        print(f"EXCEPTION: Erro ao processar upload de ficha de entrega: {e}")
         return None
 
 
@@ -221,3 +274,25 @@ def delivery_generate_pdf(request, pk):
     except Exception as e:
         messages.error(request, f'Erro ao gerar PDF: {str(e)}')
         return redirect(reverse('fiscal:delivery_detail', kwargs={'pk': pk}))
+
+
+@login_required(login_url='authenticate:login')
+def resend_delivery_email(request, pk):
+    """Reenvia email de notificação para entregas já concluídas."""
+    delivery = get_object_or_404(DeliveryNote, pk=pk)
+    
+    # Verificar se a entrega está concluída
+    if not delivery.is_completed:
+        messages.warning(request, 'Apenas entregas concluídas podem ter o email reenviado.')
+        return redirect(reverse('fiscal:delivery_detail', kwargs={'pk': pk}))
+    
+    # Enviar email
+    from fiscal.services.email import send_delivery_notification
+    email_sent, email_msg = send_delivery_notification(delivery)
+    
+    if email_sent:
+        messages.success(request, f'Email reenviado! {email_msg}')
+    else:
+        messages.error(request, f'Erro ao reenviar email: {email_msg}')
+    
+    return redirect(reverse('fiscal:delivery_detail', kwargs={'pk': pk}))

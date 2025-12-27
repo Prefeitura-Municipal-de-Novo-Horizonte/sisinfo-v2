@@ -21,6 +21,7 @@ from fiscal.views import (
     delivery_create,
     delivery_generate_pdf,
     register_receipt,
+    resend_delivery_email,
     ocr_submit,
     ocr_status,
     ocr_cancel,
@@ -62,6 +63,7 @@ urlpatterns = [
     path('entregas/<int:pk>/', DeliveryNoteDetailView.as_view(), name='delivery_detail'),
     path('entregas/<int:pk>/pdf/', delivery_generate_pdf, name='delivery_pdf'),
     path('entregas/<int:pk>/registrar-recebimento/', register_receipt, name='register_receipt'),
+    path('entregas/<int:pk>/reenviar-email/', resend_delivery_email, name='resend_delivery_email'),
     
     # Estoque
     path('estoque/', StockOverviewView.as_view(), name='stock_overview'),

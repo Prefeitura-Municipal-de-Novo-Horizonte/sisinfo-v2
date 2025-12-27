@@ -65,24 +65,47 @@
             </div>
 
             <div>
+                <label for="id_delivery_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Endereço/Local de entrega
+                </label>
+                {{ form.delivery_address }}
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Local, sala ou referência da entrega (opcional)
+                </p>
+                {% if form.delivery_address.errors %}
+                <p class="mt-1 text-sm text-red-600">{{ form.delivery_address.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <div>
                 <label for="id_signed_document_file"
                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Documento assinado *
                 </label>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                    Tire uma foto ou faça um scan do documento de entrega assinado pelo recebedor.
+                    Tire uma foto, faça um scan ou anexe o PDF do documento de entrega assinado.
                 </p>
-                <input type="file" name="signed_document_file" id="id_signed_document_file" accept="image/*"
+                <input type="file" name="signed_document_file" id="id_signed_document_file" 
+                    accept="image/*,.pdf,application/pdf"
                     capture="environment" required
                     class="block w-full text-sm text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                 {% if form.signed_document_file.errors %}
                 <p class="mt-1 text-sm text-red-600">{{ form.signed_document_file.errors.0 }}</p>
                 {% endif %}
 
-                <!-- Preview da imagem -->
+                <!-- Preview da imagem ou ícone de PDF -->
                 <div id="preview-container" class="mt-4 hidden">
                     <img id="preview-image" src="" alt="Preview"
                         class="max-w-full max-h-64 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div id="pdf-preview" class="hidden flex items-center gap-3 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <svg class="w-10 h-10 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20M10.92,12.31C10.68,11.54 10.15,9.08 11.55,9.04C12.95,9 12.03,12.16 12.03,12.16C12.42,13.65 14.05,14.72 14.05,14.72C14.55,14.57 17.4,14.24 17.4,15.72C17.4,17.2 13.84,16.3 13.84,16.3C12.04,16.4 10.92,15.9 10.92,15.9C9.15,16.65 6.5,16.95 6.5,15.05C6.5,13.15 9.07,13.23 9.07,13.23C10.01,13.45 10.92,12.31 10.92,12.31Z"/>
+                        </svg>
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white" id="pdf-filename">documento.pdf</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Arquivo PDF selecionado (será convertido para imagem)</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -106,13 +129,33 @@
 <script>
     document.getElementById('id_signed_document_file').addEventListener('change', function (e) {
         const file = e.target.files[0];
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const pdfFilename = document.getElementById('pdf-filename');
+        
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById('preview-image').src = e.target.result;
-                document.getElementById('preview-container').classList.remove('hidden');
+            previewContainer.classList.remove('hidden');
+            
+            // Verificar se é PDF
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                // Mostrar ícone de PDF
+                previewImage.classList.add('hidden');
+                pdfPreview.classList.remove('hidden');
+                pdfFilename.textContent = file.name;
+            } else {
+                // Mostrar preview da imagem
+                pdfPreview.classList.add('hidden');
+                previewImage.classList.remove('hidden');
+                
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
             }
-            reader.readAsDataURL(file);
+        } else {
+            previewContainer.classList.add('hidden');
         }
     });
 </script>

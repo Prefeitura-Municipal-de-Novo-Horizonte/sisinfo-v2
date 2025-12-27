@@ -23,6 +23,7 @@ from .delivery import (
     delivery_create,
     delivery_generate_pdf,
     register_receipt,
+    resend_delivery_email,
 )
 
 from .ocr import (

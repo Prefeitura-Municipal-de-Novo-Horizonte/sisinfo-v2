@@ -442,6 +442,11 @@ class DeliveryNote(models.Model):
     received_at = models.DateTimeField(
         'data/hora do recebimento', null=True, blank=True)
     
+    # Endereço de entrega (digitado manualmente)
+    delivery_address = models.CharField(
+        'endereço de entrega', max_length=300, blank=True,
+        help_text='Endereço/localização de referência para a entrega')
+    
     # Documento assinado (upload para Supabase)
     signed_document = models.CharField(
         'documento assinado', max_length=255, blank=True,
@@ -478,8 +483,9 @@ class DeliveryNote(models.Model):
             return None
         from decouple import config
         supabase_url = config('SUPABASE_URL', default='')
+        bucket_name = config('SUPABASE_DELIVERY_BUCKET', default='delivery-documents')
         if supabase_url:
-            return f"{supabase_url}/storage/v1/object/public/delivery-documents/{self.signed_document}"
+            return f"{supabase_url}/storage/v1/object/public/{bucket_name}/{self.signed_document}"
         return None
 
 
@@ -494,6 +500,11 @@ class DeliveryNoteItem(models.Model):
         InvoiceItem, on_delete=models.PROTECT,
         verbose_name='item da nota', related_name='entregas')
     quantity_delivered = models.PositiveIntegerField('quantidade entregue')
+    
+    stock_updated = models.BooleanField(
+        'estoque atualizado', default=False,
+        help_text='Indica se o estoque físico já foi baixado para este item'
+    )
 
     class Meta:
         verbose_name = 'item da entrega'

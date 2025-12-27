@@ -6,7 +6,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.conf import settings
 from pathlib import Path
-from fiscal.models import Invoice, InvoiceItem, DeliveryNoteItem, StockItem
+from fiscal.models import Invoice, InvoiceItem, DeliveryNote, DeliveryNoteItem, StockItem
 
 
 @receiver(post_delete, sender=Invoice)
@@ -85,39 +85,60 @@ def update_stock_on_invoice_item_save(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=DeliveryNoteItem)
-def decrease_stock_on_delivery(sender, instance, created, **kwargs):
+def update_stock_flag_on_delivery_item(sender, instance, created, **kwargs):
     """
-    Decrementa o estoque FÍSICO quando há uma saída (Entrega).
+    Sinal mantido para compatibilidade, mas a baixa de estoque real
+    agora é disparada pela DeliveryNote quando o status muda para 'C'.
+    """
+    pass
+
+
+@receiver(post_save, sender=DeliveryNote)
+def update_stock_on_delivery_completion(sender, instance, created, **kwargs):
+    """
+    Quando uma entrega é concluída ('C'), baixa o estoque de todos os itens vinculados.
     """
     # Skip durante loaddata
     if kwargs.get('raw', False):
         return
-    
-    try:
-        if created:
-            invoice_item = instance.invoice_item
-            if invoice_item.material_bidding:
-                stock_item, _ = StockItem.objects.get_or_create(material_bidding=invoice_item.material_bidding)
-                stock_item.quantity = max(0, stock_item.quantity - instance.quantity_delivered)
-                stock_item.save(update_fields=['quantity'])
-    except Exception:
-        pass  # Ignora erros durante loaddata
+        
+    if instance.status == 'C':
+        # Busca itens que ainda não tiveram o estoque baixado
+        items_to_update = instance.items.filter(stock_updated=False)
+        
+        for item in items_to_update:
+            try:
+                invoice_item = item.invoice_item
+                if invoice_item.material_bidding:
+                    stock_item, _ = StockItem.objects.get_or_create(
+                        material_bidding=invoice_item.material_bidding
+                    )
+                    stock_item.quantity = max(0, stock_item.quantity - item.quantity_delivered)
+                    stock_item.save(update_fields=['quantity'])
+                    
+                    # Marca como atualizado para não baixar de novo se o model for salvo novamente
+                    item.stock_updated = True
+                    item.save(update_fields=['stock_updated'])
+            except Exception as e:
+                print(f"Erro ao atualizar estoque para item {item.pk}: {e}")
 
 
 @receiver(post_delete, sender=DeliveryNoteItem)
 def restore_stock_on_delivery_delete(sender, instance, **kwargs):
     """
-    Restaura o estoque FÍSICO se uma entrega for cancelada/deletada.
+    Restaura o estoque FÍSICO se uma entrega concluída for deletada.
+    Só restaura se o estoque já tiver sido baixado (stock_updated=True).
     """
     # Skip durante loaddata
     if kwargs.get('raw', False):
         return
     
     try:
-        invoice_item = instance.invoice_item
-        if invoice_item.material_bidding:
-            stock_item, _ = StockItem.objects.get_or_create(material_bidding=invoice_item.material_bidding)
-            stock_item.quantity += instance.quantity_delivered
-            stock_item.save(update_fields=['quantity'])
+        if instance.stock_updated:
+            invoice_item = instance.invoice_item
+            if invoice_item.material_bidding:
+                stock_item, _ = StockItem.objects.get_or_create(material_bidding=invoice_item.material_bidding)
+                stock_item.quantity += instance.quantity_delivered
+                stock_item.save(update_fields=['quantity'])
     except Exception:
         pass  # Ignora erros durante loaddata

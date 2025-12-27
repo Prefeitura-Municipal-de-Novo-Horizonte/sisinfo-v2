@@ -141,15 +141,15 @@ class DeliveryNoteForm(forms.ModelForm):
 class RegisterReceiptForm(forms.ModelForm):
     """Formulário para registrar recebimento (passo 2 - após entrega física)."""
     
-    signed_document_file = forms.ImageField(
+    signed_document_file = forms.FileField(
         label='Documento assinado',
         required=True,
-        help_text='Foto ou scan do documento de entrega assinado'
+        help_text='Foto, scan ou PDF do documento de entrega assinado'
     )
     
     class Meta:
         model = DeliveryNote
-        fields = ['received_by', 'received_at']
+        fields = ['received_by', 'received_at', 'delivery_address']
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -164,12 +164,28 @@ class RegisterReceiptForm(forms.ModelForm):
         })
         self.fields['received_at'].required = True
         
+        self.fields['delivery_address'].widget.attrs['class'] = STANDARD_INPUT_CLASS
+        self.fields['delivery_address'].widget.attrs['placeholder'] = 'Ex: Prédio da Prefeitura, Sala 101'
+        
         self.fields['signed_document_file'].widget.attrs['class'] = STANDARD_INPUT_CLASS
-        self.fields['signed_document_file'].widget.attrs['accept'] = 'image/*'
+        self.fields['signed_document_file'].widget.attrs['accept'] = 'image/*,.pdf,application/pdf'
         
         # Define data/hora atual como padrão
         if not self.instance.received_at:
             self.initial['received_at'] = timezone.now().strftime('%Y-%m-%dT%H:%M')
+    
+    def clean_signed_document_file(self):
+        """Valida que o arquivo é uma imagem ou PDF."""
+        file = self.cleaned_data.get('signed_document_file')
+        if file:
+            content_type = file.content_type
+            valid_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
+            if content_type not in valid_types:
+                raise forms.ValidationError(
+                    'Formato de arquivo inválido. Envie uma imagem (JPG, PNG, GIF) ou PDF.'
+                )
+        return file
+
 
 
 class DeliveryNoteItemForm(forms.ModelForm):

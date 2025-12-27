@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificação de Entrega</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background-color: #1e40af; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
+        <table style="width: 100%;">
+            <tr>
+                <td style="vertical-align: middle; padding-left: 12px;">
+                    <h1 style="margin: 0; font-size: 18px;">📦 Notificação de Entrega</h1>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.9;">Prefeitura Municipal de Novo Horizonte</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div style="background-color: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; border-top: none;">
+        <p style="margin-top: 0;">
+            <strong>Prezado setor de Patrimônio,</strong>
+        </p>
+        
+        <p>
+            Informamos que foi realizada uma entrega de materiais de TI no seguinte setor:
+        </p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Setor de Destino:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">{{ delivery.sector }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Nota Fiscal:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">NF {{ delivery.invoice.number }} - {{ delivery.invoice.supplier }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Recebido por:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">{{ delivery.received_by }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Data/Hora:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">{{ delivery.received_at|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% if delivery.delivery_address %}
+            <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;"><strong>Endereço/Local:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">{{ delivery.delivery_address }}</td>
+            </tr>
+            {% endif %}
+        </table>
+        
+        <h3 style="color: #1e40af; margin-top: 24px;">Materiais Entregues:</h3>
+        
+        <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
+            <thead>
+                <tr style="background-color: #e5e7eb;">
+                    <th style="padding: 10px; text-align: left; border: 1px solid #d1d5db;">Material</th>
+                    <th style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">Qtd</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #d1d5db;">{{ item.invoice_item.material_bidding.material.name }}</td>
+                    <td style="padding: 10px; text-align: center; border: 1px solid #d1d5db;">{{ item.quantity_delivered }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        {% if delivery.observations %}
+        <p style="margin-top: 20px;">
+            <strong>Observações:</strong><br>
+            {{ delivery.observations }}
+        </p>
+        {% endif %}
+        
+        <p style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 13px;">
+            Esta é uma mensagem automática enviada pelo sistema SISInfo V2 da Diretoria de Tecnologia da Informação.
+        </p>
+    </div>
+    
+    <div style="background-color: #1e3a5f; color: white; padding: 12px 20px; border-radius: 0 0 8px 8px; font-size: 12px; text-align: center;">
+        Prefeitura Municipal de Novo Horizonte - Diretoria de TI
+    </div>
+</body>
+</html>

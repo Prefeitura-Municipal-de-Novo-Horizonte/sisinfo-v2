@@ -123,8 +123,10 @@
                 {% url 'fiscal:delivery_detail' pk=delivery.pk as detail_url %}
                 {% action_button url=detail_url type='view' title='Ver Detalhes' %}
 
+                {% if not delivery.is_completed %}
                 {% url 'fiscal:delivery_pdf' pk=delivery.pk as pdf_url %}
-                {% action_button url=pdf_url type='pdf' title='Baixar PDF' %}
+                {% action_button url=pdf_url type='pdf' title='Baixar PDF' target='_blank' %}
+                {% endif %}
 
                 {% if delivery.is_pending %}
                 {% url 'fiscal:register_receipt' pk=delivery.pk as register_url %}
