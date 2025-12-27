@@ -603,14 +603,19 @@ def bulk_complete_deliveries(request):
             }, status=400)
         
         # Atualizar status para Concluída ('C') e registrar data
+        # Usamos um loop com .save() em vez de .update() para disparar os signals de estoque
         now = timezone.now()
-        updated = DeliveryNote.objects.filter(
+        deliveries = DeliveryNote.objects.filter(
             id__in=delivery_ids, status__in=['P', 'A']
-        ).update(
-            status='C',
-            received_at=now,
-            received_by='Fechado em massa via Manutenção'
         )
+        
+        updated = 0
+        for delivery in deliveries:
+            delivery.status = 'C'
+            delivery.received_at = now
+            delivery.received_by = f'Fechado em massa por {request.user.fullname}'
+            delivery.save()
+            updated += 1
         
         return JsonResponse({
             'success': True,
