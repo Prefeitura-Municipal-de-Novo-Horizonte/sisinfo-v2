@@ -48,6 +48,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "core.middleware.TimezoneMiddleware",  # Garante timezone America/Sao_Paulo
     "authenticate.middleware.OnboardingMiddleware",  # Força onboarding em first_login
     "audit.middleware.AuditMiddleware",  # Auditoria de operações
     "django.contrib.messages.middleware.MessageMiddleware",
