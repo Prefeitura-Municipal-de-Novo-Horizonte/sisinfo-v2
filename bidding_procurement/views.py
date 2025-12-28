@@ -12,16 +12,12 @@ from django.views.generic import (
     View,
 )
 
+from core.mixins import FilteredListMixin, PaginatedListMixin, MessageMixin
 from bidding_procurement.filters import BiddingFilter, MaterialFilter
 from bidding_procurement.forms import (
     BiddingForm,
     MaterialBiddingForm,
     MaterialForm,
-)
-from bidding_procurement.mixins import (
-    FilteredListMixin,
-    PaginatedListMixin,
-    MessageMixin,
 )
 from bidding_procurement.models import Bidding, Material, MaterialBidding
 from bidding_procurement.services import BiddingService, MaterialService

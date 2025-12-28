@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, TemplateView
 
-from authenticate.mixins import TechOnlyMixin
+from core.mixins import TechOnlyMixin
 from organizational_structure.filters import DirectionFilter, SectorFilter
 from organizational_structure.forms import DirectionForm, SectorForm
 from organizational_structure.models import Direction, Sector

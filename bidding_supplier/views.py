@@ -11,10 +11,9 @@ from django.views.generic import (
     View,
 )
 
-from authenticate.mixins import TechOnlyMixin
+from core.mixins import TechOnlyMixin, MessageMixin, FormsetMixin
 from bidding_supplier.filters import SupplierFilter
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
-from bidding_supplier.mixins import MessageMixin, FormsetMixin
 from bidding_supplier.models import Contact, Supplier
 from bidding_supplier.services import SupplierService
 
