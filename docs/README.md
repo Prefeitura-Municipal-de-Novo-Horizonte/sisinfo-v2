@@ -12,14 +12,20 @@ Decisões técnicas e visão geral dos componentes.
 
 | Documento | Descrição |
 |-----------|-----------|
+| [ARCHITECTURE.md](arquitetura/ARCHITECTURE.md) | Visão geral da arquitetura do sistema |
 | [AUDITORIA.md](arquitetura/AUDITORIA.md) | Sistema de auditoria com MongoDB Atlas |
 | [STORAGE.md](arquitetura/STORAGE.md) | Armazenamento de imagens com Supabase Storage |
 
 ---
 
-## 🏗️ Infraestrutura
+## 📏 Guias de Estilo
 
-Deploy, containers e ambiente de desenvolvimento.
+Padrões de código e interface.
+
+| Documento | Descrição |
+|-----------|-----------|
+| [STYLEGUIDE.md](STYLEGUIDE.md) | Padrões de código Python/Django |
+| [UI_GUIDE.md](UI_GUIDE.md) | Padrões de interface, cores e componentes |
 
 | Documento | Descrição |
 |-----------|-----------|
