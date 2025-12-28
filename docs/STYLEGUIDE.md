@@ -199,6 +199,78 @@ urlpatterns = [
 
 ---
 
+## Utilitários do Core
+
+### Mixins Centralizados
+
+Usar mixins de `core/mixins.py` em vez de criar localmente:
+
+```python
+from core.mixins import (
+    # Forms
+    CapitalizeFieldMixin,
+    TailwindFormMixin,
+    
+    # Filters
+    TailwindFilterMixin,
+    FilteredListMixin,
+    
+    # Views
+    MessageMixin,
+    FormsetMixin,
+    PaginatedListMixin,
+    ServiceMixin,
+    
+    # Permissions
+    TechOnlyMixin,
+)
+
+class SupplierCreateView(LoginRequiredMixin, MessageMixin, CreateView):
+    model = Supplier
+    success_message = "Fornecedor criado com sucesso!"
+```
+
+### ServiceResult (Novo Padrão)
+
+Para novos services, usar `ServiceResult` para retornos padronizados:
+
+```python
+from core.services import ServiceResult
+
+class MyService:
+    @staticmethod
+    def create_item(data: dict) -> ServiceResult:
+        try:
+            item = Item.objects.create(**data)
+            return ServiceResult.ok(data=item, message="Item criado!")
+        except Exception as e:
+            return ServiceResult.fail(error=str(e))
+
+# Na view
+result = MyService.create_item(data)
+if result.success:
+    messages.success(request, result.message)
+else:
+    messages.error(request, result.error)
+```
+
+### Constantes
+
+Usar constantes de `core/constants.py`:
+
+```python
+from core.constants import (
+    STATUS_ACTIVE_INACTIVE,
+    INVOICE_STATUS,
+    DELIVERY_STATUS,
+)
+
+class MyModel(models.Model):
+    status = models.CharField(choices=STATUS_ACTIVE_INACTIVE, default="1")
+```
+
+---
+
 ## Templates
 
 ### Nomenclatura
