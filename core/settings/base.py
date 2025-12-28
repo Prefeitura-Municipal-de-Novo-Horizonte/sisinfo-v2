@@ -43,11 +43,13 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 # Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.middleware.MaintenanceMiddleware",  # Modo manutenção via MAINTENANCE_MODE env
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Serve static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "core.middleware.TimezoneMiddleware",  # Garante timezone America/Sao_Paulo
     "authenticate.middleware.OnboardingMiddleware",  # Força onboarding em first_login
     "audit.middleware.AuditMiddleware",  # Auditoria de operações
     "django.contrib.messages.middleware.MessageMiddleware",

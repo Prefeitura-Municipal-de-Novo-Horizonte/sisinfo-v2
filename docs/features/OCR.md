@@ -2,7 +2,7 @@
 
 Documentação do sistema de OCR para leitura automática de notas fiscais.
 
-**Última atualização:** 2024-12-27
+**Última atualização:** 2025-12-28
 
 ---
 
@@ -205,5 +205,5 @@ python manage.py clean_ocr_jobs --with-images --stale
 
 ---
 
-**Última revisão:** 2024-12-27  
+**Última revisão:** 2025-12-28  
 **Responsável:** Diretoria de TI

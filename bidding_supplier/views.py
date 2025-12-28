@@ -11,10 +11,9 @@ from django.views.generic import (
     View,
 )
 
-from authenticate.mixins import TechOnlyMixin
+from core.mixins import TechOnlyMixin, MessageMixin, FormsetMixin
 from bidding_supplier.filters import SupplierFilter
 from bidding_supplier.forms import ContactForm, ContactInlineForm, SupplierForm
-from bidding_supplier.mixins import MessageMixin, FormsetMixin
 from bidding_supplier.models import Contact, Supplier
 from bidding_supplier.services import SupplierService
 
@@ -78,8 +77,9 @@ class SupplierDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         """Adiciona contatos, materiais e licitações ao contexto."""
         context = super().get_context_data(**kwargs)
-        details = SupplierService.get_supplier_details(self.object.slug)
-        context.update(details)
+        result = SupplierService.get_supplier_details(self.object.slug)
+        if result.success:
+            context.update(result.data)
         return context
 
 
@@ -163,17 +163,18 @@ class SupplierDeleteView(LoginRequiredMixin, TechOnlyMixin, View):
         supplier = get_object_or_404(Supplier, slug=slug)
         trade = supplier.trade
         
-        if SupplierService.delete_supplier(supplier):
+        result = SupplierService.delete_supplier(supplier)
+        if result.success:
             messages.add_message(
                 request,
-                constants.ERROR,
-                f'O Fornecedor {trade} foi excluído com sucesso!'
+                constants.SUCCESS,
+                result.message
             )
         else:
             messages.add_message(
                 request,
                 constants.WARNING,
-                f'Não foi possível excluir o fornecedor {trade}'
+                result.error or f'Não foi possível excluir o fornecedor {trade}'
             )
         
         return redirect(reverse_lazy('suppliers:fornecedores'))
@@ -185,6 +186,10 @@ class ContactDeleteView(LoginRequiredMixin, View):
     """
     def get(self, request, id):
         """Exclui o contato e redireciona."""
-        supplier, msg = SupplierService.delete_contact(id)
-        messages.add_message(request, constants.ERROR, msg)
-        return redirect(reverse_lazy('suppliers:fornecedor_update', kwargs={'slug': supplier.slug}))
+        result = SupplierService.delete_contact(id)
+        if result.success:
+            messages.add_message(request, constants.SUCCESS, result.message)
+            return redirect(reverse_lazy('suppliers:fornecedor_update', kwargs={'slug': result.data.slug}))
+        else:
+            messages.add_message(request, constants.ERROR, result.error)
+            return redirect(reverse_lazy('suppliers:fornecedores'))

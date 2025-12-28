@@ -5,7 +5,6 @@ from django.template.defaultfilters import slugify
 from bidding_supplier.managers import KindContactQuerySet
 
 
-# Create your models here.
 class Supplier(models.Model):
     """
     Representa um fornecedor.

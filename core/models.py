@@ -1,4 +1,29 @@
+"""
+Models centralizados do projeto.
+"""
 from django.db import models
+
+
+class BaseModel(models.Model):
+    """
+    Model abstrato base com campos comuns.
+    
+    Todos os novos models devem herdar desta classe para garantir
+    consistência nos campos de timestamp.
+    
+    Exemplo:
+        class MyModel(BaseModel):
+            name = models.CharField(max_length=100)
+            
+            class Meta(BaseModel.Meta):
+                verbose_name = 'meu model'
+    """
+    created_at = models.DateTimeField('criado em', auto_now_add=True)
+    updated_at = models.DateTimeField('atualizado em', auto_now=True)
+    
+    class Meta:
+        abstract = True
+        ordering = ['-created_at']
 
 
 class DeploymentProcedure(models.Model):

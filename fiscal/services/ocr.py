@@ -1,49 +1,97 @@
 """
 Serviço de OCR para Notas Fiscais usando Google Gemini API.
-Extrai dados estruturados de imagens de notas fiscais.
+
+Este módulo contém o serviço principal de extração de dados
+de imagens de notas fiscais.
+
+Módulos relacionados:
+- ocr_types.py: Dataclasses (InvoiceProduct, ExtractedInvoiceData)
+- ocr_parser.py: Parsing de resposta JSON
+- supplier_finder.py: Busca de fornecedores
 """
-import re
-import json
-import base64
-from dataclasses import dataclass, field
 from decouple import config
 
 from google import genai
 from google.genai import types
 
+from .ocr_types import ExtractedInvoiceData
+from .ocr_parser import parse_ocr_response
 
-@dataclass
-class InvoiceProduct:
-    """Produto extraído da nota fiscal."""
-    code: str = ""
-    description: str = ""
-    quantity: float = 0.0
-    unit: str = "UN"
-    unit_price: float = 0.0
-    total_price: float = 0.0
+# Re-exportar para manter compatibilidade
+from .ocr_types import InvoiceProduct, ExtractedInvoiceData
+from .supplier_finder import find_supplier_by_cnpj, find_similar_materials
 
 
-@dataclass
-class ExtractedInvoiceData:
-    """Dados extraídos da nota fiscal."""
-    number: str = ""
-    series: str = ""
-    access_key: str = ""
-    issue_date: str = ""  # formato dd/mm/yyyy
-    supplier_name: str = ""
-    supplier_cnpj: str = ""
-    total_value: float = 0.0
-    products: list = field(default_factory=list)
-    observations: str = ""  # Novo campo
-    raw_text: str = ""
-    confidence: float = 0.0
-    error: str = ""
+# Prompt para extração de dados da nota fiscal
+OCR_PROMPT = """
+EXTRAIA OS DADOS DA NOTA FISCAL.
+Retorne APENAS um JSON válido. Não use Markdown (```json).
 
+Siga ESTRITAMENTE esta estrutura:
+{
+  "nota_fiscal": {
+    "numero": "string",
+    "serie": "string",
+    "data_emissao": "dd/mm/aaaa",
+    "chave_acesso": "string (44 digitos)",
+    "natureza_operacao": "string"
+  },
+  "emitente": {
+    "razao_social": "string",
+    "cnpj": "string",
+    "endereco": "string",
+    "municipio": "string",
+    "uf": "string"
+  },
+  "destinatario": {
+    "razao_social": "string",
+    "cnpj_cpf": "string"
+  },
+  "itens": [
+    {
+      "codigo": "string",
+      "descricao": "string",
+      "unidade": "string",
+      "quantidade": "float (ex: 10.5)",
+      "valor_unitario": "float (ex: 100.00)",
+      "valor_total": "float",
+      "cfop": "string"
+    }
+  ],
+  "valores_totais": {
+    "valor_total_nota": "float",
+    "valor_total_produtos": "float"
+  },
+  "dados_adicionais": {
+    "informacoes_complementares": "string"
+  }
+}
 
+IMPORTANTE: 
+- Se campo não existir, use string vazia "" ou 0 para números.
+- Formate datas sempre como DD/MM/AAAA.
+- Use ponto (.) como separador decimal para números.
+"""
 
 
 class InvoiceOCRService:
-    """Serviço de extração de dados de notas fiscais via Gemini Vision."""
+    """
+    Serviço de extração de dados de notas fiscais via Gemini Vision.
+    
+    Suporta múltiplas chaves API com rotação automática quando
+    uma chave atinge o limite de quota.
+    
+    Uso:
+        service = InvoiceOCRService()
+        result = service.extract_from_url("https://...")
+        
+        if result.has_error:
+            print(f"Erro: {result.error}")
+        else:
+            print(f"Nota: {result.number}")
+            for product in result.products:
+                print(f"  - {product.description}")
+    """
     
     def __init__(self):
         """
@@ -52,9 +100,6 @@ class InvoiceOCRService:
         Formatos suportados no .env:
         1. Lista JSON: GEMINI_API_KEY=["chave1", "chave2", "chave3"]
         2. Separado por vírgula: GEMINI_API_KEY=chave1,chave2,chave3
-        
-        O sistema verifica no banco quais chaves já esgotaram quota hoje
-        e começa pela primeira disponível.
         """
         import json
         
@@ -67,22 +112,21 @@ class InvoiceOCRService:
         if api_keys_str.startswith('"') and api_keys_str.endswith('"'):
             api_keys_str = api_keys_str[1:-1]
         
-        # Tentar parsear como JSON primeiro (formato de lista)
+        # Tentar parsear como JSON primeiro
         try:
             parsed = json.loads(api_keys_str)
             if isinstance(parsed, list):
                 self.api_keys = [key.strip() for key in parsed if key and key.strip()]
             else:
-                # Se for string única no JSON, usar como única chave
                 self.api_keys = [str(parsed).strip()]
         except (json.JSONDecodeError, ValueError):
-            # Fallback: separar por vírgula (formato antigo)
+            # Fallback: separar por vírgula
             self.api_keys = [key.strip() for key in api_keys_str.split(',') if key.strip()]
         
         if not self.api_keys:
             raise ValueError("Nenhuma chave API válida encontrada em GEMINI_API_KEY")
         
-        # Buscar primeira chave disponível no banco
+        # Buscar primeira chave disponível
         self.current_key_index = self._get_available_key_index()
         self.client = None
         
@@ -97,7 +141,6 @@ class InvoiceOCRService:
             from fiscal.models import APIKeyStatus
             return APIKeyStatus.get_available_key_index(len(self.api_keys))
         except Exception as e:
-            # Se falhar (ex: tabela não existe), usar primeira chave
             print(f"OCR: Erro ao verificar status das chaves: {e}")
             return 0
     
@@ -120,7 +163,15 @@ class InvoiceOCRService:
             raise ValueError(f"Erro ao inicializar cliente Gemini: {str(e)}")
     
     def extract_from_image(self, image_path: str) -> ExtractedInvoiceData:
-        """Extrai dados de uma nota fiscal a partir do caminho da imagem."""
+        """
+        Extrai dados de uma nota fiscal a partir do caminho da imagem.
+        
+        Args:
+            image_path: Caminho local para o arquivo de imagem
+            
+        Returns:
+            ExtractedInvoiceData: Dados extraídos
+        """
         try:
             with open(image_path, 'rb') as f:
                 image_data = f.read()
@@ -129,14 +180,31 @@ class InvoiceOCRService:
             return ExtractedInvoiceData(error=str(e))
     
     def extract_from_bytes(self, image_bytes: bytes, mime_type: str = "image/png") -> ExtractedInvoiceData:
-        """Extrai dados de uma nota fiscal a partir de bytes da imagem."""
+        """
+        Extrai dados de uma nota fiscal a partir de bytes da imagem.
+        
+        Args:
+            image_bytes: Bytes da imagem
+            mime_type: Tipo MIME da imagem
+            
+        Returns:
+            ExtractedInvoiceData: Dados extraídos
+        """
         try:
             return self._process_image(image_bytes, mime_type)
         except Exception as e:
             return ExtractedInvoiceData(error=str(e))
     
     def extract_from_url(self, image_url: str) -> ExtractedInvoiceData:
-        """Extrai dados de uma nota fiscal a partir de URL da imagem."""
+        """
+        Extrai dados de uma nota fiscal a partir de URL da imagem.
+        
+        Args:
+            image_url: URL pública da imagem
+            
+        Returns:
+            ExtractedInvoiceData: Dados extraídos
+        """
         try:
             import urllib.request
             with urllib.request.urlopen(image_url, timeout=30) as response:
@@ -147,58 +215,16 @@ class InvoiceOCRService:
             return ExtractedInvoiceData(error=str(e))
     
     def _process_image(self, image_bytes: bytes, mime_type: str) -> ExtractedInvoiceData:
-        """Processa a imagem com Gemini Vision."""
-        
-        prompt = """
-        EXTRAIA OS DADOS DA NOTA FISCAL.
-        Retorne APENAS um JSON válido. Não use Markdown (```json).
-        
-        Siga ESTRITAMENTE esta estrutura:
-        {
-          "nota_fiscal": {
-            "numero": "string",
-            "serie": "string",
-            "data_emissao": "dd/mm/aaaa",
-            "chave_acesso": "string (44 digitos)",
-            "natureza_operacao": "string"
-          },
-          "emitente": {
-            "razao_social": "string",
-            "cnpj": "string",
-            "endereco": "string",
-            "municipio": "string",
-            "uf": "string"
-          },
-          "destinatario": {
-            "razao_social": "string",
-            "cnpj_cpf": "string"
-          },
-          "itens": [
-            {
-              "codigo": "string",
-              "descricao": "string",
-              "unidade": "string",
-              "quantidade": "float (ex: 10.5)",
-              "valor_unitario": "float (ex: 100.00)",
-              "valor_total": "float",
-              "cfop": "string"
-            }
-          ],
-          "valores_totais": {
-            "valor_total_nota": "float",
-            "valor_total_produtos": "float"
-          },
-          "dados_adicionais": {
-            "informacoes_complementares": "string"
-          }
-        }
-        
-        IMPORTANTE: 
-        - Se campo não existir, use string vazia "" ou 0 para números.
-        - Formate datas sempre como DD/MM/AAAA.
-        - Use ponto (.) como separador decimal para números, ou mantenha original com vírgula se preferir (será tratado).
         """
+        Processa a imagem com Gemini Vision.
         
+        Args:
+            image_bytes: Bytes da imagem
+            mime_type: Tipo MIME
+            
+        Returns:
+            ExtractedInvoiceData: Dados extraídos
+        """
         # Verificar se cliente está inicializado
         if self.client is None:
             return ExtractedInvoiceData(
@@ -212,297 +238,72 @@ class InvoiceOCRService:
                 mime_type=mime_type
             )
             
-            # Configuração para forçar resposta JSON limpa
+            # Configuração para forçar resposta JSON
             generate_config = types.GenerateContentConfig(
                 response_mime_type='application/json',
-                temperature=0.0  # Zero para máxima precisão e consistência
+                temperature=0.0  # Zero para máxima precisão
             )
 
-            # Chamar API Gemini diretamente (sem timeout)
+            # Chamar API Gemini
             response = self.client.models.generate_content(
                 model="gemini-flash-latest",
-                contents=[prompt, image_part],
+                contents=[OCR_PROMPT, image_part],
                 config=generate_config
             )
             
-            # Parsear resposta
-            return self._parse_response(response.text)
+            # Parsear resposta usando módulo separado
+            return parse_ocr_response(response.text)
             
         except Exception as e:
-            error_str = str(e)
-            
-            # Verificar se é erro de quota (429) ou chave inválida (400)
-            is_quota_error = '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str or 'quota' in error_str.lower()
-            is_invalid_key = '400' in error_str or 'INVALID_ARGUMENT' in error_str or 'API_KEY_INVALID' in error_str
-            
-            if is_quota_error or is_invalid_key:
-                error_type = "quota esgotada" if is_quota_error else "chave inválida"
-                print(f"OCR: Chave {self.current_key_index + 1} falhou ({error_type})")
-                
-                # Marcar chave atual como esgotada no banco
-                self._mark_current_key_exhausted()
-                
-                # Buscar próxima chave disponível no banco
-                next_available = self._get_available_key_index()
-                
-                if next_available is not None and next_available != self.current_key_index:
-                    self.current_key_index = next_available
-                    print(f"OCR: Tentando chave {self.current_key_index + 1}/{len(self.api_keys)}...")
-                    self._initialize_client()
-                    # Retry com a nova chave
-                    return self._process_image(image_bytes, mime_type)
-                else:
-                    # Todas as chaves esgotadas
-                    print(f"OCR: Todas as {len(self.api_keys)} chaves estão esgotadas hoje")
-                    return ExtractedInvoiceData(
-                        error=f"Todas as {len(self.api_keys)} chaves API estão esgotadas hoje. "
-                              f"Tente novamente amanhã ou cadastre manualmente."
-                    )
-            
-            # Outros erros
-            print(f"OCR ERROR: {e}")
-            return ExtractedInvoiceData(error=error_str)
+            return self._handle_api_error(e, image_bytes, mime_type)
     
-    def _parse_response(self, response_text: str) -> ExtractedInvoiceData:
-        """Parseia a resposta do modelo em ExtractedInvoiceData."""
+    def _handle_api_error(
+        self, 
+        error: Exception, 
+        image_bytes: bytes, 
+        mime_type: str
+    ) -> ExtractedInvoiceData:
+        """
+        Trata erros da API, fazendo rotação de chaves se necessário.
         
-        try:
-            # Limpar markdown se presente
-            clean_text = response_text.strip()
+        Args:
+            error: Exceção ocorrida
+            image_bytes: Bytes da imagem (para retry)
+            mime_type: Tipo MIME (para retry)
             
-            # Remover delimitadores de código markdown
-            if "```json" in clean_text:
-                clean_text = clean_text.split("```json")[1]
-            elif "```" in clean_text:
-                clean_text = clean_text.split("```")[1]
-                
-            if "```" in clean_text:
-                clean_text = clean_text.split("```")[0]
-            
-            # Remover comentários de linha (//)
-            import re
-            clean_text = re.sub(r'^\s*//.*$', '', clean_text, flags=re.MULTILINE)
-                
-            clean_text = clean_text.strip()
-            
-            data = json.loads(clean_text)
-            
-            # Helper para converter strings numéricas pt-BR (ex: "1.000,00" -> 1000.00)
-            def parse_br_float(value):
-                if isinstance(value, (int, float)):
-                    return float(value)
-                if isinstance(value, str):
-                    # Remove pontos de milhar e troca vírgula decimal por ponto
-                    clean = value.replace('.', '').replace(',', '.')
-                    try:
-                        return float(clean)
-                    except ValueError:
-                        return 0.0
-                return 0.0
-
-            # Normalizar chaves (suporte a variações do Gemini)
-            nf_data = data.get('nota_fiscal') or data.get('documento') or data
-            emit_data = data.get('emitente') or data.get('fornecedor') or data
-            items_data = data.get('itens') or data.get('produtos') or data.get('products') or data.get('produtos_servicos') or []
-            totals_data = data.get('valores_totais') or data.get('calculo_imposto') or data
-            
-            # Converter produtos
-            products = []
-            for p in items_data:
-                products.append(InvoiceProduct(
-                    code=str(p.get('codigo') or p.get('code') or ''),
-                    description=str(p.get('descricao') or p.get('description') or ''),
-                    quantity=parse_br_float(p.get('quantidade') or p.get('quantity')),
-                    unit=str(p.get('unidade') or p.get('unit') or 'UN'),
-                    unit_price=parse_br_float(p.get('valor_unitario') or p.get('unit_price')),
-                    total_price=parse_br_float(p.get('valor_total') or p.get('total_price')),
-                ))
-            
-            # Limpar CNPJ (apenas números)
-            raw_cnpj = str(emit_data.get('cnpj') or emit_data.get('supplier_cnpj') or '')
-            cnpj = re.sub(r'\D', '', raw_cnpj)
-            
-            # Limpar chave de acesso
-            raw_key = str(nf_data.get('chave_acesso') or nf_data.get('chave_de_acesso') or nf_data.get('access_key') or '')
-            access_key = re.sub(r'\D', '', raw_key)
-            
-            # Extrair observações
-            observations = ""
-            if 'dados_adicionais' in data:
-                dados = data['dados_adicionais']
-                if isinstance(dados, dict):
-                    observations = dados.get('informacoes_complementares', '')
-                elif isinstance(dados, str):
-                    observations = dados
-
-            # Extrair dados principais
-            number = str(nf_data.get('numero') or nf_data.get('number') or '')
-            series = str(nf_data.get('serie') or nf_data.get('series') or '')
-            issue_date = str(nf_data.get('data_emissao') or nf_data.get('issue_date') or '')
-            supplier_name = str(emit_data.get('razao_social') or emit_data.get('supplier_name') or '')
-            
-            # Valor total
-            total_val = parse_br_float(totals_data.get('valor_total_nota') or totals_data.get('total_value') or data.get('total_value'))
-
-            return ExtractedInvoiceData(
-                number=number,
-                series=series,
-                access_key=access_key,
-                issue_date=issue_date,
-                supplier_name=supplier_name,
-                supplier_cnpj=cnpj,
-                total_value=total_val,
-                products=products,
-                observations=observations,
-                confidence=float(data.get('confidence', 0) or 1.0),
-                raw_text=response_text,
-            )
-            
-        except json.JSONDecodeError as e:
-            return ExtractedInvoiceData(
-                error=f"Erro ao parsear resposta: {e}",
-                raw_text=response_text
-            )
-        except Exception as e:
-            return ExtractedInvoiceData(
-                error=f"Erro inesperado: {e}",
-                raw_text=response_text
-            )
-
-
-def find_similar_materials(product_description: str, supplier_id: int, limit: int = 5):
-    """Busca materiais similares no banco de dados para um produto da nota."""
-    from django.db.models import Q
-    from bidding_procurement.models import MaterialBidding
-    
-    words = product_description.upper().split()
-    words = [w for w in words if len(w) > 2]
-    
-    if not words:
-        return MaterialBidding.objects.none()
-    
-    query = Q()
-    for word in words[:5]:
-        query |= Q(material__name__icontains=word)
-    
-    return MaterialBidding.objects.filter(
-        query,
-        supplier_id=supplier_id,
-        status='1'
-    ).select_related('material', 'bidding').distinct()[:limit]
-
-
-def _validate_cnpj(cnpj: str) -> bool:
-    """
-    Valida CNPJ pelos dígitos verificadores.
-    Usa a biblioteca validate_docbr (mesma usada no cadastro de fornecedores).
-    """
-    from validate_docbr import CNPJ
-    
-    cnpj_validator = CNPJ()
-    return cnpj_validator.validate(cnpj)
-
-
-def _count_different_digits(cnpj1: str, cnpj2: str) -> int:
-    """
-    Conta quantos dígitos são diferentes entre dois CNPJs.
-    Usa distância de Hamming (comparação caractere a caractere).
-    """
-    if len(cnpj1) != len(cnpj2):
-        return 99  # Tamanhos diferentes = muito diferentes
-    
-    return sum(1 for a, b in zip(cnpj1, cnpj2) if a != b)
-
-
-def find_supplier_by_cnpj(cnpj: str, supplier_name: str = None, max_digit_diff: int = 2):
-    """
-    Busca fornecedor pelo CNPJ ou pelo nome.
-    
-    Estratégia de busca:
-    1. Busca exata por CNPJ completo
-    2. Se CNPJ inválido ou não encontrado, busca CNPJ similar (até max_digit_diff dígitos diferentes)
-    3. Busca pelo nome do fornecedor (razão social ou nome fantasia)
-    
-    Args:
-        cnpj: CNPJ detectado pelo OCR
-        supplier_name: Nome do fornecedor detectado pelo OCR
-        max_digit_diff: Máximo de dígitos diferentes para considerar match (padrão: 2)
-    """
-    from django.db.models import Q
-    from bidding_supplier.models import Supplier
-    
-    cnpj_clean = re.sub(r'\D', '', cnpj) if cnpj else ''
-    
-    # 1. Busca exata por CNPJ completo
-    if len(cnpj_clean) == 14:
-        supplier = Supplier.objects.filter(cnpj=cnpj_clean).first()
+        Returns:
+            ExtractedInvoiceData: Resultado ou erro
+        """
+        error_str = str(error)
         
-        if supplier:
-            return supplier
+        # Verificar se é erro de quota ou chave inválida
+        is_quota_error = '429' in error_str or 'RESOURCE_EXHAUSTED' in error_str or 'quota' in error_str.lower()
+        is_invalid_key = '400' in error_str or 'INVALID_ARGUMENT' in error_str or 'API_KEY_INVALID' in error_str
         
-        # 2. Busca por CNPJ similar (até max_digit_diff dígitos diferentes)
-        # Especialmente útil quando OCR lê dígitos errados
-        is_valid = _validate_cnpj(cnpj_clean)
-        
-        # Buscar todos os fornecedores e comparar
-        # Otimização: filtrar pela raiz aproximada (primeiros 4 dígitos)
-        prefix = cnpj_clean[:4]
-        candidates = Supplier.objects.filter(
-            Q(cnpj__startswith=prefix) |
-            Q(cnpj__startswith=cnpj_clean[:2])  # Fallback ainda mais amplo
-        )
-        
-        best_match = None
-        best_diff = max_digit_diff + 1  # Iniciar acima do limite
-        
-        for candidate in candidates:
-            if len(candidate.cnpj) == 14:
-                diff = _count_different_digits(cnpj_clean, candidate.cnpj)
-                
-                # Se CNPJ detectado é inválido, dar preferência a CNPJs válidos do banco
-                if diff <= max_digit_diff and diff < best_diff:
-                    # Se CNPJ detectado é inválido E o candidato é válido, é provavelmente o correto
-                    if not is_valid and _validate_cnpj(candidate.cnpj):
-                        return candidate  # Match imediato!
-                    
-                    best_match = candidate
-                    best_diff = diff
-        
-        if best_match:
-            return best_match
-    
-    # 3. Busca pelo nome do fornecedor (fallback)
-    if supplier_name:
-        # Limpar e normalizar nome
-        name_clean = supplier_name.upper().strip()
-        
-        # Remover sufixos comuns de tipo de empresa
-        for suffix in [' - ME', ' - EPP', ' - EIRELI', ' LTDA', ' S/A', ' S.A.']:
-            name_clean = name_clean.replace(suffix, '')
-        
-        name_clean = name_clean.strip()
-        
-        if name_clean:
-            # Buscar por razão social ou nome fantasia
-            supplier = Supplier.objects.filter(
-                Q(company__icontains=name_clean) |
-                Q(trade__icontains=name_clean)
-            ).first()
+        if is_quota_error or is_invalid_key:
+            error_type = "quota esgotada" if is_quota_error else "chave inválida"
+            print(f"OCR: Chave {self.current_key_index + 1} falhou ({error_type})")
             
-            if supplier:
-                return supplier
+            # Marcar chave atual como esgotada
+            self._mark_current_key_exhausted()
             
-            # Tentar com as primeiras palavras significativas do nome
-            words = [w for w in name_clean.split() if len(w) > 2]
-            if words:
-                first_word = words[0]
-                supplier = Supplier.objects.filter(
-                    Q(company__icontains=first_word) |
-                    Q(trade__icontains=first_word)
-                ).first()
-                
-                if supplier:
-                    return supplier
-    
-    return None
-
+            # Buscar próxima chave disponível
+            next_available = self._get_available_key_index()
+            
+            if next_available is not None and next_available != self.current_key_index:
+                self.current_key_index = next_available
+                print(f"OCR: Tentando chave {self.current_key_index + 1}/{len(self.api_keys)}...")
+                self._initialize_client()
+                # Retry com a nova chave
+                return self._process_image(image_bytes, mime_type)
+            else:
+                # Todas as chaves esgotadas
+                print(f"OCR: Todas as {len(self.api_keys)} chaves estão esgotadas hoje")
+                return ExtractedInvoiceData(
+                    error=f"Todas as {len(self.api_keys)} chaves API estão esgotadas hoje. "
+                          f"Tente novamente amanhã ou cadastre manualmente."
+                )
+        
+        # Outros erros
+        print(f"OCR ERROR: {error}")
+        return ExtractedInvoiceData(error=error_str)

@@ -2,7 +2,7 @@
 
 Documentação do sistema de auditoria que registra todas as operações no MongoDB.
 
-**Última atualização:** 2024-12-27
+**Última atualização:** 2025-12-28
 
 ---
 

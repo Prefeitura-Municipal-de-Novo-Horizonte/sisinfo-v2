@@ -23,7 +23,7 @@
 
 ---
 
-## � Sobre o Projeto
+## 📖 Sobre o Projeto
 
 O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de Tecnologia da Informação** da Prefeitura de Novo Horizonte/SP. O sistema centraliza a gestão de processos internos, proporcionando eficiência e transparência nas operações diárias.
 
@@ -31,35 +31,42 @@ O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de T
 
 | Módulo | Descrição |
 |--------|-----------|
-| **📊 Dashboard** | Visão geral com indicadores de desempenho e gráficos interativos |
-| **📄 Laudos Técnicos** | Criação, gerenciamento e geração de PDFs de laudos de equipamentos |
-| **🧾 Notas Fiscais** | Controle de notas fiscais com OCR automático via Gemini AI |
-| **📦 Licitações** | Gestão completa de processos licitatórios e materiais |
-| **🏢 Fornecedores** | Base de dados de fornecedores com consolidação automática |
-| **�️ Estrutura Organizacional** | Mapeamento de diretorias e setores da prefeitura |
-| **👥 Autenticação** | Sistema de usuários com perfis diferenciados e onboarding |
-| **📝 Auditoria** | Rastreamento completo de operações (MongoDB) |
+| 📊 **Dashboard** | Visão geral com indicadores de desempenho e gráficos interativos |
+| 📄 **Laudos Técnicos** | Criação, gerenciamento e geração de PDFs de laudos de equipamentos |
+| 🧾 **Notas Fiscais** | Controle de notas fiscais com OCR automático via Gemini AI |
+| 📦 **Licitações** | Gestão completa de processos licitatórios e materiais |
+| 🏢 **Fornecedores** | Base de dados de fornecedores com consolidação automática |
+| 🏛️ **Estrutura Organizacional** | Mapeamento de diretorias e setores da prefeitura |
+| 👥 **Autenticação** | Sistema de usuários com perfis diferenciados e onboarding |
+| 📝 **Auditoria** | Rastreamento completo de operações (MongoDB) |
 
 ---
 
 ## 🚀 Tecnologias
 
 ### Backend
-- **Python 3.12** + **Django 5.2** - Framework principal
-- **PostgreSQL** (Supabase) - Banco de dados relacional
-- **MongoDB Atlas** - Logs de auditoria
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| Python | 3.12 | Linguagem principal |
+| Django | 5.2 | Framework web |
+| PostgreSQL | - | Banco de dados (Supabase) |
+| MongoDB Atlas | - | Logs de auditoria |
 
 ### Frontend
-- **TailwindCSS 3.4** - Estilização
-- **Alpine.js 3.13** - Reatividade
-- **HTMX 1.9** - Interações AJAX sem JavaScript
-- **ApexCharts** - Gráficos e dashboards
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| TailwindCSS | 3.4 | Estilização |
+| Alpine.js | 3.13 | Reatividade |
+| HTMX | 1.9 | Interações AJAX |
+| ApexCharts | - | Gráficos e dashboards |
 
-### Serviços
-- **Supabase** - Storage e Edge Functions
-- **Gemini API 2.0** - OCR de notas fiscais
-- **Browserless.io** - Geração de PDFs
-- **Vercel** - Deploy e hosting
+### Serviços Externos
+| Serviço | Uso |
+|---------|-----|
+| Supabase | Storage e Edge Functions |
+| Gemini API 2.0 | OCR de notas fiscais |
+| Browserless.io | Geração de PDFs |
+| Vercel | Deploy e hosting |
 
 ---
 
@@ -68,7 +75,7 @@ O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de T
 ### Pré-requisitos
 - Python 3.11+
 - Node.js 20+
-- Docker (opcional, para Supabase local)
+- Docker (opcional, para serviços locais)
 
 ### 1. Clone o repositório
 ```bash
@@ -103,7 +110,7 @@ python manage.py migrate
 
 ### 6. Inicie o servidor
 ```bash
-# Terminal 1: Tailwind CSS
+# Terminal 1: Tailwind CSS (watch mode)
 npm run dev
 
 # Terminal 2: Supabase Edge Functions (para OCR)
@@ -134,8 +141,6 @@ Acesse: **http://127.0.0.1:8000**
 | `BROWSERLESS_API_KEY` | Token do Browserless.io |
 
 ### Supabase Local (Desenvolvimento)
-
-Para desenvolvimento com Supabase local:
 
 ```bash
 # 1. Inicie o Supabase (banco, storage, etc)
@@ -170,16 +175,18 @@ python manage.py test --nomigrations
 
 ## 📚 Documentação
 
-| Documento | Descrição |
-|-----------|-----------|
-| [OCR.md](docs/OCR.md) | Sistema de OCR com Supabase Edge Functions |
-| [STORAGE.md](docs/STORAGE.md) | Supabase Storage e migração de imagens |
-| [AUDITORIA.md](docs/AUDITORIA.md) | Sistema de auditoria com MongoDB |
-| [DEPLOY_OCR.md](docs/DEPLOY_OCR.md) | Checklist de deploy do OCR |
-| [DOCKER.md](docs/DOCKER.md) | Configuração com Docker |
-| [GEMINI.md](docs/GEMINI.md) | Contexto do projeto para IA |
-| [PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md) | Roadmap do projeto |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Guia de contribuição |
+A documentação está organizada em `docs/`:
+
+| Categoria | Documentos |
+|-----------|------------|
+| 📐 **Arquitetura** | [AUDITORIA.md](docs/arquitetura/AUDITORIA.md) · [STORAGE.md](docs/arquitetura/STORAGE.md) |
+| 🏗️ **Infraestrutura** | [DOCKER.md](docs/infraestrutura/DOCKER.md) |
+| ⚙️ **Features** | [OCR.md](docs/features/OCR.md) |
+| 📋 **Planejamento** | [ROADMAP.md](docs/planejamento/ROADMAP.md) · [PROXIMOS_PASSOS.md](docs/planejamento/PROXIMOS_PASSOS.md) |
+
+**Outros arquivos importantes:**
+- [GEMINI.md](GEMINI.md) - Contexto do projeto para IA
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Guia de contribuição
 
 ---
 
@@ -201,7 +208,12 @@ sisinfo-v2/
 │       └── process-ocr/  # OCR via Gemini
 ├── static/            # CSS, JS, imagens
 ├── templates/         # Templates HTML base
-└── docs/              # Documentação
+├── docs/              # Documentação
+│   ├── arquitetura/   # Decisões técnicas
+│   ├── infraestrutura/ # Deploy e containers
+│   ├── features/      # Funcionalidades
+│   └── planejamento/  # Roadmap e backlog
+└── data/              # Dados de teste
 ```
 
 ---
@@ -229,7 +241,7 @@ Este projeto é de uso interno da Prefeitura Municipal de Novo Horizonte.
 
 <div align="center">
 
-**Desenvolvido com ❤️ pela Diretoria de TI**
+**Desenvolvido pela Diretoria de TI**
 
 Prefeitura Municipal de Novo Horizonte/SP
 
