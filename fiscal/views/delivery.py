@@ -225,8 +225,8 @@ def upload_signed_document(file, delivery_pk):
         # Gerar nome único para o arquivo
         file_name = f"{delivery_pk}_{uuid.uuid4().hex[:8]}.{file_ext}"
         
-        # Nome do bucket parametrizado
-        bucket_name = config('SUPABASE_DELIVERY_BUCKET', default='delivery-documents')
+        # Bucket para documentos assinados de entrega
+        bucket_name = 'delivery-documents'
         
         # Upload para Supabase Storage
         upload_url = f"{supabase_url}/storage/v1/object/{bucket_name}/{file_name}"
