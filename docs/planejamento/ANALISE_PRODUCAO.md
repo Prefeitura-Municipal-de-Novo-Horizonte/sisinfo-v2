@@ -3,7 +3,7 @@
 Análise das lacunas do projeto SISInfo V2 para melhorar eficiência, segurança e operações em produção.
 
 **Status:** 📋 Levantamento  
-**Última atualização:** 2024-12-28
+**Última atualização:** 2025-12-28
 
 ---
 

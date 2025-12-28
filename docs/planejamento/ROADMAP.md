@@ -2,7 +2,7 @@
 
 Ordem de execução priorizada consolidando todas as documentações do projeto.
 
-**Última atualização:** 2024-12-28
+**Última atualização:** 2025-12-28
 
 ---
 
@@ -183,7 +183,7 @@ Ordem de execução priorizada consolidando todas as documentações do projeto.
 - [ ] Bloqueio após assinatura
 - [ ] Permissões específicas
 
-**Docs:** [design/assinatura_digital.md](design/assinatura_digital.md)
+**Docs:** [assinatura_digital.md](../features/design/assinatura_digital.md)
 
 ### 5.2 Recuperação de Senha
 - [ ] Formulário "Esqueci minha senha"
@@ -239,8 +239,8 @@ Ordem de execução priorizada consolidando todas as documentações do projeto.
 |-----------|-----------|
 | [PROXIMOS_PASSOS.md](PROXIMOS_PASSOS.md) | Backlog detalhado |
 | [ANALISE_PRODUCAO.md](ANALISE_PRODUCAO.md) | Análise de gaps de produção |
-| [design/assinatura_digital.md](design/assinatura_digital.md) | Design de assinatura digital |
-| [GEMINI.md](GEMINI.md) | Contexto para IA |
+| [assinatura_digital.md](../features/design/assinatura_digital.md) | Design de assinatura digital |
+| [GEMINI.md](../../GEMINI.md) | Contexto para IA |
 
 ---
 

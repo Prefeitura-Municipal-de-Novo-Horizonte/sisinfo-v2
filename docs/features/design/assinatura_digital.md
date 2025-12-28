@@ -3,7 +3,7 @@
 Design para implementação futura de assinatura digital no SISInfo V2.
 
 **Status:** 📋 Levantamento  
-**Última atualização:** 2024-12-28
+**Última atualização:** 2025-12-28
 
 ---
 

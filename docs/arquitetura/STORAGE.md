@@ -2,7 +2,7 @@
 
 Sistema de armazenamento de imagens usando Supabase Storage.
 
-**Última atualização:** 2024-12-27
+**Última atualização:** 2025-12-28
 
 ---
 

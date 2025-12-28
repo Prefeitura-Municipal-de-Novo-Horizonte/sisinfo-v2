@@ -2,7 +2,7 @@
 
 Roadmap e planejamento de desenvolvimento.
 
-**Última atualização:** 2024-12-28
+**Última atualização:** 2025-12-28
 
 ---
 
@@ -75,7 +75,7 @@ Roadmap e planejamento de desenvolvimento.
 ### Segurança
 - [ ] Recuperação de senha por email
 - [ ] Row Level Security (RLS)
-- [ ] **Assinatura Digital de PDFs** - Laudos e entregas ([design](design/assinatura_digital.md))
+- [ ] **Assinatura Digital de PDFs** - Laudos e entregas ([design](../features/design/assinatura_digital.md))
 
 ### Performance e Infraestrutura
 - [ ] **Migração para UV** (gerenciador de pacotes Python)
@@ -136,12 +136,12 @@ docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:lat
 
 ## 🎨 Designs Pendentes
 
-Designs prontos na pasta `docs/design/`:
+Designs prontos na pasta `docs/features/design/`:
 
 | Design | Descrição | Status |
 |--------|-----------|--------|
-| `central_de_notificações` | Tela de notificações com histórico | Pendente |
-| `ajuda_/_faq` | Página de FAQ com acordeões | Pendente |
+| `assinatura_digital.md` | Assinatura digital de PDFs | Pendente |
+| `ajuda_faq/` | Página de FAQ com acordeões | Pendente |
 
 ---
 
