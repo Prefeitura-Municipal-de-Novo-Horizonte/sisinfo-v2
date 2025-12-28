@@ -20,6 +20,8 @@ Este documento fornece contexto essencial para modelos de IA que interagem com o
 | **Frontend** | Tailwind CSS 3.4, Alpine.js 3.13, HTMX 1.9 |
 | **Banco Principal** | PostgreSQL (Supabase) |
 | **Logs de Auditoria** | MongoDB Atlas |
+| **Cache/Queue** | Upstash (Redis + QStash) |
+| **PDF** | Browserless.io + Playwright |
 | **Serverless** | Supabase Edge Functions (Deno) |
 | **Storage** | Supabase Storage |
 | **Deploy** | Vercel |
@@ -150,4 +152,4 @@ BROWSERLESS_API_KEY     # Token do Browserless
 
 ---
 
-**Última atualização:** 2024-12-27
+**Última atualização:** 2024-12-28
