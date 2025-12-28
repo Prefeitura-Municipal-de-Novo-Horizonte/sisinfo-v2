@@ -483,9 +483,8 @@ class DeliveryNote(models.Model):
             return None
         from decouple import config
         supabase_url = config('SUPABASE_URL', default='')
-        bucket_name = config('SUPABASE_DELIVERY_BUCKET', default='delivery-documents')
         if supabase_url:
-            return f"{supabase_url}/storage/v1/object/public/{bucket_name}/{self.signed_document}"
+            return f"{supabase_url}/storage/v1/object/public/delivery-documents/{self.signed_document}"
         return None
 
 

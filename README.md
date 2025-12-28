@@ -173,9 +173,12 @@ python manage.py test --nomigrations
 | Documento | Descrição |
 |-----------|-----------|
 | [OCR.md](docs/OCR.md) | Sistema de OCR com Supabase Edge Functions |
+| [STORAGE.md](docs/STORAGE.md) | Supabase Storage e migração de imagens |
+| [AUDITORIA.md](docs/AUDITORIA.md) | Sistema de auditoria com MongoDB |
 | [DEPLOY_OCR.md](docs/DEPLOY_OCR.md) | Checklist de deploy do OCR |
 | [DOCKER.md](docs/DOCKER.md) | Configuração com Docker |
-| [GEMINI.md](docs/GEMINI.md) | Guia para colaboração com IA |
+| [GEMINI.md](docs/GEMINI.md) | Contexto do projeto para IA |
+| [PROXIMOS_PASSOS.md](docs/PROXIMOS_PASSOS.md) | Roadmap do projeto |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Guia de contribuição |
 
 ---

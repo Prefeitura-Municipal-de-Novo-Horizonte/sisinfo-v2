@@ -1,132 +1,153 @@
-# GEMINI.MD: Guia de Colaboração em IA
+# GEMINI.MD: Contexto do Projeto para IA
 
-Este documento fornece o contexto essencial para os modelos de IA que interagem com este projeto. A adesão a estas diretrizes garantirá a consistência e manterá a qualidade do código.
+Este documento fornece contexto essencial para modelos de IA que interagem com o projeto SISInfo V2.
 
-## 1. Visão Geral e Propósito do Projeto
+---
 
-*   **Objetivo Principal:** O SISInfo V2 é uma plataforma completa e intuitiva desenvolvida para otimizar e centralizar a gestão da Diretoria de Tecnologia da Informação da Prefeitura de Novo Horizonte. Ele oferece ferramentas para gerenciamento de ativos de TI, central de serviços de helpdesk, gestão de projetos de TI e geração de relatórios e análises.
-*   **Domínio de Negócio:** Gestão Pública / Tecnologia da Informação Municipal.
+## Projeto
 
-## 2. Tecnologias e Pilha Principal
+**SISInfo V2** - Sistema Integrado de Gestão da Diretoria de TI  
+**Domínio:** Gestão Pública Municipal / Tecnologia da Informação  
+**Organização:** Prefeitura Municipal de Novo Horizonte/SP
 
-*   **Linguagens:** Python (3.12.x preferencial, 3.11.x compatível), JavaScript.
-*   **Frameworks e Runtimes:**
-    *   Backend: Django 5.2.6
-    *   Frontend: Tailwind CSS 3.4.x, Alpine.js 3.13.3, HTMX 1.9.10
-    *   Runtime: Node.js 20.9.0+ (para ferramentas de frontend)
-*   **Bancos de Dados:** 
-    *   PostgreSQL (via Docker) - Banco principal
-    *   MongoDB Atlas (Free Tier) - Logs de auditoria
-*   **Bibliotecas/Dependências Chave:**
-    *   Python: `django`, `psycopg2-binary`, `python-decouple`, `django-filter`, `django-extensions`, `pillow`, `djlint`, `pymongo`.
-    *   JavaScript: `tailwindcss`, `prettier`, `prettier-plugin-tailwindcss`.
-*   **Gerenciadores de Pacotes:** `pip` (Python), `npm` (Node.js).
+---
 
-## 3. Padrões Arquiteturais
+## Stack Tecnológico
 
-*   **Arquitetura Geral:** Aplicação Monolítica baseada em Django, seguindo o padrão Model-View-Template (MVT). O projeto é modularizado através de "apps" Django, cada um encapsulando uma funcionalidade específica.
-*   **Filosofia da Estrutura de Diretórios:**
-    *   `/core`: Contém as configurações globais do projeto Django (settings, urls, wsgi, asgi).
-    *   `/authenticate`: App Django para gerenciamento de autenticação e usuários.
-    *   `/audit`: App Django para sistema de auditoria e logs (MongoDB).
-    *   `/bidding_supplier`: App Django para gerenciamento de fornecedores e licitações.
-    *   `/dashboard`: App Django para o painel principal e funcionalidades relacionadas.
-    *   `/reports`: App Django para geração e gerenciamento de relatórios.
-    *   `/static`: Contém arquivos estáticos (CSS, JS, imagens) servidos diretamente.
-    *   `/templates`: Contém templates HTML base e templates compartilhados entre os apps.
-    *   `/docs`: Contém a documentação do projeto.
-    *   `/.docker`: Contém configurações para serviços Docker (ex: PostgreSQL).
-    *   `/.venv`: Ambiente virtual Python.
-    *   `contrib`: Arquivos auxiliares, como `.env-sample`.
+| Camada | Tecnologias |
+|--------|-------------|
+| **Backend** | Python 3.12, Django 5.2 |
+| **Frontend** | Tailwind CSS 3.4, Alpine.js 3.13, HTMX 1.9 |
+| **Banco Principal** | PostgreSQL (Supabase) |
+| **Logs de Auditoria** | MongoDB Atlas |
+| **Serverless** | Supabase Edge Functions (Deno) |
+| **Storage** | Supabase Storage |
+| **Deploy** | Vercel |
 
-## 4. Convenções de Codificação e Guia de Estilo
+---
 
-*   **Formatação:**
-    *   Geral: `charset = utf-8`, `insert_final_newline = true`, `end_of_line = lf`, `indent_style = space`, `indent_size = 4`.
-    *   Python: Adere ao guia de estilo [PEP 8](https://www.python.org/dev/peps/pep-0008/).
-    *   JavaScript/CSS: Formatado automaticamente com [Prettier](https://prettier.io/), utilizando `prettier-plugin-tailwindcss`.
-    *   Templates Django: Utiliza `djlint` para linting.
-*   **Convenções de Nomenclatura:**
-    *   Variáveis e Funções Python: `snake_case` (ex: `minha_variavel`, `minha_funcao`).
-    *   Classes Python: `PascalCase` (ex: `MinhaClasse`).
-    *   Arquivos Python: `snake_case` (ex: `views.py`, `models.py`).
-    *   Arquivos JavaScript/CSS: `kebab-case` ou `snake_case` (inferido).
-*   **Design de API:** O projeto é predominantemente uma aplicação web renderizada no servidor (Server-Side Rendered - SSR) com Django. Não há indícios de uma API RESTful explícita para consumo externo.
-*   **Tratamento de Erros:** (Inferido) Segue as práticas padrão do Django para tratamento de exceções e exibição de mensagens ao usuário.
+## Estrutura de Apps Django
 
-## 5. Arquivos Chave e Pontos de Entrada
+| App | Descrição |
+|-----|-----------|
+| `authenticate` | Autenticação, usuários, onboarding |
+| `audit` | Sistema de auditoria (MongoDB) |
+| `bidding_procurement` | Licitações e materiais |
+| `bidding_supplier` | Fornecedores |
+| `dashboard` | Painel principal |
+| `fiscal` | Notas fiscais, entregas, estoque, OCR |
+| `organizational_structure` | Diretorias e setores |
+| `reports` | Laudos técnicos e geração de PDFs |
+| `core` | Configurações globais |
 
-*   **Ponto(s) de Entrada Principal:**
-    *   `manage.py`: Script principal para comandos de gerenciamento Django (execução do servidor de desenvolvimento, migrações, testes).
-    *   `core/wsgi.py`: Ponto de entrada para servidores web compatíveis com WSGI.
-*   **Configuração:**
-    *   `core/settings.py`: Configurações principais do Django.
-    *   `.env`: Variáveis de ambiente (baseado em `contrib/.env-sample`).
-    *   `docker-compose.yaml`: Configuração dos serviços Docker (ex: banco de dados).
-*   **Pipeline CI/CD:** Não foi identificado um arquivo de configuração de pipeline CI/CD (ex: `.github/workflows`, `.gitlab-ci.yml`) na estrutura de diretórios fornecida.
+---
 
-## 6. Fluxo de Trabalho de Desenvolvimento e Testes
+## Convenções de Código
 
-*   **Ambiente de Desenvolvimento Local:**
-    1.  Clonar o repositório.
-    2.  Criar e ativar um ambiente virtual Python (`python -m venv .venv`).
-    3.  Instalar dependências Python (`pip install -r requirements.txt`).
-    4.  Instalar dependências Node.js (`npm install`).
-    5.  Copiar e configurar o arquivo `.env` (`cp contrib/.env-sample .env`).
-    6.  Executar migrações do banco de dados (`python manage.py migrate`).
-    7.  Iniciar o compilador Tailwind CSS em um terminal (`npm run dev`).
-    8.  Iniciar o servidor Django em outro terminal (`python manage.py runserver`).
-*   **Testes:**
-    *   Executar todos os testes: `python manage.py test`
-    *   Executar testes de uma aplicação específica: `python manage.py test <app_name>`
-    *   Novas funcionalidades e correções de bugs devem ser acompanhadas de testes correspondentes.
-*   **Processo CI/CD:** Não identificado.
+### Python
+- **Estilo:** PEP 8
+- **Nomenclatura:** `snake_case` (variáveis/funções), `PascalCase` (classes)
+- **Docstrings:** Obrigatórias em classes e métodos públicos
+- **Type hints:** Recomendados
 
-## 7. Instruções Específicas para Colaboração com IA
+### JavaScript/CSS
+- **Formatação:** Prettier com `prettier-plugin-tailwindcss`
 
-*   **Diretrizes de Contribuição:**
-    *   Crie branches a partir da `main` com nomes descritivos (ex: `feat/nova-funcionalidade`, `fix/correcao-bug-x`).
-    *   Faça commits atômicos com mensagens claras, seguindo a especificação de [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (ex: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`).
-    *   Garanta que suas alterações não quebrem funcionalidades existentes e adicione novos testes quando aplicável.
-    *   Mantenha sua branch atualizada com a `main` antes de abrir um Pull Request (PR).
-    *   Abra PRs para a branch `main`, descrevendo as alterações detalhadamente.
-    *   Esteja aberto a feedback durante a revisão de código.
-*   **Infraestrutura (IaC):** Não há um diretório dedicado a Infrastructure as Code (IaC) no projeto. Quaisquer alterações na infraestrutura (ex: Docker Compose) devem ser revisadas cuidadosamente.
-*   **Segurança:** Seja sempre consciente da segurança. Não codifique segredos ou chaves diretamente no código. Utilize variáveis de ambiente (via `.env` e `python-decouple`) para informações sensíveis. Garanta que quaisquer alterações na lógica de autenticação sejam seguras e validadas.
-*   **Dependências:**
-    *   Para dependências Python: Adicione ao `requirements.txt` e execute `pip install -r requirements.txt`.
-    *   Para dependências Node.js/Frontend: Adicione ao `package.json` e execute `npm install`.
-*   **Mensagens de Commit:** **É mandatório** seguir a especificação de Conventional Commits. Isso é crucial para manter um histórico de commits limpo e facilitar a automação de tarefas como a geração de changelogs.
+### Templates Django
+- **Linting:** djlint
 
-## 8. Ferramentas de Manutenção e Importação
+### Commits
+- **Obrigatório:** [Conventional Commits](https://www.conventionalcommits.org/)
+- **Formato:** `<tipo>(<escopo>): <descrição>`
+- **Tipos:** `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
 
-O projeto possui comandos personalizados (`management commands`) essenciais para a manutenção da integridade dos dados e importação de novos processos.
+---
 
-### Manutenção de Fornecedores
-*   `python manage.py consolidate_suppliers`: Normaliza e consolida fornecedores duplicados.
+## Padrão Arquitetural
 
-### Importação de Licitações
-*   `python manage.py import_bidding_from_xlsx <caminho_arquivo>`: Importa licitações completas a partir de planilhas XLSX. É o método preferencial e mais confiável.
-*   `python manage.py sync_bidding_with_pdf <caminho_arquivo>`: Sincroniza e valida os dados importados comparando com o arquivo PDF original.
-*   `python manage.py import_bidding_pdf <caminho_arquivo>`: (Fallback) Importa dados diretamente do PDF. Use apenas se o XLSX não estiver disponível.
+O projeto usa **Service Layer** sobre o MVT do Django:
 
-### Diagnóstico e Limpeza
-*   `python manage.py diagnose_data`: Executa um diagnóstico completo do banco de dados, identificando duplicatas, órfãos e inconsistências.
-*   `python manage.py clean_duplicate_biddings`: Identifica e remove licitações duplicadas, consolidando os materiais.
-*   `python manage.py clean_duplicate_materials`: Identifica e funde materiais duplicados com base em similaridade de nome.
+```
+Models (dados) → Services (lógica) → Views (HTTP) → Templates (UI)
+```
 
-### Recuperação de Dados (Reports)
-*   `python manage.py restore_material_reports_from_json`: Restaura laudos a partir de backup JSON.
-*   `python manage.py fix_orphan_material_reports`: Corrige inconsistências em laudos órfãos.
+---
 
-### Auditoria
-*   `python manage.py backup_audit_logs`: Faz backup dos logs de auditoria do MongoDB.
-    *   `--days N`: Backup apenas dos últimos N dias
-    *   `--model MODEL`: Filtrar por modelo específico
-    *   `--compress`: Comprimir arquivo de saída com gzip
-*   `python manage.py clean_audit_logs`: Limpa logs antigos de auditoria.
-    *   `--days N`: Remover logs mais antigos que N dias (padrão: 90)
-    *   `--dry-run`: Mostra o que seria deletado sem deletar
-    *   `--backup-first`: Faz backup antes de limpar
+## Comandos de Management Importantes
 
-> **Nota:** Ao realizar manutenções críticas, sempre faça um backup antes utilizando `python manage.py backup_database`.
+### Manutenção de Dados
+```bash
+python manage.py diagnose_data          # Diagnóstico completo do banco
+python manage.py consolidate_suppliers  # Consolida fornecedores duplicados
+python manage.py close_stale_reports    # Fecha laudos pendentes antigos
+```
+
+### Auditoria (MongoDB)
+```bash
+python manage.py backup_audit_logs      # Backup de logs
+python manage.py clean_audit_logs       # Limpeza de logs antigos
+```
+
+### OCR
+```bash
+python manage.py clean_ocr_jobs         # Limpa jobs de OCR órfãos
+python manage.py clean_orphan_images    # Remove imagens órfãs
+```
+
+### Backup
+```bash
+python manage.py backup_database        # Backup do PostgreSQL
+python manage.py restore_backup         # Restaura backup
+```
+
+---
+
+## Arquivos Chave
+
+| Arquivo | Propósito |
+|---------|-----------|
+| `core/settings/base.py` | Configurações base Django |
+| `core/settings/development.py` | Config desenvolvimento |
+| `core/settings/production.py` | Config produção (Vercel) |
+| `.env` | Variáveis de ambiente |
+| `supabase/functions/process-ocr/` | Edge Function de OCR |
+
+---
+
+## Instruções para IA
+
+1. **Segurança:** Nunca exponha secrets ou chaves no código
+2. **Testes:** Novas features devem ter testes correspondentes
+3. **Docstrings:** Adicione documentação em código novo
+4. **Commits:** Use Conventional Commits
+5. **Dependências:** Adicione ao `requirements.txt` ou `package.json`
+6. **Auditoria:** Novos models CRUD são automaticamente auditados
+
+---
+
+## Variáveis de Ambiente Essenciais
+
+```bash
+SECRET_KEY              # Chave Django
+DEBUG                   # True/False
+POSTGRES_URL            # PostgreSQL (Supabase)
+DATABASE_MONGODB_LOGS   # MongoDB Atlas
+SUPABASE_URL            # URL do Supabase
+SUPABASE_SERVICE_ROLE_KEY  # Chave admin Supabase
+GEMINI_API_KEY          # Chaves Gemini (múltiplas, separadas por vírgula)
+BROWSERLESS_API_KEY     # Token do Browserless
+```
+
+---
+
+## Documentação Relacionada
+
+- [README.md](../README.md) - Visão geral do projeto
+- [CONTRIBUTING.md](../CONTRIBUTING.md) - Guia de contribuição
+- [docs/OCR.md](OCR.md) - Sistema de OCR
+- [docs/DOCKER.md](DOCKER.md) - Configuração Docker
+- [docs/PROXIMOS_PASSOS.md](PROXIMOS_PASSOS.md) - Roadmap
+
+---
+
+**Última atualização:** 2024-12-27
