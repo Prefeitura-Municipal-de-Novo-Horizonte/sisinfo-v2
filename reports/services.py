@@ -1,14 +1,23 @@
-from typing import Optional, Tuple, Dict, Any
+"""
+Serviço para operações com Laudos (Reports).
+
+Este módulo contém a lógica de negócio de Report,
+usando ServiceResult para retornos padronizados.
+"""
+from typing import Optional
 from django.db.models import QuerySet
-from django.shortcuts import get_object_or_404
 from django.forms import BaseInlineFormSet
 
+from core.services import ServiceResult
 from .models import Report, MaterialReport
 from .forms import ReportForm, ReportUpdateForm
 
+
 class ReportService:
     """
-    Serviço responsável pela lógica de negócios relacionada a Laudos (Reports).
+    Serviço responsável pela lógica de negócios relacionada a Laudos.
+    
+    Usa ServiceResult para retornos padronizados.
     """
 
     @staticmethod
@@ -19,87 +28,147 @@ class ReportService:
         ).prefetch_related('invoice_links').all()
 
     @staticmethod
-    def get_report_by_slug(slug: str) -> Report:
-        """Retorna um laudo específico pelo slug ou 404 se não encontrado."""
-        return get_object_or_404(
-            Report.objects.select_related('sector', 'professional', 'pro_accountable'), 
-            slug=slug
-        )
+    def get_report_by_slug(slug: str) -> ServiceResult:
+        """
+        Retorna um laudo específico pelo slug.
+        
+        Args:
+            slug: Slug do laudo
+            
+        Returns:
+            ServiceResult com Report ou erro
+        """
+        try:
+            report = Report.objects.select_related(
+                'sector', 'professional', 'pro_accountable'
+            ).get(slug=slug)
+            return ServiceResult.ok(data=report)
+        except Report.DoesNotExist:
+            return ServiceResult.fail(error="Laudo não encontrado.")
 
     @staticmethod
-    def create_report(form: ReportForm, form_material: BaseInlineFormSet) -> Optional[Report]:
+    def create_report(form: ReportForm, form_material: BaseInlineFormSet) -> ServiceResult:
         """
         Cria um novo laudo e seus materiais associados.
         
         Args:
-            form (ReportForm): Formulário do laudo.
-            form_material (BaseInlineFormSet): Formset de materiais.
+            form: Formulário do laudo
+            form_material: Formset de materiais
             
         Returns:
-            Report: O laudo criado se sucesso, None caso contrário.
+            ServiceResult com Report criado ou erros
         """
-        if form.is_valid() and form_material.is_valid():
+        if not form.is_valid():
+            return ServiceResult.fail(
+                error="Dados do laudo inválidos.",
+                errors=list(form.errors.values())
+            )
+        
+        if not form_material.is_valid():
+            return ServiceResult.fail(
+                error="Dados dos materiais inválidos.",
+                errors=list(form_material.errors)
+            )
+        
+        try:
             report = form.save()
             form_material.instance = report
             form_material.save()
-            return report
-        return None
+            return ServiceResult.ok(
+                data=report,
+                message=f"Laudo {report.number_report} criado com sucesso!"
+            )
+        except Exception as e:
+            return ServiceResult.fail(error=str(e))
 
     @staticmethod
-    def update_report(form: ReportUpdateForm, form_material: BaseInlineFormSet) -> Optional[Report]:
+    def update_report(form: ReportUpdateForm, form_material: BaseInlineFormSet) -> ServiceResult:
         """
         Atualiza um laudo existente e seus materiais.
         
         Args:
-            form (ReportUpdateForm): Formulário de atualização do laudo.
-            form_material (BaseInlineFormSet): Formset de materiais.
+            form: Formulário de atualização do laudo
+            form_material: Formset de materiais
             
         Returns:
-            Report: O laudo atualizado se sucesso, None caso contrário.
+            ServiceResult com Report atualizado ou erros
         """
-        if form.is_valid() and form_material.is_valid():
+        if not form.is_valid():
+            return ServiceResult.fail(
+                error="Dados do laudo inválidos.",
+                errors=list(form.errors.values())
+            )
+        
+        if not form_material.is_valid():
+            return ServiceResult.fail(
+                error="Dados dos materiais inválidos.",
+                errors=list(form_material.errors)
+            )
+        
+        try:
             report = form.save()
             form_material.instance = report
             form_material.save()
-            return report
-        return None
+            return ServiceResult.ok(
+                data=report,
+                message=f"Laudo {report.number_report} atualizado com sucesso!"
+            )
+        except Exception as e:
+            return ServiceResult.fail(error=str(e))
 
     @staticmethod
-    def delete_material_report(material_report_id: int) -> Tuple[Report, str]:
+    def delete_material_report(material_report_id: int) -> ServiceResult:
         """
         Exclui um item (material) de um laudo.
         
         Args:
-            material_report_id (int): ID do MaterialReport.
+            material_report_id: ID do MaterialReport
             
         Returns:
-            tuple: (Report instance, str message)
+            ServiceResult com Report e mensagem
         """
-        material_report = get_object_or_404(MaterialReport, id=material_report_id)
-        report = material_report.report
-        material_name = material_report.material.name
-        material_report.delete()
-        msg = f'O Item {material_name} foi excluido do laudo {report.number_report} com sucesso.'
-        return report, msg
+        try:
+            material_report = MaterialReport.objects.select_related(
+                'report', 'material_bidding__material'
+            ).get(id=material_report_id)
+            report = material_report.report
+            material_name = material_report.material_bidding.material.name
+            material_report.delete()
+            return ServiceResult.ok(
+                data=report,
+                message=f"Item {material_name} excluído do laudo {report.number_report}!"
+            )
+        except MaterialReport.DoesNotExist:
+            return ServiceResult.fail(error="Material do laudo não encontrado.")
+        except Exception as e:
+            return ServiceResult.fail(error=str(e))
 
     @staticmethod
-    def get_report_details(slug: str) -> Dict[str, Any]:
+    def get_report_details(slug: str) -> ServiceResult:
         """
         Retorna detalhes do laudo e o preço total calculado.
         
         Args:
-            slug (str): Slug do laudo.
+            slug: Slug do laudo
             
         Returns:
-            dict: Contexto com report e total_price.
+            ServiceResult com contexto ou erro
         """
-        report = get_object_or_404(Report, slug=slug)
-        materiais_report = MaterialReport.objects.filter(report=report).exclude(
+        try:
+            report = Report.objects.get(slug=slug)
+        except Report.DoesNotExist:
+            return ServiceResult.fail(error="Laudo não encontrado.")
+        
+        materiais_report = MaterialReport.objects.filter(
+            report=report
+        ).exclude(
             material_bidding__material__name__icontains='Perdido'
-        )
+        ).select_related('material_bidding__material')
+        
         total_price = sum(material.total_price for material in materiais_report)
         
-        return {
+        return ServiceResult.ok(data={
             'report': report,
+            'materiais': materiais_report,
             'total_price': total_price,
-        }
+        })
