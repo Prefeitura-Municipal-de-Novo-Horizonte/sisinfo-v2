@@ -43,6 +43,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + MY_APPS
 # Middleware
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "core.middleware.MaintenanceMiddleware",  # Modo manutenção via MAINTENANCE_MODE env
     "whitenoise.middleware.WhiteNoiseMiddleware",  # Serve static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
