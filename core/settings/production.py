@@ -101,6 +101,13 @@ LOGGING = {
             "level": LOG_LEVEL,
             "propagate": False,
         },
+        # Silencia logs INFO do httpx (usado pelo upstash-redis)
+        "httpx": {
+            "level": "WARNING",
+        },
+        "httpcore": {
+            "level": "WARNING",
+        },
     },
 }
 
