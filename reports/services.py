@@ -172,3 +172,33 @@ class ReportService:
             'materiais': materiais_report,
             'total_price': total_price,
         })
+
+    @staticmethod
+    def finalize_report(slug: str, closing_reason: str = None) -> ServiceResult:
+        """
+        Finaliza um laudo, marcando-o como fechado.
+        
+        Args:
+            slug: Slug do laudo
+            closing_reason: Motivo opcional do fechamento
+            
+        Returns:
+            ServiceResult com Report finalizado ou erro
+        """
+        try:
+            report = Report.objects.get(slug=slug)
+        except Report.DoesNotExist:
+            return ServiceResult.fail(error="Laudo não encontrado.")
+        
+        if report.status == '3':
+            return ServiceResult.fail(error="Este laudo já está finalizado.")
+        
+        report.status = '3'
+        if closing_reason:
+            report.closing_reason = closing_reason
+        report.save()
+        
+        return ServiceResult.ok(
+            data=report,
+            message=f"Laudo {report.number_report} finalizado com sucesso!"
+        )

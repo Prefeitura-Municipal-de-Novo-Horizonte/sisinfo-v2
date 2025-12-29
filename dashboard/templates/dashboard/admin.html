@@ -294,7 +294,8 @@
 </div>
 
 <!-- Seção: Laudos em Aberto -->
-<div class="mt-8 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
+<div
+  class="mt-8 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
   x-data="{ 
     selectedReports: [],
     loading: false,
@@ -367,8 +368,8 @@
         </svg>
       </div>
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos em Aberto</h3>
-        <p class="text-sm text-gray-500 dark:text-slate-400">Selecione laudos para finalizar em massa</p>
+        <h3 class="text-lg font-semibold text-white">Laudos em Aberto</h3>
+        <p class="text-sm text-slate-400">Selecione laudos para finalizar em massa</p>
       </div>
     </div>
   </div>
@@ -411,13 +412,20 @@
               {{ report.number_report|default:"Sem número" }}
             </td>
             <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ report.sector.name|default:"-" }}</td>
-            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ report.professional.first_name|default:"-" }}</td>
+            <td class="px-4 py-3 text-gray-600 dark:text-slate-300">{{ report.professional.first_name|default:"-" }}
+            </td>
             <td class="px-4 py-3 text-gray-500 dark:text-slate-400">{{ report.created_at|date:"d/m/Y" }}</td>
             <td class="px-4 py-3 text-center">
               <a href="{{ report.get_absolute_url }}" target="_blank"
                 class="inline-flex items-center justify-center gap-1 rounded-md h-8 px-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40 focus:ring-blue-500"
                 title="Ver laudo">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                  </path>
+                </svg>
               </a>
             </td>
           </tr>
@@ -425,12 +433,16 @@
         </tbody>
       </table>
     </div>
-    
+
     <div class="mt-4 flex justify-between items-center">
-      <span class="text-sm text-gray-500 dark:text-slate-400" x-text="selectedReports.length + ' selecionado(s)'"></span>
+      <span class="text-sm text-gray-500 dark:text-slate-400"
+        x-text="selectedReports.length + ' selecionado(s)'"></span>
       <button @click="closeSelected()" :disabled="loading || selectedReports.length === 0"
         class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-amber-600 rounded-lg shadow-md hover:bg-amber-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
-        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
         <svg x-show="loading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -441,7 +453,8 @@
     {% else %}
     <div class="text-center py-8 text-gray-500 dark:text-slate-400">
       <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <p>Nenhum laudo em aberto</p>
     </div>
@@ -450,7 +463,8 @@
 </div>
 
 <!-- Seção: Fichas de Entrega Pendentes -->
-<div class="mt-6 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
+<div
+  class="mt-6 bg-slate-800 dark:bg-slate-900 rounded-lg shadow-sm border border-slate-700 dark:border-slate-800 overflow-hidden"
   x-data="{ 
     selectedDeliveries: [],
     loading: false,
@@ -523,8 +537,8 @@
         </svg>
       </div>
       <div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Fichas de Entrega Pendentes</h3>
-        <p class="text-sm text-gray-500 dark:text-slate-400">Selecione fichas para concluir em massa (com ou sem PDF)</p>
+        <h3 class="text-lg font-semibold text-white">Fichas de Entrega Pendentes</h3>
+        <p class="text-sm text-slate-400">Selecione fichas para concluir em massa (com ou sem PDF)</p>
       </div>
     </div>
   </div>
@@ -572,16 +586,21 @@
             <td class="px-4 py-3 text-gray-600 dark:text-slate-300">NF {{ delivery.invoice.number }}</td>
             <td class="px-4 py-3">
               {% if delivery.status == 'P' %}
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400">Pendente</span>
+              <span
+                class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400">Pendente</span>
               {% else %}
-              <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400">A Caminho</span>
+              <span
+                class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400">A
+                Caminho</span>
               {% endif %}
             </td>
             <td class="px-4 py-3">
               {% if delivery.signed_document %}
               <span class="inline-flex items-center text-green-600 dark:text-green-400">
                 <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                  <path fill-rule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clip-rule="evenodd" />
                 </svg>
                 Sim
               </span>
@@ -594,7 +613,13 @@
               <a href="{{ delivery.get_absolute_url }}" target="_blank"
                 class="inline-flex items-center justify-center gap-1 rounded-md h-8 px-2 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-none bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40 focus:ring-blue-500"
                 title="Ver ficha">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                  </path>
+                </svg>
               </a>
             </td>
           </tr>
@@ -602,12 +627,16 @@
         </tbody>
       </table>
     </div>
-    
+
     <div class="mt-4 flex justify-between items-center">
-      <span class="text-sm text-gray-500 dark:text-slate-400" x-text="selectedDeliveries.length + ' selecionada(s)'"></span>
+      <span class="text-sm text-gray-500 dark:text-slate-400"
+        x-text="selectedDeliveries.length + ' selecionada(s)'"></span>
       <button @click="completeSelected()" :disabled="loading || selectedDeliveries.length === 0"
         class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-emerald-600 rounded-lg shadow-md hover:bg-emerald-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200">
-        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <svg x-show="!loading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
         <svg x-show="loading" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -618,7 +647,8 @@
     {% else %}
     <div class="text-center py-8 text-gray-500 dark:text-slate-400">
       <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <p>Nenhuma ficha de entrega pendente</p>
     </div>
