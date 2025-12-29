@@ -4,6 +4,7 @@ from reports.views import (
     ReportDetailView,
     ReportListView,
     create_sector_api,
+    finalize_report,
     generate_pdf_report,
     material_report_delete,
     report_register,
@@ -23,6 +24,7 @@ urlpatterns = [
     path('report/<slug:report_slug>/material/<int:pk>/delete',
          material_report_delete, name="material_report_delete"),
     path('report/<slug:slug>/download-pdf', generate_pdf_report, name='generate_pdf'),
+    path('report/<slug:slug>/finalize', finalize_report, name='finalize_report'),
     path('api/create-sector/', create_sector_api, name='create_sector_api'),
     
 ]

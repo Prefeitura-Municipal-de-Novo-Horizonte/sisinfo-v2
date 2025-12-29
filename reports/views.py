@@ -55,14 +55,14 @@ def report_register(request):
             Report, MaterialReport, form=MaterialReportForm)
         form_material = form_material_factory(request.POST)
         
-        report = ReportService.create_report(form, form_material)
-        if report:
+        result = ReportService.create_report(form, form_material)
+        if result.success:
             messages.add_message(request, constants.SUCCESS,
-                                 f'Laudo {report.slug} salvo com sucesso!')
+                                 f'Laudo {result.data.slug} salvo com sucesso!')
             return redirect(reverse('reports:register_report'))
         else:
             messages.add_message(request, constants.ERROR,
-                                 'Ocorreu um erro tente novamente!')
+                                 result.error or 'Ocorreu um erro tente novamente!')
             return redirect(reverse('reports:reports'))
             
     form = ReportForm(request=request)
@@ -92,9 +92,10 @@ class ReportDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Usa o service para pegar detalhes adicionais (como preço total)
-        # O service retorna um dict com 'report' e 'total_price'
-        details = ReportService.get_report_details(self.object.slug)
-        context.update(details)
+        # O service retorna um ServiceResult, então acessamos .data para o dict
+        result = ReportService.get_report_details(self.object.slug)
+        if result.success:
+            context.update(result.data)
         return context
 
 
@@ -104,7 +105,12 @@ def report_update(request, slug):
     Atualiza um laudo existente.
     Mantida como FBV verificação de permissão customizada e formset.
     """
-    report = ReportService.get_report_by_slug(slug)
+    result = ReportService.get_report_by_slug(slug)
+    if not result.success:
+        messages.add_message(request, constants.ERROR, result.error)
+        return redirect('reports:reports')
+    
+    report = result.data
     # Verifica permissão: apenas o profissional ou responsável podem editar
     if request.user in [report.professional, report.pro_accountable]:
         form = ReportUpdateForm(request.POST or None,
@@ -113,10 +119,10 @@ def report_update(request, slug):
             request.POST or None, instance=report, prefix='materials')
         
         if request.method == 'POST':
-            updated_report = ReportService.update_report(form, form_material)
-            if updated_report:
+            update_result = ReportService.update_report(form, form_material)
+            if update_result.success:
                 messages.add_message(
-                    request, constants.SUCCESS, f'O Laudo {updated_report.number_report} foi atualizado com sucesso.')
+                    request, constants.SUCCESS, f'O Laudo {update_result.data.number_report} foi atualizado com sucesso.')
                 return redirect(reverse('reports:report_update', kwargs={'slug': slug}))
             messages.add_message(request, constants.ERROR,
                                  'Não foi possivel atualizar o laudo.')
@@ -143,9 +149,13 @@ def material_report_delete(request, report_slug, pk):
     """
     Exclui um material de um laudo.
     """
-    report, msg = ReportService.delete_material_report(pk)
-    messages.add_message(request, constants.SUCCESS, msg)
-    return redirect(reverse('reports:report_update', kwargs={'slug': report.slug}))
+    result = ReportService.delete_material_report(pk)
+    if result.success:
+        messages.add_message(request, constants.SUCCESS, result.message)
+        return redirect(reverse('reports:report_update', kwargs={'slug': result.data.slug}))
+    else:
+        messages.add_message(request, constants.ERROR, result.error)
+        return redirect(reverse('reports:report_update', kwargs={'slug': report_slug}))
 
 
 @login_required(login_url='authenticate:login')
@@ -153,7 +163,12 @@ def generate_pdf_report(request, slug):
     """
     Gera e retorna PDF do laudo usando Browserless.io/PDFGenerator.
     """
-    report = ReportService.get_report_by_slug(slug)
+    result = ReportService.get_report_by_slug(slug)
+    if not result.success:
+        messages.add_message(request, constants.ERROR, result.error)
+        return redirect('reports:reports')
+    
+    report = result.data
     
     try:
         pdf_bytes = PDFGenerator.generate_report_pdf(report)
@@ -193,3 +208,25 @@ def create_sector_api(request):
             return JsonResponse({'error': str(e)}, status=500)
             
     return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
+@login_required(login_url='authenticate:login')
+def finalize_report(request, slug):
+    """
+    Finaliza um laudo com motivo opcional.
+    Apenas aceita requisições POST.
+    """
+    if request.method != 'POST':
+        messages.add_message(request, constants.ERROR, 'Método não permitido.')
+        return redirect(reverse('reports:report_view', kwargs={'slug': slug}))
+    
+    closing_reason = request.POST.get('closing_reason', '').strip()
+    
+    result = ReportService.finalize_report(slug, closing_reason if closing_reason else None)
+    
+    if result.success:
+        messages.add_message(request, constants.SUCCESS, result.message)
+    else:
+        messages.add_message(request, constants.ERROR, result.error)
+    
+    return redirect(reverse('reports:report_view', kwargs={'slug': slug}))

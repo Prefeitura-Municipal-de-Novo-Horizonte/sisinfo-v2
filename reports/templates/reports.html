@@ -229,10 +229,12 @@
                     <td class="px-6 py-4">{{ report.professional }}</td>
                     <td class="px-6 py-4 text-center">
                         <div class="flex items-center justify-center gap-2">
-                            <!-- Editar -->
+                            {% if report.status == '1' %}
+                            <!-- Editar (apenas para laudos abertos) -->
                             {% url 'reports:report_update' report.slug as edit_url %}
                             {% action_button url=edit_url type='edit' title='Editar' %}
-                            
+                            {% endif %}
+
                             <!-- Download PDF -->
                             {% url 'reports:generate_pdf' report.slug as pdf_url %}
                             {% action_button url=pdf_url type='pdf' title='Baixar PDF' target='_blank' %}

@@ -47,11 +47,16 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Contatos</dt>
             <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">
                 {{ supplier.contacts.count }}</dd>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Notas Fiscais</dt>
+            <dd class="mt-1 text-2xl font-semibold text-gray-900 dark:text-white">{{ supplier.notas_fiscais.count }}
+            </dd>
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Licitações Participantes</dt>
@@ -136,6 +141,77 @@
             </div>
         </div>
 
+        <!-- Notas Fiscais -->
+        <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    Notas Fiscais
+                </h3>
+            </div>
+            <div class="relative overflow-x-auto">
+                <table class="w-full text-xs text-left text-gray-500 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-3 py-2">Número</th>
+                            <th scope="col" class="px-3 py-2">Data</th>
+                            <th scope="col" class="px-3 py-2 text-right">Valor</th>
+                            <th scope="col" class="px-3 py-2 text-center">Status</th>
+                            <th scope="col" class="px-3 py-2 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for invoice in supplier.notas_fiscais.all %}
+                        <tr
+                            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                            <th scope="row"
+                                class="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                NF {{ invoice.number }}
+                            </th>
+                            <td class="px-3 py-2">
+                                {{ invoice.issue_date|date:"d/m/Y" }}
+                            </td>
+                            <td class="px-3 py-2 text-right font-medium text-gray-900 dark:text-white">
+                                R$ {{ invoice.total_value|floatformat:2 }}
+                            </td>
+                            <td class="px-3 py-2 text-center">
+                                {% if invoice.status == 'P' %}
+                                <span
+                                    class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">Pendente</span>
+                                {% elif invoice.status == 'R' %}
+                                <span
+                                    class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">Recebida</span>
+                                {% else %}
+                                <span
+                                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Entregue</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-3 py-2 flex justify-end">{% url 'fiscal:invoice_detail' invoice.pk as invoice_url %}{% action_button url=invoice_url type='view' title='Visualizar' extra_classes='w-8 px-0' %}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-3 py-8 text-center text-gray-500 dark:text-gray-400">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                    <p class="text-sm">Nenhuma nota fiscal encontrada.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Licitações -->
         <div
             class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -169,10 +245,7 @@
                             <td class="px-3 py-2">
                                 {{ bidding.date|date:"d/m/Y" }}
                             </td>
-                            <td class="px-3 py-2 text-right">
-                                <a href="{% url 'bidding_procurement:licitacao' bidding.slug %}"
-                                    class="text-brand-600 hover:underline dark:text-brand-400">Visualizar</a>
-                            </td>
+                            <td class="px-3 py-2 flex justify-end">{% url 'bidding_procurement:licitacao' bidding.slug as bidding_url %}{% action_button url=bidding_url type='view' title='Visualizar' extra_classes='w-8 px-0' %}</td>
                         </tr>
                         {% empty %}
                         <tr>

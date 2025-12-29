@@ -43,6 +43,9 @@ class Report(models.Model):
     pro_accountable = models.ForeignKey(
         ProfessionalUser, on_delete=models.DO_NOTHING, 
         verbose_name='profissional responsável', related_name='laudos_responsavel')
+    closing_reason = models.TextField(
+        'motivo do fechamento', blank=True, null=True,
+        help_text='Motivo preenchido manualmente ao finalizar o laudo sem nota fiscal')
     
     created_at = models.DateTimeField('criado em', auto_now_add=True)
     updated_at = models.DateTimeField('atualizado em', auto_now=True)
