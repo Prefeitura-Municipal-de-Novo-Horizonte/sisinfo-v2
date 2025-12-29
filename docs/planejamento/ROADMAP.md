@@ -2,7 +2,7 @@
 
 Ordem de execução priorizada consolidando todas as documentações do projeto.
 
-**Última atualização:** 2025-12-28
+**Última atualização:** 2025-12-29
 
 ---
 
@@ -10,9 +10,9 @@ Ordem de execução priorizada consolidando todas as documentações do projeto.
 
 | Fase | Foco | Duração | Status |
 |------|------|---------|--------|
-| 0 | Fundação (Sentry + Dependabot) | 1-2 dias | 🔜 Próximo |
-| 1 | Cache & Segurança (Redis + Rate Limit) | 1-2 semanas | ⏳ Aguardando |
-| 2 | Automação (QStash + Google Drive) | 2-3 semanas | ⏳ Aguardando |
+| 0 | Fundação (Sentry + Dependabot) | 1-2 dias | ✅ Concluído |
+| 1 | Cache & Segurança (Redis + Rate Limit) | 1-2 semanas | ✅ Concluído |
+| 2 | Automação (QStash + Google Drive) | 2-3 semanas | 🔜 Próximo |
 | 3 | Qualidade (Testes + CI) | 1-2 semanas | ⏳ Aguardando |
 | 4 | Dashboard & Interface | 1 mês | ⏳ Aguardando |
 | 5 | Features Avançadas (Assinatura Digital) | 1-2 meses | ⏳ Aguardando |
@@ -20,56 +20,57 @@ Ordem de execução priorizada consolidando todas as documentações do projeto.
 
 ---
 
-## Fase 0 - Fundação (1-2 dias) 🔜
+## Fase 0 - Fundação ✅ Concluído
 
 > **Objetivo:** Ganhar visibilidade de erros e manter dependências seguras.
 
 ### 0.1 Sentry (Error Tracking)
-- [ ] Criar conta no Sentry (free tier)
-- [ ] Instalar `sentry-sdk[django]`
-- [ ] Configurar em `production.py`
-- [ ] Testar com erro proposital
-
-**Docs:** [ANALISE_PRODUCAO.md](ANALISE_PRODUCAO.md#1-monitoramento-e-observabilidade)
+- [x] Criar conta no Sentry (free tier)
+- [x] Instalar `sentry-sdk[django]`
+- [x] Configurar em `production.py` e `sentry.py`
+- [x] Testar com erro proposital
 
 ### 0.2 Dependabot
-- [ ] Criar `.github/dependabot.yml`
-- [ ] Habilitar alertas de segurança
+- [x] Criar `.github/dependabot.yml`
+- [x] Habilitar alertas de segurança
 
-**Esforço:** ~2 horas
+**Concluído em:** 2025-12-29
 
 ---
 
-## Fase 1 - Cache & Segurança (1-2 semanas)
+## Fase 1 - Cache & Segurança ✅ Concluído
 
 > **Objetivo:** Proteger APIs e melhorar performance com Upstash Redis.
 
 ### 1.1 Upstash Redis - Setup
-- [ ] Criar conta Upstash (free tier)
-- [ ] Obter `UPSTASH_REDIS_URL`
-- [ ] Configurar no Django
+- [x] Criar conta Upstash (free tier)
+- [x] Obter `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`
+- [x] Criar `core/cache.py` (wrapper dual dev/prod)
+- [x] Configurar variáveis no `.env`
 
 ### 1.2 Rate Limiting
-- [ ] Rate limit no login (5/min por IP)
-- [ ] Rate limit nas APIs críticas
-- [ ] Testar proteção
-
-**Docs:** [PROXIMOS_PASSOS.md](PROXIMOS_PASSOS.md#redis-upstash)
+- [x] Rate limit no login (5/min por IP)
+- [ ] Rate limit nas APIs críticas (OCR, PDFs) - *baixa prioridade*
 
 ### 1.3 Cache de Dashboard
-- [ ] Cache de estatísticas (TTL 5 min)
-- [ ] Cache de gráficos (TTL 10 min)
+- [x] Cache de estatísticas (TTL 5 min)
+- [x] Cache de gráficos (TTL 30 min)
 
 ### 1.4 Cache de Listas
-- [ ] Fornecedores (TTL 30 min)
-- [ ] Setores/Diretorias (TTL 30 min)
-- [ ] Materiais (TTL 30 min)
+- [x] Fornecedores (TTL 30 min)
+- [x] Setores/Diretorias (TTL 30 min)
+- [x] Materiais (TTL 30 min)
+- [x] Licitações (TTL 30 min)
 
-### 1.5 Session Store (Opcional)
-- [ ] Migrar sessões para Redis
-- [ ] Testar login/logout
+### 1.5 Invalidação Automática
+- [x] Signals para invalidar cache ao criar/editar/deletar
 
-**Esforço:** ~1-2 semanas
+### 1.6 Session Store
+- [x] ~~Migrar sessões para Redis~~ - Descartado (não recomendado para serverless/Vercel)
+
+**Concluído em:** 2025-12-29
+
+**Esforço real:** ~2 horas
 
 ---
 

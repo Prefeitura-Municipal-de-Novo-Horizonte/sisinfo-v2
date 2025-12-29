@@ -132,7 +132,8 @@
                         <!-- Delete Button (Existing Items) -->
                         <div class="self-center sm:self-end mb-1">
                             <div class="hidden">{{ fm.DELETE }}</div>
-                            {% action_button url='javascript:void(0)' type='delete' extra_classes='delete-row p-2' title='Remover Material' %}
+                            {% action_button url='javascript:void(0)' type='delete' extra_classes='delete-row p-2'
+                            title='Remover Material' %}
                         </div>
                     </div>
                     {% endfor %}
@@ -192,7 +193,8 @@
         <!-- Delete Button -->
         <div class="self-center sm:self-end mb-1">
             <div class="hidden">{{ form_material.empty_form.DELETE }}</div>
-            {% action_button url='javascript:void(0)' type='delete' extra_classes='delete-row p-2' title='Remover Material' %}
+            {% action_button url='javascript:void(0)' type='delete' extra_classes='delete-row p-2' title='Remover
+            Material' %}
         </div>
     </div>
 </template>
@@ -219,11 +221,11 @@
                         <label for="new_sector_name"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome do Setor</label>
                         <input type="text" name="name" id="new_sector_name"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                             placeholder="Ex: Financeiro" required>
                     </div>
                     <button type="submit"
-                        class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Salvar
+                        class="w-full text-white bg-brand-600 hover:bg-brand-700 focus:ring-4 focus:outline-none focus:ring-brand-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-brand-600 dark:hover:bg-brand-700 dark:focus:ring-brand-800">Salvar
                         Setor</button>
                 </form>
             </div>

@@ -1,17 +1,24 @@
 dj-database-url==3.0.1
 Django==5.2.6
 django-extensions==4.1
-djlint==1.36.4
 python-decouple==3.8
 psycopg2-binary==2.9.10
 django-filter==25.1
 pillow==11.3.0
 pymongo==4.6.1
-urllib3==1.26.6
 validate-docbr==1.11.1
 whitenoise==6.11.0
 playwright==1.48.0
 certifi==2024.2.2
-# cloudinary removido - usando Supabase Storage exclusivamente
 google-genai>=1.0.0
 pypdfium2==4.29.0
+
+# Error Tracking
+sentry-sdk[django]>=2.0.0
+
+# Upstash (Produção)
+upstash-redis           # Cache REST API
+qstash                  # Background Jobs
+
+# Rate Limiting
+django-ratelimit==4.1.0

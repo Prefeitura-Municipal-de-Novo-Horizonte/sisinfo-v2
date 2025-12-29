@@ -1,139 +1,197 @@
 # Docker Compose - SISInfo V2
 
-Este arquivo configura os serviços necessários para desenvolvimento local.
+Configuração dos serviços para desenvolvimento local.
 
-## Serviços
+**Última atualização:** 2025-12-29
 
-### PostgreSQL
-- **Imagem**: postgres:latest
-- **Container**: sisinfo_postgres
-- **Porta**: 5432
-- **Credenciais**:
-  - Usuário: `sisinfo`
-  - Senha: `sisinfo`
-  - Database: `sisinfo`
-- **Volume**: `postgres_data` (persistente)
+---
+
+## 📦 Serviços
+
+| Serviço | Imagem | Container | Porta | Uso |
+|---------|--------|-----------|-------|-----|
+| Redis | redis:7-alpine | sisinfo_redis | 6379 | Cache, rate limiting, sessions |
+| MongoDB | mongo:7.0-jammy | sisinfo_mongodb | 27017 | Logs de auditoria |
+| Browserless | browserless/chrome | sisinfo_browserless | 3000 | Geração de PDFs |
+
+> **Nota:** PostgreSQL é provido pelo Supabase local (`npx supabase start`).
+
+---
+
+## 🚀 Comandos de Desenvolvimento
+
+### Ordem de Inicialização
+
+```bash
+# 1. Iniciar Supabase (PostgreSQL + Storage)
+npx supabase start
+
+# 2. Iniciar Docker Compose (Redis, MongoDB, Browserless)
+docker-compose up -d
+
+# 3. Instalar dependências Python
+pip install -r requirements.txt -r requirements-dev.txt
+
+# 4. Iniciar QStash local para background jobs
+npx @upstash/qstash-cli dev
+
+# 5. Aplicar migrações
+python manage.py migrate
+
+# 6. Iniciar servidor Django
+python manage.py runserver
+```
+
+### Verificar Status
+
+```bash
+# Status dos containers
+docker-compose ps
+
+# Verificar Redis
+docker exec sisinfo_redis redis-cli ping  # Deve retornar PONG
+
+# Verificar MongoDB
+docker exec sisinfo_mongodb mongosh --eval "db.adminCommand('ping')"
+
+# Verificar Browserless
+curl http://localhost:3000/
+```
+
+### Parar Serviços
+
+```bash
+# Parar Docker Compose
+docker-compose down
+
+# Parar Supabase
+npx supabase stop
+```
+
+### Limpar Dados (⚠️ APAGA DADOS)
+
+```bash
+docker-compose down -v  # Remove volumes
+```
+
+---
+
+## ⚙️ Variáveis de Ambiente (.env)
+
+```bash
+# === SUPABASE LOCAL ===
+# Gerado automaticamente por 'npx supabase start'
+POSTGRES_URL_NON_POOLING=postgresql://postgres:postgres@localhost:54322/postgres
+
+# === DOCKER COMPOSE ===
+# MongoDB
+DATABASE_MONGODB_LOGS=mongodb://sisinfo:sisinfo@localhost:27017/sisinfo_audit?authSource=admin
+
+# Redis
+REDIS_URL=redis://localhost:6379/0
+USE_REDIS=True
+
+# Browserless
+BROWSERLESS_API_KEY=ws://localhost:3000?token=sisinfo_dev_token
+
+# === SENTRY (Opcional) ===
+# Criar conta em https://sentry.io/signup/ (free tier)
+SENTRY_DSN=
+```
+
+---
+
+## 📝 Detalhes dos Serviços
+
+### Redis
+
+Usado para cache, rate limiting e sessões.
+
+```bash
+# Acessar CLI
+docker exec -it sisinfo_redis redis-cli
+
+# Comandos úteis
+> KEYS *           # Listar todas as chaves
+> FLUSHALL         # Limpar tudo (⚠️ cuidado)
+> INFO             # Status do servidor
+```
 
 ### MongoDB
-- **Imagem**: mongo:7.0
-- **Container**: sisinfo_mongodb
-- **Porta**: 27017
-- **Credenciais**:
-  - Usuário: `sisinfo`
-  - Senha: `sisinfo`
-  - Database: `sisinfo_audit`
-- **Volumes**: 
-  - `mongodb_data` (dados)
-  - `mongodb_config` (configuração)
 
-### Browserless
-- **Imagem**: browserless/chrome:latest
-- **Container**: sisinfo_browserless
-- **Porta**: 3000
-- **Token**: `sisinfo_dev_token`
-- **Uso**: Geração de PDFs de laudos técnicos
-- **Configurações**:
-  - Max sessões concorrentes: 10
-  - Timeout de conexão: 60s
-  - Tamanho máximo da fila: 10
-
-## Comandos
-
-### Iniciar serviços
-```bash
-docker-compose up -d
-```
-
-### Ver logs
-```bash
-# PostgreSQL
-docker-compose logs -f db
-
-# MongoDB
-docker-compose logs -f mongodb
-```
-
-### Parar serviços
-```bash
-docker-compose down
-```
-
-### Parar e remover volumes (⚠️ APAGA DADOS)
-```bash
-docker-compose down -v
-```
-
-## Configuração no .env
-
-Para usar o MongoDB local, configure no `.env`:
+Usado para logs de auditoria (app `audit`).
 
 ```bash
-# MongoDB Local (Docker)
-DATABASE_MONGODB_LOGS=mongodb://sisinfo:sisinfo@localhost:27017/sisinfo_audit?authSource=admin
-```
-
-Para produção (MongoDB Atlas):
-```bash
-# MongoDB Atlas (Produção)
-DATABASE_MONGODB_LOGS=mongodb+srv://user:password@cluster.mongodb.net/sisinfo_audit
-```
-
-### Browserless
-
-Para usar o Browserless local, configure no `.env`:
-
-```bash
-# Browserless Local (Docker)
-BROWSERLESS_API_KEY=ws://localhost:3000?token=sisinfo_dev_token
-```
-
-Para produção (Browserless.io):
-```bash
-# Browserless.io (Produção)
-BROWSERLESS_API_KEY=your_browserless_io_api_key
-```
-
-## Acessar MongoDB
-
-### Via Docker
-```bash
+# Acessar shell
 docker exec -it sisinfo_mongodb mongosh -u sisinfo -p sisinfo --authenticationDatabase admin
+
+# Comandos úteis
+> use sisinfo_audit
+> db.audit_logs.countDocuments()
+> db.audit_logs.find().limit(5).sort({timestamp: -1})
 ```
 
-### Via MongoDB Compass
-- Connection String: `mongodb://sisinfo:sisinfo@localhost:27017/?authSource=admin`
-
-## Criar Índices
-
-Após iniciar o MongoDB, crie os índices recomendados:
+**Índices recomendados:**
 
 ```javascript
 use sisinfo_audit
-
 db.audit_logs.createIndex({ "timestamp": -1 })
 db.audit_logs.createIndex({ "user_id": 1, "timestamp": -1 })
 db.audit_logs.createIndex({ "model": 1, "timestamp": -1 })
-db.audit_logs.createIndex({ "event_type": 1, "action": 1 })
-db.audit_logs.createIndex({ "object_id": 1, "model": 1 })
 ```
 
-## Troubleshooting
+### Browserless
+
+Renderização de PDFs com Chrome headless.
+
+- **Dashboard:** http://localhost:3000/
+- **Token:** `sisinfo_dev_token`
+
+---
+
+## 🔧 Troubleshooting
 
 ### Porta já em uso
-Se a porta 27017 já estiver em uso, altere no `docker-compose.yaml`:
-```yaml
-ports:
-  - "27018:27017"  # Mapeia porta 27018 do host para 27017 do container
-```
 
-E atualize o `.env`:
 ```bash
-DATABASE_MONGODB_LOGS=mongodb://sisinfo:sisinfo@localhost:27018/sisinfo_audit?authSource=admin
+# Verificar quem está usando a porta
+lsof -i :6379  # Redis
+lsof -i :27017 # MongoDB
+lsof -i :3000  # Browserless
 ```
 
-### Resetar MongoDB
+### Resetar um container
+
 ```bash
 docker-compose down
-docker volume rm sisinfo-v2_mongodb_data sisinfo-v2_mongodb_config
-docker-compose up -d mongodb
+docker volume rm sisinfo-v2_redis_data       # Redis
+docker volume rm sisinfo-v2_mongodb_data     # MongoDB
+docker-compose up -d
 ```
+
+### Redis não conecta
+
+Verifique se `USE_REDIS=True` está no `.env`:
+
+```bash
+# O Django usa fallback para memória se USE_REDIS=False
+USE_REDIS=True
+```
+
+---
+
+## 🌐 Produção vs Desenvolvimento
+
+| Serviço | Desenvolvimento | Produção |
+|---------|-----------------|----------|
+| PostgreSQL | Supabase local (`npx supabase start`) | Supabase Cloud |
+| Redis | Docker (`redis:7-alpine`) | Upstash Redis |
+| MongoDB | Docker (`mongo:7.0-jammy`) | MongoDB Atlas |
+| Browserless | Docker (`browserless/chrome`) | Browserless.io |
+| QStash | CLI (`npx @upstash/qstash-cli dev`) | Upstash QStash |
+| Sentry | Opcional (mesmo DSN) | Sentry Cloud |
+
+---
+
+**Responsável:** Diretoria de TI  
+**Contato:** ti@novohorizonte.sp.gov.br

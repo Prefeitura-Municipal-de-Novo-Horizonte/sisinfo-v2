@@ -17,3 +17,8 @@ seaborn>=0.12.0
 
 # Ferramentas de desenvolvimento
 ipdb>=0.13.0     # Debugger interativo
+djlint==1.36.4   # Linter/formatter para templates Django
+
+# Redis Local (Docker)
+django-redis==6.0.0
+redis==7.1.0

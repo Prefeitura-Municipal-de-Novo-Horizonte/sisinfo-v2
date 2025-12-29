@@ -1,5 +1,23 @@
 services:
 
+  # Redis - Cache, Rate Limiting, Sessions
+  # Substitui Upstash Redis localmente
+  redis:
+    image: redis:7-alpine
+    container_name: sisinfo_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB - Logs de Auditoria
   mongodb:
     image: mongo:7.0-jammy
     container_name: sisinfo_mongodb
@@ -13,7 +31,13 @@ services:
     volumes:
       - mongodb_data:/data/db
       - mongodb_config:/data/configdb
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Browserless - Geração de PDFs
   browserless:
     image: browserless/chrome:latest
     container_name: sisinfo_browserless
@@ -25,7 +49,13 @@ services:
       - MAX_QUEUE_LENGTH=10
     ports:
       - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
+  redis_data:
   mongodb_data:
   mongodb_config:

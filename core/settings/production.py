@@ -111,3 +111,6 @@ BROWSERLESS_API_KEY = config("BROWSERLESS_API_KEY")
 ADMINS = [("Prefeitura Municipal de Novo Horizonte",
            "suporte@novohorizonte.sp.gov.br")]
 SERVER_EMAIL = "suporte@novohorizonte.sp.gov.br"
+
+# Sentry Error Tracking
+from core.settings.sentry import *  # noqa: E402, F401, F403
