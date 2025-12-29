@@ -2,7 +2,7 @@ dj-database-url==3.0.1
 Django==5.2.6
 django-extensions==4.1
 python-decouple==3.8
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.11
 django-filter==25.1
 pillow==11.3.0
 pymongo==4.6.1
