@@ -29,7 +29,35 @@ DATABASES = {
 # Browserless.io API Key for PDF generation
 BROWSERLESS_API_KEY = config("BROWSERLESS_API_KEY", default="")
 
-# Logging específico para desenvolvimento
-# LOG_LEVEL = "DEBUG"
-# LOGGING["root"]["level"] = LOG_LEVEL
-# LOGGING["loggers"]["django"]["level"] = LOG_LEVEL
+# ==============================================================================
+# CACHE (Redis quando disponível, fallback para memória)
+# ==============================================================================
+USE_REDIS = config("USE_REDIS", default=False, cast=bool)
+
+if USE_REDIS:
+    REDIS_URL = config("REDIS_URL", default="redis://localhost:6379/0")
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "IGNORE_EXCEPTIONS": True,  # Fallback se Redis offline
+            }
+        }
+    }
+else:
+    # Fallback para cache em memória
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        }
+    }
+
+# ==============================================================================
+# SENTRY (Opcional em desenvolvimento)
+# ==============================================================================
+# Apenas importa se SENTRY_DSN estiver configurado
+SENTRY_DSN = config("SENTRY_DSN", default="")
+if SENTRY_DSN:
+    from core.settings.sentry import *  # noqa: E402, F401, F403

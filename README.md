@@ -67,6 +67,9 @@ O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de T
 | Gemini API 2.0 | OCR de notas fiscais |
 | Browserless.io | Geração de PDFs |
 | Vercel | Deploy e hosting |
+| Sentry | Error tracking e monitoramento |
+| Upstash Redis | Cache (produção) |
+| Upstash QStash | Background jobs |
 
 ---
 
@@ -89,7 +92,11 @@ python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # .venv\Scripts\activate   # Windows
 
+# Produção
 pip install -r requirements.txt
+
+# Desenvolvimento (inclui ferramentas extras)
+pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 ### 3. Configure o ambiente Node.js
@@ -99,24 +106,30 @@ npm install
 
 ### 4. Configure as variáveis de ambiente
 ```bash
-cp contrib/.env-sample .env
+cp .env.example .env
 # Edite o .env com suas configurações
 ```
 
-### 5. Execute as migrações
+### 5. Inicie os serviços Docker (desenvolvimento)
+```bash
+# Supabase (PostgreSQL + Storage)
+npx supabase start
+
+# Redis, MongoDB, Browserless
+docker-compose up -d
+```
+
+### 6. Execute as migrações
 ```bash
 python manage.py migrate
 ```
 
-### 6. Inicie o servidor
+### 7. Inicie o servidor
 ```bash
 # Terminal 1: Tailwind CSS (watch mode)
 npm run dev
 
-# Terminal 2: Supabase Edge Functions (para OCR)
-npx supabase functions serve process-ocr --env-file .env
-
-# Terminal 3: Django
+# Terminal 2: Django
 python manage.py runserver 0.0.0.0:8000
 ```
 

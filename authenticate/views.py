@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.messages import constants
 from django.shortcuts import redirect, render
+from django_ratelimit.decorators import ratelimit
 
 from authenticate.decorators import admin_only, unauthenticated_user
 from authenticate.forms import (
@@ -32,12 +33,15 @@ def show_users(request):
 ################################################################
 ################### LOGIN AND LOGOUT ###########################
 ################################################################
+@ratelimit(key='ip', rate='5/m', block=True)
 @unauthenticated_user
 def login_page(request):
     """
     View para login de usuários.
     Redireciona para dashboard se já autenticado.
     Se primeiro login, redireciona para troca de senha.
+
+    Rate limit: 5 tentativas por minuto por IP.
     """
     if request.method == 'POST':
         form = AuthenticationFormCustom(request, data=request.POST)
