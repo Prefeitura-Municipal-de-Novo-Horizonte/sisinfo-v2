@@ -154,13 +154,19 @@ Ordem de execução priorizada consolidando todas as documentações do projeto.
 - [ ] Evolução NFs por mês
 - [ ] Top Fornecedores por valor
 
-### 4.3 Página Sobre
+### 4.3 Interface de Logs de Auditoria
+- [ ] Página `/admin/audit/` para visualizar logs
+- [ ] Filtros por usuário, ação, data
+- [ ] Exportar logs (CSV/JSON)
+- [ ] Paginação
+
+### 4.4 Página Sobre
 - [ ] Versão do sistema
 - [ ] Equipe
 - [ ] Tecnologias usadas
 - [ ] Políticas
 
-### 4.4 (Opcional) Central de Notificações
+### 4.5 (Opcional) Central de Notificações
 - [ ] Usar design existente
 - [ ] Backend de notificações
 - [ ] Realtime com Redis Pub/Sub
