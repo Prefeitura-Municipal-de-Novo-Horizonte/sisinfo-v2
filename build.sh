@@ -20,6 +20,7 @@ pip install -r requirements.txt -q
 # Apply migrations
 echo "🔄 Aplicando migrações..."
 python3 manage.py migrate --noinput
+
 # Collect static files
 echo "📁 Coletando arquivos estáticos..."
 python3 manage.py collectstatic --noinput --clear
