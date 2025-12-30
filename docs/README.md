@@ -27,9 +27,12 @@ Padrões de código e interface.
 | [STYLEGUIDE.md](STYLEGUIDE.md) | Padrões de código Python/Django |
 | [UI_GUIDE.md](UI_GUIDE.md) | Padrões de interface, cores e componentes |
 
+## 🏗️ Infraestrutura
+
 | Documento | Descrição |
 |-----------|-----------|
 | [DOCKER.md](infraestrutura/DOCKER.md) | Docker Compose para desenvolvimento local |
+| [SERVICOS.md](infraestrutura/SERVICOS.md) | Lista de serviços externos (Redis, Supabase, Vercel) |
 
 ---
 

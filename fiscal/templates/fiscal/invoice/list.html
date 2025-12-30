@@ -60,11 +60,11 @@
         </select>
       </div>
       <button type="submit"
-        class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm mb-[1px]">
+        class="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors text-sm mb-[1px] shadow-sm">
         Filtrar
       </button>
       <a href="{% url 'fiscal:invoices' %}"
-        class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm mb-[1px]">
+        class="px-4 py-2 bg-latte-surface0 dark:bg-mocha-surface0 text-latte-text dark:text-mocha-text border border-latte-surface2 dark:border-mocha-surface2 rounded-lg hover:bg-latte-surface1 dark:hover:bg-mocha-surface1 transition-colors text-sm mb-[1px] shadow-sm">
         Limpar
       </a>
     </form>
@@ -83,7 +83,7 @@
 
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 table-zebra">
         <thead class="bg-gray-50 dark:bg-gray-700">
           <tr>
             <th
@@ -132,14 +132,14 @@
               {% endif %}
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-                {# This was formerly 'Status' #}
-                {% if invoice.status == 'P' %}
-                    {% status_badge status='Pendente' type='warning' %}
-                {% elif invoice.status == 'R' %}
-                    {% status_badge status='Recebida' type='info' %}
-                {% else %}
-                    {% status_badge status=invoice.get_status_display %}
-                {% endif %}
+              {# This was formerly 'Status' #}
+              {% if invoice.status == 'P' %}
+              {% status_badge status='Pendente' type='warning' %}
+              {% elif invoice.status == 'R' %}
+              {% status_badge status='Recebida' type='info' %}
+              {% else %}
+              {% status_badge status=invoice.get_status_display %}
+              {% endif %}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-center">
               {% if invoice.report_link %}
@@ -158,13 +158,13 @@
               {% endif %}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-center">
-                {% if invoice.delivery_process_status == 'delivered' %}
-                    {% status_badge status='Entregue' type='success' %}
-                {% elif invoice.delivery_process_status == 'on_way' %}
-                    {% status_badge status='A Caminho' type='info' %}
-                {% else %}
-                    {% status_badge status='Em Preparo' type='default' %}
-                {% endif %}
+              {% if invoice.delivery_process_status == 'delivered' %}
+              {% status_badge status='Entregue' type='success' %}
+              {% elif invoice.delivery_process_status == 'on_way' %}
+              {% status_badge status='A Caminho' type='info' %}
+              {% else %}
+              {% status_badge status='Em Preparo' type='default' %}
+              {% endif %}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <div class="flex justify-end gap-2">

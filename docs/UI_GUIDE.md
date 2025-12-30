@@ -71,7 +71,84 @@ brand: #1D4ED8 (azul)
 
 ---
 
-## Componentes
+## Componentes (Django Template Tags)
+
+O projeto utiliza `templatetags` personalizadas em `core/templatetags/ui_tags.py` para padronizar a UI. **Prefira usar estas tags ao invés de classes CSS manuais.**
+
+### Carregar Tags
+No topo do template:
+```html
+{% load ui_tags %}
+```
+
+### Botões
+```html
+<!-- Primário (Ações principais) -->
+<button class="{% btn_primary %}">Salvar</button>
+
+<!-- Secundário (Cancelar/Voltar) -->
+<a href="..." class="{% btn_secondary %}">Voltar</a>
+
+<!-- Sucesso (Confirmar/Adicionar) -->
+<button class="{% btn_success %}">Novo Item</button>
+
+<!-- Perigo (Excluir) -->
+<button class="{% btn_danger %}">Excluir</button>
+
+<!-- Warning (Alertas) -->
+<button class="{% btn_warning %}">Alerta</button>
+```
+
+### Badges de Status
+Renderiza um badge colorido baseado no status (código ou texto).
+
+```html
+<!-- Automático (tenta detectar cor pelo status) -->
+{% status_badge object.status text=object.get_status_display %}
+
+<!-- Forçando tipo -->
+{% status_badge "aprovado" type="success" text="Aprovado" %}
+```
+
+### Containers e Layout
+```html
+<!-- Container de Página -->
+<div class="{% page_container %}">
+    <!-- Conteúdo -->
+</div>
+
+<!-- Container de Cabeçalho -->
+<div class="{% header_container %}">
+    <h1 class="{% header_title %}">
+        <span class="{% header_mark %}">|</span> Título
+    </h1>
+</div>
+
+<!-- Container de Tabela -->
+<div class="{% table_container %}">
+    <table class="{% table_base %}">
+        <thead class="{% table_head %}">
+            ...
+        </thead>
+        <tbody class="{% table_base %}">
+            <tr class="{% table_row %}">
+                ...
+            </tr>
+        </tbody>
+    </table>
+</div>
+```
+
+### Inputs Estilizados
+Use o filtro `style_input` em formulários Django:
+
+```html
+{{ form.field_name|style_input }}
+```
+
+---
+
+## Componentes HTML (Legado/Referência)
 
 ### Botões
 

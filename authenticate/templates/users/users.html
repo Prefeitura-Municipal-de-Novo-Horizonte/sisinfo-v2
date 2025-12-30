@@ -29,8 +29,7 @@
         </a>
     </div>
 
-    <!-- Alerts -->
-    {% include "include/_alert.html" %}
+
 
     <!-- Table Container -->
     <div
@@ -104,11 +103,11 @@
 
                                 <!-- Toggle Ativo/Inativo -->
                                 {% if user.is_active %}
-                                    {% url 'authenticate:disabled_user' user.slug as disable_url %}
-                                    {% action_button url=disable_url type='x' title='Desativar' %}
+                                {% url 'authenticate:disabled_user' user.slug as disable_url %}
+                                {% action_button url=disable_url type='x' title='Desativar' %}
                                 {% else %}
-                                    {% url 'authenticate:enabled_user' user.slug as enable_url %}
-                                    {% action_button url=enable_url type='check' title='Ativar' %}
+                                {% url 'authenticate:enabled_user' user.slug as enable_url %}
+                                {% action_button url=enable_url type='check' title='Ativar' %}
                                 {% endif %}
 
                                 <!-- Toggle Técnico -->

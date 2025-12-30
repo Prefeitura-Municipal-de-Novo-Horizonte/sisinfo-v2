@@ -1,77 +1,63 @@
 <div id="chart-reports-sector" class="w-full h-full"></div>
 <script>
-    (function() {
+    (function () {
         function initSectorChart() {
             if (!document.querySelector("#chart-reports-sector")) return;
+
+            // Ensure data availability or fallback to empty array
+            // Using JSON.parse on an escaped string is safer than raw injection
+            var sectorDataStr = '{{ sector_series|escapejs }}';
+            var sectorLabelsStr = '{{ sector_labels|escapejs }}';
+
+            var sectorData = sectorDataStr ? JSON.parse(sectorDataStr) : [];
+            var sectorLabels = sectorLabelsStr ? JSON.parse(sectorLabelsStr) : [];
 
             var options = {
                 series: [{
                     name: 'Laudos',
-                    data: {{ sector_series|safe }}
+                    data: sectorData
                 }],
                 chart: {
                     type: 'bar',
                     height: 350,
                     fontFamily: 'Inter, sans-serif',
-                    toolbar: {
-                        show: false
-                    },
+                    toolbar: { show: false },
                     background: 'transparent',
-                    animations: {
-                        enabled: true
-                    }
+                    animations: { enabled: true }
                 },
-                colors: ['#1D4ED8'], /* Azul Institucional */
+                colors: ['#89b4fa', '#a6e3a1', '#f9e2af', '#f38ba8', '#fab387', '#cba6f7', '#94e2d5'],
                 plotOptions: {
                     bar: {
                         borderRadius: 4,
                         horizontal: false,
                         columnWidth: '50%',
+                        distributed: true,
+                        dataLabels: { position: 'top' }
                     }
                 },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    show: true,
-                    width: 2,
-                    colors: ['transparent']
-                },
+                dataLabels: { enabled: false },
+                stroke: { show: true, width: 2, colors: ['transparent'] },
                 xaxis: {
-                    categories: {{ sector_labels|safe }},
-                    labels: {
-                        style: {
-                            colors: '#6B7280',
-                            fontSize: '12px'
-                        }
-                    },
+                    categories: sectorLabels,
+                    labels: { style: { colors: '#6B7280', fontSize: '12px' } },
                     axisBorder: { show: false },
                     axisTicks: { show: false }
                 },
                 yaxis: {
-                    labels: {
-                        style: {
-                            colors: '#6B7280',
-                            fontSize: '12px'
-                        }
-                    }
+                    labels: { style: { colors: '#6B7280', fontSize: '12px' } }
                 },
                 grid: {
                     show: true,
-                    borderColor: '#F3F4F6',
+                    borderColor: document.documentElement.classList.contains('dark') ? '#374151' : '#F3F4F6',
                     strokeDashArray: 4
                 },
                 theme: {
                     mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                },
+                tooltip: {
+                    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
                 }
             };
-
-            // Dark mode adjustment
-            if (document.documentElement.classList.contains('dark')) {
-                options.grid.borderColor = '#374151';
-                options.xaxis.labels.style.colors = '#9CA3AF';
-                options.yaxis.labels.style.colors = '#9CA3AF';
-            }
 
             var chartContainer = document.querySelector("#chart-reports-sector");
             chartContainer.innerHTML = '';
@@ -91,7 +77,8 @@
                     theme: { mode: e.detail.theme },
                     grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
                     xaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
-                    yaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } }
+                    yaxis: { labels: { style: { colors: e.detail.theme === 'dark' ? '#9CA3AF' : '#6B7280' } } },
+                    tooltip: { theme: e.detail.theme }
                 });
             }
             window.addEventListener('themeChanged', handleThemeChange);

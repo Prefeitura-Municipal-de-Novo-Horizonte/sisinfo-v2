@@ -2,72 +2,76 @@
 
 <script>
     (function () {
-        const materialLabels = {{ material_labels| safe }};
-    const materialSeries = {{ material_series| safe }};
+        // Ensure data availability or fallback to empty array
+        var materialLabelsStr = '{{ material_labels|escapejs }}';
+        var materialSeriesStr = '{{ material_series|escapejs }}';
 
-    if (materialLabels.length === 0) {
-        document.querySelector("#chart-top-materials-content").innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
-        return;
-    }
+        var materialLabels = materialLabelsStr ? JSON.parse(materialLabelsStr) : [];
+        var materialSeries = materialSeriesStr ? JSON.parse(materialSeriesStr) : [];
 
-    const options = {
-        series: [{
-            name: 'Quantidade',
-            data: materialSeries
-        }],
-        chart: {
-            type: 'bar',
-            height: 400,
-            width: '100%',
-            toolbar: { show: false },
-            background: 'transparent',
-            fontFamily: 'Inter, sans-serif'
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 4,
-                horizontal: true,
-                distributed: false
-            }
-        },
-        colors: ['#1D4ED8'],
-        dataLabels: {
-            enabled: true,
-            style: {
-                colors: ['#fff']
-            }
-        },
-        xaxis: {
-            categories: materialLabels,
-            labels: {
-                style: {
-                    colors: '#6B7280',
-                    fontSize: '12px'
-                }
-            }
-        },
-        yaxis: {
-            labels: {
-                style: {
-                    colors: '#6B7280',
-                    fontSize: '12px'
-                }
-            }
-        },
-        legend: { show: false },
-        grid: { borderColor: '#F3F4F6' },
-        theme: {
-            mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        if (materialLabels.length === 0) {
+            document.querySelector("#chart-top-materials-content").innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
+            return;
         }
-    };
 
-    if (document.documentElement.classList.contains('dark')) {
-        options.grid.borderColor = '#374151';
-        options.xaxis.labels.style.colors = '#9CA3AF';
-        options.yaxis.labels.style.colors = '#9CA3AF';
-    }
+        const options = {
+            series: [{
+                name: 'Quantidade',
+                data: materialSeries
+            }],
+            chart: {
+                type: 'bar',
+                height: 400,
+                width: '100%',
+                toolbar: { show: false },
+                background: 'transparent',
+                fontFamily: 'Inter, sans-serif'
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 4,
+                    horizontal: true,
+                    distributed: true
+                }
+            },
+            colors: ['#89b4fa', '#a6e3a1', '#f9e2af', '#f38ba8', '#fab387', '#cba6f7', '#94e2d5'],
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: ['#fff']
+                }
+            },
+            xaxis: {
+                categories: materialLabels,
+                labels: {
+                    style: {
+                        colors: '#6B7280',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            yaxis: {
+                labels: {
+                    style: {
+                        colors: '#6B7280',
+                        fontSize: '12px'
+                    }
+                }
+            },
+            legend: { show: false },
+            grid: { borderColor: '#F3F4F6' },
+            theme: {
+                mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+            }
+        };
 
-    const chart = new ApexCharts(document.querySelector("#chart-top-materials-content"), options);
-    chart.render();
-    }) ();
+        if (document.documentElement.classList.contains('dark')) {
+            options.grid.borderColor = '#374151';
+            options.xaxis.labels.style.colors = '#9CA3AF';
+            options.yaxis.labels.style.colors = '#9CA3AF';
+        }
+
+        const chart = new ApexCharts(document.querySelector("#chart-top-materials-content"), options);
+        chart.render();
+    })();
 </script>

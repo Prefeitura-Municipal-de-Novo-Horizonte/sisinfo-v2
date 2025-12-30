@@ -12,7 +12,7 @@ Guia de todos os serviços externos utilizados pelo sistema.
 |---------|-----|-------|
 | Vercel | Deploy e hosting | Free |
 | Supabase | PostgreSQL + Storage | Free |
-| Upstash | Redis + QStash | Free |
+| Upstash | Redis (Cache) | Free |
 | Sentry | Error tracking | Free (5k erros/mês) |
 | MongoDB Atlas | Auditoria | Free |
 | Browserless.io | Geração de PDFs | Free (1k PDFs/mês) |
@@ -52,8 +52,10 @@ SUPABASE_SERVICE_ROLE_KEY=***
 # Upstash Redis
 UPSTASH_REDIS_REST_URL=***
 UPSTASH_REDIS_REST_TOKEN=***
+# (Opcional) Redis Local
+# REDIS_URL=redis://localhost:6379/0
 
-# Upstash QStash
+# Upstash QStash (Se utilizado)
 QSTASH_URL=***
 QSTASH_TOKEN=***
 QSTASH_CURRENT_SIGNING_KEY=***

@@ -7,8 +7,8 @@
 <!-- Page Header -->
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
     <div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <h1 class="text-3xl font-bold text-latte-text dark:text-mocha-text">Dashboard</h1>
+        <p class="text-sm text-latte-subtext0 dark:text-mocha-subtext0 mt-1">
             Bem-vindo, {{ request.user.fullname|default:"Usuário" }}</p>
     </div>
 
@@ -29,7 +29,7 @@
     <!-- Total de Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between">
-            <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+            <div class="p-3 rounded-full bg-info/20 text-info dark:bg-info/20 dark:text-info">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -37,8 +37,8 @@
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Laudos</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports|default:0 }}</p>
+                <p class="text-sm font-medium text-latte-subtext0 dark:text-mocha-subtext0">Total de Laudos</p>
+                <p class="text-2xl font-bold text-latte-text dark:text-mocha-text">{{ total_reports|default:0 }}</p>
             </div>
         </div>
     </div>
@@ -46,15 +46,16 @@
     <!-- Meus Laudos -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between">
-            <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+            <div class="p-3 rounded-full bg-success/20 text-success dark:bg-success/20 dark:text-success">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Meus Laudos</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ total_reports_user|default:0 }}</p>
+                <p class="text-sm font-medium text-latte-subtext0 dark:text-mocha-subtext0">Meus Laudos</p>
+                <p class="text-2xl font-bold text-latte-text dark:text-mocha-text">{{ total_reports_user|default:0 }}
+                </p>
             </div>
         </div>
     </div>
@@ -62,15 +63,15 @@
     <!-- Pendentes -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between">
-            <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
+            <div class="p-3 rounded-full bg-warning/20 text-warning dark:bg-warning/20 dark:text-warning">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pendentes</p>
-                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ pending_reports|default:0 }}</p>
+                <p class="text-sm font-medium text-latte-subtext0 dark:text-mocha-subtext0">Pendentes</p>
+                <p class="text-2xl font-bold text-latte-text dark:text-mocha-text">{{ pending_reports|default:0 }}</p>
             </div>
         </div>
     </div>
@@ -82,7 +83,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
         style="width: 70%; min-width: 0;">
         <div class="flex items-center justify-between mb-4">
-            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Top Materiais Utilizados</h5>
+            <h5 class="text-lg font-semibold text-latte-text dark:text-mocha-text">Top Materiais Utilizados</h5>
             <div class="flex items-center gap-2">
                 <div id="loading-materials" class="htmx-indicator">
                     <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
@@ -95,7 +96,7 @@
                 </div>
                 <select name="days" hx-get="{% url 'dashboard:top_materials_chart' %}" hx-target="#chart-top-materials"
                     hx-indicator="#loading-materials"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    class="bg-latte-surface0 border border-latte-surface2 text-latte-text text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-mocha-surface0 dark:border-mocha-surface2 dark:text-mocha-text">
                     <option value="7">Últimos 7 dias</option>
                     <option value="15">Últimos 15 dias</option>
                     <option value="30" selected>Últimos 30 dias</option>
@@ -110,7 +111,7 @@
     <!-- Calendar (30%) -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
         style="width: 30%;">
-        <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Calendário</h5>
+        <h5 class="text-lg font-semibold text-latte-text dark:text-mocha-text mb-4">Calendário</h5>
         <div id="mini-calendar"></div>
     </div>
 </div>
@@ -119,7 +120,7 @@
 <div class="mb-6">
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <div class="flex items-center justify-between mb-4">
-            <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Laudos por Setor</h5>
+            <h5 class="text-lg font-semibold text-latte-text dark:text-mocha-text">Laudos por Setor</h5>
             <div class="flex items-center gap-2">
                 <div id="loading-sector" class="htmx-indicator">
                     <svg class="animate-spin h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24">
@@ -132,7 +133,7 @@
                 </div>
                 <select name="days" hx-get="{% url 'dashboard:reports_by_sector_chart' %}"
                     hx-target="#chart-reports-container" hx-indicator="#loading-sector"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    class="bg-latte-surface0 border border-latte-surface2 text-latte-text text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-2.5 dark:bg-mocha-surface0 dark:border-mocha-surface2 dark:text-mocha-text">
                     <option value="7">Últimos 7 dias</option>
                     <option value="15">Últimos 15 dias</option>
                     <option value="30" selected>Últimos 30 dias</option>
@@ -203,19 +204,58 @@
                 container.innerHTML = '<p class="text-gray-500 dark:text-gray-400 text-center py-8">Nenhum dado disponível</p>';
                 return;
             }
+
+            // Ensure materialSeries is array of numbers
+            const seriesData = materialSeries.map(val => parseFloat(val));
+
             var options = {
-                series: [{ name: 'Quantidade', data: materialSeries }],
-                chart: { type: 'bar', height: 350, toolbar: { show: false }, background: 'transparent', fontFamily: 'Inter, sans-serif' },
-                plotOptions: { bar: { borderRadius: 4, horizontal: true, dataLabels: { position: 'center' } } },
-                colors: ['#1D4ED8'],
-                dataLabels: { enabled: true, style: { colors: ['#fff'] } },
-                xaxis: { categories: materialLabels, labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
+                series: [{ name: 'Quantidade', data: seriesData }],
+                chart: {
+                    type: 'bar',
+                    height: 350,
+                    toolbar: { show: false },
+                    fontFamily: 'Inter, sans-serif',
+                    background: 'transparent'
+                },
+                plotOptions: {
+                    bar: {
+                        borderRadius: 4,
+                        horizontal: true,
+                        distributed: true,
+                        barHeight: '70%',
+                        dataLabels: { position: 'center' }
+                    }
+                },
+                colors: ['#89b4fa', '#a6e3a1', '#f9e2af', '#f38ba8', '#fab387', '#cba6f7', '#94e2d5'],
+                dataLabels: { enabled: true, style: { colors: ['#fff'] }, dropShadow: { enabled: true } },
+                xaxis: {
+                    categories: materialLabels,
+                    labels: { style: { colors: '#6B7280', fontSize: '12px' } },
+                    axisBorder: { show: false },
+                    axisTicks: { show: false }
+                },
                 yaxis: { labels: { style: { colors: '#6B7280', fontSize: '12px' } } },
                 legend: { show: false },
-                grid: { borderColor: document.documentElement.classList.contains('dark') ? '#374151' : '#F3F4F6' },
+                grid: {
+                    show: true,
+                    borderColor: document.documentElement.classList.contains('dark') ? '#374151' : '#F3F4F6',
+                    strokeDashArray: 4
+                },
+                tooltip: { theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light' },
                 theme: { mode: document.documentElement.classList.contains('dark') ? 'dark' : 'light' }
             };
-            new ApexCharts(container, options).render();
+
+            const chart = new ApexCharts(container, options);
+            chart.render();
+
+            // Theme listener
+            window.addEventListener('themeChanged', (e) => {
+                chart.updateOptions({
+                    theme: { mode: e.detail.theme },
+                    grid: { borderColor: e.detail.theme === 'dark' ? '#374151' : '#F3F4F6' },
+                    tooltip: { theme: e.detail.theme }
+                });
+            });
         }
 
         // Mini Calendar

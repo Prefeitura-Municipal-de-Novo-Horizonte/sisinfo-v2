@@ -95,14 +95,20 @@ def style_input(value, extra_classes=""):
 
 @register.inclusion_tag('ui/action_button.html')
 def action_button(url, type='view', title=None, text=None, extra_classes='', target=None, confirm_message=None):
+    extra_attrs = ""
+    if target:
+        extra_attrs += f' target="{target}"'
+    if confirm_message:
+        escaped_message = confirm_message.replace("'", "\\'")
+        extra_attrs += f' onclick="return confirm(\'{escaped_message}\')"'
+
     return {
         'url': url,
         'type': type,
         'title': title,
         'text': text,
         'extra_classes': extra_classes,
-        'target': target,
-        'confirm_message': confirm_message
+        'extra_attrs': extra_attrs,
     }
 
 @register.inclusion_tag('ui/status_badge.html')

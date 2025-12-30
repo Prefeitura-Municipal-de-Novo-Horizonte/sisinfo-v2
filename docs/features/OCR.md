@@ -8,7 +8,15 @@ Documentação do sistema de OCR para leitura automática de notas fiscais.
 
 ## Visão Geral
 
-O sistema utiliza **Google Gemini Vision API** para extração de dados de imagens de notas fiscais. O processamento é **assíncrono** via Supabase Edge Functions para contornar o limite de 10s da Vercel.
+O sistema utiliza **Google Gemini Vision API** para extração de dados de imagens de notas fiscais.
+
+### Arquitetura Híbrida (Vercel + Supabase)
+Devido ao limite de **10 segundos** para respostas HTTP na Vercel (Hobby/Pro), o OCR não pode ser processado síncronamente na view do Django.
+Adotamos uma abordagem híbrida:
+1. **Django** recebe o upload e salva no Storage.
+2. **Django** aciona uma **Edge Function** (no Supabase) em modo "fire-and-forget".
+3. **Edge Function** processa o OCR (pode levar até 150s).
+4. **Edge Function** chama um **Callback** no Django para salvar o resultado.
 
 ### Arquitetura
 
@@ -202,6 +210,11 @@ python manage.py clean_ocr_jobs --with-images --stale
 ### Erro de quota (429)
 - Sistema rotaciona automaticamente
 - Aguardar reset à meia-noite ou adicionar mais chaves
+
+### Callback falhou
+- Verificar logs da Edge Function no Supabase Dashboard
+- Verificar se `SITE_URL` ou `VERCEL_URL` estão corretos nas variáveis de ambiente
+- O callback espera um `secret` (SUPABASE_SERVICE_ROLE_KEY) para segurança
 
 ---
 

@@ -17,11 +17,11 @@
             <div class="flex items-center gap-3">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Ficha de Entrega #{{ delivery.pk }}</h1>
                 {% if delivery.status == 'P' %}
-                    {% status_badge status='Pendente' type='warning' %}
+                {% status_badge status='Pendente' type='warning' %}
                 {% elif delivery.status == 'A' %}
-                    {% status_badge status='A Caminho' type='info' %}
+                {% status_badge status='A Caminho' type='info' %}
                 {% else %}
-                    {% status_badge status='Concluída' type='success' %}
+                {% status_badge status='Concluída' type='success' %}
                 {% endif %}
             </div>
             <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
@@ -49,13 +49,14 @@
                 Registrar Recebimento
             </a>
             {% endif %}
-            
+
             {% if delivery.is_completed %}
             <a href="{% url 'fiscal:resend_delivery_email' pk=delivery.pk %}"
                 class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors text-sm"
                 onclick="return confirm('Reenviar email de notificação para o Patrimônio?');">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 Reenviar Email
             </a>
@@ -137,10 +138,11 @@
                     Ver original (tela cheia)
                 </a>
             </div>
-            <div class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-100 dark:bg-gray-900">
-                <img src="{{ delivery.signed_document_url }}" alt="Ficha de entrega assinada" 
-                     class="w-full h-auto max-h-[600px] object-contain cursor-zoom-in"
-                     onclick="window.open(this.src, '_blank')">
+            <div
+                class="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                <img src="{{ delivery.signed_document_url }}" alt="Ficha de entrega assinada" loading="lazy"
+                    class="w-full h-auto max-h-[600px] object-contain cursor-zoom-in"
+                    onclick="window.open(this.src, '_blank')" onload="this.classList.add('loaded')">
             </div>
         </div>
         {% endif %}

@@ -24,10 +24,10 @@ Visão geral da arquitetura e decisões técnicas do sistema.
           │                       │                │
           ▼                       ▼                ▼
 ┌─────────────┐       ┌─────────────────┐   ┌─────────────┐
-│  Supabase   │       │   PostgreSQL    │   │   MongoDB   │
-│  Storage    │       │   (Supabase)    │   │   (Atlas)   │
-│ Edge Funcs  │       │    Dados App    │   │  Auditoria  │
-└─────────────┘       └─────────────────┘   └─────────────┘
+│  Supabase   │       │   PostgreSQL    │   │   MongoDB   │      │ Redis/Upstash │
+│  Storage    │       │   (Supabase)    │   │   (Atlas)   │      │    Cache      │
+│ Edge Funcs  │       │    Dados App    │   │  Auditoria  │      │   Listas UI   │
+└─────────────┘       └─────────────────┘   └─────────────┘      └───────────────┘
 ```
 
 ---
@@ -119,6 +119,18 @@ Responsáveis por:
                                               │  Result  │
                                               └──────────┘
 ```
+┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+│  Upload  │───▶│ Supabase │───▶│  Edge    │───▶│  Gemini  │───▶│ Callback │
+│  Django  │    │  Storage │    │ Function │    │  Vision  │    │  Django  │
+└──────────┘    └──────────┘    └──────────┘    └──────────┘    └──────────┘
+                                                                       │
+                                                                       ▼
+                                                                  ┌──────────┐
+                                                                  │  Update  │
+                                                                  │  Invoice │
+                                                                  └──────────┘
+```
+*Nota: Arquitetura Híbrida para evitar timeout da Vercel (10s).*
 
 ---
 
@@ -127,7 +139,22 @@ Responsáveis por:
 - Django authentication built-in
 - Session-based (cookies)
 - Login apenas por email (sem username)
-- Onboarding no primeiro login
+## Autenticação
+
+### Modelo de Usuário (`ProfessionalUser`)
+O sistema utiliza um modelo de usuário personalizado que suporta múltiplos papéis:
+
+| Papel | Permissões | Identificação |
+|-------|------------|---------------|
+| **Administrador** | Acesso total, Admin Tools, Backups | `is_admin=True` |
+| **Técnico** | Acesso a todas as features operacionais | `is_tech=True` |
+| **Estagiário** | Acesso limitado (visualização) | `is_tech=False` |
+
+### Middlewares Importantes
+- **OnboardingMiddleware**: Força alteração de senha no primeiro login.
+- **AuditMiddleware**: Registra metadados (IP, User Agent) para auditoria.
+- **MaintenanceMiddleware**: Bloqueia acesso (exceto Admin) se `MAINTENANCE_MODE=True`.
+- **TimezoneMiddleware**: Garante timezone `America/Sao_Paulo`.
 
 ---
 
@@ -146,7 +173,15 @@ Responsáveis por:
 ### Supabase Storage
 - Imagens de notas fiscais
 - Documentos assinados
+### Supabase Storage
+- Imagens de notas fiscais
+- Documentos assinados
 - Arquivos de entrega
+
+### Redis (Upstash)
+- Cache de listas frequentes (Fornecedores, Materiais, Setores)
+- Cache de estatísticas do Dashboard
+- Implementação via `core.cache` (Abstração para Redis local ou Upstash REST)
 
 ---
 
