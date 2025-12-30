@@ -197,6 +197,11 @@ class Invoice(models.Model):
         verbose_name = 'nota fiscal'
         verbose_name_plural = 'notas fiscais'
         unique_together = [['number', 'supplier']]
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['issue_date']),
+            models.Index(fields=['status', 'issue_date']),
+        ]
 
     def __str__(self):
         return f"NF {self.number} - {self.supplier}"
@@ -207,9 +212,15 @@ class Invoice(models.Model):
     
     @property
     def total_value(self):
-        """Valor total da nota (soma dos itens)."""
-        total = sum(item.total_price for item in self.items.all())
-        return Decimal(total).quantize(Decimal("0.00"))
+        """
+        Valor total da nota (soma dos itens).
+        Otimizado: usa agregação SQL ao invés de loop Python.
+        """
+        from django.db.models import Sum, F
+        result = self.items.aggregate(
+            total=Sum(F('quantity') * F('unit_price'))
+        )
+        return Decimal(result['total'] or 0).quantize(Decimal("0.00"))
     
     @property
     def photo_url(self):
@@ -269,15 +280,14 @@ class Invoice(models.Model):
     
     @property
     def has_stock_items(self):
-        """Verifica se os materiais desta nota estão em estoque (StockItem com qty > 0)."""
-        for item in self.items.all():
-            try:
-                stock = StockItem.objects.get(material_bidding=item.material_bidding)
-                if stock.quantity > 0:
-                    return True
-            except StockItem.DoesNotExist:
-                pass
-        return False
+        """
+        Verifica se os materiais desta nota estão em estoque (StockItem com qty > 0).
+        Otimizado: usa exists() com subquery ao invés de loop.
+        """
+        return StockItem.objects.filter(
+            material_bidding__in=self.items.values('material_bidding'),
+            quantity__gt=0
+        ).exists()
     
     @property
     def has_deliveries(self):
@@ -291,16 +301,17 @@ class Invoice(models.Model):
         - 'preparing': Nenhuma entrega criada.
         - 'on_way': Alguma entrega 'Pendente' ou 'A Caminho'.
         - 'delivered': Tem entregas e todas estão 'Concluída'.
+        
+        Otimizado: usa exists() ao invés de carregar todas as deliveries.
         """
-        deliveries = self.deliveries.all()
-        if not deliveries.exists():
+        # Verifica se há entregas
+        if not self.deliveries.exists():
             return 'preparing'
         
-        # Se houver alguma pendente ou a caminho
-        if any(d.status in ['P', 'A'] for d in deliveries):
+        # Verifica se alguma está pendente ou a caminho (1 query)
+        if self.deliveries.filter(status__in=['P', 'A']).exists():
             return 'on_way'
-            
-        # Se tem entregas e não caiu no if acima, todas estão concluídas (ou não tem, mas o check de exists pegou)
+        
         return 'delivered'
 
 
@@ -459,6 +470,9 @@ class DeliveryNote(models.Model):
         ordering = ['-created_at']
         verbose_name = 'ficha de entrega'
         verbose_name_plural = 'fichas de entrega'
+        indexes = [
+            models.Index(fields=['status']),
+        ]
 
     def __str__(self):
         return f"Entrega #{self.pk} - {self.sector}"

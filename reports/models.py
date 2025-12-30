@@ -54,6 +54,10 @@ class Report(models.Model):
         ordering = ['-created_at', 'status', '-updated_at']
         verbose_name = 'laudo'
         verbose_name_plural = 'laudos'
+        indexes = [
+            models.Index(fields=['status']),
+            models.Index(fields=['status', 'created_at']),
+        ]
 
     def __str__(self):
         return self.number_report or f"Laudo #{self.pk}"
