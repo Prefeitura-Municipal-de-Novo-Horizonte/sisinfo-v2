@@ -1,0 +1,35 @@
+{% comment %}
+Skeleton Loading para Tabelas
+Uso: {% include "include/_skeleton_table.html" with rows=5 cols=6 %}
+{% endcomment %}
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden" x-data="{ loading: true }"
+    x-init="setTimeout(() => loading = false, 100)">
+    <div x-show="loading" x-cloak class="animate-pulse">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        {% for _ in "123456"|make_list %}
+                        <th class="px-6 py-3">
+                            <div class="skeleton skeleton-text"
+                                style="width: {{ forloop.counter|add:3|divisibleby:2|yesno:'60%,80%' }}"></div>
+                        </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for _ in "12345"|make_list %}
+                    <tr>
+                        {% for _ in "123456"|make_list %}
+                        <td class="px-6 py-4">
+                            <div class="skeleton skeleton-text"></div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

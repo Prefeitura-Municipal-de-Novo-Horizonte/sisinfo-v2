@@ -175,8 +175,9 @@
                 </div>
                 <div class="p-4">
                     <a href="{{ invoice.photo_url }}" target="_blank">
-                        <img src="{{ invoice.photo_url }}" alt="Nota Fiscal"
-                            class="w-full rounded-lg hover:opacity-90 transition-opacity">
+                        <img src="{{ invoice.photo_url }}" alt="Nota Fiscal" loading="lazy"
+                            class="w-full rounded-lg hover:opacity-90 transition-opacity"
+                            onload="this.classList.add('loaded')">
                     </a>
                 </div>
             </div>
