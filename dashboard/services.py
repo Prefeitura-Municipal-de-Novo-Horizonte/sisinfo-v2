@@ -116,19 +116,42 @@ class DashboardService:
     def get_recent_reports_for_calendar() -> List[Dict[str, Any]]:
         """
         Retorna laudos para o calendário.
+        
+        Otimizado:
+        - Limita a 200 laudos mais recentes
+        - Usa values() para evitar criar objetos Report
+        - Cache de 30 minutos
         """
-        reports = Report.objects.select_related('sector').all()
+        cache_key = f"{CACHE_DASHBOARD_CHARTS}_calendar"
+        
+        cached_data = cache_get(cache_key)
+        if cached_data:
+            return cached_data
+        
+        # Usa values para evitar criar objetos Report (mais rápido)
+        reports = Report.objects.select_related('sector').order_by(
+            '-created_at'
+        )[:200].values(
+            'number_report', 'created_at', 'slug', 'status',
+            'sector__name'
+        )
+        
         events = []
         for report in reports:
+            # Mapeia status para display
+            status_display = 'Aberto' if report['status'] == '1' else 'Finalizado'
+            
             events.append({
-                'title': f"Laudo {report.number_report}",
-                'start': report.created_at.isoformat(),
-                'url': report.get_absolute_url(),
+                'title': f"Laudo {report['number_report'] or 'S/N'}",
+                'start': report['created_at'].isoformat() if report['created_at'] else '',
+                'url': f"/reports/{report['slug']}/",
                 'extendedProps': {
-                    'sector': report.sector.name if report.sector else 'Sem Setor',
-                    'status': report.get_status_display()
+                    'sector': report['sector__name'] or 'Sem Setor',
+                    'status': status_display
                 }
             })
+        
+        cache_set(cache_key, events, ttl=TTL_LONG)  # 30 min
         return events
 
     @staticmethod

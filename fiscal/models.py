@@ -3,6 +3,7 @@ Modelos do sistema fiscal (Notas, Empenhos, Entrega).
 """
 import uuid
 from decimal import Decimal
+from functools import cached_property
 from django.db import models
 from django.shortcuts import resolve_url as r
 from django.utils import timezone

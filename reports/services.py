@@ -5,6 +5,7 @@ Este módulo contém a lógica de negócio de Report,
 usando ServiceResult para retornos padronizados.
 """
 from typing import Optional
+from django.db import transaction
 from django.db.models import QuerySet
 from django.forms import BaseInlineFormSet
 
@@ -71,9 +72,10 @@ class ReportService:
             )
         
         try:
-            report = form.save()
-            form_material.instance = report
-            form_material.save()
+            with transaction.atomic():
+                report = form.save()
+                form_material.instance = report
+                form_material.save()
             return ServiceResult.ok(
                 data=report,
                 message=f"Laudo {report.number_report} criado com sucesso!"
@@ -106,9 +108,10 @@ class ReportService:
             )
         
         try:
-            report = form.save()
-            form_material.instance = report
-            form_material.save()
+            with transaction.atomic():
+                report = form.save()
+                form_material.instance = report
+                form_material.save()
             return ServiceResult.ok(
                 data=report,
                 message=f"Laudo {report.number_report} atualizado com sucesso!"
