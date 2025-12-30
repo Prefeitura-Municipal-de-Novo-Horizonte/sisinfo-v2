@@ -40,6 +40,8 @@ O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de T
 | 👥 **Autenticação** | Sistema de usuários com perfis diferenciados e onboarding |
 | 📝 **Auditoria** | Rastreamento completo de operações (MongoDB) |
 
+| 🎨 **UI/UX Refinado** | Tema Catppuccin (Light/Dark), Toasts, e design responsivo |
+
 ---
 
 ## 🚀 Tecnologias
@@ -55,7 +57,8 @@ O **SISInfo V2** é uma plataforma completa desenvolvida para a **Diretoria de T
 ### Frontend
 | Tecnologia | Versão | Uso |
 |------------|--------|-----|
-| TailwindCSS | 3.4 | Estilização |
+| TailwindCSS | 3.4 | Estilização (UI Kit) |
+| Catppuccin | Latte/Mocha | Paleta de Cores |
 | Alpine.js | 3.13 | Reatividade |
 | HTMX | 1.9 | Interações AJAX |
 | ApexCharts | - | Gráficos e dashboards |

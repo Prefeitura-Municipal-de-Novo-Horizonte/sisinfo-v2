@@ -57,7 +57,7 @@ class ProfessionalUserManager(BaseUserManager):
 
 class ProfessionalUser(AbstractBaseUser):
     """
-    Modelo de usuário personalizado para o SISInfo V2.
+    Modelo de usuário personalizado para o SISINFO.
     
     Este modelo substitui o usuário padrão do Django e adiciona
     campos específicos para gestão de profissionais da TI municipal.

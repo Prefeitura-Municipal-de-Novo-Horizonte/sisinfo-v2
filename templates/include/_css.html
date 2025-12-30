@@ -2,3 +2,32 @@
 
 <link rel="stylesheet" href="{% static 'css/djangotw-ui.css' %}">
 <link rel="stylesheet" href="{% static 'css/custom.css' %}?v=2">
+<style>
+    /* Global Zebra Table Styles (Catppuccin) */
+    .table-zebra tbody tr:nth-child(odd) {
+        background-color: transparent;
+    }
+
+    .table-zebra tbody tr:nth-child(even) {
+        background-color: #f9fafb;
+    }
+
+    /* gray-50 */
+    .dark .table-zebra tbody tr:nth-child(even) {
+        background-color: #313244;
+    }
+
+    /* mocha-surface0 */
+
+    /* Hover effects */
+    .table-zebra tbody tr:hover {
+        background-color: #eff1f5;
+    }
+
+    /* latte-base */
+    .dark .table-zebra tbody tr:hover {
+        background-color: #45475a;
+    }
+
+    /* mocha-surface1 */
+</style>

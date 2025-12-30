@@ -1,27 +1,37 @@
 {% if status %}
 <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold
     {% if type == 'success' or status == '1' or status == 'C' or status == 'Entregue' or status == 'Aberto' %}
-        bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300
+        bg-success/15 text-success dark:bg-success/25 dark:text-success
     {% elif type == 'warning' or status == 'P' or status == 'Pendente' %}
-        bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300
+        bg-warning/15 text-warning dark:bg-warning/25 dark:text-warning
     {% elif type == 'info' or status == 'A' or status == 'A Caminho' %}
-        bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300
+        bg-info/15 text-info dark:bg-info/25 dark:text-info
     {% elif type == 'danger' or status == '0' or status == 'Cancelada' or type == 'critical' %}
-        bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300
+        bg-danger/15 text-danger dark:bg-danger/25 dark:text-danger
     {% else %}
-        bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+        bg-latte-surface2/20 text-latte-subtext1 dark:bg-mocha-surface2/20 dark:text-mocha-subtext1
     {% endif %}
     {{ extra_classes }}">
 
     {# Icon Logic #}
     {% if type == 'success' or status == '1' or status == 'C' or status == 'Entregue' or status == 'Aberto' %}
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
     {% elif type == 'warning' or status == 'P' or status == 'Pendente' %}
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
     {% elif type == 'info' or status == 'A' or status == 'A Caminho' %}
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+    </svg>
     {% elif type == 'danger' or status == '0' or status == 'Cancelada' %}
-        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
     {% endif %}
 
     {{ text|default:status }}

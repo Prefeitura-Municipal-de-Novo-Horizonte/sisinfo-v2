@@ -43,8 +43,7 @@ Licitações
         </div>
     </div>
 
-    <!-- Alerts -->
-    {% include "include/_alert.html" %}
+
 
     <!-- Filters Section (Collapsible) -->
     <div x-show="showFilters" x-transition:enter="transition ease-out duration-300"
@@ -165,9 +164,9 @@ Licitações
 
                         {% url 'bidding_procurement:toggle_status_licitacao' licitacao.slug as toggle_url %}
                         {% if licitacao.status == '1' %}
-                            {% action_button url=toggle_url type='x' text='Desativar' %}
+                        {% action_button url=toggle_url type='x' text='Desativar' %}
                         {% else %}
-                            {% action_button url=toggle_url type='check' text='Ativar' %}
+                        {% action_button url=toggle_url type='check' text='Ativar' %}
                         {% endif %}
 
                         {% url 'bidding_procurement:delete_licitacao' licitacao.slug as delete_url %}

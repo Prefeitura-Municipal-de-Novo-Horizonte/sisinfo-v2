@@ -19,15 +19,15 @@
         x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
         x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="flex items-center w-full p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 border-l-4 
-            {% if message.tags == 'success' %}border-green-500{% elif message.tags == 'error' %}border-red-500{% elif message.tags == 'warning' %}border-yellow-500{% else %}border-blue-500{% endif %}"
+        class="flex items-center w-full p-4 text-latte-text bg-latte-surface0 rounded-lg shadow-md dark:text-mocha-text dark:bg-mocha-surface0 border-l-4 
+            {% if message.tags == 'success' %}border-success{% elif message.tags == 'error' %}border-danger{% elif message.tags == 'warning' %}border-warning{% else %}border-info{% endif %}"
         role="alert">
 
         <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg 
-                {% if message.tags == 'success' %}text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200
-                {% elif message.tags == 'error' %}text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200
-                {% elif message.tags == 'warning' %}text-yellow-500 bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-200
-                {% else %}text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200{% endif %}">
+                {% if message.tags == 'success' %}text-success bg-success/20 dark:bg-success/20 dark:text-success
+                {% elif message.tags == 'error' %}text-danger bg-danger/20 dark:bg-danger/20 dark:text-danger
+                {% elif message.tags == 'warning' %}text-warning bg-warning/20 dark:bg-warning/20 dark:text-warning
+                {% else %}text-info bg-info/20 dark:bg-info/20 dark:text-info{% endif %}">
 
             {% if message.tags == 'success' %}
             <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
@@ -57,7 +57,7 @@
         </div>
         <div class="ml-3 text-sm font-normal">{{ message }}</div>
         <button type="button" @click="show = false"
-            class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700"
+            class="ml-auto -mx-1.5 -my-1.5 bg-latte-surface0 text-latte-subtext0 hover:text-latte-text rounded-lg focus:ring-2 focus:ring-latte-surface2 p-1.5 hover:bg-latte-surface1 inline-flex items-center justify-center h-8 w-8 dark:text-mocha-subtext0 dark:hover:text-mocha-text dark:bg-mocha-surface0 dark:hover:bg-mocha-surface1"
             aria-label="Close">
             <span class="sr-only">Close</span>
             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -76,19 +76,19 @@
             x-transition:enter-end="translate-y-0 opacity-100 sm:translate-x-0"
             x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="flex items-center w-full p-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800 border-l-4"
+            class="flex items-center w-full p-4 text-latte-text bg-latte-surface0 rounded-lg shadow-md dark:text-mocha-text dark:bg-mocha-surface0 border-l-4"
             :class="{
-                'border-green-500': toast.type === 'success',
-                'border-red-500': toast.type === 'error',
-                'border-yellow-500': toast.type === 'warning',
-                'border-blue-500': toast.type === 'info'
+                'border-success': toast.type === 'success',
+                'border-danger': toast.type === 'error',
+                'border-warning': toast.type === 'warning',
+                'border-info': toast.type === 'info'
              }" role="alert">
 
             <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg" :class="{
-                    'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200': toast.type === 'success',
-                    'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200': toast.type === 'error',
-                    'text-yellow-500 bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-200': toast.type === 'warning',
-                    'text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200': toast.type === 'info'
+                    'text-success bg-success/20 dark:bg-success/20 dark:text-success': toast.type === 'success',
+                    'text-danger bg-danger/20 dark:bg-danger/20 dark:text-danger': toast.type === 'error',
+                    'text-warning bg-warning/20 dark:bg-warning/20 dark:text-warning': toast.type === 'warning',
+                    'text-info bg-info/20 dark:bg-info/20 dark:text-info': toast.type === 'info'
                   }">
 
                 <!-- Success -->
@@ -118,7 +118,7 @@
             </div>
             <div class="ml-3 text-sm font-normal" x-text="toast.msg"></div>
             <button type="button" @click="remove(toast.id)"
-                class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700">
+                class="ml-auto -mx-1.5 -my-1.5 bg-latte-surface0 text-latte-subtext0 hover:text-latte-text rounded-lg focus:ring-2 focus:ring-latte-surface2 p-1.5 hover:bg-latte-surface1 inline-flex items-center justify-center h-8 w-8 dark:text-mocha-subtext0 dark:hover:text-mocha-text dark:bg-mocha-surface0 dark:hover:bg-mocha-surface1">
                 <span class="sr-only">Close</span>
                 <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 14 14">

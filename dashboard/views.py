@@ -63,15 +63,15 @@ def index(request):
         **stats,
         
         # Main Chart Data (passed to partial logic or initial render)
-        'sector_labels': json.dumps([item['sector__name'] for item in sector_data]),
-        'sector_series': json.dumps([item['count'] for item in sector_data]),
+        'sector_labels': json.dumps([item['sector__name'] for item in sector_data]) if sector_data else "[]",
+        'sector_series': json.dumps([item['count'] for item in sector_data]) if sector_data else "[]",
 
         # Materials Chart
-        'material_labels': json.dumps([item['name'] for item in materials_data]),
-        'material_series': json.dumps([str(item['qty']) for item in materials_data]), # Decimal to str
+        'material_labels': json.dumps([item['name'] for item in materials_data]) if materials_data else "[]",
+        'material_series': json.dumps([float(item['qty']) for item in materials_data]) if materials_data else "[]", # Decimal to float for ApexCharts
 
         # Calendar
-        'calendar_events': json.dumps(calendar_events),
+        'calendar_events': json.dumps(calendar_events) if calendar_events else "[]",
     }
     return render(request, "index.html", context)
 
@@ -88,8 +88,8 @@ def reports_by_sector_chart(request):
 
     sector_data = DashboardService.get_reports_by_sector(days)
 
-    labels = json.dumps([item['sector__name'] for item in sector_data])
-    series = json.dumps([item['count'] for item in sector_data])
+    labels = json.dumps([item['sector__name'] for item in sector_data]) if sector_data else "[]"
+    series = json.dumps([item['count'] for item in sector_data]) if sector_data else "[]"
 
     # Retornamos apenas o script de atualização do gráfico ou o partial
     # Para simplicidade com HTMX, vamos retornar um partial com o gráfico recriado
@@ -112,8 +112,8 @@ def top_materials_chart(request):
 
     materials_data = DashboardService.get_top_materials_by_period(days)
 
-    labels = json.dumps([item['name'] for item in materials_data])
-    series = json.dumps([str(item['qty']) for item in materials_data])
+    labels = json.dumps([item['name'] for item in materials_data]) if materials_data else "[]"
+    series = json.dumps([float(item['qty']) for item in materials_data]) if materials_data else "[]"
 
     context = {
         'material_labels': labels,

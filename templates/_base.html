@@ -38,7 +38,7 @@
       }
     }"
     x-init="if(darkMode) document.documentElement.classList.add('dark'); $watch('sidebarCollapsed', val => localStorage.setItem('sidebarCollapsed', val))"
-    class="flex h-screen bg-gray-50 dark:bg-slate-900 overflow-hidden" x-cloak>
+    class="flex h-screen bg-latte-base dark:bg-mocha-base overflow-hidden" x-cloak>
 
     <!-- Sidebar -->
     {% include "include/_nav.html" %}
@@ -46,7 +46,7 @@
     <!-- Main Content Wrapper -->
     <div class="flex-1 flex flex-col overflow-hidden relative w-full">
       <!-- Main Content -->
-      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-slate-900 p-6 w-full">
+      <main class="flex-1 overflow-x-hidden overflow-y-auto bg-latte-base dark:bg-mocha-base p-6 w-full">
         {% block content %}
         {% endblock content %}
       </main>

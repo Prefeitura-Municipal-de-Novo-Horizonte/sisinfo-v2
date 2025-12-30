@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR" class="h-full">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,37 +20,56 @@
             }
         }
         // Check for dark mode preference
-        if (localStorage.getItem('theme') === 'dark' || 
+        if (localStorage.getItem('theme') === 'dark' ||
             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         }
     </script>
     <style>
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
+
         .float-animation {
             animation: float 3s ease-in-out infinite;
         }
+
         @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
         }
+
         .pulse-slow {
             animation: pulse-slow 2s ease-in-out infinite;
         }
     </style>
 </head>
+
 <body class="h-full bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
     <div class="min-h-full flex flex-col items-center justify-center px-4 py-12">
         {% block content %}{% endblock %}
-        
+
         <!-- Footer -->
         <div class="mt-12 text-center text-sm text-slate-500 dark:text-slate-400">
-            <p>SISInfo V2 - Diretoria de Tecnologia da Informação</p>
+            <p>SISINFO - Diretoria de Tecnologia da Informação</p>
             <p class="mt-1">Prefeitura Municipal de Novo Horizonte</p>
         </div>
     </div>
 </body>
+
 </html>
