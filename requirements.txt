@@ -4,7 +4,7 @@ django-extensions==4.1
 python-decouple==3.8
 psycopg2-binary==2.9.11
 django-filter==25.1
-pillow==11.3.0
+pillow==12.1.0
 pymongo==4.15.5
 validate-docbr==1.11.1
 whitenoise==6.11.0
